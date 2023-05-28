@@ -105,7 +105,7 @@ public final class UserUtil {
 
             File[] files = currentUserBackgrounds.listFiles();
 
-            if (files != null && files.length > 0) {
+            if (!ArrayUtil.nullOrEmpty(files)) {
                 for (File backgroundFile : files) {
                     boolean valid = true;
 
@@ -196,7 +196,7 @@ public final class UserUtil {
         }
 
         File[] uuids = users.listFiles();
-        if (uuids != null && uuids.length > 0) {
+        if (!ArrayUtil.nullOrEmpty(uuids)) {
             for (File user : uuids) {
                 if (!user.isDirectory()) {
                     throw new FatalException("Found non-directory in users directory: " + user.getAbsolutePath());
@@ -288,7 +288,7 @@ public final class UserUtil {
      *
      * @param file      the file
      * @param extension the extension
-     * @return whether the rename was successful
+     * @return whether the rename operation was successful
      */
     @CanIgnoreReturnValue
     private static boolean attemptToRenameToUseExtension(File file, Extension extension) {

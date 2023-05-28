@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
  */
 public final class UsbUtil {
     /**
-     * The power shell executable name.
+     * The PowerShell executable name.
      */
     private static final String POWER_SHELL = "powershell.exe";
 

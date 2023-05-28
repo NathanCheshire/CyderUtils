@@ -101,7 +101,7 @@ public class YouTubeAudioDownload {
      * The width of the printed progress bar if enabled. This actually doesn't matter since
      * the progress bar printed to a JTextPane will take the entire width of the pane.
      */
-    private static final int processBarWidth = 400;
+    private static final int progressBarWidth = 400;
 
     /**
      * The name of this download object.
@@ -131,22 +131,22 @@ public class YouTubeAudioDownload {
     /**
      * Whether this download has completed downloading.
      */
-    private boolean downloaded;
+    private boolean isDownloaded;
 
     /**
      * Whether this download has completed, not necessarily downloaded.
      */
-    private boolean done;
+    private boolean isDone;
 
     /**
      * Whether this download is currently underway.
      */
-    private boolean downloading;
+    private boolean isDownloading;
 
     /**
      * Whether this download was canceled externally.
      */
-    private boolean canceled;
+    private boolean isCanceled;
 
     /**
      * The label this class will print and update with statistics about the download.
@@ -372,12 +372,8 @@ public class YouTubeAudioDownload {
         if (audioDownloadName == null && thumbnailDownloadName == null) {
             initializeAudioAndThumbnailDownloadNames();
         } else {
-            if (audioDownloadName == null) {
-                initializeAudioDownloadNames();
-            }
-            if (thumbnailDownloadName == null) {
-                initializeThumbnailDownloadName();
-            }
+            if (audioDownloadName == null) initializeAudioDownloadNames();
+            if (thumbnailDownloadName == null) initializeThumbnailDownloadName();
         }
 
         downloadThumbnail();
@@ -434,7 +430,7 @@ public class YouTubeAudioDownload {
                     createAndPrintUiElements();
                 }
 
-                downloading = true;
+                isDownloading = true;
 
                 Process process = Runtime.getRuntime().exec(command);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -461,8 +457,8 @@ public class YouTubeAudioDownload {
             } finally {
                 YouTubeDownloadManager.INSTANCE.removeActiveDownload(this);
 
-                done = true;
-                downloading = false;
+                isDone = true;
+                isDownloading = false;
 
                 if (shouldPrintUiElements()) {
                     cleanUpPrintedUiElements();
@@ -522,7 +518,7 @@ public class YouTubeAudioDownload {
      * @return whether this download has completed
      */
     public boolean isDownloaded() {
-        return downloaded;
+        return isDownloaded;
     }
 
     /**
@@ -532,7 +528,7 @@ public class YouTubeAudioDownload {
      * @return whether this download has ended
      */
     public boolean isDone() {
-        return done;
+        return isDone;
     }
 
     /**
@@ -541,7 +537,7 @@ public class YouTubeAudioDownload {
      * @return whether this download is currently downloading
      */
     public boolean isDownloading() {
-        return downloading;
+        return isDownloading;
     }
 
     /**
@@ -550,7 +546,7 @@ public class YouTubeAudioDownload {
      * @return whether this download was canceled
      */
     public boolean isCanceled() {
-        return canceled;
+        return isCanceled;
     }
 
     /**
@@ -558,7 +554,7 @@ public class YouTubeAudioDownload {
      */
     public void cancel() {
         if (isDownloading()) {
-            canceled = true;
+            isCanceled = true;
         }
     }
 
@@ -704,7 +700,7 @@ public class YouTubeAudioDownload {
         if (processExitCode != SUCCESSFUL_EXIT_CODE) {
             onDownloadFailed();
         } else if (!isCanceled()) {
-            downloaded = true;
+            isDownloaded = true;
 
             AudioPlayer.playAudioNext(audioDownloadFile);
 
@@ -785,7 +781,7 @@ public class YouTubeAudioDownload {
         downloadProgressBar.setMinimum(downloadProgressMin);
         downloadProgressBar.setMaximum(downloadProgressMax);
         downloadProgressBar.setBorder(new LineBorder(Color.black, 2));
-        downloadProgressBar.setBounds(0, 0, processBarWidth, 40);
+        downloadProgressBar.setBounds(0, 0, progressBarWidth, 40);
         downloadProgressBar.setVisible(true);
         downloadProgressBar.setValue(0);
         downloadProgressBar.setOpaque(false);
@@ -860,7 +856,7 @@ public class YouTubeAudioDownload {
         if (!isCanceled() && isDownloading()) {
             cancel();
             cancelButton.setText(CANCELED);
-        } else if (downloaded) {
+        } else if (isDownloaded) {
             AudioPlayer.showGui(getAudioDownloadFile());
         }
     }
@@ -869,7 +865,7 @@ public class YouTubeAudioDownload {
      * Cleans up the printed ui elements.
      */
     private void cleanUpPrintedUiElements() {
-        Color resultColor = downloaded
+        Color resultColor = isDownloaded
                 ? CyderColors.regularBlue
                 : CyderColors.regularRed;
 
@@ -886,9 +882,9 @@ public class YouTubeAudioDownload {
      */
     private void refreshCancelButtonText() {
         String buttonText;
-        if (downloaded) {
+        if (isDownloaded) {
             buttonText = PLAY;
-        } else if (canceled) {
+        } else if (isCanceled) {
             buttonText = CANCELED;
         } else {
             buttonText = FAILED;

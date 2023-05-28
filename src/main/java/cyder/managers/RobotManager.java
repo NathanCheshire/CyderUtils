@@ -45,7 +45,7 @@ public enum RobotManager {
             try {
                 commonSharedRobot = new Robot();
                 break;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 attempts++;
             }
         }
