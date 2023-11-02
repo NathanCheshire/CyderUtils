@@ -10,7 +10,6 @@ import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.getter.GetInputBuilder;
 import cyder.getter.GetterUtil;
-import cyder.managers.ProgramModeManager;
 import cyder.props.Props;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;

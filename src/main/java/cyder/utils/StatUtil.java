@@ -9,8 +9,6 @@ import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
 import cyder.handlers.internal.ExceptionHandler;
-import cyder.managers.ProgramMode;
-import cyder.managers.ProgramModeManager;
 import cyder.network.IpDataManager;
 import cyder.network.LatencyManager;
 import cyder.network.NetworkUtil;

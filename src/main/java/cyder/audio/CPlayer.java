@@ -8,11 +8,10 @@ import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
 import cyder.threads.CyderThreadRunner;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -84,12 +83,11 @@ public final class CPlayer {
                 player = new Player(bis);
                 player.play();
                 if (!canceled) onCompletionCallback.forEach(Runnable::run);
-            } catch (Exception e) {
-                ExceptionHandler.handle(e);
+            } catch (FileNotFoundException | JavaLayerException e) {
+                e.printStackTrace();
             } finally {
                 closeResources();
                 playing = false;
-                Console.INSTANCE.revalidateAudioMenuVisibility();
             }
         }, audioFile.getAbsolutePath());
     }
@@ -120,8 +118,8 @@ public final class CPlayer {
             bis = null;
             if (fis != null) fis.close();
             fis = null;
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

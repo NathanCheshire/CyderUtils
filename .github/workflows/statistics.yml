@@ -19,8 +19,8 @@ jobs:
       - name: Commit and Push generated files
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            git config --local user.email "action@github.com"
-            git config --local user.name "github-actions"
+            git config --local user.email "nathan.vincent.2.718@gmail.com"
+            git config --local user.name "nathancheshire"
             git add .
             git commit -m "update statistics badges" -m "`date`"
             git push -u origin main

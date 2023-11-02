@@ -3,13 +3,13 @@ package cyder.weather;
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderUrls;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.utils.SerializationUtil;
 import cyder.weather.parsers.WeatherData;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
@@ -36,36 +36,6 @@ public final class WeatherUtil {
     }
 
     /**
-     * Possible measurement scales, that of imperial or metric.
-     */
-    public enum MeasurementScale {
-        /**
-         * The imperial measurement scale.
-         */
-        IMPERIAL("imperial"),
-
-        /**
-         * The metric measurement scale.
-         */
-        METRIC("metric");
-
-        private final String weatherDataRepresentation;
-
-        MeasurementScale(String weatherDataRepresentation) {
-            this.weatherDataRepresentation = weatherDataRepresentation;
-        }
-
-        /**
-         * Returns the weather data representation for this measurement scale.
-         *
-         * @return the weather data representation for this measurement scale
-         */
-        public String getWeatherDataRepresentation() {
-            return weatherDataRepresentation;
-        }
-    }
-
-    /**
      * Returns the weather data object for the provided location string if available. Empty optional else.
      *
      * @param locationString the location string such as "Starkville,Ms,USA"
@@ -84,8 +54,8 @@ public final class WeatherUtil {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(OpenString).openStream()))) {
             return Optional.of(SerializationUtil.fromJson(reader, WeatherData.class));
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return Optional.empty();

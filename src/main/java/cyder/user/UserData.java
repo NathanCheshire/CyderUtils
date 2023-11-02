@@ -14,7 +14,6 @@ import cyder.ui.field.CyderCaret;
 import cyder.ui.list.CyderScrollList;
 import cyder.user.data.MappedExecutables;
 import cyder.user.data.ScreenStat;
-import cyder.weather.WeatherWidget;
 import cyder.widgets.ClockWidget;
 
 import javax.swing.*;

@@ -10,7 +10,6 @@ import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
-import cyder.managers.ProgramModeManager;
 import cyder.managers.RobotManager;
 import cyder.meta.Cyder;
 import cyder.strings.CyderStrings;
