@@ -10,12 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A container for a github link to clone a repository.
+ * A wrapper for a GitHub link to clone a repository.
  */
 @Immutable
 public class GithubCloneRepoLink {
     /**
-     * The regex to extract the user and repo name from a valid github .git repo link.
+     * The regex to extract the user and repo name from a valid GitHub ".git" repo clone link.
      */
     private static final String githubRepoCloneRegex = "^((http|https)://)?(www\\.)?github\\.com/(.*)/(.*)\\.git";
 
@@ -30,7 +30,7 @@ public class GithubCloneRepoLink {
     private static final String www = "www";
 
     /**
-     * The colon slash slash protocol suffix.
+     * The colon slash-slash protocol suffix.
      */
     private static final String colonSlashSlash = "://";
 
@@ -45,17 +45,17 @@ public class GithubCloneRepoLink {
     private static final String http = "http";
 
     /**
-     * The safe hyper text transfer protocol with colon slash slash suffix.
+     * The safe hyper text transfer protocol with colon slash-slash suffix.
      */
     private static final String httpsColonSlashSlash = https + colonSlashSlash;
 
     /**
-     * The hyper text transfer protocol with colon slash slash suffix.
+     * The hyper text transfer protocol with colon slash-slash suffix.
      */
     private static final String httpColonSlashSlash = http + colonSlashSlash;
 
     /**
-     * The .git link for the github repository.
+     * The .git link for the GitHub repository.
      */
     private final String link;
 
@@ -77,7 +77,7 @@ public class GithubCloneRepoLink {
     }
 
     /**
-     * Constructs a new github clone repo link.
+     * Constructs a new GitHub clone repo link.
      *
      * @param link the https clone link
      */
@@ -89,7 +89,6 @@ public class GithubCloneRepoLink {
         Preconditions.checkArgument(matcher.matches());
 
         this.link = correctCloneLink(link);
-
         this.user = matcher.group(4);
         this.repository = matcher.group(5);
     }
@@ -179,9 +178,10 @@ public class GithubCloneRepoLink {
     }
 
     /**
-     * Corrects the provided github clone link to ensure it begins with https://www.github.com.
+     * Corrects the provided GitHub clone link to ensure it begins with
+     * <a href="https://www.github.com">https://www.github.com</a>.
      *
-     * @param link the provided clone link which is valid but not in proper form
+     * @param link the clone link which should be valid but not necessarily in proper form
      * @return the corrected link
      */
     private static String correctCloneLink(String link) {
@@ -190,29 +190,22 @@ public class GithubCloneRepoLink {
 
         StringBuilder ret = new StringBuilder(link);
 
-        // Insert www if starts with github.com
+        // Insert www if start is domain
         if (!link.startsWith(www) && !link.startsWith(httpsColonSlashSlash) && !link.startsWith(httpColonSlashSlash)) {
             ret.insert(0, www + ".");
         }
-
         // Insert https if http not present
         if (!link.startsWith(httpsColonSlashSlash) && !link.startsWith(httpColonSlashSlash)) {
             ret.insert(0, httpsColonSlashSlash);
         }
-
         // Convert non-safe to safe
-        if (ret.toString().startsWith(http) && !ret.toString().startsWith(https)) {
-            ret.insert(4, "s");
-        }
+        if (ret.toString().startsWith(http) && !ret.toString().startsWith(https)) ret.insert(4, "s");
 
         String[] parts = ret.toString().split(colonSlashSlash);
         String protocol = parts[0];
         String domainAndRemainingUrl = parts[1];
-
-        // Ensure www precedes github.com
-        if (!domainAndRemainingUrl.startsWith(www)) {
-            domainAndRemainingUrl = www + "." + domainAndRemainingUrl;
-        }
+        // Ensure www precedes domain name
+        if (!domainAndRemainingUrl.startsWith(www)) domainAndRemainingUrl = www + "." + domainAndRemainingUrl;
 
         return protocol + colonSlashSlash + domainAndRemainingUrl;
     }

@@ -2,11 +2,7 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.console.Console;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.threads.CyderThreadRunner;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
@@ -75,7 +71,6 @@ public final class CPlayer {
     public void play() {
         CyderThreadRunner.submit(() -> {
             try {
-                logAudio(audioFile);
                 canceled = false;
                 playing = true;
                 fis = new FileInputStream(audioFile);
@@ -208,7 +203,7 @@ public final class CPlayer {
      */
     @Override
     public String toString() {
-        return "CPlayer{" + "audioFile=" + audioFile
+        return "AudioPlayer{" + "audioFile=" + audioFile
                 + ", fis=" + fis
                 + ", bis=" + bis
                 + ", player=" + player
@@ -216,14 +211,5 @@ public final class CPlayer {
                 + ", canceled=" + canceled
                 + ", playing=" + playing
                 + "}";
-    }
-
-    /**
-     * Logs the provided audio file using an audio tag.
-     *
-     * @param file the file to log
-     */
-    private static void logAudio(File file) {
-        if (!GeneralAudioPlayer.isSystemAudio(file)) Logger.log(LogTag.AUDIO, file.getAbsolutePath());
     }
 }
