@@ -10,7 +10,6 @@ import cyder.constants.CyderUrls;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.NetworkUtil;
 import cyder.ui.pane.CyderOutputPane;
 import cyder.utils.ArrayUtil;
@@ -83,28 +82,28 @@ public final class StringUtil {
 
     /**
      * Removes the first object from the linked pane, this could be anything from a Component to a String.
+     *
+     * @throws FatalException if the output pane's lock cannot be aquired
+     * @throws BadLocationException if some portion of a computed removal range is not a valid part of the document
      */
-    public synchronized void removeFirst() {
-        try {
-            if (!linkedCyderPane.acquireLock()) {
-                throw new FatalException("Failed to acquire output pane lock");
-            }
-
-            Element root = linkedCyderPane.getJTextPane().getDocument().getDefaultRootElement();
-            Element first = root.getElement(0);
-            linkedCyderPane.getJTextPane().getDocument().remove(first.getStartOffset(), first.getEndOffset());
-            linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
-
-            linkedCyderPane.releaseLock();
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+    public synchronized void removeFirst() throws BadLocationException {
+        if (!linkedCyderPane.acquireLock()) {
+            throw new FatalException("Failed to acquire output pane lock");
         }
+
+        Element root = linkedCyderPane.getJTextPane().getDocument().getDefaultRootElement();
+        Element first = root.getElement(0);
+        linkedCyderPane.getJTextPane().getDocument().remove(first.getStartOffset(), first.getEndOffset());
+        linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
+
+        linkedCyderPane.releaseLock();
     }
 
     /**
      * Finds the last line of text from the linked output area.
      *
      * @return the last line of raw ASCII text
+     * @throws FatalException if the linked pane contains no text lines
      */
     public synchronized String getLastTextLine() {
         String text = linkedCyderPane.getJTextPane().getText();
@@ -120,26 +119,24 @@ public final class StringUtil {
     /**
      * Removes the last element added to the linked JTextPane such as an
      * {@link ImageIcon}, {@link JComponent}, string, or newline.
+     *
+     * @throws BadLocationException if some portion of a computed removal range is not a valid part of the document
      */
-    public synchronized void removeLastElement() {
-        try {
-            Element rootElement = linkedCyderPane.getJTextPane().getDocument().getDefaultRootElement();
-            Element removeElement = rootElement.getElement(rootElement.getElementCount() - 1);
-            int start = removeElement.getStartOffset();
-            int end = removeElement.getEndOffset();
+    public synchronized void removeLastElement() throws BadLocationException {
+        Element rootElement = linkedCyderPane.getJTextPane().getDocument().getDefaultRootElement();
+        Element removeElement = rootElement.getElement(rootElement.getElementCount() - 1);
+        int start = removeElement.getStartOffset();
+        int end = removeElement.getEndOffset();
 
-            int offset = start - 1;
-            int length = end - start;
+        int offset = start - 1;
+        int length = end - start;
 
-            if (offset < 0) {
-                offset = 0;
-                length -= 1;
-            }
-
-            linkedCyderPane.getJTextPane().getDocument().remove(offset, length);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        if (offset < 0) {
+            offset = 0;
+            length -= 1;
         }
+
+        linkedCyderPane.getJTextPane().getDocument().remove(offset, length);
     }
 
     /**
@@ -176,20 +173,19 @@ public final class StringUtil {
      * @param component the component to append to the pane
      * @param name      the name identifier for the style
      * @param stringId  the string identifier for the underlying insert string call
+     *
+     * @throws BadLocationException if an exception occurs when attempting to insert the string
      */
-    public synchronized void printComponent(Component component, String name, String stringId) {
+    public synchronized void printComponent(Component component, String name, String stringId)
+            throws BadLocationException {
         Preconditions.checkNotNull(component);
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(stringId);
 
-        try {
-            Style style = linkedCyderPane.getJTextPane().getStyledDocument().addStyle(name, null);
-            StyleConstants.setComponent(style, component);
-            linkedCyderPane.getJTextPane().getStyledDocument()
-                    .insertString(linkedCyderPane.getJTextPane().getStyledDocument().getLength(), stringId, style);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        Style style = linkedCyderPane.getJTextPane().getStyledDocument().addStyle(name, null);
+        StyleConstants.setComponent(style, component);
+        linkedCyderPane.getJTextPane().getStyledDocument()
+                .insertString(linkedCyderPane.getJTextPane().getStyledDocument().getLength(), stringId, style);
     }
 
     /**
@@ -197,19 +193,16 @@ public final class StringUtil {
      * modifiers, etc. have been set before printing the component.
      *
      * @param component the component to append to the pane
+     * @throws BadLocationException if an exception occurs when attempting to insert the component
      */
-    public synchronized void printComponent(Component component) {
+    public synchronized void printComponent(Component component) throws BadLocationException {
         Preconditions.checkNotNull(component);
 
-        try {
-            String componentUuid = SecurityUtil.generateUuid();
-            Style cs = linkedCyderPane.getJTextPane().getStyledDocument().addStyle(componentUuid, null);
-            StyleConstants.setComponent(cs, component);
-            linkedCyderPane.getJTextPane().getStyledDocument()
-                    .insertString(linkedCyderPane.getJTextPane().getStyledDocument().getLength(), componentUuid, cs);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        String componentUuid = SecurityUtil.generateUuid();
+        Style cs = linkedCyderPane.getJTextPane().getStyledDocument().addStyle(componentUuid, null);
+        StyleConstants.setComponent(cs, component);
+        linkedCyderPane.getJTextPane().getStyledDocument()
+                .insertString(linkedCyderPane.getJTextPane().getStyledDocument().getLength(), componentUuid, cs);
     }
 
     /**
@@ -218,17 +211,14 @@ public final class StringUtil {
      * a new line is appended to the pane.
      *
      * @param component the component to append to the pane
+     * @throws BadLocationException if an exception occurs when attempting to insert the component
      */
-    public synchronized void printlnComponent(Component component) {
+    public synchronized void printlnComponent(Component component) throws BadLocationException {
         Preconditions.checkNotNull(component);
 
-        try {
-            String componentUuid = SecurityUtil.generateUuid();
-            printComponent(component, componentUuid, componentUuid);
-            println("");
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        String componentUuid = SecurityUtil.generateUuid();
+        printComponent(component, componentUuid, componentUuid);
+        println("");
     }
 
     /**
@@ -239,18 +229,16 @@ public final class StringUtil {
      * @param component the component to append to the pane
      * @param name      the name identifier for the style
      * @param stringId  the string identifier for the underlying insert string call
+     * @throws BadLocationException if an exception occurs when attempting to insert the component
      */
-    public synchronized void printlnComponent(Component component, String name, String stringId) {
+    public synchronized void printlnComponent(Component component, String name, String stringId)
+            throws BadLocationException {
         Preconditions.checkNotNull(component);
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(stringId);
 
-        try {
-            printComponent(component, name, stringId);
-            println("");
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        printComponent(component, name, stringId);
+        println("");
     }
 
     /**
@@ -258,15 +246,12 @@ public final class StringUtil {
      *
      * @param print the provided generic to print to the linked JTextPane
      * @param <T>   the type of the generic
+     * @throws BadLocationException if an exception occurs when attempting to print the provided object
      */
-    public synchronized <T> void print(T print) {
-        try {
-            StyledDocument document = (StyledDocument) linkedCyderPane.getJTextPane().getDocument();
-            document.insertString(document.getLength(), print.toString(), null);
-            linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+    public synchronized <T> void print(T print) throws BadLocationException {
+        StyledDocument document = (StyledDocument) linkedCyderPane.getJTextPane().getDocument();
+        document.insertString(document.getLength(), print.toString(), null);
+        linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
     }
 
     /**
@@ -274,34 +259,35 @@ public final class StringUtil {
      *
      * @param print the provided generic to print to the linked JTextPane
      * @param <T>   the type of the generic
+     * @throws BadLocationException if an excpetion occurs when attempting to print the provided object
      */
-    public synchronized <T> void println(T print) {
-        try {
-            StyledDocument document = (StyledDocument) linkedCyderPane.getJTextPane().getDocument();
-            document.insertString(document.getLength(), print.toString() + CyderStrings.newline, null);
-            linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+    public synchronized <T> void println(T print) throws BadLocationException {
+        StyledDocument document = (StyledDocument) linkedCyderPane.getJTextPane().getDocument();
+        document.insertString(document.getLength(), print.toString() + CyderStrings.newline, null);
+        linkedCyderPane.getJTextPane().setCaretPosition(linkedCyderPane.getJTextPane().getDocument().getLength());
     }
 
     /**
      * Prints the list to {@link this} object's JTextPane.
      *
      * @param list the list of objects to print
+     * @throws BadLocationException if an exception occurs when trying to print one of the provided lines
      */
-    public synchronized <T> void printLines(List<T> list) {
+    public synchronized <T> void printLines(List<T> list) throws BadLocationException {
         Preconditions.checkNotNull(list);
+        Preconditions.checkArgument(!list.isEmpty());
 
-        for (T tee : list) {
-            println(tee);
+        for (T t : list) {
+            println(t);
         }
     }
 
     /**
      * Prints a newline to the linked JTextPane.
+     *
+     * @throws BadLocationException if an exception occurs when attempting to insert a newline
      */
-    public synchronized void newline() {
+    public synchronized void newline() throws BadLocationException {
         println("");
     }
 
@@ -309,8 +295,9 @@ public final class StringUtil {
      * Prints a newline to the linked JTextPane if the condition is true.
      *
      * @param condition the condition which needs to evaluate to true before printing a newline
+     * @throws BadLocationException if an exception occurs when attempting ot insert the provided number of newlines
      */
-    public synchronized void newline(boolean condition) {
+    public synchronized void newline(boolean condition) throws BadLocationException {
         if (condition) {
             println("");
         }
@@ -331,11 +318,7 @@ public final class StringUtil {
         Preconditions.checkNotNull(name);
         Preconditions.checkArgument(!name.isEmpty());
 
-        if (name.endsWith("s")) {
-            return "'";
-        } else {
-            return "'s";
-        }
+        return name.endsWith("s") ? "'" : "'s";
     }
 
     /**

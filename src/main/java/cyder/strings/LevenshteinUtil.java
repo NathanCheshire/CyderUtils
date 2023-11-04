@@ -27,26 +27,30 @@ public final class LevenshteinUtil {
         Preconditions.checkNotNull(alpha);
         Preconditions.checkNotNull(beta);
 
+        // Simplest case
         if (alpha.equals(beta)) return 0;
 
         int lengthAlpha = alpha.length();
         int lengthBeta = beta.length();
 
+        // If one is empty, the distance is the length of the other
         if (lengthAlpha == 0) return lengthBeta;
         if (lengthBeta == 0) return lengthAlpha;
 
         if (lengthAlpha < lengthBeta) {
+            // Swap lengths
             int tempAlphaLength = lengthAlpha;
             lengthAlpha = lengthBeta;
             lengthBeta = tempAlphaLength;
 
+            // Swap strings
             String tempAlphaString = alpha;
             alpha = beta;
             beta = tempAlphaString;
         }
 
+        // Initialize cost array
         int[] cost = new int[lengthBeta + 1];
-
         for (int i = 0 ; i <= lengthBeta ; i += 1) {
             cost[i] = i;
         }
@@ -54,9 +58,11 @@ public final class LevenshteinUtil {
         for (int i = 1 ; i <= lengthAlpha ; i += 1) {
             cost[0] = i;
             int previous = i - 1;
+            // minimum cost for next generation
             int min = previous;
 
             for (int j = 1 ; j <= lengthBeta ; j += 1) {
+                // cost of alpha[0, i] to beta[0, j], same char is 0, different is +1 cost
                 int act = previous + (alpha.charAt(i - 1) == beta.charAt(j - 1) ? 0 : 1);
                 cost[j] = NumberUtil.min(1 + (previous = cost[j]), 1 + cost[j - 1], act);
 

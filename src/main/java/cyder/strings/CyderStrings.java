@@ -29,17 +29,17 @@ public final class CyderStrings {
     /**
      * A bullet point character used for numerous purposes.
      */
-    public static final String BULLET_POINT = "\u2022";
+    public static final String BULLET_POINT = "•";
 
     /**
      * The echo char to use for any instance of CyderPasswordField.
      */
-    public static final char ECHO_CHAR = '\u2022';
+    public static final char ECHO_CHAR = '•';
 
     /**
      * The downward pointing triangle character (▼).
      */
-    public static final String DOWN_ARROW = "\u25BC";
+    public static final String DOWN_ARROW = "▼";
 
     /**
      * A string used to denote something is not available.

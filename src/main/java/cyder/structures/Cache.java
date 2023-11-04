@@ -34,6 +34,7 @@ public class Cache<T> {
      * Constructs a new cache.
      *
      * @param initialValue the initial value cached
+     * @throws NullPointerException if the provided initial value is null
      */
     public Cache(T initialValue) {
         cachedValue = Preconditions.checkNotNull(initialValue);
@@ -80,22 +81,21 @@ public class Cache<T> {
     /**
      * Caches the provided value if no cache is currently present.
      *
-     * @return whether the new cache was set
-     * @throws NullPointerException if newCache is attempted to be set as the new cache value and it is null
+     * @return whether the new value was cached
+     * @throws NullPointerException if the new value is null
      */
     @CanIgnoreReturnValue
-    public boolean cacheIfNotPresent(T newCache) {
+    public boolean cacheIfNotPresent(T newValue) {
+        Preconditions.checkNotNull(newValue);
         if (isCachePresent()) return false;
-
-        cachedValue = Preconditions.checkNotNull(newCache);
-
+        cachedValue = newValue;
         return true;
     }
 
     /**
-     * Sets the cached value updater function.
+     * Sets the function to invoke to refresh the cache.
      *
-     * @param function the cached value updater function to invoke when {@link #refreshCachedValue()} is called
+     * @param function the function to invoke to refresh the cache
      * @throws NullPointerException if the provided function is null
      */
     public void setCachedValueUpdater(Function<Void, T> function) {
@@ -110,5 +110,42 @@ public class Cache<T> {
     public void refreshCachedValue() {
         Preconditions.checkState(cachedValueUpdater != null);
         cachedValue = cachedValueUpdater.apply(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof Cache<?>)) {
+            return false;
+        }
+
+        Cache<?> other = (Cache<?>) o;
+        return other.cachedValue == cachedValueUpdater
+                && other.cachedValueUpdater == cachedValueUpdater;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Cache{"
+                + "cachedValue=" + cachedValue
+                + ", cachedValueUpdater=" + cachedValueUpdater
+                + "}";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int ret = cachedValue.hashCode();
+        ret = 31 * ret + cachedValueUpdater.hashCode();
+        return ret;
     }
 }
