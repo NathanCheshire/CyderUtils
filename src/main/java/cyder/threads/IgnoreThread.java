@@ -5,27 +5,14 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// todo
+
 /**
  * Thread names to ignore when determining if Cyder should be classified as busy.
  */
 public enum IgnoreThread {
-    /* Java and AWT/Swing threads */
     AwtEventQueue0("AWT-EventQueue-0", false),
-    DestroyJavaVm("DestroyJavaVM", false),
-
-    CyderBusyChecker("Cyder Busy Checker"),
-    ConsoleClockUpdater("Console Clock Updater"),
-    HourlyChimeChecker("Hourly Chime Checker"),
-    HighPingChecker("High Ping Checker"),
-    ConsolePrintingAnimation("Console Printing Animation"),
-    SingularInstanceEnsurer("Singular Cyder Instance Ensurer"),
-    ObjectCreationLogger("Object Creation Logger"),
-    CyderWatchdog("Cyder Watchdog"),
-    WatchdogInitializer("Watchdog Initializer"),
-    LatencyHostnameFinder("Latency Hostname finder"),
-    ConsoleBusyAnimation("Console Busy Animation"),
-    InstanceSocket("Instance Socket"),
-    UserSaver("User Saver");
+    DestroyJavaVm("DestroyJavaVM", false);
 
     /**
      * The name associated with the thread to ignore.

@@ -4,13 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
-import cyder.console.Console;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.IgnoreThread;
@@ -27,7 +23,6 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 /**
  * Utility methods revolving around networking, urls, servers, etc.
@@ -40,7 +35,7 @@ public final class NetworkUtil {
     public static final String LOCALHOST = "localhost";
 
     /**
-     * The range a port must fall into.
+     * The range a general computer port must fall into.
      */
     public static final Range<Integer> portRange = Range.closed(1024, 65535);
 
@@ -52,7 +47,7 @@ public final class NetworkUtil {
     /**
      * The time in ms to wait for a local port to bind to determine whether it is available.
      */
-    private static final int LOCAL_PORT_AVAILABLE_TIMEOUT = 400;
+    private static final Duration LOCAL_PORT_AVAILABLE_TIMEOUT = Duration.ofMillis(400);
 
     /**
      * Suppress default constructor.
@@ -90,12 +85,6 @@ public final class NetworkUtil {
     private static final AtomicBoolean highPingCheckerRunning = new AtomicBoolean();
 
     /**
-     * The function used by the high ping checker to provide to TimeUtil.
-     */
-    private static final Supplier<Boolean> shouldExitHighPingCheckerThread = () ->
-            Console.INSTANCE.isClosed() || !highPingCheckerRunning.get();
-
-    /**
      * The timeout between checking for high ping.
      */
     private static final Duration HIGH_PING_TIMEOUT = Duration.ofMinutes(2);
@@ -104,6 +93,8 @@ public final class NetworkUtil {
      * The timeout between checking for the high ping checker's exit condition.
      */
     private static final Duration HIGH_PING_EXIT_CHECK = Duration.ofSeconds(10);
+
+    // todo this should be it's own object you can kill and restart and what not
 
     /**
      * Starts the high ping checker.
@@ -122,7 +113,7 @@ public final class NetworkUtil {
                             HIGH_PING_EXIT_CHECK.toMillis(), shouldExitHighPingCheckerThread);
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+
             }
         }, IgnoreThread.HighPingChecker.getName());
     }
@@ -148,24 +139,21 @@ public final class NetworkUtil {
      *
      * @param url the url to open
      * @return a pointer to the {@link Process} instance that opened the url if successful. Empty optional else
+     *
+     * @throws NullPointerException if the provided url is null
+     * @throws IllegalArgumentException if the provided url is empty or invalid
+     * @throws IOException if an exception occurs after invocation of {@link ProcessBuilder#start()}
      */
     @CheckReturnValue
     @CanIgnoreReturnValue
-    public static Optional<Process> openUrl(String url) {
+    public static Optional<Process> openUrl(String url) throws IOException {
         Preconditions.checkNotNull(url);
         Preconditions.checkArgument(!url.isEmpty());
         Preconditions.checkArgument(isValidUrl(url));
 
-        try {
-            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "start", url);
-            Process process = builder.start();
-            Logger.log(LogTag.LINK, url);
-            return Optional.of(process);
-        } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
-        }
-
-        return Optional.empty();
+        ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "start", url);
+        Process process = builder.start();
+        return Optional.of(process);
     }
 
     /**
@@ -402,7 +390,7 @@ public final class NetworkUtil {
             } catch (Exception ignored) {}
         }, "Local Port Available Finder, port: " + port);
 
-        ThreadUtil.sleep(LOCAL_PORT_AVAILABLE_TIMEOUT);
+        ThreadUtil.sleep(LOCAL_PORT_AVAILABLE_TIMEOUT.toMillis());
 
         return ret.get();
     }

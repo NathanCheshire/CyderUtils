@@ -3,12 +3,8 @@ package cyder.network;
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderUrls;
 import cyder.exceptions.FatalException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.parsers.ip.IpData;
 import cyder.props.Props;
-import cyder.strings.StringUtil;
 import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
@@ -27,9 +23,7 @@ public enum IpDataManager {
      */
     INSTANCE;
 
-    IpDataManager() {
-        Logger.log(LogTag.OBJECT_CREATION, "IpDataManager constructed");
-    }
+    IpDataManager() {}
 
     /**
      * The most recent IpData object.
@@ -40,8 +34,9 @@ public enum IpDataManager {
      * Updates the ip data object encapsulated and returns it.
      *
      * @return the encapsulated ip data object
+     * @throws IOException if an exception occurs reading from the query url
      */
-    public IpData getIpData() {
+    public IpData getIpData() throws IOException {
         IpData ret = ipData.get();
         if (ret != null) return ret;
 
@@ -52,7 +47,7 @@ public enum IpDataManager {
             return ret;
         }
 
-        throw new FatalException("Could not fetch IP data");
+        throw new FatalException("Failed to fetch IP data");
     }
 
     /**
@@ -60,8 +55,9 @@ public enum IpDataManager {
      * returns that object if successful. Empty optional else.
      *
      * @return the ip data object
+     * @throws IOException if an exception occurs reading from the query url
      */
-    private Optional<IpData> pullIpData() {
+    private Optional<IpData> pullIpData() throws IOException {
         Preconditions.checkState(Props.ipKey.valuePresent());
 
         return pullIpData(Props.ipKey.getValue());
@@ -73,18 +69,19 @@ public enum IpDataManager {
      *
      * @param key the key to use for the ip data query
      * @return the ip data object
+     * @throws NullPointerException     if the provided key is null
+     * @throws IllegalArgumentException if the provided key is empty
+     * @throws IOException              if an exception occurs reading from the query url
      */
-    public Optional<IpData> pullIpData(String key) {
-        if (StringUtil.isNullOrEmpty(key)) return Optional.empty();
+    public Optional<IpData> pullIpData(String key) throws IOException {
+        Preconditions.checkNotNull(key);
+        Preconditions.checkArgument(!key.isEmpty());
 
-        String url = CyderUrls.IPDATA_BASE + key;
+        String queryUrl = CyderUrls.IPDATA_BASE + key;
+        URL url = new URL(queryUrl);
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(url).openStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
             return Optional.of(SerializationUtil.fromJson(reader, IpData.class));
-        } catch (IOException e) {
-            ExceptionHandler.handle(e);
         }
-
-        return Optional.empty();
     }
 }

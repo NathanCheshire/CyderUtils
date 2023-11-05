@@ -4,9 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
-import cyder.strings.StringUtil;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -88,16 +87,22 @@ public final class ThreadUtil {
     }
 
     /**
-     * Returns whether the number of active threads indicate that Cyder is busy.
+     * Sleeps on the current executing thread for the provided duration converted to milliseconds.
+     * This method is intended to be used as a static helper so that a method can
+     * invoke this method without having to surround with a try/catch block or type
+     * out all of {@link Thread#sleep(long)}.
      *
-     * @return whether the number of active threads indicate that Cyder is busy
+     * @param duration the duration object
+     * @throws NullPointerException if the provided duration object is null
+     * @throws IllegalArgumentException if the provided duration is negative
      */
-    public static boolean threadsIndicateCyderBusy() {
-        ArrayList<Thread> nonDaemonThreads = getCurrentThreads().stream()
-                .filter(thread -> !thread.isDaemon())
-                .collect(Collectors.toCollection(ArrayList::new));
-        return nonDaemonThreads.stream().anyMatch(nonDaemonThread
-                -> !StringUtil.in(nonDaemonThread.getName(), true, IgnoreThread.getNames()));
+    public static void sleep(Duration duration) {
+        Preconditions.checkNotNull(duration);
+        Preconditions.checkArgument(!duration.isNegative());
+
+        try {
+            Thread.sleep(duration.toMillis());
+        } catch (Exception ignored) {}
     }
 
     /**
@@ -123,7 +128,7 @@ public final class ThreadUtil {
      * out all of {@link Thread#sleep(long)}.
      *
      * @param sleepTimeMs   the time to sleep for in ms
-     * @param sleepTimeNano the time to sleep for in nano seconds
+     * @param sleepTimeNano the time to sleep for in nanoseconds
      */
     public static void sleep(long sleepTimeMs, int sleepTimeNano) {
         Preconditions.checkArgument(sleepTimeMs >= 0);

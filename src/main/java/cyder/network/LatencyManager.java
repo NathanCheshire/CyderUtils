@@ -15,6 +15,7 @@ import cyder.threads.CyderThreadRunner;
 import cyder.threads.IgnoreThread;
 import cyder.time.TimeUtil;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -86,13 +87,7 @@ public enum LatencyManager {
      */
     private String latencyHostName;
 
-    /**
-     * The log tags used when logging the result of a latency result.
-     */
-    private ImmutableList<String> latencyLoggingTags;
-
     LatencyManager() {
-        Logger.log(LogTag.OBJECT_CREATION, "LatencyManager instance constructed");
         initializeLatencyIpPortName();
     }
 
@@ -101,27 +96,20 @@ public enum LatencyManager {
      *
      * @param timeout the time in ms to wait before timing out
      * @return the latency in ms between the host system and the latency ip
+     * @throws IOException if an exception occurs when attempting to connect to the latency ip
      */
-    public long getLatency(int timeout) {
+    public long getLatency(int timeout) throws IOException {
         Preconditions.checkArgument(timeout > 0);
 
         Socket socket = new Socket();
         SocketAddress address = new InetSocketAddress(latencyIp, latencyPort);
 
-        long latency = -1;
-
-        try {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            socket.connect(address, timeout);
-            latency = stopwatch.elapsed().toMillis();
-            stopwatch.stop();
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        socket.connect(address, timeout);
+        long latency = stopwatch.elapsed().toMillis();
+        stopwatch.stop();
 
         FileUtil.closeIfNotNull(socket);
-
-        Logger.log(latencyLoggingTags, "Latency found to be " + TimeUtil.formatMillis(latency));
 
         return latency;
     }
@@ -139,8 +127,9 @@ public enum LatencyManager {
      * Determines if the connection to the internet is usable by pinging {@link #latencyIp}.
      *
      * @return if the connection to the internet is usable
+     * @throws IOException if an exception occurs trying to connect to the latency ip
      */
-    public boolean currentConnectionHasDecentPing() {
+    public boolean currentConnectionHasDecentPing() throws IOException {
         return getLatency(DECENT_PING_MAXIMUM_LATENCY) < DECENT_PING_MAXIMUM_LATENCY;
     }
 
@@ -154,16 +143,12 @@ public enum LatencyManager {
 
         if (customLatencyIpPresent) {
             latencyIp = Props.latencyIp.getValue();
-            Logger.log(LogTag.NETWORK, "Set latency ip as " + latencyIp);
-
             latencyPort = customLatencyPortPreset
                     ? Props.latencyPort.getValue()
                     : defaultLatencyPort;
-            Logger.log(LogTag.NETWORK, "Set latency port as " + latencyPort);
 
             if (customLatencyNamePresent) {
                 latencyHostName = Props.latencyName.getValue();
-                Logger.log(LogTag.NETWORK, "Set latency host name as " + latencyHostName);
             } else {
                 CyderThreadRunner.submit(() -> {
                     latencyHostName = UNKNOWN;
@@ -186,8 +171,6 @@ public enum LatencyManager {
                             ExceptionHandler.handle(e2);
                         }
                     }
-
-                    Logger.log(LogTag.NETWORK, "Found and set latency host name as " + latencyHostName);
                 }, IgnoreThread.LatencyHostnameFinder.getName());
             }
         } else {
@@ -195,11 +178,5 @@ public enum LatencyManager {
             latencyPort = defaultLatencyPort;
             latencyHostName = defaultLatencyName;
         }
-
-        latencyLoggingTags = ImmutableList.of(
-                LogTag.NETWORK.getLogName(),
-                latencyIp + CyderStrings.colon + latencyPort,
-                latencyHostName
-        );
     }
 }

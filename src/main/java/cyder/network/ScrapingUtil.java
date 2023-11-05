@@ -3,7 +3,6 @@ package cyder.network;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -88,9 +87,7 @@ public final class ScrapingUtil {
 
         try {
             locationDocument = Jsoup.connect(ispQueryUrl).get();
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        } catch (Exception ignored) {}
 
         if (locationDocument == null) {
             throw new FatalException("Could not obtain document from isp query url");
