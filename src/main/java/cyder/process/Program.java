@@ -19,7 +19,7 @@ public enum Program {
     private final String programName;
 
     /**
-     * The filename of this program.
+     * The filename of this program, extension included even though it's likely an exe.
      */
     private final String filename;
 

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * The result of a {@link ProcessUtil#getProcessOutput(String) invocation}.
@@ -33,8 +33,9 @@ public class ProcessResult {
      *
      * @param standardOutput the standard output
      * @param errorOutput    the error output
+     * @throws NullPointerException if either of the provided collections is null
      */
-    public ProcessResult(List<String> standardOutput, List<String> errorOutput) {
+    public ProcessResult(Collection<String> standardOutput, Collection<String> errorOutput) {
         Preconditions.checkNotNull(standardOutput);
         Preconditions.checkNotNull(errorOutput);
 

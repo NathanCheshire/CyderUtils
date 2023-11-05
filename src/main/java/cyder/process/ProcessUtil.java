@@ -1,17 +1,17 @@
 package cyder.process;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.exceptions.CyderProcessException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.utils.ArrayUtil;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +37,14 @@ public final class ProcessUtil {
      *
      * @param command the command string array to run
      * @return the process result
+     * @throws NullPointerException     if the provided command array is null or contains a null element
+     * @throws IllegalArgumentException if the provided command array is empty
      */
     @CanIgnoreReturnValue
     public static Future<ProcessResult> getProcessOutput(String[] command) {
-        Preconditions.checkNotNull(command);
-        Preconditions.checkArgument(!ArrayUtil.isEmpty(command));
+        checkNotNull(command);
+        checkArgument(!ArrayUtil.isEmpty(command));
+        checkArgument(ImmutableList.copyOf(command).stream().noneMatch((cmd) -> cmd == null));
 
         return getProcessOutput(ArrayUtil.toList(command));
     }
@@ -51,11 +54,14 @@ public final class ProcessUtil {
      *
      * @param command the command list
      * @return the process result
+     * @throws NullPointerException     if the provided command list is null or contains a null element
+     * @throws IllegalArgumentException if the provided command array is empty
      */
     @CanIgnoreReturnValue
     public static Future<ProcessResult> getProcessOutput(List<String> command) {
-        Preconditions.checkNotNull(command);
-        Preconditions.checkArgument(!command.isEmpty());
+        checkNotNull(command);
+        checkArgument(!command.isEmpty());
+        checkArgument(command.stream().noneMatch((cmd) -> cmd == null));
 
         return getProcessOutput(StringUtil.joinParts(command, CyderStrings.space));
     }
@@ -65,11 +71,14 @@ public final class ProcessUtil {
      *
      * @param command the command to run
      * @return the process result
+     * @throws NullPointerException     if the provided command is null
+     * @throws IllegalArgumentException if the provided command is empty
+     * @throws CyderProcessException    if an exception occurs when opening/reading from the process' std or error streams
      */
     @CanIgnoreReturnValue
-    public static Future<ProcessResult> getProcessOutput(String command) {
-        Preconditions.checkNotNull(command);
-        Preconditions.checkArgument(!command.isEmpty());
+    public static Future<ProcessResult> getProcessOutput(String command) throws CyderProcessException {
+        checkNotNull(command);
+        checkArgument(!command.trim().isEmpty());
 
         String threadName = "getProcessOutput, command: " + CyderStrings.quote + command + CyderStrings.quote;
         AtomicReference<ProcessResult> ret = new AtomicReference<>(null);
@@ -91,8 +100,8 @@ public final class ProcessUtil {
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 while ((errorLine = errorReader.readLine()) != null) errorOutput.add(errorLine);
                 errorReader.close();
-            } catch (Exception e) {
-                ExceptionHandler.handle(e);
+            } catch (IOException e) {
+                throw new CyderProcessException(e);
             }
 
             ret.set(new ProcessResult(standardOutput, errorOutput));
@@ -110,6 +119,9 @@ public final class ProcessUtil {
      *
      * @param builder the process builder to run
      * @return the output
+     * @throws NullPointerException     if the provided builder is null
+     * @throws IllegalArgumentException if the provided builder's command args list is empty
+     * @throws CyderProcessException    if an {@link IOException} occurs when reading from the process's stream(s)
      */
     public static ImmutableList<String> runProcess(ProcessBuilder builder) {
         checkNotNull(builder);
@@ -127,8 +139,8 @@ public final class ProcessUtil {
             while ((line = reader.readLine()) != null) {
                 ret.add(line);
             }
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        } catch (IOException e) {
+            throw new CyderProcessException(e);
         }
 
         return ImmutableList.copyOf(ret);
@@ -139,34 +151,41 @@ public final class ProcessUtil {
      *
      * @param builders the process builders to run
      * @return the output
+     * @throws NullPointerException     if the provided builders list is null or contains a null element
+     * @throws IllegalArgumentException if the provided builders list is empty
      */
     public static ImmutableList<String> runProcesses(ImmutableList<ProcessBuilder> builders) {
         checkNotNull(builders);
+        checkArgument(builders.stream().noneMatch((builder) -> builder == null));
         checkArgument(!builders.isEmpty());
 
         ArrayList<String> ret = new ArrayList<>();
-        for (ProcessBuilder builder : builders) {
-            ret.addAll(runProcess(builder));
-        }
-
+        builders.forEach((processBuilder -> ret.addAll(runProcess(processBuilder))));
         return ImmutableList.copyOf(ret);
     }
 
     /**
      * Runs the provided command using the Java process API and
      * invokes {@link Process#waitFor()} after starting the process.
+     * <p>
+     * Note, this method will ignore and suppress any {@link InterruptedException}
+     * that is thrown from the {@link Process#wait()} invocation.
      *
      * @param command the command to run
+     * @throws NullPointerException if the provided command is null
+     * @throws IllegalArgumentException if the provided command is empty or contains only whitespace
+     * @throws CyderProcessException if an {@link IOException} occurs when running the process created
+     * from the provide command
      */
     public static void runAndWaitForProcess(String command) {
         checkNotNull(command);
-        checkArgument(!command.isEmpty());
+        checkArgument(!command.trim().isEmpty());
 
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        } catch (InterruptedException ignored) {} catch (IOException e) {
+            throw new CyderProcessException(e);
         }
     }
 }
