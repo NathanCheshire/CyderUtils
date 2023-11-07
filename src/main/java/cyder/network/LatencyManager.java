@@ -2,18 +2,12 @@ package cyder.network;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
-import cyder.threads.IgnoreThread;
-import cyder.time.TimeUtil;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -163,15 +157,15 @@ public enum LatencyManager {
                             latencyHostName = StringUtil.capsFirstWords(latencyHostNameOptional.get());
                         }
                     } catch (Exception e) {
-                        ExceptionHandler.handle(e);
+                        e.printStackTrace();
 
                         try {
                             latencyHostName = InetAddress.getByName(latencyIp).getHostName();
                         } catch (Exception e2) {
-                            ExceptionHandler.handle(e2);
+                            e2.printStackTrace();
                         }
                     }
-                }, IgnoreThread.LatencyHostnameFinder.getName());
+                }, "todo remove me, or make me customization");
             }
         } else {
             latencyIp = defaultLatencyIp;

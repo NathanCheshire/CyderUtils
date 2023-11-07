@@ -8,10 +8,24 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 
+/**
+ * A categorizer for categorizing latency levels provided a set
+ * number of categories and their corresponding max (exclusive) values.
+ */
 public final class LatencyCategorizer {
+    /**
+     * The default unreachable string.
+     */
     private static final String DEFAULT_UNREACHABLE_STRING = "Unreachable";
 
+    /**
+     * The string to return when a latency level is outside the maximum level of this categorizer.
+     */
     private final String unreachableString;
+
+    /**
+     * The latency levels for this categorizer.
+     */
     private final NavigableMap<Integer, String> latencyLevels;
 
     /**
