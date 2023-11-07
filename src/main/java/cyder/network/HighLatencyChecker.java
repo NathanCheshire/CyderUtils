@@ -8,10 +8,7 @@ import com.google.common.collect.Range;
  * An object which pings a provided ip:port and determines a status based on a provided tolerance.
  */
 public final class HighLatencyChecker {
-    /**
-     * The range a general computer port must fall into.
-     */
-    public static final Range<Integer> portRange = Range.closed(1024, 65535);
+
 
     /**
      * The IP address this checker will ping.
@@ -49,7 +46,8 @@ public final class HighLatencyChecker {
                 DEFAULT_REMOTE_NAME + " unreachable");
 
         private String ipAddress;
-        private int port;
+        private Port port;
+
         private LatencyCategorizer latencyCategorizer;
         private String remoteName;
 
@@ -59,7 +57,7 @@ public final class HighLatencyChecker {
          */
         public Builder() {
             this.ipAddress = DEFAULT_IP_ADDRESS;
-            this.port = DEFAULT_PORT;
+            this.port = new Port(DEFAULT_PORT);
             this.remoteName = DEFAULT_REMOTE_NAME;
             this.latencyCategorizer = DEFAULT_LATENCY_CATEGORIZER;
         }
