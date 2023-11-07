@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 
-public final class LatencyCategorizer {
+public class LatencyCategorizer {
     // todo should this be customizable?
     private static final String UNREACHABLE = "Unreachable";
-    private final NavigableMap<Integer, String> latencyLevels;
+    protected final NavigableMap<Integer, String> latencyLevels;
 
     /**
      * Constructs a LatencyCategorizer with the provided latency levels.
@@ -44,5 +44,38 @@ public final class LatencyCategorizer {
         var entry = latencyLevels.higherEntry(latency);
         if (entry != null) return entry.getValue();
         return UNREACHABLE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "LatencyCategorizer{"
+                + "latencyLevels=" + latencyLevels
+                + "}";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return latencyLevels.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof LatencyCategorizer)) {
+            return false;
+        }
+
+        LatencyCategorizer other = (LatencyCategorizer) o;
+        return other.latencyLevels.equals(latencyLevels);
     }
 }
