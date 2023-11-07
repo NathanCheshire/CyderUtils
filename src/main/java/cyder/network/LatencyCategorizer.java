@@ -8,10 +8,11 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 
-public class LatencyCategorizer {
-    // todo should this be customizable?
-    private static final String UNREACHABLE = "Unreachable";
-    protected final NavigableMap<Integer, String> latencyLevels;
+public final class LatencyCategorizer {
+    private static final String DEFAULT_UNREACHABLE_STRING = "Unreachable";
+
+    private final String unreachableString;
+    private final NavigableMap<Integer, String> latencyLevels;
 
     /**
      * Constructs a LatencyCategorizer with the provided latency levels.
@@ -23,12 +24,31 @@ public class LatencyCategorizer {
      *                                  or if the latency labels are not unique
      */
     public LatencyCategorizer(Map<Integer, String> latencyLevels) {
+        this(latencyLevels, DEFAULT_UNREACHABLE_STRING);
+    }
+
+    /**
+     * Constructs a LatencyCategorizer with the provided latency levels.
+     *
+     * @param latencyLevels a map where keys represent the maximum latency (exclusive)
+     *                      and values represent the labels for those latencies
+     * @param unreachableString the string to return if categorize is called on a value
+     *                         that is outside the range of this categorizer
+     * @throws NullPointerException if the latencyLevels map is null or unreachableString
+     * @throws IllegalArgumentException if the latencyLevels map contains fewer than two entries,
+     *                                  or if the latency labels are not unique, or if unreachableString
+     *                                  is empty
+     */
+    public LatencyCategorizer(Map<Integer, String> latencyLevels, String unreachableString) {
         Preconditions.checkNotNull(latencyLevels);
+        Preconditions.checkNotNull(unreachableString);
         Preconditions.checkArgument(latencyLevels.size() > 1);
         Set<String> labelSet = new HashSet<>(latencyLevels.values());
         Preconditions.checkArgument(labelSet.size() == latencyLevels.size());
+        Preconditions.checkArgument(!unreachableString.trim().isEmpty());
 
         this.latencyLevels = ImmutableSortedMap.copyOf(latencyLevels);
+        this.unreachableString = unreachableString;
     }
 
     /**
@@ -43,7 +63,7 @@ public class LatencyCategorizer {
 
         var entry = latencyLevels.higherEntry(latency);
         if (entry != null) return entry.getValue();
-        return UNREACHABLE;
+        return unreachableString;
     }
 
     /**
@@ -53,6 +73,7 @@ public class LatencyCategorizer {
     public String toString() {
         return "LatencyCategorizer{"
                 + "latencyLevels=" + latencyLevels
+                + ", unreachableString=" + unreachableString
                 + "}";
     }
 
@@ -61,7 +82,9 @@ public class LatencyCategorizer {
      */
     @Override
     public int hashCode() {
-        return latencyLevels.hashCode();
+        int ret = latencyLevels.hashCode();
+        ret = 31 * ret + unreachableString.hashCode();
+        return ret;
     }
 
     /**
@@ -76,6 +99,7 @@ public class LatencyCategorizer {
         }
 
         LatencyCategorizer other = (LatencyCategorizer) o;
-        return other.latencyLevels.equals(latencyLevels);
+        return other.latencyLevels.equals(latencyLevels)
+                && other.unreachableString.equals(unreachableString);
     }
 }
