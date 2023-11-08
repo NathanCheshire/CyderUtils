@@ -1,25 +1,23 @@
 package cyder.network;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
-import cyder.threads.IgnoreThread;
 import cyder.threads.ThreadUtil;
 import cyder.time.TimeUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.URL;
+import java.net.*;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,7 +38,7 @@ public final class NetworkUtil {
     public static final Range<Integer> portRange = Range.closed(1024, 65535);
 
     /**
-     * The string used to represent a space in a url.
+     * The string used to represent a space in a URL.
      */
     public static final String URL_SPACE = "%20";
 
@@ -57,92 +55,13 @@ public final class NetworkUtil {
     }
 
     /**
-     * Whether connection to the internet is slow.
-     */
-    private static boolean highLatency;
-
-    /**
-     * Returns whether connection to the internet is slow.
-     *
-     * @return whether connection to the internet is slow
-     */
-    public static boolean isHighLatency() {
-        return highLatency;
-    }
-
-    /**
-     * Sets the value of highLatency.
-     *
-     * @param highLatency the value of high latency
-     */
-    private static void setHighLatency(boolean highLatency) {
-        NetworkUtil.highLatency = highLatency;
-    }
-
-    /**
-     * Whether the high ping check is/should be running currently.
-     */
-    private static final AtomicBoolean highPingCheckerRunning = new AtomicBoolean();
-
-    /**
-     * The timeout between checking for high ping.
-     */
-    private static final Duration HIGH_PING_TIMEOUT = Duration.ofMinutes(2);
-
-    /**
-     * The timeout between checking for the high ping checker's exit condition.
-     */
-    private static final Duration HIGH_PING_EXIT_CHECK = Duration.ofSeconds(10);
-
-    // todo this should be it's own object you can kill and restart and what not
-
-    /**
-     * Starts the high ping checker.
-     */
-    public static void startHighPingChecker() {
-        if (highPingCheckerRunning.get()) return;
-
-        highPingCheckerRunning.set(true);
-
-        CyderThreadRunner.submit(() -> {
-            try {
-                while (highPingCheckerRunning.get()) {
-                    setHighLatency(!LatencyManager.INSTANCE.currentConnectionHasDecentPing());
-
-                    ThreadUtil.sleepWithChecks(HIGH_PING_TIMEOUT.toMillis(),
-                            HIGH_PING_EXIT_CHECK.toMillis(), shouldExitHighPingCheckerThread);
-                }
-            } catch (Exception e) {
-
-            }
-        }, IgnoreThread.HighPingChecker.getName());
-    }
-
-    /**
-     * Ends the high ping checker subroutine.
-     */
-    public static void terminateHighPingChecker() {
-        highPingCheckerRunning.set(false);
-    }
-
-    /**
-     * Returns whether the high ping checker is running.
-     *
-     * @return whether the high ping checker is running
-     */
-    public static boolean highPingCheckerRunning() {
-        return highPingCheckerRunning.get();
-    }
-
-    /**
      * Opens the provided url using the native browser.
      *
      * @param url the url to open
      * @return a pointer to the {@link Process} instance that opened the url if successful. Empty optional else
-     *
-     * @throws NullPointerException if the provided url is null
+     * @throws NullPointerException     if the provided url is null
      * @throws IllegalArgumentException if the provided url is empty or invalid
-     * @throws IOException if an exception occurs after invocation of {@link ProcessBuilder#start()}
+     * @throws IOException              if an exception occurs after invocation of {@link ProcessBuilder#start()}
      */
     @CheckReturnValue
     @CanIgnoreReturnValue
@@ -162,7 +81,7 @@ public final class NetworkUtil {
     public static final int SITE_PING_TIMEOUT = (int) (TimeUtil.millisInSecond * 5);
 
     /**
-     * The slash slash for urls.
+     * The slash-slash for urls.
      */
     private static final String slashSlash = "//";
 
@@ -242,7 +161,7 @@ public final class NetworkUtil {
      * @param urlString the string of the url to ping and get contents from
      * @return the resulting url response
      */
-    @CanIgnoreReturnValue /* Can be used to ensure a url is valid as a Precondition */
+    @CanIgnoreReturnValue /* Can be used to ensure a URL is valid as a Precondition */
     public static String readUrl(String urlString) {
         Preconditions.checkNotNull(urlString);
         Preconditions.checkArgument(!urlString.isEmpty());
@@ -261,7 +180,7 @@ public final class NetworkUtil {
             reader.close();
             return sb.toString();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         throw new FatalException("Error reading from url: " + urlString);
@@ -283,7 +202,7 @@ public final class NetworkUtil {
             Document document = Jsoup.connect(url).get();
             return Optional.of(document.title());
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return Optional.empty();
@@ -303,7 +222,7 @@ public final class NetworkUtil {
     }
 
     /**
-     * The size of the buffer when downloading resources from a Url or reading a Url.
+     * The size of the buffer when downloading resources from a URL or reading a URL.
      */
     public static final int DOWNLOAD_RESOURCE_BUFFER_SIZE = 1024;
 
@@ -329,7 +248,7 @@ public final class NetworkUtil {
             try {
                 created = referenceFile.createNewFile();
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
                 return false;
             }
         }
@@ -348,7 +267,7 @@ public final class NetworkUtil {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             return false;
         }
 
@@ -364,10 +283,44 @@ public final class NetworkUtil {
         try {
             return Optional.of(InetAddress.getLocalHost().getHostAddress());
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return Optional.empty();
+    }
+
+    // todo need a unit test for this one
+
+    /**
+     * Returns the latency of the host system to the provided ip:port.
+     *
+     * @param ip      the ip to ping
+     * @param port    the port to ping on the ip
+     * @param timeout the time in ms to wait before timing out
+     * @return the latency in ms between the host system and the latency ip
+     * @throws NullPointerException     if the provided ip is null
+     * @throws IllegalArgumentException if the provided ip is empty or invalid or the port
+     *                                  is out of range or the timeout is less than or equal to zero
+     * @throws IOException              if an exception occurs when attempting to connect to the latency ip
+     */
+    public static long getLatency(String ip, int port, int timeout) throws IOException {
+        Preconditions.checkNotNull(ip);
+        Preconditions.checkArgument(!ip.trim().isEmpty());
+        Preconditions.checkArgument(CyderRegexPatterns.ipv4Pattern.matcher(ip).matches());
+        Preconditions.checkArgument(Port.portRange.contains(port));
+        Preconditions.checkArgument(timeout > 0);
+
+        Socket socket = new Socket();
+        SocketAddress address = new InetSocketAddress(ip, port);
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        socket.connect(address, timeout);
+        long latency = stopwatch.elapsed().toMillis();
+        stopwatch.stop();
+
+        FileUtil.closeIfNotNull(socket);
+
+        return latency;
     }
 
     /**

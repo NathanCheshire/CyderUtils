@@ -3,10 +3,7 @@ package cyder.network;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedMap;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A categorizer for categorizing latency levels provided a set
@@ -26,7 +23,7 @@ public final class LatencyCategorizer {
     /**
      * The latency levels for this categorizer.
      */
-    private final NavigableMap<Integer, String> latencyLevels;
+    private final NavigableMap<Long, String> latencyLevels;
 
     /**
      * Constructs a LatencyCategorizer with the provided latency levels.
@@ -37,7 +34,7 @@ public final class LatencyCategorizer {
      * @throws IllegalArgumentException if the latencyLevels map contains fewer than two entries,
      *                                  or if the latency labels are not unique
      */
-    public LatencyCategorizer(Map<Integer, String> latencyLevels) {
+    public LatencyCategorizer(Map<Long, String> latencyLevels) {
         this(latencyLevels, DEFAULT_UNREACHABLE_STRING);
     }
 
@@ -53,7 +50,7 @@ public final class LatencyCategorizer {
      *                                  or if the latency labels are not unique, or if unreachableString
      *                                  is empty
      */
-    public LatencyCategorizer(Map<Integer, String> latencyLevels, String unreachableString) {
+    public LatencyCategorizer(Map<Long, String> latencyLevels, String unreachableString) {
         Preconditions.checkNotNull(latencyLevels);
         Preconditions.checkNotNull(unreachableString);
         Preconditions.checkArgument(latencyLevels.size() > 1);
@@ -72,12 +69,30 @@ public final class LatencyCategorizer {
      * @return the label of the latency level, or "UNREACHABLE" if higher than any defined level
      * @throws IllegalArgumentException if the provided latency is less than zero
      */
-    public String categorize(int latency) {
+    public String categorize(long latency) {
         Preconditions.checkArgument(latency >= 0);
 
         var entry = latencyLevels.higherEntry(latency);
         if (entry != null) return entry.getValue();
         return unreachableString;
+    }
+
+    /**
+     * Returns the unreachable string for this latency categorizer.
+     *
+     * @return the unreachable string for this latency categorizer
+     */
+    public String getUnreachableString() {
+        return unreachableString;
+    }
+
+    /**
+     * Returns the maximum delay in milliseconds this categorizer can categorize.
+     *
+     * @return the maximum delay in milliseconds this categorizer can categorize
+     */
+    public long getMaxLatencyLevel() {
+        return Collections.max(latencyLevels.keySet());
     }
 
     /**

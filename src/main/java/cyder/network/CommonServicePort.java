@@ -59,6 +59,6 @@ public enum CommonServicePort {
      * @return a new {@link Port} object using this port.
      */
     public Port constructPort() {
-        return new Port(this.port);
+        return new Port(this);
     }
 }

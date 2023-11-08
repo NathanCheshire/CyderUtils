@@ -10,7 +10,6 @@ import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
 import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.IpDataManager;
-import cyder.network.LatencyManager;
 import cyder.network.NetworkUtil;
 import cyder.parsers.ip.IpData;
 import cyder.strings.CyderStrings;

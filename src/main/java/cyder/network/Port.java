@@ -35,6 +35,15 @@ public class Port {
     }
 
     /**
+     * Returns the port.
+     *
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

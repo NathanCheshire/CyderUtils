@@ -15,7 +15,6 @@ import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
 import cyder.meta.CyderSplash;
-import cyder.network.LatencyManager;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;

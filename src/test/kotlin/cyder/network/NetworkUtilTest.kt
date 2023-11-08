@@ -14,27 +14,6 @@ import java.util.*
  */
 class NetworkUtilTest {
     /**
-     * Tests for the high latency setter/getter.
-     */
-    @Test
-    fun highLatency() {
-        assertDoesNotThrow { NetworkUtil.isHighLatency() }
-        assertFalse { NetworkUtil.isHighLatency() }
-    }
-
-    /**
-     * Tests for the high ping checker starter/terminator.
-     */
-    @Test
-    fun testHighPingChecker() {
-        assertFalse { NetworkUtil.highPingCheckerRunning() }
-        assertDoesNotThrow { NetworkUtil.startHighPingChecker() }
-        assertTrue { NetworkUtil.highPingCheckerRunning() }
-        assertDoesNotThrow { NetworkUtil.terminateHighPingChecker() }
-        assertFalse { NetworkUtil.highPingCheckerRunning() }
-    }
-
-    /**
      * Tests for the open url method.
      */
     @Test
