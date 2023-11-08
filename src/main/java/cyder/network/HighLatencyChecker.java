@@ -41,8 +41,19 @@ public final class HighLatencyChecker {
      */
     private final Duration pingDelay;
 
+    /**
+     * The frequency at which to check to exit the wait between latency refreshes should occur at.
+     */
     private final Duration exitRefreshLatencySleepCheckFrequency;
+
+    /**
+     * The frequency at which to check to exit the spin wait thread when refreshing the latency.
+     */
     private final Duration exitGetLatencySpinWaitCheckFrequency;
+
+    /**
+     * The name of the thread which refreshes the latency.
+     */
     private final String checkerThreadName;
 
     /**
@@ -144,6 +155,78 @@ public final class HighLatencyChecker {
     }
 
     /**
+     * Returns the name of the domain this latency checker pings.
+     *
+     * @return the name of the domain this latency checker pings
+     */
+    public String getRemoteName() {
+        return remoteName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof HighLatencyChecker)) {
+            return false;
+        }
+
+        HighLatencyChecker other = (HighLatencyChecker) o;
+        return other.ipAddress.equals(ipAddress)
+                && other.port.equals(port)
+                && other.remoteName.equals(remoteName)
+                && other.latencyCategorizer.equals(latencyCategorizer)
+                && other.pingDelay.equals(pingDelay)
+                && other.exitGetLatencySpinWaitCheckFrequency.equals(exitGetLatencySpinWaitCheckFrequency)
+                && other.exitRefreshLatencySleepCheckFrequency.equals(exitRefreshLatencySleepCheckFrequency)
+                && other.checkerThreadName.equals(checkerThreadName)
+                && other.pinging.equals(pinging)
+                && other.currentLatency == currentLatency
+                && other.currentStatus.equals(currentStatus);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int ret = ipAddress.hashCode();
+        ret = 31 * ret + port.hashCode();
+        ret = 31 * ret + remoteName.hashCode();
+        ret = 31 * ret + latencyCategorizer.hashCode();
+        ret = 31 * ret + pingDelay.hashCode();
+        ret = 31 * ret + exitGetLatencySpinWaitCheckFrequency.hashCode();
+        ret = 31 * ret + exitRefreshLatencySleepCheckFrequency.hashCode();
+        ret = 31 * ret + checkerThreadName.hashCode();
+        ret = 31 * ret + pinging.hashCode();
+        ret = 31 * ret + Long.hashCode(currentLatency);
+        ret = 31 * ret + currentStatus.hashCode();
+        return ret;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "LatencyChecker{"
+                + "ipAddress=\"" + ipAddress + "\", "
+                + "port=" + port + ", "
+                + "remoteName=\"" + remoteName + "\", "
+                + "latencyCategorizer=" + latencyCategorizer + ", "
+                + "pingDelay=" + pingDelay + ", "
+                + "exitGetLatencySpinWaitCheckFrequency=" + exitGetLatencySpinWaitCheckFrequency + ", "
+                + "exitRefreshLatencySleepCheckFrequency=" + exitRefreshLatencySleepCheckFrequency + ", "
+                + "checkerThreadName=\"" + checkerThreadName + "\", "
+                + "pinging=" + pinging + ", "
+                + "currentLatency=" + currentLatency + ", "
+                + "currentStatus=\"" + currentStatus + "\""
+                + "}";
+    }
+
+    /**
      * A builder for constructing instances of {@link HighLatencyChecker}.
      */
     public static final class Builder {
@@ -151,9 +234,9 @@ public final class HighLatencyChecker {
         private static final String DEFAULT_REMOTE_NAME = "Google";
         private static final LatencyCategorizer DEFAULT_LATENCY_CATEGORIZER
                 = new LatencyCategorizer(ImmutableMap.of(
-                        200L, "Low",
-                        1000L, "Moderate",
-                        1500L, "High"),
+                200L, "Low",
+                1000L, "Moderate",
+                1500L, "High"),
                 DEFAULT_REMOTE_NAME + " unreachable");
         private static final Duration DEFAULT_PING_DELAY = Duration.ofSeconds(5);
         private static final Duration EXIT_REFRESH_LATENCY_SLEEP_CHECK_FREQUENCY = Duration.ofMillis(100);
@@ -166,14 +249,14 @@ public final class HighLatencyChecker {
         private Duration pingDelay;
         private Duration exitRefreshLatencySleepCheckFrequency;
         private Duration exitGetLatencySpinWaitCheckFrequency;
-        private String checkerThreadName;
+        private final String checkerThreadName;
 
         /**
          * Constructs a new instance of a Builder for a {@link HighLatencyChecker}.
          * All defaults are used for all internal parameters.
          *
          * @param checkerThreadName the thread name for the latency refresh thread
-         * @throws NullPointerException if the provided checker thread name is null
+         * @throws NullPointerException     if the provided checker thread name is null
          * @throws IllegalArgumentException if the provided checker thread name is empty
          */
         public Builder(String checkerThreadName) {
@@ -195,7 +278,7 @@ public final class HighLatencyChecker {
          *
          * @param ipAddress the IP address
          * @return this builder
-         * @throws NullPointerException if the provided ipAddress is null
+         * @throws NullPointerException     if the provided ipAddress is null
          * @throws IllegalArgumentException if the provided ipAddress is not formatted properly
          */
         public Builder setIpAddress(String ipAddress) {
@@ -263,7 +346,7 @@ public final class HighLatencyChecker {
          *
          * @param remoteName the remote name of this builder
          * @return this builder
-         * @throws NullPointerException if the provided remote name is null
+         * @throws NullPointerException     if the provided remote name is null
          * @throws IllegalArgumentException if the provided remote name is empty
          */
         public Builder setRemoteName(String remoteName) {
@@ -278,7 +361,7 @@ public final class HighLatencyChecker {
          *
          * @param pingDelay the ping delay
          * @return this builder
-         * @throws NullPointerException if the provided ping delay is null
+         * @throws NullPointerException     if the provided ping delay is null
          * @throws IllegalArgumentException if the provided ping delay is negative
          */
         public Builder setPingDelay(Duration pingDelay) {
@@ -293,7 +376,7 @@ public final class HighLatencyChecker {
          *
          * @param exitRefreshLatencySleepCheckFrequency the frequency
          * @return this builder
-         * @throws NullPointerException if the provided duration is null
+         * @throws NullPointerException     if the provided duration is null
          * @throws IllegalArgumentException if the provided duration is negative
          */
         public Builder setExitRefreshLatencySleepCheckFrequency(Duration exitRefreshLatencySleepCheckFrequency) {
@@ -309,7 +392,7 @@ public final class HighLatencyChecker {
          *
          * @param exitGetLatencySpinWaitCheckFrequency the frequency
          * @return this builder
-         * @throws NullPointerException if the provided duration is null
+         * @throws NullPointerException     if the provided duration is null
          * @throws IllegalArgumentException if the provided duration is negative
          */
         public Builder setExitGetLatencySpinWaitCheckFrequency(Duration exitGetLatencySpinWaitCheckFrequency) {
