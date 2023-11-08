@@ -41,6 +41,10 @@ public final class HighLatencyChecker {
      */
     private final Duration pingDelay;
 
+    private final Duration exitRefreshLatencySleepCheckFrequency;
+    private final Duration exitGetLatencySpinWaitCheckFrequency;
+    private final String checkerThreadName;
+
     /**
      * Whether this high latency checker is currently running
      */
@@ -62,14 +66,13 @@ public final class HighLatencyChecker {
         this.latencyCategorizer = builder.latencyCategorizer;
         this.remoteName = builder.remoteName;
         this.pingDelay = builder.pingDelay;
+        this.exitRefreshLatencySleepCheckFrequency = builder.exitRefreshLatencySleepCheckFrequency;
+        this.exitGetLatencySpinWaitCheckFrequency = builder.exitGetLatencySpinWaitCheckFrequency;
+        this.checkerThreadName = builder.checkerThreadName;
 
         this.currentStatus = latencyCategorizer.getUnreachableString();
         this.currentLatency = Long.MAX_VALUE;
     }
-
-    private Duration refreshLatencyFrequency = Duration.ofMillis(100);
-    private Duration exitGetLatencySpinWaitCheckFrequency = Duration.ofMillis(50);
-    private String checkerThreadName = "";
 
     /**
      * Starts this latency checker if not running.
@@ -99,7 +102,7 @@ public final class HighLatencyChecker {
                 }
 
                 ThreadUtil.sleepWithChecks(pingDelay.toMillis(),
-                        refreshLatencyFrequency.toMillis(), () -> !isRunning());
+                        exitRefreshLatencySleepCheckFrequency.toMillis(), () -> !isRunning());
             }
         }, checkerThreadName);
     }
@@ -153,23 +156,38 @@ public final class HighLatencyChecker {
                         1500L, "High"),
                 DEFAULT_REMOTE_NAME + " unreachable");
         private static final Duration DEFAULT_PING_DELAY = Duration.ofSeconds(5);
+        private static final Duration EXIT_REFRESH_LATENCY_SLEEP_CHECK_FREQUENCY = Duration.ofMillis(100);
+        private static final Duration EXIT_GET_LATENCY_SPIN_WAIT_CHECK_FREQUENCY = Duration.ofMillis(50);
 
         private String ipAddress;
         private Port port;
         private LatencyCategorizer latencyCategorizer;
         private String remoteName;
         private Duration pingDelay;
+        private Duration exitRefreshLatencySleepCheckFrequency;
+        private Duration exitGetLatencySpinWaitCheckFrequency;
+        private String checkerThreadName;
 
         /**
          * Constructs a new instance of a Builder for a {@link HighLatencyChecker}.
          * All defaults are used for all internal parameters.
+         *
+         * @param checkerThreadName the thread name for the latency refresh thread
+         * @throws NullPointerException if the provided checker thread name is null
+         * @throws IllegalArgumentException if the provided checker thread name is empty
          */
-        public Builder() {
+        public Builder(String checkerThreadName) {
+            Preconditions.checkNotNull(checkerThreadName);
+            Preconditions.checkArgument(!checkerThreadName.trim().isEmpty());
+
             this.ipAddress = DEFAULT_IP_ADDRESS;
             this.port = CommonServicePort.HTTP.constructPort();
             this.latencyCategorizer = DEFAULT_LATENCY_CATEGORIZER;
             this.remoteName = DEFAULT_REMOTE_NAME;
             this.pingDelay = DEFAULT_PING_DELAY;
+            this.exitRefreshLatencySleepCheckFrequency = EXIT_REFRESH_LATENCY_SLEEP_CHECK_FREQUENCY;
+            this.exitGetLatencySpinWaitCheckFrequency = EXIT_GET_LATENCY_SPIN_WAIT_CHECK_FREQUENCY;
+            this.checkerThreadName = checkerThreadName;
         }
 
         /**
@@ -267,6 +285,38 @@ public final class HighLatencyChecker {
             Preconditions.checkNotNull(pingDelay);
             Preconditions.checkArgument(!pingDelay.isNegative());
             this.pingDelay = pingDelay;
+            return this;
+        }
+
+        /**
+         * Sets the frequency at which to check to exit the wait between latency refreshes should occur at.
+         *
+         * @param exitRefreshLatencySleepCheckFrequency the frequency
+         * @return this builder
+         * @throws NullPointerException if the provided duration is null
+         * @throws IllegalArgumentException if the provided duration is negative
+         */
+        public Builder setExitRefreshLatencySleepCheckFrequency(Duration exitRefreshLatencySleepCheckFrequency) {
+            Preconditions.checkNotNull(exitRefreshLatencySleepCheckFrequency);
+            Preconditions.checkArgument(!exitRefreshLatencySleepCheckFrequency.isNegative());
+
+            this.exitRefreshLatencySleepCheckFrequency = exitRefreshLatencySleepCheckFrequency;
+            return this;
+        }
+
+        /**
+         * Sets the frequency at which to check to exit the spin wait thread when refreshing the latency.
+         *
+         * @param exitGetLatencySpinWaitCheckFrequency the frequency
+         * @return this builder
+         * @throws NullPointerException if the provided duration is null
+         * @throws IllegalArgumentException if the provided duration is negative
+         */
+        public Builder setExitGetLatencySpinWaitCheckFrequency(Duration exitGetLatencySpinWaitCheckFrequency) {
+            Preconditions.checkNotNull(exitGetLatencySpinWaitCheckFrequency);
+            Preconditions.checkArgument(!exitGetLatencySpinWaitCheckFrequency.isNegative());
+
+            this.exitGetLatencySpinWaitCheckFrequency = exitGetLatencySpinWaitCheckFrequency;
             return this;
         }
     }
