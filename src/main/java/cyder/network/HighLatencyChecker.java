@@ -8,6 +8,8 @@ import cyder.threads.ThreadUtil;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -65,6 +67,10 @@ public final class HighLatencyChecker {
         this.currentLatency = Long.MAX_VALUE;
     }
 
+    private Duration refreshLatencyFrequency = Duration.ofMillis(100);
+    private Duration exitGetLatencySpinWaitCheckFrequency = Duration.ofMillis(50);
+    private String checkerThreadName = "";
+
     /**
      * Starts this latency checker if not running.
      *
@@ -77,19 +83,25 @@ public final class HighLatencyChecker {
         CyderThreadRunner.submit(() -> {
             while (pinging.get()) {
                 try {
-                    // todo how to time this out if stop is called?
-                    long newLatency = NetworkUtil.getLatency(ipAddress, port.getPort(),
+                    Future<Long> newLatencyFuture = NetworkUtil.getLatency(ipAddress, port.getPort(),
                             (int) latencyCategorizer.getMaxLatencyLevel());
+                    while (!newLatencyFuture.isDone()) {
+                        if (!pinging.get()) newLatencyFuture.cancel(true);
+                        ThreadUtil.sleep(exitGetLatencySpinWaitCheckFrequency.toMillis());
+                    }
+
+                    long newLatency = newLatencyFuture.get();
                     this.currentLatency = newLatency;
                     this.currentStatus = latencyCategorizer.categorize(newLatency);
-                } catch (IOException e) {
+                } catch (IOException | ExecutionException | InterruptedException e) {
                     this.currentLatency = Long.MAX_VALUE;
                     this.currentStatus = latencyCategorizer.getUnreachableString();
                 }
 
-                ThreadUtil.sleepWithChecks(pingDelay.toMillis(), 100, () -> !isRunning());
+                ThreadUtil.sleepWithChecks(pingDelay.toMillis(),
+                        refreshLatencyFrequency.toMillis(), () -> !isRunning());
             }
-        }, "todo customizable");
+        }, checkerThreadName);
     }
 
     /**

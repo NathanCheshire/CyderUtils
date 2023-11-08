@@ -8,7 +8,6 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -20,6 +19,9 @@ import java.io.*;
 import java.net.*;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -303,24 +305,24 @@ public final class NetworkUtil {
      *                                  is out of range or the timeout is less than or equal to zero
      * @throws IOException              if an exception occurs when attempting to connect to the latency ip
      */
-    public static long getLatency(String ip, int port, int timeout) throws IOException {
+    public static Future<Long> getLatency(String ip, int port, int timeout) throws IOException {
         Preconditions.checkNotNull(ip);
         Preconditions.checkArgument(!ip.trim().isEmpty());
         Preconditions.checkArgument(CyderRegexPatterns.ipv4Pattern.matcher(ip).matches());
         Preconditions.checkArgument(Port.portRange.contains(port));
         Preconditions.checkArgument(timeout > 0);
 
-        Socket socket = new Socket();
-        SocketAddress address = new InetSocketAddress(ip, port);
+        Callable<Long> task = () -> {
+            try (Socket socket = new Socket()) {
+                SocketAddress address = new InetSocketAddress(ip, port);
+                Stopwatch stopwatch = Stopwatch.createStarted();
+                socket.connect(address, timeout);
+                stopwatch.stop();
+                return stopwatch.elapsed().toMillis();
+            }
+        };
 
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        socket.connect(address, timeout);
-        long latency = stopwatch.elapsed().toMillis();
-        stopwatch.stop();
-
-        FileUtil.closeIfNotNull(socket);
-
-        return latency;
+        return Executors.newSingleThreadExecutor().submit(task);
     }
 
     /**
