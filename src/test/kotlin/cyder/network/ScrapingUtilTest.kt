@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 /**
- * Tests for [ScrapingUtil]s.
+ * Tests for [WhatsMyIpScraper]s.
  */
 class ScrapingUtilTest {
     /**
@@ -13,8 +13,8 @@ class ScrapingUtilTest {
      */
     @Test
     fun testGetIspAndNetworkDetails() {
-        var result: ScrapingUtil.IspQueryResult? = null
-        assertDoesNotThrow { result = ScrapingUtil.getIspAndNetworkDetails() }
+        var result: WhatsMyIpScraper.IspQueryResult? = null
+        assertDoesNotThrow { result = WhatsMyIpScraper.getIspAndNetworkDetails() }
 
         assertNotNull(result!!.isp)
         assertNotNull(result!!.city)

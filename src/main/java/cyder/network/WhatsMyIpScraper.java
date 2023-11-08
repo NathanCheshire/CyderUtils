@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 /**
  * Utilities related to web-scraping.
  */
-public final class ScrapingUtil {
+public final class WhatsMyIpScraper {
     /**
      * The url for determining network details.
      */
@@ -73,7 +73,7 @@ public final class ScrapingUtil {
     /**
      * Suppress default constructor.
      */
-    private ScrapingUtil() {
+    private WhatsMyIpScraper() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 

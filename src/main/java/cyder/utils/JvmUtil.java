@@ -11,7 +11,7 @@ import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
 import cyder.meta.Cyder;
-import cyder.network.ScrapingUtil;
+import cyder.network.WhatsMyIpScraper;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
@@ -411,7 +411,7 @@ public final class JvmUtil {
 
     /**
      * Logs any main method command line arguments passed in to Cyder upon starting.
-     * {@link ScrapingUtil#getIspAndNetworkDetails()} is queried and the details appended
+     * {@link WhatsMyIpScraper#getIspAndNetworkDetails()} is queried and the details appended
      * to the resulting log statement if {@link Props#autocypher} is {@code false}.
      * This is queried in a separate thread so invoking this method on the UI thread is safe.
      *
@@ -430,7 +430,7 @@ public final class JvmUtil {
             try {
                 StringBuilder argBuilder = new StringBuilder(StringUtil.joinParts(cyderArgs, comma));
 
-                ScrapingUtil.IspQueryResult result = ScrapingUtil.getIspAndNetworkDetails();
+                WhatsMyIpScraper.IspQueryResult result = WhatsMyIpScraper.getIspAndNetworkDetails();
 
                 argBuilder.append("city")
                         .append(colon).append(space).append(result.city())

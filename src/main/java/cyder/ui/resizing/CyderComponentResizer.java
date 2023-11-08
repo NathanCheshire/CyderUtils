@@ -1,8 +1,6 @@
 package cyder.ui.resizing;
 
 import com.google.common.base.Preconditions;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.props.Props;
 import cyder.ui.frame.CyderFrame;
 import cyder.ui.pane.CyderPanel;
@@ -114,8 +112,6 @@ public final class CyderComponentResizer extends MouseAdapter {
      */
     public CyderComponentResizer() {
         setSnapSize(DEFAULT_SNAP_SIZE);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

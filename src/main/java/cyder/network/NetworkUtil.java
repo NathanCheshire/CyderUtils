@@ -223,6 +223,9 @@ public final class NetworkUtil {
         return CyderRegexPatterns.urlFormationPattern.matcher(url).matches();
     }
 
+    // todo allow accepting of this, maybe this should be an abstracted class too, ResourceDownloader
+    // even with unzipping capabilities?
+
     /**
      * The size of the buffer when downloading resources from a URL or reading a URL.
      */

@@ -1,8 +1,6 @@
 package cyder.ui.resizing;
 
 import com.google.common.base.Preconditions;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.awt.*;
 
@@ -10,7 +8,7 @@ import java.awt.*;
  * An entity to link the original ability of a {@link Component} to gain focus to itself.
  * Used for restorations after resize events.
  */
-class FocusWrappedComponent {
+final class FocusWrappedComponent {
     /**
      * The component.
      */
@@ -29,8 +27,6 @@ class FocusWrappedComponent {
     public FocusWrappedComponent(Component component, boolean wasFocusable) {
         this.component = Preconditions.checkNotNull(component);
         this.wasFocusable = wasFocusable;
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

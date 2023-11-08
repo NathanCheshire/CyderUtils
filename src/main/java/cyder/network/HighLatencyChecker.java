@@ -57,9 +57,14 @@ public final class HighLatencyChecker {
     private final String checkerThreadName;
 
     /**
-     * Whether this high latency checker is currently running
+     * Whether this high latency checker is currently running.
      */
-    private final AtomicBoolean pinging = new AtomicBoolean(false);
+    private final AtomicBoolean refreshLatencyThreadRunning = new AtomicBoolean(false);
+
+    /**
+     * Whether this high latency checker's {@link #stop()} method has been invoked but the thread has not yet exited.
+     */
+    private final AtomicBoolean refreshLatencyThreadStopping = new AtomicBoolean(false);
 
     /**
      * The current status of this latency checker.
@@ -89,18 +94,20 @@ public final class HighLatencyChecker {
      * Starts this latency checker if not running.
      *
      * @throws IllegalStateException if this checker is already running
+     * or has not yet stopped after a {@link #stop()} invocation
      */
     public void start() {
-        Preconditions.checkState(!pinging.get());
-        pinging.set(true);
+        Preconditions.checkState(!refreshLatencyThreadRunning.get());
+        Preconditions.checkState(!refreshLatencyThreadStopping.get());
+        refreshLatencyThreadRunning.set(true);
 
         CyderThreadRunner.submit(() -> {
-            while (pinging.get()) {
+            while (refreshLatencyThreadRunning.get() && !refreshLatencyThreadRunning.get()) {
                 try {
                     Future<Long> newLatencyFuture = NetworkUtil.getLatency(ipAddress, port.getPort(),
                             (int) latencyCategorizer.getMaxLatencyLevel());
                     while (!newLatencyFuture.isDone()) {
-                        if (!pinging.get()) newLatencyFuture.cancel(true);
+                        if (!refreshLatencyThreadRunning.get()) newLatencyFuture.cancel(true);
                         ThreadUtil.sleep(exitGetLatencySpinWaitCheckFrequency.toMillis());
                     }
 
@@ -115,6 +122,9 @@ public final class HighLatencyChecker {
                 ThreadUtil.sleepWithChecks(pingDelay.toMillis(),
                         exitRefreshLatencySleepCheckFrequency.toMillis(), () -> !isRunning());
             }
+
+            refreshLatencyThreadRunning.set(false);
+            refreshLatencyThreadStopping.set(false);
         }, checkerThreadName);
     }
 
@@ -122,7 +132,7 @@ public final class HighLatencyChecker {
      * Stops this latency checker if running.
      */
     public void stop() {
-        pinging.set(false);
+        refreshLatencyThreadStopping.get();
     }
 
     /**
@@ -131,7 +141,7 @@ public final class HighLatencyChecker {
      * @return whether the latency checker is running
      */
     public boolean isRunning() {
-        return pinging.get();
+        return refreshLatencyThreadRunning.get();
     }
 
     /**
@@ -183,7 +193,7 @@ public final class HighLatencyChecker {
                 && other.exitGetLatencySpinWaitCheckFrequency.equals(exitGetLatencySpinWaitCheckFrequency)
                 && other.exitRefreshLatencySleepCheckFrequency.equals(exitRefreshLatencySleepCheckFrequency)
                 && other.checkerThreadName.equals(checkerThreadName)
-                && other.pinging.equals(pinging)
+                && other.refreshLatencyThreadRunning.equals(refreshLatencyThreadRunning)
                 && other.currentLatency == currentLatency
                 && other.currentStatus.equals(currentStatus);
     }
@@ -201,7 +211,7 @@ public final class HighLatencyChecker {
         ret = 31 * ret + exitGetLatencySpinWaitCheckFrequency.hashCode();
         ret = 31 * ret + exitRefreshLatencySleepCheckFrequency.hashCode();
         ret = 31 * ret + checkerThreadName.hashCode();
-        ret = 31 * ret + pinging.hashCode();
+        ret = 31 * ret + refreshLatencyThreadRunning.hashCode();
         ret = 31 * ret + Long.hashCode(currentLatency);
         ret = 31 * ret + currentStatus.hashCode();
         return ret;
@@ -220,7 +230,7 @@ public final class HighLatencyChecker {
                 + "exitGetLatencySpinWaitCheckFrequency=" + exitGetLatencySpinWaitCheckFrequency + ", "
                 + "exitRefreshLatencySleepCheckFrequency=" + exitRefreshLatencySleepCheckFrequency + ", "
                 + "checkerThreadName=\"" + checkerThreadName + "\", "
-                + "pinging=" + pinging + ", "
+                + "refreshLatencyThreadRunning=" + refreshLatencyThreadRunning + ", "
                 + "currentLatency=" + currentLatency + ", "
                 + "currentStatus=\"" + currentStatus + "\""
                 + "}";
