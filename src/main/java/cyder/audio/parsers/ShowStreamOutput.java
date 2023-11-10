@@ -1,8 +1,5 @@
 package cyder.audio.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 import java.util.ArrayList;
 
 /**
@@ -15,11 +12,9 @@ public class ShowStreamOutput {
     private ArrayList<Stream> streams;
 
     /**
-     * Constructs a new show stream output object.
+     * Constructs a new ShowStreamOutput object.
      */
-    public ShowStreamOutput() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public ShowStreamOutput() {}
 
     /**
      * Returns the list of streams found by the show stream output command.

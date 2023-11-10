@@ -6,13 +6,9 @@ import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -100,6 +96,11 @@ public final class WaveFile {
      * Constructs a new WaveFile object.
      *
      * @param file the wave file
+     * @throws NullPointerException     if the provided file is null
+     * @throws IllegalArgumentException if the provided file does not exist
+     *                                  or is not of the {@link Extension#WAV} extension
+     * @throws WaveFileException        if an exception occurs when attempting to set up
+     *                                  the streams related to the wave file
      */
     public WaveFile(File file) {
         Preconditions.checkNotNull(file);
@@ -107,60 +108,63 @@ public final class WaveFile {
         Preconditions.checkArgument(FileUtil.validateExtension(file, Extension.WAV.getExtension()));
 
         wavFile = file;
-        setup();
+
+        try {
+            setupStreams();
+        } catch (UnsupportedAudioFileException | IOException e) {
+            throw new WaveFileException("Failed to setup wave file: " + e.getMessage());
+        }
     }
 
     /**
-     * Performs setup for common wav file props after the object
-     * has been constructed and the file validated.
+     * Sets up the {@link AudioInputStream} and other fields related to this wav file.
+     *
+     * @throws IOException                   if the constructed {@link AudioInputStream} cannot be read from or closed properly
+     * @throws UnsupportedAudioFileException if the File does not point to valid audio file data recognized by the system
      */
-    private void setup() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(wavFile);
-            audioFormat = audioInputStream.getFormat();
-            numFrames = audioInputStream.getFrameLength();
+    private void setupStreams() throws IOException, UnsupportedAudioFileException {
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(wavFile);
+        audioFormat = audioInputStream.getFormat();
+        numFrames = audioInputStream.getFrameLength();
 
-            sampleRate = (int) audioFormat.getSampleRate();
-            sampleSize = audioFormat.getSampleSizeInBits() / BITS_PER_SAMPLE;
-            numChannels = audioFormat.getChannels();
+        sampleRate = (int) audioFormat.getSampleRate();
+        sampleSize = audioFormat.getSampleSizeInBits() / BITS_PER_SAMPLE;
+        numChannels = audioFormat.getChannels();
 
-            long dataLength = numFrames * audioFormat.getSampleSizeInBits() * audioFormat.getChannels() / 8;
+        long dataLength = numFrames * audioFormat.getSampleSizeInBits() * audioFormat.getChannels() / 8;
 
-            data = new byte[(int) dataLength];
-            int bytesRead = audioInputStream.read(data);
-            if (bytesRead == -1) {
-                throw new FatalException("Failed to read bytes from fis constructed from: " + wavFile);
-            }
-
-            audioInputStream.close();
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        data = new byte[(int) dataLength];
+        int bytesRead = audioInputStream.read(data);
+        if (bytesRead == -1) {
+            throw new FatalException("Failed to read bytes from FileInputStream constructed from: " + wavFile);
         }
+
+        audioInputStream.close();
 
         try {
             clip = AudioSystem.getClip();
-
             clipStream = AudioSystem.getAudioInputStream(wavFile);
             clip.open(clipStream);
-
             clip.setFramePosition(0);
             isPlayable = true;
-        } catch (Exception e) {
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             // non 16/8-bit audio file
             isPlayable = false;
             clip = null;
-            ExceptionHandler.handle(e);
         }
     }
 
     /**
-     * Returns the amplitude of the wav at the provided sample point.
+     * Returns the amplitude of the wave at the provided sample point.
+     * <p>
      * Note that in case of stereos, samples go one after another meaning
      * 0 is the first of the left channel, 1 the first of the right, 2
      * the second of the left, 3 the second of the right, etc.
      *
-     * @param samplePoint the point to sample the wav at
+     * @param samplePoint the point to sample the wave file at
      * @return the amplitude at the sample point
+     * @throws IllegalArgumentException if the provided sample point is less than 0 or greater
+     *                                  than the data's length divided by the sample size
      */
     public int getSample(int samplePoint) {
         Preconditions.checkArgument(samplePoint >= 0);
@@ -187,15 +191,19 @@ public final class WaveFile {
 
     /**
      * Play the clip of this wav file.
+     *
+     * @throws NullPointerException if the encapsulated clip is null
      */
     public void play() {
         Preconditions.checkNotNull(clip);
-
         clip.start();
     }
 
     /**
-     * Stops the clip of this wav file.
+     * Stops the clip of this WAV file if playing.
+     *
+     * @throws NullPointerException if either the encapsulated clip or clip stream are null
+     * @throws IOException if an input or output error occurs when closing the clip stream
      */
     public void stop() throws IOException {
         Preconditions.checkNotNull(clip);
@@ -224,9 +232,9 @@ public final class WaveFile {
     }
 
     /**
-     * Returns the duration in seconds.
+     * Returns the duration of this wave file in seconds.
      *
-     * @return the duration in seconds
+     * @return the duration of this wave file in seconds
      */
     public int getDurationTime() {
         return (int) (getNumFrames() / getAudioFormat().getFrameRate());
@@ -285,7 +293,8 @@ public final class WaveFile {
                 + ", dataLength=" + data.length
                 + ", isPlayable=" + isPlayable
                 + ", audioFormat=" + audioFormat
-                + ", clip=" + clip + ", sampleSize=" + sampleSize
+                + ", clip=" + clip
+                + ", sampleSize=" + sampleSize
                 + ", numFrames=" + numFrames
                 + ", sampleRate=" + sampleRate
                 + ", wavFile=" + wavFile

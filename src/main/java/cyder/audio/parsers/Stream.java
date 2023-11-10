@@ -1,8 +1,6 @@
 package cyder.audio.parsers;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.Objects;
 
@@ -126,11 +124,9 @@ public class Stream {
     private Tags tags;
 
     /**
-     * Constructs a new stream object.
+     * Constructs a new Stream object.
      */
-    public Stream() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Stream() {}
 
     /**
      * Returns the index of the stream.

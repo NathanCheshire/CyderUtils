@@ -1,8 +1,5 @@
 package cyder.audio.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The tags object contained within a {@link Stream} object.
  */
@@ -13,11 +10,9 @@ public class Tags {
     private String encoder;
 
     /**
-     * Constructs a new tags object.
+     * Constructs a new Tags object.
      */
-    public Tags() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Tags() {}
 
     /**
      * Returns the encoder for this audio file.

@@ -7,7 +7,7 @@ import cyder.utils.StaticUtil;
 import javax.swing.*;
 
 /**
- * All icons from the static audio directory loaded as {@link javax.swing.ImageIcon}s.
+ * Common audio icons loaded in memory as {@link javax.swing.ImageIcon}s.
  */
 public final class AudioIcons {
     /**

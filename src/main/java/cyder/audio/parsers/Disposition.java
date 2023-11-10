@@ -1,8 +1,6 @@
 package cyder.audio.parsers;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * A disposition object serializer for a {@link Stream} object.
@@ -75,11 +73,9 @@ public class Disposition {
     private int timedThumbnails;
 
     /**
-     * Constructs a new disposition object.
+     * Constructs a new Disposition object.
      */
-    public Disposition() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Disposition() {}
 
     /**
      * Returns the default prop.
