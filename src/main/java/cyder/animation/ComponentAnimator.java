@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A wrapper for a {@link Component} to perform cardinal direction animations on it.
+ * This component uses a slight modification on a builder pattern; accessor methods
+ * return {@code this} instance instead of {@link Void}.
  */
 public final class ComponentAnimator {
     /**
@@ -182,14 +184,17 @@ public final class ComponentAnimator {
     /**
      * Animates this component.
      *
+     * @return this animator
      * @throws IllegalStateException if this component is already animating
      */
-    public synchronized void animate() {
+    @CanIgnoreReturnValue
+    public synchronized ComponentAnimator animate() {
         Preconditions.checkArgument(!isAnimating.get());
         Preconditions.checkArgument(!stoppingAnimation.get());
 
         isAnimating.set(true);
 
+        String animationThreadName = getAnimationThreadName();
         CyderThreadRunner.submit(() -> {
             switch (animationDirection) {
                 case LEFT -> {
@@ -237,7 +242,9 @@ public final class ComponentAnimator {
 
             isAnimating.set(false);
             stoppingAnimation.set(false);
-        }, "todo custom thread name");
+        }, animationThreadName);
+
+        return this;
     }
 
     /**
@@ -297,13 +304,35 @@ public final class ComponentAnimator {
         }
 
         ComponentAnimator other = (ComponentAnimator) o;
-        return isAnimating.equals(other.isAnimating) &&
-                stoppingAnimation.equals(other.stoppingAnimation) &&
-                animationDirection.equals(other.animationDirection) &&
-                animationComponent.equals(other.animationComponent) &&
-                animationStart == other.animationStart &&
-                animationEnd == other.animationEnd &&
-                animationDelay.equals(other.animationDelay) &&
-                animationIncrement == other.animationIncrement;
+        return isAnimating.equals(other.isAnimating)
+                && stoppingAnimation.equals(other.stoppingAnimation)
+                && animationDirection.equals(other.animationDirection)
+                && animationComponent.equals(other.animationComponent)
+                && animationStart == other.animationStart
+                && animationEnd == other.animationEnd
+                && animationDelay.equals(other.animationDelay)
+                && animationIncrement == other.animationIncrement;
+    }
+
+    /**
+     * Returns the name for the thread which animates this component.
+     *
+     * @return the name for the thread which animates this component
+     */
+    private String getAnimationThreadName() {
+        int currentAnimationValue = switch (animationDirection) {
+            case LEFT, RIGHT -> animationComponent.getX();
+            case TOP, BOTTOM -> animationComponent.getY();
+            default -> throw new IllegalStateException("Invalid direction: " + animationDirection);
+        };
+
+        String currentAnimationValueRepresentation = isAnimating.get()
+                ? "NOT ANIMATING" : String.valueOf(currentAnimationValue);
+
+        return "ComponentAnimator{direction=" + animationDirection
+                + ", animationStart=" + animationStart
+                + ", currentAnimationValue=" + currentAnimationValueRepresentation
+                + ", animationEnd=" + animationEnd
+                + "}";
     }
 }

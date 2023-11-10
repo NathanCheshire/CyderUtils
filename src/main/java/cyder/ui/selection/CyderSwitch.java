@@ -2,16 +2,18 @@ package cyder.ui.selection;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
-import cyder.animation.AnimationUtil;
+import cyder.animation.ComponentAnimator;
 import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderFonts;
+import cyder.enumerations.Direction;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderButton;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.time.Duration;
 
 /**
  * An animated binary switch with smooth transition animations.
@@ -217,28 +219,26 @@ public class CyderSwitch extends JLabel {
 
         refreshButtonText();
 
-        switch (state) {
-            case ON -> {
-                if (shouldAnimate) {
-                    AnimationUtil.componentRight(switchButton.getX(),
-                            width - switchButton.getWidth() - buttonXPadding,
-                            animationDelay, animationIncrement, switchButton);
+        if (shouldAnimate) {
+            switch (state) {
+                case ON -> {
+                    int animationStart = switchButton.getX();
+                    int animationEnd = width - switchButton.getWidth() - buttonXPadding;
+                    new ComponentAnimator(Direction.RIGHT, this,
+                            animationStart, animationEnd)
+                            .setAnimationDelay(Duration.ofMillis(animationDelay))
+                            .setAnimationIncrement(animationIncrement)
+                            .animate();
                 }
-            }
-            case OFF -> {
-                if (shouldAnimate) {
+                case OFF -> {
                     AnimationUtil.componentLeft(switchButton.getX(), buttonXPadding,
                             animationDelay, animationIncrement, switchButton);
                 }
-            }
-            case INDETERMINATE -> {
-                if (switchButton.getX() > buttonXPadding) {
-                    if (shouldAnimate) {
+                case INDETERMINATE -> {
+                    if (switchButton.getX() > buttonXPadding) {
                         AnimationUtil.componentLeft(switchButton.getX(), width / 2 - switchButton.getWidth() / 2,
                                 animationDelay, animationIncrement, switchButton);
-                    }
-                } else {
-                    if (shouldAnimate) {
+                    } else {
                         AnimationUtil.componentRight(buttonXPadding, width / 2 - switchButton.getWidth() / 2,
                                 animationDelay, animationIncrement, switchButton);
                     }
@@ -477,6 +477,7 @@ public class CyderSwitch extends JLabel {
                 + ", onText=" + onText
                 + ", indeterminateText=" + indeterminateText
                 + ", offText=" + offText
-                + ", animationIncrement=" + animationIncrement + "}";
+                + ", animationIncrement=" + animationIncrement
+                + "}";
     }
 }
