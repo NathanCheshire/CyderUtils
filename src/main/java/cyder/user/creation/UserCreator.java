@@ -110,7 +110,6 @@ public final class UserCreator {
     /**
      * Shows the GUI for this widget.
      */
-    @Widget(triggers = {"create user", "create"}, description = "A widget for creating new users")
     public static void showGui() {
         UiUtil.closeIfOpen(createUserFrame);
 

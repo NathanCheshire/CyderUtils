@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import cyder.annotations.CyderAuthor;
 import cyder.annotations.ForReadability;
 import cyder.annotations.Vanilla;
-import cyder.annotations.Widget;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderFonts;
 import cyder.logging.LogTag;
@@ -164,7 +163,6 @@ public final class TemperatureWidget {
      */
     private static final String MEASUREMENT = "Measurement:";
 
-    @Widget(triggers = {"temperature", "temp", "fahrenheit", "celsius", "kelvin"}, description = description)
     public static void showGui() {
         getInstance().innerShowGUI();
     }

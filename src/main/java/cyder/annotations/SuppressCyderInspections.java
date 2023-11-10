@@ -8,8 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark methods throughout Cyder to
- * ignore when performing certain tests/checks.
+ * An annotation used to mark methods of Cyder exempt from certain Cyder-specific reflection checks.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({

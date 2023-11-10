@@ -3,7 +3,6 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.ClassPath;
-import cyder.annotations.Handle;
 import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.input.BaseInputHandler;
 import cyder.handlers.input.InputHandler;

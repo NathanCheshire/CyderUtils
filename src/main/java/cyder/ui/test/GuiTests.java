@@ -1,6 +1,5 @@
 package cyder.ui.test;
 
-import cyder.annotations.GuiTest;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderFonts;
 import cyder.constants.CyderIcons;
@@ -48,7 +47,6 @@ public final class GuiTests {
     /**
      * Tests for the switcher.
      */
-    @GuiTest("switcher test")
     public static void cyderSwitcherTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(280)
@@ -75,7 +73,6 @@ public final class GuiTests {
     /**
      * Tests for the CyderGrid.
      */
-    @GuiTest("grid test")
     public static void cyderGridTest() {
         CyderFrame cf = new CyderFrame.Builder()
                 .setWidth(1000)
@@ -97,7 +94,6 @@ public final class GuiTests {
     /**
      * Tests for drag label buttons.
      */
-    @GuiTest("drag label button test")
     public static void dragLabelButtonTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(600)
@@ -166,7 +162,6 @@ public final class GuiTests {
     /**
      * Tests for notifications.
      */
-    @GuiTest("notification test")
     public static void notificationTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(600)
@@ -249,7 +244,6 @@ public final class GuiTests {
         testFrame.finalizeAndShow();
     }
 
-    @GuiTest("askew test")
     public static void askewTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(350)
@@ -272,7 +266,6 @@ public final class GuiTests {
     /**
      * Tests for the sliding icon label.
      */
-    @GuiTest("sliding icon label test")
     public static void iconLabelSlidingTest() {
         ImageIcon theImage = new ImageIcon(ImageUtil.getImageGradient(600, 1200,
                 CyderColors.regularPink, CyderColors.regularBlue, CyderColors.regularBlue));
@@ -351,7 +344,6 @@ public final class GuiTests {
     /**
      * Tests for checkboxes.
      */
-    @GuiTest("checkbox test")
     public static void checkboxTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -376,7 +368,6 @@ public final class GuiTests {
     /**
      * Tests for the progress bar ui.
      */
-    @GuiTest("progress bar test")
     public static void progressBarTest() {
         CyderFrame cf = new CyderFrame.Builder()
                 .setWidth(400)
@@ -411,7 +402,6 @@ public final class GuiTests {
     /**
      * Tests for the slider ui.
      */
-    @GuiTest("slider test")
     public static void cyderSliderTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -448,7 +438,6 @@ public final class GuiTests {
     /**
      * Tests for the frame title length.
      */
-    @GuiTest("frame title length test")
     public static void frameTitleLengthTest() {
         CyderFrame cf = new CyderFrame.Builder()
                 .setWidth(600)
@@ -473,7 +462,6 @@ public final class GuiTests {
     /**
      * Tests for the switch.
      */
-    @GuiTest("switch test")
     public static void switchTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(500)
@@ -492,7 +480,6 @@ public final class GuiTests {
     /**
      * Tests for the ripple label.
      */
-    @GuiTest("ripple label test")
     public static void rippleLabelTest() {
         CyderFrame rippleTestFrame = new CyderFrame.Builder()
                 .setWidth(600)
@@ -524,7 +511,6 @@ public final class GuiTests {
     /**
      * Tests for the checkbox group.
      */
-    @GuiTest("checkbox group test")
     public static void checkboxGroupTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -551,7 +537,6 @@ public final class GuiTests {
     /**
      * Test for the grid layout.
      */
-    @GuiTest("grid layout test")
     public static void cyderGridLayoutTest() {
         //regular frame calls
         CyderFrame gridTestFrame = new CyderFrame.Builder()
@@ -610,7 +595,6 @@ public final class GuiTests {
     /**
      * Test for the flow layout.
      */
-    @GuiTest("flow layout test")
     public static void flowLayoutTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(600)
@@ -649,7 +633,6 @@ public final class GuiTests {
     /**
      * Tests for popups switcher.
      */
-    @GuiTest("inform test")
     public static void popupTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -674,7 +657,6 @@ public final class GuiTests {
     /**
      * Tests for CyderFrame menu.
      */
-    @GuiTest("menu test")
     public static void frameMenuTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -737,7 +719,6 @@ public final class GuiTests {
      * Tests for the notify and possibly overflow
      * onto an inform pane custom container test.
      */
-    @GuiTest("notify container test")
     public static void notifyAndInformCustomContainerTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -775,7 +756,6 @@ public final class GuiTests {
      * Tests for the notify and possibly overflow
      * onto an inform pane custom container test.
      */
-    @GuiTest("disable relative to test")
     public static void informDisableRelativeToTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -793,7 +773,6 @@ public final class GuiTests {
     /**
      * Tests for the shape of the checkbox check.
      */
-    @GuiTest("checkbox check")
     public static void checkboxCheckTest() {
         CyderFrame checkboxFrame = new CyderFrame.Builder()
                 .setWidth(220)
@@ -853,7 +832,6 @@ public final class GuiTests {
     /**
      * Tests for partitioned layouts.
      */
-    @GuiTest("partitioned layout test")
     public static void partitionedLayoutTest() {
         CyderFrame horizontalFrame = new CyderFrame.Builder()
                 .setWidth(200)
@@ -896,7 +874,6 @@ public final class GuiTests {
     /**
      * Tests for drag label buttons.
      */
-    @GuiTest("drag label text button test")
     public static void dragLabelTextButtonTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(800)
@@ -955,7 +932,6 @@ public final class GuiTests {
     /**
      * Modern button tests.
      */
-    @GuiTest("modern button test")
     public static void modernButtonTest() {
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(500)
@@ -1008,7 +984,6 @@ public final class GuiTests {
     /**
      * Tests for the text field hint text.
      */
-    @GuiTest("hint text test")
     public static void textFieldHintTextTest() {
         CyderFrame frame = new CyderFrame.Builder()
                 .setWidth(400)
@@ -1035,7 +1010,6 @@ public final class GuiTests {
     /**
      * Tests for the icons and hint text of text fields.
      */
-    @GuiTest("field icons test")
     public static void textFieldIconsTest() {
         CyderFrame frame = new CyderFrame.Builder()
                 .setWidth(400)

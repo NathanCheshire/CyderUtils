@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
-import cyder.annotations.Widget;
 import cyder.audio.player.AudioPlayer;
 import cyder.console.Console;
 import cyder.constants.CyderColors;
@@ -246,7 +245,6 @@ public final class UserEditor {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    @Widget(triggers = {"prefs", "edit user"}, description = "A widget to edit your user settings and files")
     public static void showGui() {
         showGui(Page.FILES);
     }

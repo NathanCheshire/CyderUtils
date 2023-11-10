@@ -1,7 +1,5 @@
 package cyder.subroutines;
 
-import cyder.annotations.Handle;
-
 /**
  * The possible warnings for invalid {@link Handle}s.
  */

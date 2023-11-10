@@ -1,7 +1,6 @@
 package cyder.handlers.external;
 
 import com.google.common.base.Preconditions;
-import cyder.annotations.Widget;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
@@ -144,7 +143,6 @@ public final class DirectoryViewer {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    @Widget(triggers = {"dir", "directory"}, description = "A directory navigator widget")
     public static void showGui() {
         showGui(new File(OsUtil.USER_DIR));
     }
