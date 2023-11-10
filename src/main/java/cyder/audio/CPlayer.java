@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * An encapsulated JLayer {@link Player} for playing singular audio files and stopping.
+ * An encapsulated JLayer{@link Player} for playing singular audio files and stopping.
  */
 public final class CPlayer {
     /**
-     * The audio file.
+     * The audio file this player will stream/play.
      */
     private final File audioFile;
 
@@ -26,7 +26,7 @@ public final class CPlayer {
     private FileInputStream fis;
 
     /**
-     * The buffered input stream for the file input stream.
+     * The buffered input stream for the FileInputStream.
      */
     private BufferedInputStream bis;
 
@@ -36,7 +36,7 @@ public final class CPlayer {
     private Player player;
 
     /**
-     * The runnable to invoke upon a completion event.
+     * The runnables to invoke upon a completion event.
      */
     private final ArrayList<Runnable> onCompletionCallback;
 
@@ -51,9 +51,12 @@ public final class CPlayer {
     private boolean playing;
 
     /**
-     * Constructs a new inner player object.
+     * Constructs a new CPlayer object.
      *
      * @param audioFile the audio file this player will play
+     * @throws NullPointerException     if the provided audio file is null
+     * @throws IllegalArgumentException if the provided audio file does not exist
+     *                                  or is not a file or is not a supported audio file
      */
     public CPlayer(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -69,17 +72,20 @@ public final class CPlayer {
      * Plays the encapsulated audio file.
      */
     public void play() {
+        Preconditions.checkArgument(!playing);
+
+        playing = true;
+        canceled = false;
+
         CyderThreadRunner.submit(() -> {
             try {
-                canceled = false;
-                playing = true;
                 fis = new FileInputStream(audioFile);
                 bis = new BufferedInputStream(fis);
                 player = new Player(bis);
                 player.play();
                 if (!canceled) onCompletionCallback.forEach(Runnable::run);
             } catch (FileNotFoundException | JavaLayerException e) {
-                e.printStackTrace();
+               throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
             } finally {
                 closeResources();
                 playing = false;
@@ -88,17 +94,17 @@ public final class CPlayer {
     }
 
     /**
-     * Cancels this player, the on completion callback will not be invoked if set.
+     * Cancels this player, the on completion callbacks will not be invoked if present.
      */
-    public void cancel() {
+    public void cancelPlaying() {
         canceled = true;
         closeResources();
     }
 
     /**
-     * Stops the player, the completion callback will be invoked if set.
+     * Stops the player, the completion callbacks will be invoked if present.
      */
-    public void stop() {
+    public void stopPlaying() {
         closeResources();
     }
 
@@ -157,15 +163,6 @@ public final class CPlayer {
      */
     public boolean isUsing(File audioFile) {
         return this.audioFile.equals(audioFile);
-    }
-
-    /**
-     * Returns whether the audio file encapsulated by this player is a system audio file.
-     *
-     * @return whether the audio file encapsulated by this player is a system audio file
-     */
-    public boolean isSystemAudio() {
-        return GeneralAudioPlayer.isSystemAudio(audioFile);
     }
 
     /**

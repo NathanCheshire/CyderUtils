@@ -129,7 +129,7 @@ public final class GeneralAudioPlayer {
      * any system audio or AudioPlayer widget audio.
      */
     public static void stopGeneralAudio() {
-        if (generalPlayer != null) generalPlayer.stop();
+        if (generalPlayer != null) generalPlayer.stopPlaying();
         Console.INSTANCE.revalidateAudioMenuVisibility();
     }
 
