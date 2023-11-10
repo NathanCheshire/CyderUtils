@@ -8,9 +8,6 @@ import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.exceptions.UnsupportedOsException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
@@ -219,7 +216,6 @@ public final class FileUtil {
                 if (nthByte != expectedSignature.get(n)) return false;
             }
         } catch (IOException ex) {
-            ExceptionHandler.handle(ex);
             return false;
         }
 
@@ -247,7 +243,7 @@ public final class FileUtil {
                 ret.add(b);
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ImmutableList.copyOf(ret);
@@ -408,7 +404,7 @@ public final class FileUtil {
         try {
             return com.google.common.io.Files.equal(fileOne, fileTwo);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return false;
@@ -447,7 +443,7 @@ public final class FileUtil {
             fis.close();
             fos.close();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             return false;
         }
 
@@ -488,7 +484,7 @@ public final class FileUtil {
             try {
                 closable.close();
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }
     }
@@ -664,7 +660,7 @@ public final class FileUtil {
             fis.close();
             return sb.toString();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         throw new FatalException("Could not read binary file");
@@ -687,7 +683,7 @@ public final class FileUtil {
             fis.close();
             return stringBytes;
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         throw new FatalException("Could not read binary file");
@@ -719,7 +715,7 @@ public final class FileUtil {
                     }
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
 
             return openResourceUsingNativeProgram(resource);
@@ -743,15 +739,12 @@ public final class FileUtil {
 
             if (filePointer.exists()) {
                 Desktop.getDesktop().open(filePointer);
-                Logger.log(LogTag.SYSTEM_IO, "Opening file: " + filePointer.getAbsolutePath());
             } else {
                 Desktop.getDesktop().browse(new URI(resource));
-                Logger.log(LogTag.LINK, resource);
             }
 
             return true;
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
             return false;
         }
     }
@@ -775,7 +768,7 @@ public final class FileUtil {
                 ret.add(line);
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ImmutableList.copyOf(ret);
@@ -801,7 +794,7 @@ public final class FileUtil {
                 writer.newLine();
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
     }
 
@@ -821,7 +814,7 @@ public final class FileUtil {
                 try {
                     return Files.size(Paths.get(file.getAbsolutePath()));
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
             } else {
                 long ret = 0L;

@@ -6,8 +6,6 @@ import cyder.animation.AnimationUtil;
 import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderFonts;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderButton;
 
@@ -166,8 +164,6 @@ public class CyderSwitch extends JLabel {
         setState(startingState);
 
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

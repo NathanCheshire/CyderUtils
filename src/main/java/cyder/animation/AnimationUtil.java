@@ -8,6 +8,8 @@ import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 
 import java.awt.*;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Utilities to animate components.
@@ -15,134 +17,241 @@ import java.awt.*;
 public final class AnimationUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private AnimationUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    /**
-     * Animates the provided component from the starting value to the ending value
-     * using the provided direction, delay, and increment.
-     *
-     * @param direction the direction of animation (to)
-     * @param start     the starting value
-     * @param end       the ending value
-     * @param delay     the delay in ms
-     * @param increment the increment in px
-     * @param component the component
-     */
-    public static void animateComponentMovement(Direction direction, int start, int end,
-                                                int delay, int increment, Component component) {
-        Preconditions.checkNotNull(component);
-        Preconditions.checkNotNull(direction);
-        Preconditions.checkArgument(increment > 0);
+    public static final class ComponentAnimator {
+        /**
+         * The default animation delay.
+         */
+        private static final Duration DEFAULT_DELAY = Duration.ofMillis(8);
 
-        switch (direction) {
-            case LEFT -> componentLeft(start, end, delay, increment, component);
-            case RIGHT -> componentRight(start, end, delay, increment, component);
-            case TOP -> componentUp(start, end, delay, increment, component);
-            case BOTTOM -> componentDown(start, end, delay, increment, component);
-            default -> throw new IllegalArgumentException("Invalid direction provided: " + direction);
+        /**
+         * The default animation increment.
+         */
+        private static final int DEFAULT_INCREMENT = 4;
+
+        /**
+         * Whether this component is currently animating.
+         */
+        private final AtomicBoolean isAnimating = new AtomicBoolean(false);
+
+        /**
+         * Whether {@link #stopAnimation()} has been invoked and the animation is being stopped.
+         */
+        private final AtomicBoolean stoppingAnimation = new AtomicBoolean(false);
+
+        /**
+         * The direction of animation.
+         */
+        private final Direction animationDirection;
+
+        /**
+         * The component to animate.
+         */
+        private final Component animationComponent;
+
+        /**
+         * The animation starting position.
+         */
+        private final int animationStart;
+
+        /**
+         * The animation ending position.
+         */
+        private final int animationEnd;
+
+        /**
+         * The delay between animation frames.
+         */
+        private Duration animationDelay = DEFAULT_DELAY;
+
+        /**
+         * The animation increment amount.
+         */
+        private int animationIncrement = DEFAULT_INCREMENT;
+
+        /**
+         * Constructs a new builder.
+         *
+         * @param animationDirection the direction to animate the component towards
+         * @param animationComponent the component to animate
+         * @param animationStart     the starting value of the animation
+         * @param animationEnd       the ending value of the animation
+         * @throws NullPointerException     if the provided direction or component are null
+         * @throws IllegalArgumentException if the start is less than or equal to the end
+         */
+        public ComponentAnimator(Direction animationDirection, Component animationComponent,
+                                 int animationStart, int animationEnd) {
+            Preconditions.checkNotNull(animationDirection);
+            Preconditions.checkNotNull(animationComponent);
+            Preconditions.checkArgument(animationStart < animationEnd);
+
+            this.animationDirection = animationDirection;
+            this.animationComponent = animationComponent;
+            this.animationStart = animationStart;
+            this.animationEnd = animationEnd;
         }
-    }
 
-    /**
-     * Moves the provided component from the starting value to the
-     * ending value by the increment amount, sleeping for the specified millisecond delay
-     * in between increments.
-     *
-     * @param startY    the starting y value
-     * @param endY      the ending y value
-     * @param delay     the ms delay in between increments
-     * @param increment the increment value
-     * @param component the component to move
-     */
-    public static void componentUp(int startY, int endY, int delay, int increment, Component component) {
-        Preconditions.checkNotNull(component);
-
-        if (component.getY() == startY) {
-            CyderThreadRunner.submit(() -> {
-                for (int i = startY ; i >= endY ; i -= increment) {
-                    ThreadUtil.sleep(delay);
-                    component.setLocation(component.getX(), i);
-                }
-                component.setLocation(component.getX(), endY);
-            }, "Component Up Animator, component=" + component);
+        /**
+         * Sets the delay between animation frames.
+         *
+         * @param animationDelay the delay between animation frames
+         * @return this builder
+         * @throws NullPointerException     if the provided delay is null
+         * @throws IllegalArgumentException if the provided delay is negative
+         */
+        public ComponentAnimator setAnimationDelay(Duration animationDelay) {
+            Preconditions.checkNotNull(animationDelay);
+            Preconditions.checkArgument(!animationDelay.isNegative());
+            this.animationDelay = animationDelay;
+            return this;
         }
-    }
 
-    /**
-     * Moves the provided component from the starting value to the
-     * ending value by the increment amount, sleeping for the specified millisecond delay
-     * in between increments.
-     *
-     * @param startY    the starting y value
-     * @param endY      the ending y value
-     * @param delay     the ms delay in between increments
-     * @param increment the increment value
-     * @param component the component to move
-     */
-    public static void componentDown(int startY, int endY, int delay, int increment, Component component) {
-        Preconditions.checkNotNull(component);
-
-        if (component.getY() == startY) {
-            CyderThreadRunner.submit(() -> {
-                for (int i = startY ; i <= endY ; i += increment) {
-                    ThreadUtil.sleep(delay);
-                    component.setLocation(component.getX(), i);
-                }
-                component.setLocation(component.getX(), endY);
-            }, "Component Down Animator, component=" + component);
+        /**
+         * Sets the amount by which to increment the animation component by each animation frame.
+         *
+         * @param animationIncrement the amount to increment the animation by each frame
+         * @return this builder
+         * @throws IllegalArgumentException if the provided increment is less than or equal to zero
+         */
+        public ComponentAnimator setAnimationIncrement(int animationIncrement) {
+            Preconditions.checkArgument(animationIncrement > 0);
+            this.animationIncrement = animationIncrement;
+            return this;
         }
-    }
 
-    /**
-     * Moves the provided component from the starting value to the
-     * ending value by the increment amount, sleeping for the specified millisecond delay
-     * in between increments.
-     *
-     * @param startX    the starting x value
-     * @param endX      the ending x value
-     * @param delay     the ms delay in between increments
-     * @param increment the increment value
-     * @param component the component to move
-     */
-    public static void componentLeft(int startX, int endX, int delay, int increment, Component component) {
-        Preconditions.checkNotNull(component);
-
-        if (component.getX() == startX) {
-            CyderThreadRunner.submit(() -> {
-                for (int i = startX ; i >= endX ; i -= increment) {
-                    ThreadUtil.sleep(delay);
-                    component.setLocation(i, component.getY());
-                }
-                component.setLocation(endX, component.getY());
-            }, "Component Left Animator, component=" + component);
+        /**
+         * Returns the direction to animate the component towards.
+         *
+         * @return the direction to animate the component towards
+         */
+        public Direction getAnimationDirection() {
+            return animationDirection;
         }
-    }
 
-    /**
-     * Moves the provided component from the starting value to the
-     * ending value by the increment amount, sleeping for the specified millisecond delay
-     * in between increments.
-     *
-     * @param startX    the starting x value
-     * @param endX      the ending x value
-     * @param delay     the ms delay in between increments
-     * @param increment the increment value
-     * @param component the component to move
-     */
-    public static void componentRight(int startX, int endX, int delay, int increment, Component component) {
-        Preconditions.checkNotNull(component);
+        /**
+         * Returns the component to animate.
+         *
+         * @return the component to animate
+         */
+        public Component getAnimationComponent() {
+            return animationComponent;
+        }
 
-        if (component.getX() == startX) {
+        /**
+         * Returns the starting value for the animation.
+         *
+         * @return the starting value for the animation
+         */
+        public int getAnimationStart() {
+            return animationStart;
+        }
+
+        /**
+         * Returns the ending value for the animation.
+         *
+         * @return the ending value for the animation
+         */
+        public int getAnimationEnd() {
+            return animationEnd;
+        }
+
+        /**
+         * Returns the delay between animation frames.
+         *
+         * @return the delay between animation frames
+         */
+        public Duration getAnimationDelay() {
+            return animationDelay;
+        }
+
+        /**
+         * Returns the increment between animation frames.
+         *
+         * @return the increment between animation frames
+         */
+        public int getAnimationIncrement() {
+            return animationIncrement;
+        }
+
+        /**
+         * Returns whether this component is animating.
+         *
+         * @return whether this component is animating
+         */
+        public boolean isAnimating() {
+            return isAnimating.get();
+        }
+
+        /**
+         * Animates this component.
+         *
+         * @throws IllegalStateException if this component is already animating
+         */
+        public synchronized void animate() {
+            Preconditions.checkArgument(!isAnimating.get());
+            Preconditions.checkArgument(!stoppingAnimation.get());
+
+            isAnimating.set(true);
+
             CyderThreadRunner.submit(() -> {
-                for (int i = startX ; i <= endX ; i += increment) {
-                    ThreadUtil.sleep(delay);
-                    component.setLocation(i, component.getY());
+                switch (animationDirection) {
+                    case LEFT -> {
+                        int y = animationComponent.getY();
+                        animationComponent.setLocation(animationStart, y);
+                        for (int i = animationStart ; i >= animationEnd ; i -= animationIncrement) {
+                            if (stoppingAnimation.get()) break;
+                            animationComponent.setLocation(i, y);
+                            ThreadUtil.sleep(animationDelay);
+                        }
+                        animationComponent.setLocation(animationEnd, y);
+                    }
+                    case RIGHT -> {
+                        int y = animationComponent.getY();
+                        animationComponent.setLocation(animationStart, y);
+                        for (int i = animationStart ; i <= animationEnd ; i += animationIncrement) {
+                            if (stoppingAnimation.get()) break;
+                            animationComponent.setLocation(i, y);
+                            ThreadUtil.sleep(animationDelay);
+                        }
+                        animationComponent.setLocation(animationEnd, y);
+                    }
+                    case TOP -> {
+                        int x = animationComponent.getX();
+                        animationComponent.setLocation(x, animationStart);
+                        for (int i = animationStart ; i >= animationEnd ; i -= animationIncrement) {
+                            if (stoppingAnimation.get()) break;
+                            animationComponent.setLocation(x, i);
+                            ThreadUtil.sleep(animationDelay);
+                        }
+                        animationComponent.setLocation(x, animationEnd);
+                    }
+                    case BOTTOM -> {
+                        int x = animationComponent.getX();
+                        animationComponent.setLocation(x, animationStart);
+                        for (int i = animationStart ; i <= animationEnd ; i += animationIncrement) {
+                            if (stoppingAnimation.get()) break;
+                            animationComponent.setLocation(x, i);
+                            ThreadUtil.sleep(animationDelay);
+                        }
+                        animationComponent.setLocation(x, animationEnd);
+                    }
+                    case default ->
+                            throw new IllegalStateException("Invalid animation direction: " + animationDirection);
                 }
-                component.setLocation(endX, component.getY());
-            }, "Component Right Animator, component=" + component);
+
+                isAnimating.set(false);
+                stoppingAnimation.set(false);
+            }, "todo");
+        }
+
+        public void stopAnimation() {
+            stoppingAnimation.set(true);
         }
     }
 }

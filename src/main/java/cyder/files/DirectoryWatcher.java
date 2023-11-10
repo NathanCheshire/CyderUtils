@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * An observer of evens and broker to subscribers of events which happen in a directory.
+ * An observer of events and broker to subscribers of events which happen in a directory.
  * Instances of this class are immutable not thread safe. To achieve thread-safety,
  * clients should surround object method invocations using external synchronization
  * techniques.
@@ -51,6 +51,10 @@ public class DirectoryWatcher {
      * The timeout between checking the watch directory.
      */
     private long pollTimeout;
+
+    // {
+    // "my key" : " my value"
+    // }
 
     /**
      * The map of file paths to byte sizes last cached by this directory watcher.
