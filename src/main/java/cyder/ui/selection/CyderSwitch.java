@@ -214,13 +214,12 @@ public class CyderSwitch extends JLabel {
         }
 
         this.state = state;
-
         boolean shouldAnimate = (isVisible() && getParent() != null);
-
         refreshButtonText();
 
         if (shouldAnimate) {
             switch (state) {
+                // todo all this needs testing since we switched from animation util to component animator
                 case ON -> {
                     int animationStart = switchButton.getX();
                     int animationEnd = width - switchButton.getWidth() - buttonXPadding;
@@ -231,16 +230,33 @@ public class CyderSwitch extends JLabel {
                             .animate();
                 }
                 case OFF -> {
-                    AnimationUtil.componentLeft(switchButton.getX(), buttonXPadding,
-                            animationDelay, animationIncrement, switchButton);
+                    int animationStart = switchButton.getX();
+                    @SuppressWarnings("UnnecessaryLocalVariable")
+                    int animationEnd = buttonXPadding;
+                    new ComponentAnimator(Direction.LEFT, this,
+                            animationStart, animationEnd)
+                            .setAnimationDelay(Duration.ofMillis(animationDelay))
+                            .setAnimationIncrement(animationIncrement)
+                            .animate();
                 }
                 case INDETERMINATE -> {
                     if (switchButton.getX() > buttonXPadding) {
-                        AnimationUtil.componentLeft(switchButton.getX(), width / 2 - switchButton.getWidth() / 2,
-                                animationDelay, animationIncrement, switchButton);
+                        int animationStart = switchButton.getX();
+                        int animationEnd = width / 2 - switchButton.getWidth() / 2;
+                        new ComponentAnimator(Direction.LEFT, this,
+                                animationStart, animationEnd)
+                                .setAnimationDelay(Duration.ofMillis(animationDelay))
+                                .setAnimationIncrement(animationIncrement)
+                                .animate();
                     } else {
-                        AnimationUtil.componentRight(buttonXPadding, width / 2 - switchButton.getWidth() / 2,
-                                animationDelay, animationIncrement, switchButton);
+                        @SuppressWarnings("UnnecessaryLocalVariable")
+                        int animationStart = buttonXPadding;
+                        int animationEnd = width / 2 - switchButton.getWidth() / 2;
+                        new ComponentAnimator(Direction.RIGHT, this,
+                                animationStart, animationEnd)
+                                .setAnimationDelay(Duration.ofMillis(animationDelay))
+                                .setAnimationIncrement(animationIncrement)
+                                .animate();
                     }
                 }
             }
