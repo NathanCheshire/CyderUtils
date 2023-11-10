@@ -43,7 +43,7 @@ public final class VideoUtil {
                 .build();
         cyderFrame.finalizeAndShow();
 
-        GeneralAudioPlayer.playAudio(audioFile);
+        GeneralAudioPlayer.playGeneralAudio(audioFile);
 
         long absoluteStart = System.currentTimeMillis();
 

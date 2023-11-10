@@ -1,199 +1,134 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.audio.player.AudioPlayer;
-import cyder.console.Console;
-import cyder.exceptions.FatalException;
-import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-import cyder.strings.CyderStrings;
-import cyder.strings.StringUtil;
-import cyder.utils.StaticUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Utilities related to playing general and system audio.
  */
-public final class GeneralAudioPlayer {
-    /**
-     * The list of audio files to ignore when logging.
-     */
-    private static final ArrayList<File> systemAudioFiles = new ArrayList<>();
-
-    /**
-     * Whether the default system audio has been registered.
-     */
-    private static final AtomicBoolean defaultSystemAudioRegistered = new AtomicBoolean();
+public enum GeneralAudioPlayer {
+    INSTANCE;
 
     /**
      * The player used to play general audio that may be user terminated.
      */
-    private static CPlayer generalPlayer;
+    private CPlayer generalPlayer;
 
     /**
      * The list of system players which are currently playing audio.
      */
-    private static final LinkedList<CPlayer> systemPlayers = new LinkedList<>();
+    private final LinkedList<CPlayer> systemPlayers = new LinkedList<>();
 
     /**
-     * Suppress default constructor.
+     * Plays the provided audio file as a general audio file.
+     *
+     * @param audioFile the audio file to play
+     * @throws NullPointerException     if the provided file is null
+     * @throws IllegalArgumentException if the provided file does not exist,
+     *                                  is not a file, or is not a supported audio extension
+     * @throws IllegalStateException    if the general audio player is already playing a file
      */
-    private GeneralAudioPlayer() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+    public void playGeneralAudio(File audioFile) {
+        Preconditions.checkNotNull(audioFile);
+        Preconditions.checkArgument(audioFile.exists());
+        Preconditions.checkArgument(audioFile.isFile());
+        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
+        Preconditions.checkState(!generalPlayer.isPlaying());
+
+        generalPlayer = new CPlayer(audioFile);
+        generalPlayer.play();
     }
 
     /**
-     * Plays the provided audio file. The general audio player is used if this is not a system sound.
-     * Otherwise, a new {@link CPlayer} instance is used to start the requested system sound.
+     * Plays the provided audio file as a system audio file.
      *
      * @param audioFile the audio file to play
+     * @throws NullPointerException     if the provided file is null
+     * @throws IllegalArgumentException if the provided file does not exist,
+     *                                  is not a file, or is not a supported audio extension
      */
-    public static void playAudio(File audioFile) {
+    public void playSystemAudio(File audioFile) {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
         Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
 
-        playAudio(new CPlayer(audioFile));
+        CPlayer newSystemPlayer = new CPlayer(audioFile);
+        systemPlayers.add(newSystemPlayer);
+        newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
+        newSystemPlayer.play();
     }
 
     /**
-     * Plays the provided player.
+     * Stops the general audio player if playing.
      *
-     * @param player the player to play
+     * @throws IllegalStateException if the general audio player is not playing.
      */
-    public static void playAudio(CPlayer player) {
-        Preconditions.checkNotNull(player);
-
-        if (player.isSystemAudio()) {
-            systemPlayers.add(player);
-            player.addOnCompletionCallback(() -> systemPlayers.remove(player));
-            player.play();
-        } else {
-            stopGeneralAudio();
-            Console.INSTANCE.showAudioButton();
-
-            generalPlayer = player;
-            generalPlayer.play();
-        }
+    public void stopGeneralAudio() {
+        Preconditions.checkState(!generalPlayer.isPlaying());
+        generalPlayer.stopPlaying();
     }
 
     /**
-     * Returns whether general audio is playing.
+     * Stops any and all system audio players if playing.
      *
-     * @return whether general audio is playing
+     * @throws IllegalStateException if no system audio is playing
      */
-    public static boolean isGeneralAudioPlaying() {
-        return generalPlayer != null && generalPlayer.isPlaying();
+    public void stopSystemAudio() {
+        Preconditions.checkState(systemPlayers.size() > 0);
     }
 
     /**
-     * Returns whether general audio or {@link AudioPlayer} audio is currently playing.
+     * Returns whether any system audio player are playing.
      *
-     * @return whether general audio or {@link AudioPlayer} audio is currently playing
+     * @return whether any system audio player are playing
      */
-    public static boolean generalOrAudioPlayerAudioPlaying() {
-        return isGeneralAudioPlaying() || AudioPlayer.isAudioPlaying();
+    public boolean isSystemAudioPlaying() {
+        return systemPlayers.stream().anyMatch(CPlayer::isPlaying);
     }
 
     /**
-     * Stops the current general audio if the provided file is playing.
+     * Returns whether any system audio players are playing the provided file.
      *
      * @param audioFile the audio file
-     * @return whether any audio was stopped.
+     * @return whether any system audio players are playing the provided file
+     * @throws NullPointerException if the provided audio file is null
      */
-    @CanIgnoreReturnValue
-    public static boolean stopAudio(File audioFile) {
+    public boolean isSystemAudioPlaying(File audioFile) {
         Preconditions.checkNotNull(audioFile);
-        Preconditions.checkArgument(audioFile.exists());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
-
-        if (generalPlayer != null && generalPlayer.isUsing(audioFile)) {
-            stopGeneralAudio();
-            return true;
-        }
-
-        return false;
+        return systemPlayers.stream().anyMatch(player -> player.isUsing(audioFile) && player.isPlaying());
     }
 
     /**
-     * Stops the audio currently playing. Note that this does not include
-     * any system audio or AudioPlayer widget audio.
-     */
-    public static void stopGeneralAudio() {
-        if (generalPlayer != null) generalPlayer.stopPlaying();
-        Console.INSTANCE.revalidateAudioMenuVisibility();
-    }
-
-    /**
-     * Stops any and all audio playing either through the audio player or the general player.
-     */
-    public static void stopAllAudio() {
-        if (AudioPlayer.isAudioPlaying()) AudioPlayer.handlePlayPauseButtonClick();
-        if (isGeneralAudioPlaying()) stopGeneralAudio();
-    }
-
-    /**
-     * Returns a list of the current active system audio players.
+     * Returns whether the general audio player isp laying.
      *
-     * @return a list of the current active system audio players
+     * @return whether the general audio player isp laying
      */
-    public static ImmutableList<CPlayer> getSystemPlayers() {
-        return ImmutableList.copyOf(systemPlayers);
+    public boolean isGeneralAudioPlaying() {
+        return generalPlayer.isPlaying();
     }
 
     /**
-     * Adds the provided audio file to the system audio files list.
+     * Returns whether the general audio player is playing the provided file.
      *
      * @param audioFile the audio file
+     * @return whether the general audio player is playing the provided file
+     * @throws NullPointerException if the provided file is null
      */
-    public static void registerSystemAudio(File audioFile) {
+    public boolean isGeneralAudioPlaying(File audioFile) {
         Preconditions.checkNotNull(audioFile);
-        Preconditions.checkArgument(audioFile.exists());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
-
-        systemAudioFiles.add(audioFile);
+        return generalPlayer.isUsing(audioFile) && isGeneralAudioPlaying();
     }
 
     /**
-     * Registers the default system audio files.
-     */
-    public static synchronized void registerDefaultSystemAudioFiles() {
-        Preconditions.checkState(!defaultSystemAudioRegistered.get());
-        defaultSystemAudioRegistered.set(true);
-
-        try {
-            File systemAudio = StaticUtil.getStaticResource("system_audio.txt");
-            ImmutableList<String> contents = FileUtil.getFileLines(systemAudio);
-            for (String fileName : contents) {
-                if (StringUtil.isNullOrEmpty(fileName)) continue;
-                File systemAudioFile = StaticUtil.getStaticResource(fileName);
-                Logger.log(LogTag.DEBUG, "Registering system audio file: "
-                        + systemAudioFile.getAbsolutePath());
-                registerSystemAudio(systemAudioFile);
-            }
-        } catch (Exception e) {
-            throw new FatalException("Failed to register default system audio files: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Returns whether the provided audio file is a system audio file.
+     * Returns whether {@link #isSystemAudioPlaying()} or {@link #isGeneralAudioPlaying()} return true.
      *
-     * @param audioFile the audio file
-     * @return whether the provided audio file is a system audio file
+     * @return whether {@link #isSystemAudioPlaying()} or {@link #isGeneralAudioPlaying()} return true
      */
-    public static boolean isSystemAudio(File audioFile) {
-        Preconditions.checkNotNull(audioFile);
-
-        return systemAudioFiles.contains(audioFile);
+    public boolean isAudioPlaying() {
+        return isSystemAudioPlaying() || isGeneralAudioPlaying();
     }
 }
