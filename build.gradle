@@ -10,7 +10,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-group 'cyder'
+group 'cyder-utils'
 version '0.1.0'
 
 sourceSets {
