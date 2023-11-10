@@ -25,7 +25,15 @@ public class DirectoryWatcher {
      */
     private enum FileType {
         FILE,
-        DIRECTORY
+        DIRECTORY;
+
+        public boolean isFile() {
+            return this == FILE;
+        }
+
+        public boolean isDirectory() {
+            return this == DIRECTORY;
+        }
     }
 
     /**
@@ -51,10 +59,6 @@ public class DirectoryWatcher {
      * The timeout between checking the watch directory.
      */
     private long pollTimeout;
-
-    // {
-    // "my key" : " my value"
-    // }
 
     /**
      * The map of file paths to byte sizes last cached by this directory watcher.
@@ -188,13 +192,13 @@ public class DirectoryWatcher {
                             }
                         }
                     } else if (inOldContents) {
-                        if (oldDirectoryContents.get(path).type() == FileType.DIRECTORY) {
+                        if (oldDirectoryContents.get(path).type().isDirectory()) {
                             notifySubscribers(WatchDirectoryEvent.DIRECTORY_DELETED, currentFilePointer);
                         } else {
                             notifySubscribers(WatchDirectoryEvent.FILE_DELETED, currentFilePointer);
                         }
                     } else if (inNewContents) {
-                        if (newDirectoryContents.get(path).type() == FileType.DIRECTORY) {
+                        if (newDirectoryContents.get(path).type().isDirectory()) {
                             notifySubscribers(WatchDirectoryEvent.DIRECTORY_ADDED, currentFilePointer);
                         } else {
                             notifySubscribers(WatchDirectoryEvent.FILE_ADDED, currentFilePointer);

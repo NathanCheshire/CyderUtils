@@ -1,4 +1,4 @@
-package cyder.animation;
+package cyder.animation.harmonics;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
@@ -10,21 +10,12 @@ import cyder.threads.ThreadUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A rectangle which can grow and shrink (oscillate) in a specific cardinal direction (horizontally or vertically).
  */
 public final class HarmonicRectangle extends JLabel {
-    /**
-     * The current width.
-     */
-    private int currentWidth;
-
-    /**
-     * The current height.
-     */
-    private int currentHeight;
-
     /**
      * The maximum allowable width for the component.
      */
@@ -66,54 +57,46 @@ public final class HarmonicRectangle extends JLabel {
     private HarmonicDirection harmonicDirection = HarmonicDirection.VERTICAL;
 
     /**
-     * The position directions of harmonic oscillation.
-     */
-    public enum HarmonicDirection {
-        /**
-         * The rectangle will oscillate in the vertical direction.
-         */
-        VERTICAL,
-
-        /**
-         * The rectangle will oscillate in the horizontal direction.
-         */
-        HORIZONTAL
-    }
-
-    /**
      * The current state of the harmonic direction.
      */
     private ScalingDirection scalingDirection = ScalingDirection.INCREASING;
 
     /**
-     * The possible states of the harmonic direction.
-     */
-    public enum ScalingDirection {
-        /**
-         * The rectangle is currently increasing.
-         */
-        INCREASING,
-
-        /**
-         * The rectangle is currently decreasing.
-         */
-        DECREASING
-    }
-
-    /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private HarmonicRectangle() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
     /**
-     * Constructs a new harmonic rectangle.
+     * Constructs a new instance of a HarmonicRectangle from the provided initial dimensions.
+     * Minimum size will be set during construction.
+     *
+     * @param minimumSize the minimum size
+     * @param maximumSize the maximum size
+     * @throws NullPointerException if either of the dimensions are null
+     */
+    public HarmonicRectangle(Dimension minimumSize, Dimension maximumSize) {
+        this(Preconditions.checkNotNull(minimumSize).width,
+                Preconditions.checkNotNull(minimumSize).height,
+                Preconditions.checkNotNull(maximumSize).width,
+                Preconditions.checkNotNull(maximumSize).height);
+    }
+
+    /**
+     * Constructs a new instance of a HarmonicRectangle from the provided initial dimensions.
+     * Minimum size will be set during construction.
      *
      * @param minWidth  the minimum width
      * @param minHeight the minimum height
      * @param maxWidth  the maximum width
      * @param maxHeight the maximum height
+     * @throws IllegalArgumentException if either of the minimum dimensions are less than their
+     *                                  corresponding maximum dimensions, or if either of the minimum
+     *                                  dimensions are less than zero, or if either of the maximum dimensions
+     *                                  are less than or equal to zero.
      */
     public HarmonicRectangle(int minWidth, int minHeight, int maxWidth, int maxHeight) {
         Preconditions.checkArgument(maxWidth > 0);
@@ -128,44 +111,6 @@ public final class HarmonicRectangle extends JLabel {
         this.minHeight = minHeight;
 
         super.setSize(minWidth, minHeight);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getWidth() {
-        return currentWidth;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getHeight() {
-        return currentHeight;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setSize(int width, int height) {
-        currentWidth = width;
-        currentHeight = height;
-
-        super.setSize(width, height);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBounds(int x, int y, int width, int height) {
-        currentWidth = width;
-        currentHeight = height;
-
-        super.setBounds(x, y, width, height);
     }
 
     /**
@@ -246,7 +191,7 @@ public final class HarmonicRectangle extends JLabel {
     /**
      * Whether the rectangle is animating currently.
      */
-    private boolean isAnimating;
+    private final AtomicBoolean isAnimating = new AtomicBoolean(false);
 
     /**
      * Returns whether the rectangle is currently in animation.
@@ -254,90 +199,79 @@ public final class HarmonicRectangle extends JLabel {
      * @return whether the rectangle is currently in animation
      */
     public boolean isAnimating() {
-        return isAnimating;
+        return isAnimating.get();
     }
-
-    /**
-     * The default animation thread name.
-     */
-    private static final String DEFAULT_ANIMATION_THREAD_NAME = "Harmonic Rectangle Animator";
 
     /**
      * Starts the animation.
-     * If the animation is already running the method returns immediately.
+     *
+     * @throws IllegalStateException if already animating
      */
-    public void startAnimation() {
-        if (isAnimating) return;
-        isAnimating = true;
+    public void animate() {
+        Preconditions.checkState(!isAnimating.get());
+        isAnimating.set(true);
 
         CyderThreadRunner.submit(() -> {
-            while (isAnimating) {
-                animationStep();
+            while (isAnimating.get()) {
+                performAnimationStep();
                 ThreadUtil.sleep(animationDelay);
             }
-        }, DEFAULT_ANIMATION_THREAD_NAME);
+        }, "todo figure out name"); //todo
     }
 
     /**
-     * Takes an animation step.
+     * Performs a singular animation frame step.
      */
-    public void animationStep() {
+    public void performAnimationStep() {
+        // todo don't want to be able to do this manually if it's during animation.
+
         switch (harmonicDirection) {
-            case HORIZONTAL:
+            case HORIZONTAL -> {
                 switch (scalingDirection) {
-                    case INCREASING:
-                        if (currentWidth + animationIncrement < maxWidth) {
-                            currentWidth += animationIncrement;
+                    case INCREASING -> {
+                        if (getWidth() + animationIncrement < maxWidth) {
+                            setSize(getWidth() + animationIncrement, getHeight());
                         } else {
-                            currentWidth = maxWidth;
+                            setSize(maxWidth, getHeight());
                             scalingDirection = ScalingDirection.DECREASING;
                         }
-
-                        break;
-                    case DECREASING:
-                        if (currentWidth - animationIncrement > minWidth) {
-                            currentWidth -= animationIncrement;
+                    }
+                    case DECREASING -> {
+                        if (getWidth() - animationIncrement > minWidth) {
+                            setSize(getWidth() - animationIncrement, getHeight());
                         } else {
-                            currentWidth = minWidth;
+                            setSize(minWidth, getHeight());
                             scalingDirection = ScalingDirection.INCREASING;
                         }
-
-                        break;
-                    default:
-                        throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
+                    }
+                    default -> throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
                 }
-
-                break;
-            case VERTICAL:
+            }
+            case VERTICAL -> {
                 switch (scalingDirection) {
-                    case INCREASING:
-                        if (currentHeight + animationIncrement < maxHeight) {
-                            currentHeight += animationIncrement;
+                    case INCREASING -> {
+                        if (getHeight() + animationIncrement < maxHeight) {
+                            setSize(getWidth(), getHeight() + animationIncrement);
                         } else {
-                            currentHeight = maxHeight;
+                            setSize(getWidth(), maxHeight);
                             scalingDirection = ScalingDirection.DECREASING;
                         }
-
-                        break;
-                    case DECREASING:
-                        if (currentHeight - animationIncrement > minHeight) {
-                            currentHeight -= animationIncrement;
+                    }
+                    case DECREASING -> {
+                        if (getHeight() - animationIncrement > minHeight) {
+                            setSize(getWidth(), getHeight() - animationIncrement);
                         } else {
-                            currentHeight = minHeight;
+                            setSize(getWidth(), minHeight);
                             scalingDirection = ScalingDirection.INCREASING;
                         }
-
-                        break;
-                    default:
-                        throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
+                    }
+                    default -> throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
                 }
-
-                break;
-            default:
-                throw new IllegalStateException("Invalid harmonic direction: " + harmonicDirection);
+            }
+            default -> throw new IllegalStateException("Invalid harmonic direction: " + harmonicDirection);
         }
 
-        setSize(currentWidth, currentHeight);
+        setSize(getWidth(), getHeight());
         revalidate();
         repaint();
     }
@@ -346,7 +280,7 @@ public final class HarmonicRectangle extends JLabel {
      * Stops the animation of on-going.
      */
     public void stopAnimation() {
-        isAnimating = false;
+        isAnimating.set(false);
     }
 
     /**
@@ -355,6 +289,55 @@ public final class HarmonicRectangle extends JLabel {
     @Override
     public void paint(Graphics g) {
         g.setColor(backgroundColor);
-        g.fillRect(0, 0, currentWidth, currentHeight);
+        g.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "HarmonicRectangle{"
+                + "minimumWidth=" + minWidth
+                + ", minimumHeight=" + minHeight
+                + ", currentWidth=" + getWidth()
+                + ", currentHeight=" + getHeight()
+                + ", maximumWidth=" + maxWidth
+                + ", maximumHeight=" + maxHeight
+                + ", isAnimating=" + isAnimating
+                + "}";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int ret = Integer.hashCode(minWidth);
+        ret = 31 * ret + Integer.hashCode(minHeight);
+        ret = 31 * ret + Integer.hashCode(getWidth());
+        ret = 31 * ret + Integer.hashCode(getHeight());
+        ret = 31 * ret + Integer.hashCode(maxWidth);
+        ret = 31 * ret + Integer.hashCode(maxHeight);
+        ret = 31 * ret + isAnimating.hashCode();
+        return ret;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof HarmonicRectangle)) {
+            return false;
+        }
+
+        HarmonicRectangle other = (HarmonicRectangle) o;
+        return minWidth == other.minWidth
+                && minHeight == other.minHeight
+                && getWidth() == other.getWidth()
+                && getHeight() == other.getHeight()
+                && maxWidth == other.maxWidth
+                && maxHeight == other.maxHeight
+                && isAnimating.get() == other.isAnimating.get();
     }
 }
