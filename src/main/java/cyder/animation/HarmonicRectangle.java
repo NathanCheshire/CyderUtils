@@ -9,11 +9,12 @@ import cyder.threads.ThreadUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Duration;
 
 /**
- * A rectangle which can grow and shrink (oscillate) horizontally or vertically.
+ * A rectangle which can grow and shrink (oscillate) in a specific cardinal direction (horizontally or vertically).
  */
-public class HarmonicRectangle extends JLabel {
+public final class HarmonicRectangle extends JLabel {
     /**
      * The current width.
      */
@@ -27,32 +28,32 @@ public class HarmonicRectangle extends JLabel {
     /**
      * The maximum allowable width for the component.
      */
-    private final int staticMaxWidth;
+    private final int maxWidth;
 
     /**
      * The maximum allowable height for the component.
      */
-    private final int staticMaxHeight;
+    private final int maxHeight;
 
     /**
      * The minimum allowable height for the component.
      */
-    private final int staticMinWidth;
+    private final int minWidth;
 
     /**
      * The minimum allowable width for the component.
      */
-    private final int staticMinHeight;
+    private final int minHeight;
 
     /**
      * The amount to increase or decrease the animation direction by.
      */
-    private int animationInc = 1;
+    private int animationIncrement = 1;
 
     /**
      * The delay between animation updates.
      */
-    private int animationDelay = 50;
+    private Duration animationDelay = Duration.ofMillis(50);
 
     /**
      * The background color of the drawn component.
@@ -82,12 +83,12 @@ public class HarmonicRectangle extends JLabel {
     /**
      * The current state of the harmonic direction.
      */
-    private DeltaDirection deltaDirection = DeltaDirection.INCREASING;
+    private ScalingDirection scalingDirection = ScalingDirection.INCREASING;
 
     /**
      * The possible states of the harmonic direction.
      */
-    public enum DeltaDirection {
+    public enum ScalingDirection {
         /**
          * The rectangle is currently increasing.
          */
@@ -109,24 +110,24 @@ public class HarmonicRectangle extends JLabel {
     /**
      * Constructs a new harmonic rectangle.
      *
-     * @param staticMinWidth  the minimum width
-     * @param staticMinHeight the minimum height
-     * @param staticMaxWidth  the maximum width
-     * @param staticMaxHeight the maximum height
+     * @param minWidth  the minimum width
+     * @param minHeight the minimum height
+     * @param maxWidth  the maximum width
+     * @param maxHeight the maximum height
      */
-    public HarmonicRectangle(int staticMinWidth, int staticMinHeight, int staticMaxWidth, int staticMaxHeight) {
-        Preconditions.checkArgument(staticMaxWidth > 0);
-        Preconditions.checkArgument(staticMaxHeight > 0);
-        Preconditions.checkArgument(staticMinWidth >= 0);
-        Preconditions.checkArgument(staticMinHeight >= 0);
-        Preconditions.checkArgument(staticMinWidth < staticMaxWidth || staticMinHeight < staticMaxHeight);
+    public HarmonicRectangle(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        Preconditions.checkArgument(maxWidth > 0);
+        Preconditions.checkArgument(maxHeight > 0);
+        Preconditions.checkArgument(minWidth >= 0);
+        Preconditions.checkArgument(minHeight >= 0);
+        Preconditions.checkArgument(minWidth < maxWidth || minHeight < maxHeight);
 
-        this.staticMaxWidth = staticMaxWidth;
-        this.staticMaxHeight = staticMaxHeight;
-        this.staticMinWidth = staticMinWidth;
-        this.staticMinHeight = staticMinHeight;
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        this.minWidth = minWidth;
+        this.minHeight = minHeight;
 
-        super.setSize(staticMinWidth, staticMinHeight);
+        super.setSize(minWidth, minHeight);
     }
 
     /**
@@ -172,7 +173,7 @@ public class HarmonicRectangle extends JLabel {
      *
      * @return the delay between animation frame updates
      */
-    public int getAnimationDelay() {
+    public Duration getAnimationDelay() {
         return animationDelay;
     }
 
@@ -181,8 +182,9 @@ public class HarmonicRectangle extends JLabel {
      *
      * @param animationDelay the delay between animation frame updates
      */
-    public void setAnimationDelay(int animationDelay) {
-        Preconditions.checkArgument(animationDelay > 0);
+    public void setAnimationDelay(Duration animationDelay) {
+        Preconditions.checkNotNull(animationDelay);
+        Preconditions.checkArgument(!animationDelay.isNegative());
         this.animationDelay = animationDelay;
     }
 
@@ -227,18 +229,18 @@ public class HarmonicRectangle extends JLabel {
      *
      * @return the increment to increase/decrease the animation side by
      */
-    public int getAnimationInc() {
-        return animationInc;
+    public int getAnimationIncrement() {
+        return animationIncrement;
     }
 
     /**
      * Sets the increment to increase/decrease the animation side by.
      *
-     * @param animationInc the increment to increase/decrease the animation side by
+     * @param animationIncrement the increment to increase/decrease the animation side by
      */
-    public void setAnimationInc(int animationInc) {
-        Preconditions.checkArgument(animationInc > 0);
-        this.animationInc = animationInc;
+    public void setAnimationIncrement(int animationIncrement) {
+        Preconditions.checkArgument(animationIncrement > 0);
+        this.animationIncrement = animationIncrement;
     }
 
     /**
@@ -282,52 +284,52 @@ public class HarmonicRectangle extends JLabel {
     public void animationStep() {
         switch (harmonicDirection) {
             case HORIZONTAL:
-                switch (deltaDirection) {
+                switch (scalingDirection) {
                     case INCREASING:
-                        if (currentWidth + animationInc < staticMaxWidth) {
-                            currentWidth += animationInc;
+                        if (currentWidth + animationIncrement < maxWidth) {
+                            currentWidth += animationIncrement;
                         } else {
-                            currentWidth = staticMaxWidth;
-                            deltaDirection = DeltaDirection.DECREASING;
+                            currentWidth = maxWidth;
+                            scalingDirection = ScalingDirection.DECREASING;
                         }
 
                         break;
                     case DECREASING:
-                        if (currentWidth - animationInc > staticMinWidth) {
-                            currentWidth -= animationInc;
+                        if (currentWidth - animationIncrement > minWidth) {
+                            currentWidth -= animationIncrement;
                         } else {
-                            currentWidth = staticMinWidth;
-                            deltaDirection = DeltaDirection.INCREASING;
+                            currentWidth = minWidth;
+                            scalingDirection = ScalingDirection.INCREASING;
                         }
 
                         break;
                     default:
-                        throw new IllegalStateException("Invalid delta direction: " + deltaDirection);
+                        throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
                 }
 
                 break;
             case VERTICAL:
-                switch (deltaDirection) {
+                switch (scalingDirection) {
                     case INCREASING:
-                        if (currentHeight + animationInc < staticMaxHeight) {
-                            currentHeight += animationInc;
+                        if (currentHeight + animationIncrement < maxHeight) {
+                            currentHeight += animationIncrement;
                         } else {
-                            currentHeight = staticMaxHeight;
-                            deltaDirection = DeltaDirection.DECREASING;
+                            currentHeight = maxHeight;
+                            scalingDirection = ScalingDirection.DECREASING;
                         }
 
                         break;
                     case DECREASING:
-                        if (currentHeight - animationInc > staticMinHeight) {
-                            currentHeight -= animationInc;
+                        if (currentHeight - animationIncrement > minHeight) {
+                            currentHeight -= animationIncrement;
                         } else {
-                            currentHeight = staticMinHeight;
-                            deltaDirection = DeltaDirection.INCREASING;
+                            currentHeight = minHeight;
+                            scalingDirection = ScalingDirection.INCREASING;
                         }
 
                         break;
                     default:
-                        throw new IllegalStateException("Invalid delta direction: " + deltaDirection);
+                        throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
                 }
 
                 break;
