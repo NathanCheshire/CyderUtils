@@ -17,6 +17,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class HarmonicRectangle extends JLabel {
     /**
+     * Whether the rectangle is animating currently.
+     */
+    private final AtomicBoolean isAnimating = new AtomicBoolean(false);
+
+    /**
+     * Whether the animation has been requested to stop.
+     */
+    private final AtomicBoolean stoppingAnimation = new AtomicBoolean(false);
+
+    /**
      * The maximum allowable width for the component.
      */
     private final int maxWidth;
@@ -189,11 +199,6 @@ public final class HarmonicRectangle extends JLabel {
     }
 
     /**
-     * Whether the rectangle is animating currently.
-     */
-    private final AtomicBoolean isAnimating = new AtomicBoolean(false);
-
-    /**
      * Returns whether the rectangle is currently in animation.
      *
      * @return whether the rectangle is currently in animation
@@ -205,18 +210,37 @@ public final class HarmonicRectangle extends JLabel {
     /**
      * Starts the animation.
      *
-     * @throws IllegalStateException if already animating
+     * @throws IllegalStateException if already animating or waiting to stop animating
      */
     public void animate() {
         Preconditions.checkState(!isAnimating.get());
+        Preconditions.checkState(!stoppingAnimation.get());
+
         isAnimating.set(true);
 
         CyderThreadRunner.submit(() -> {
-            while (isAnimating.get()) {
+            while (isAnimating.get() && !stoppingAnimation.get()) {
                 performAnimationStep();
                 ThreadUtil.sleep(animationDelay);
             }
-        }, "todo figure out name"); //todo
+
+            isAnimating.set(false);
+            stoppingAnimation.set(false);
+        }, getAnimationThreadName());
+    }
+
+    /**
+     * Returns the name of the thread to animate this harmonic rectangle.
+     *
+     * @return the name of the thread to animate this harmonic rectangle
+     */
+    private String getAnimationThreadName() {
+        return "HarmonicRectangleAnimatorThread{harmonicDirection=" + harmonicDirection
+                + ", minWidth=" + minWidth
+                + ", minHeight=" + minHeight
+                + ", maxWidth=" + maxWidth
+                + ", maxHeight=" + maxHeight
+                + "}";
     }
 
     /**
@@ -277,10 +301,10 @@ public final class HarmonicRectangle extends JLabel {
     }
 
     /**
-     * Stops the animation of on-going.
+     * Stops the animation if animating.
      */
     public void stopAnimation() {
-        isAnimating.set(false);
+        stoppingAnimation.set(true);
     }
 
     /**

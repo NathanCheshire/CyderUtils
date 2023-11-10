@@ -320,18 +320,8 @@ public final class ComponentAnimator {
      * @return the name for the thread which animates this component
      */
     private String getAnimationThreadName() {
-        int currentAnimationValue = switch (animationDirection) {
-            case LEFT, RIGHT -> animationComponent.getX();
-            case TOP, BOTTOM -> animationComponent.getY();
-            default -> throw new IllegalStateException("Invalid direction: " + animationDirection);
-        };
-
-        String currentAnimationValueRepresentation = isAnimating.get()
-                ? "NOT ANIMATING" : String.valueOf(currentAnimationValue);
-
-        return "ComponentAnimator{direction=" + animationDirection
+        return "ComponentAnimatorThread{direction=" + animationDirection
                 + ", animationStart=" + animationStart
-                + ", currentAnimationValue=" + currentAnimationValueRepresentation
                 + ", animationEnd=" + animationEnd
                 + "}";
     }
