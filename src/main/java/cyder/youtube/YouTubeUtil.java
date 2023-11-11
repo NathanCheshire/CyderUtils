@@ -10,7 +10,6 @@ import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.exceptions.YoutubeException;
 import cyder.handlers.input.BaseInputHandler;
 import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.NetworkUtil;

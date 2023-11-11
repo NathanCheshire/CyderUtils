@@ -1,4 +1,4 @@
-package cyder.exceptions;
+package cyder.youtube;
 
 /**
  * An exception used to indicate that an operation involving YouTube failed.

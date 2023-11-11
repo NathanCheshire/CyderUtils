@@ -1,4 +1,4 @@
-package cyder.exceptions;
+package cyder.ui.exceptions;
 
 /**
  * An exception for when a device such as a monitor or keyboard cannot be located.

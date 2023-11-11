@@ -1,4 +1,4 @@
-package cyder.exceptions;
+package cyder.process;
 
 /**
  * An exception for when a process invoked via the

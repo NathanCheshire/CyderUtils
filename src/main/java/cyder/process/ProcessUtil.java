@@ -3,7 +3,6 @@ package cyder.process;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.exceptions.CyderProcessException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;

@@ -1,4 +1,4 @@
-package cyder.exceptions;
+package cyder.files;
 
 /**
  * An exception used to indicate the host's operating system could not be validated

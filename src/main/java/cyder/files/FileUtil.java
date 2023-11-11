@@ -7,7 +7,6 @@ import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.exceptions.UnsupportedOsException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;

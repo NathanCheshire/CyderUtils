@@ -10,7 +10,6 @@ import cyder.constants.HtmlTags;
 import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
-import cyder.exceptions.YoutubeException;
 import cyder.files.FileUtil;
 import cyder.handlers.input.BaseInputHandler;
 import cyder.handlers.internal.ExceptionHandler;

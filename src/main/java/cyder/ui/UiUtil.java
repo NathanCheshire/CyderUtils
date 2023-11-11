@@ -11,7 +11,7 @@ import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
 import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
-import cyder.exceptions.DeviceNotFoundException;
+import cyder.ui.exceptions.DeviceNotFoundException;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.internal.ExceptionHandler;
