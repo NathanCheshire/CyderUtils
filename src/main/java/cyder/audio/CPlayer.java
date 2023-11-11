@@ -70,6 +70,7 @@ public final class CPlayer {
 
     /**
      * Plays the encapsulated audio file.
+     * The audio is played in a new thread.
      */
     public void play() {
         Preconditions.checkArgument(!playing);

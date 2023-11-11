@@ -1,6 +1,7 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.files.FileUtil;
 
 import java.io.File;
@@ -10,6 +11,9 @@ import java.util.LinkedList;
  * Utilities related to playing general and system audio.
  */
 public enum GeneralAudioPlayer {
+    /**
+     * The general audio player instance.
+     */
     INSTANCE;
 
     /**
@@ -49,8 +53,10 @@ public enum GeneralAudioPlayer {
      * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist,
      *                                  is not a file, or is not a supported audio extension
+     * @return the constructed system audio player which is now playing the requested audio
      */
-    public void playSystemAudio(File audioFile) {
+    @CanIgnoreReturnValue
+    public CPlayer playSystemAudio(File audioFile) {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
@@ -60,6 +66,7 @@ public enum GeneralAudioPlayer {
         systemPlayers.add(newSystemPlayer);
         newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
         newSystemPlayer.play();
+        return newSystemPlayer;
     }
 
     /**
