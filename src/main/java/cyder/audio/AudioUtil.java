@@ -3,7 +3,6 @@ package cyder.audio;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.audio.parsers.ShowStreamOutput;
-import cyder.console.Console;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
@@ -18,14 +17,13 @@ import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.time.TimeUtil;
-import cyder.user.UserFile;
 import cyder.utils.OsUtil;
 import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -264,6 +262,7 @@ public final class AudioUtil {
 
             /*
             Audio length might change from ffmpeg high and low pass filters.
+            Thus we don't check for the same length, todo this seems wrong we should use Mutagen
              */
             while (!outputFile.exists()) Thread.onSpinWait();
             process.waitFor();
@@ -427,8 +426,17 @@ public final class AudioUtil {
         });
     }
 
+    // todo maybe should have some encapsulated object for a general audio file
+    //  and then some enum for length extraction choices
+    private enum DetermineAudioLengthMethod {
+        FFPROBE,
+        WAVE_FILE,
+        PYTHON_MUTAGEN
+        // todo others
+    }
+
     /**
-     * Returns the milliseconds of the provided audio file using FFprobe's -show_format command.
+     * Returns the milliseconds of the provided audio file using ffprobe's -show_format command.
      * Note, this method is blocking. Callers should surround invocation of this method in a separate thread.
      *
      * @param audioFile the audio file
@@ -437,12 +445,12 @@ public final class AudioUtil {
      * @throws FatalException       if the process result contains errors
      * @throws InterruptedException if the thread was interrupted while waiting
      */
-    public static int getMillisFfprobe(File audioFile) throws ExecutionException, InterruptedException {
+    public static Duration getLengthViaFfprobe(File audioFile) throws ExecutionException, InterruptedException {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
 
-        if (milliTimes.containsKey(audioFile)) return milliTimes.get(audioFile);
+        if (milliTimes.containsKey(audioFile)) return Duration.ofMillis(milliTimes.get(audioFile));
 
         ImmutableList<String> command = ImmutableList.of(
                 getFfprobeCommand(),
@@ -463,34 +471,14 @@ public final class AudioUtil {
         double seconds = Double.parseDouble(millisPropertyString);
         int millis = (int) (seconds * TimeUtil.millisInSecond);
         milliTimes.put(audioFile, millis);
-        return millis;
-    }
-
-    /**
-     * Returns a reference to the current user's music file with the provided name if found, empty optional else.
-     *
-     * @param filename the name of the music file to search for
-     * @return an optional reference to the requested music file
-     */
-    public static Optional<File> getCurrentUserMusicFileWithName(String filename) {
-        Preconditions.checkNotNull(filename);
-        Preconditions.checkArgument(!filename.isEmpty());
-
-        File[] files = Dynamic.buildDynamic(Dynamic.USERS.getFileName(),
-                Console.INSTANCE.getUuid(), UserFile.MUSIC.getName()).listFiles();
-
-        if (files != null && files.length > 0) {
-            return Arrays.stream(files)
-                    .filter(file -> FileUtil.getFilename(file).equalsIgnoreCase(filename)).findFirst();
-        }
-
-        return Optional.empty();
+        return Duration.ofMillis(millis);
     }
 
     /**
      * Returns the first found MP3 file from this Windows user's music directory if present. Empty optional else.
      *
      * @return the first found MP3 file from this Windows user's music directory if present. Empty optional else
+     * @throws IllegalStateException if the host operating system cannot be determined to be Windows
      */
     public static Optional<File> getFirstMp3FileForWindowsUser() {
         Preconditions.checkState(OsUtil.isWindows());
