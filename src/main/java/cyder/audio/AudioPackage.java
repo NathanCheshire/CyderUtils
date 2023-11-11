@@ -2,6 +2,10 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.enumerations.Dynamic;
+import cyder.files.FileUtil;
+import cyder.network.NetworkUtil;
+import cyder.utils.OsUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,34 +17,60 @@ public enum AudioPackage {
     /**
      * A suite of libraries for handling video, audio, and other multimedia files and streams.
      */
-    FFMPEG("ffmpeg -version", ""),
+    FFMPEG("ffmpeg -version"),
 
     /**
      * A command line tool in the ffmpeg library that analyzes multimedia streams and prints information about them.
      */
-    FFPROBE("ffprobe -version", ""),
+    FFPROBE("ffprobe -version"),
 
     /**
      * A command line media player that supports most video and audio filters.
      */
-    FFPLAY("ffplay -version", ""),
+    FFPLAY("ffplay -version"),
 
     /**
      * A command line tool to download videos from YouTube and other video sites.
      */
-    YOUTUBE_DL("youtube-dl --version", "");
+    YOUTUBE_DL("youtube-dl --version");
 
     private final String versionCommand;
-    private final String resourceDownloadLink;
 
-    AudioPackage(String versionCommand, String resourceDownloadLink) {
+    AudioPackage(String versionCommand) {
         this.versionCommand = versionCommand;
-        this.resourceDownloadLink = resourceDownloadLink;
     }
+
+    private final String directDownloadLinkHeader =
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/";
+
 
     @CanIgnoreReturnValue
     public File downloadBinary(File directoryToDownloadTo) {
+        switch (this) {
+            case FFMPEG, FFPROBE, FFPLAY -> {
+                switch (OsUtil.OPERATING_SYSTEM) {
+                    case UNIX, SOLARIS -> {
+                        String directDownloadLink = directDownloadLinkHeader + "ubuntu/ffmpeg_ubuntu.zip";
+                    }
+                    case WINDOWS -> {
+                        String directDownloadLink = directDownloadLinkHeader + "windows/ffmpeg_windows.zip";
+                    }
+                    case OSX -> {
+                        String directDownloadLink = directDownloadLinkHeader + "mac/ffmpeg_mac.zip";
 
+                        File saveToFile = OsUtil.buildFile(directoryToDownloadTo.getAbsolutePath(), "ffmpeg");
+                        NetworkUtil.downloadResource(directDownloadLink, saveToFile);
+                        while (!saveToFile.exists()) Thread.onSpinWait();
+                        FileUtil.unzip(saveToFile, directoryToDownloadTo);
+                        OsUtil.deleteFile(pairedZipFile.file());
+                    }
+                    case UNKNOWN -> throw new IllegalStateException("Unknown operating system: "
+                            + OsUtil.OPERATING_SYSTEM);
+                }
+            }
+            case YOUTUBE_DL -> {}
+            default -> throw new IllegalStateException("Unknown AudioPackage: " + this);
+        }
     }
 
     @CanIgnoreReturnValue
