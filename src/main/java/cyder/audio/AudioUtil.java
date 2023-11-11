@@ -474,23 +474,5 @@ public final class AudioUtil {
         return Duration.ofMillis(millis);
     }
 
-    /**
-     * Returns the first found MP3 file from this Windows user's music directory if present. Empty optional else.
-     *
-     * @return the first found MP3 file from this Windows user's music directory if present. Empty optional else
-     * @throws IllegalStateException if the host operating system cannot be determined to be Windows
-     */
-    public static Optional<File> getFirstMp3FileForWindowsUser() {
-        Preconditions.checkState(OsUtil.isWindows());
-
-        File windowsUserMusicDirectory = OsUtil.buildFile(OsUtil.WINDOWS_ROOT + USERS,
-                OsUtil.getOsUsername(), MUSIC);
-        if (windowsUserMusicDirectory.exists()) {
-            return FileUtil.getFiles(windowsUserMusicDirectory, true)
-                    .stream().filter(file -> FileUtil.validateExtension(file, Extension.MP3.getExtension()))
-                    .findFirst();
-        }
-
-        return Optional.empty();
-    }
+    // todo get first mp3 file
 }

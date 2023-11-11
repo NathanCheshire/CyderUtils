@@ -5,11 +5,7 @@ import cyder.utils.OsUtil;
 /**
  * Common external programs/binaries utilized by Cyder.
  */
-public enum Program {
-    FFMPEG("ffmpeg", "ffmpeg.exe"),
-    FFPROBE("ffprobe", "ffprobe.exe"),
-    FFPLAY("ffplay", "ffplay.exe"),
-    YOUTUBE_DL("youtube-dl", "youtube-dl.exe"),
+public enum Program { // todo rename to python programs and then need python package
     PIP("pip", "pip.exe"),
     PYTHON("python", "python.exe");
 

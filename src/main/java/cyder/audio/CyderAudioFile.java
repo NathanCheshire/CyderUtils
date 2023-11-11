@@ -1,6 +1,7 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.io.File;
 
@@ -29,6 +30,18 @@ public final class CyderAudioFile {
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
         this.audioFile = audioFile;
+    }
+
+
+    @CanIgnoreReturnValue
+    public File convertTo(SupportedAudioFileType audioFileType) {
+        String newName = "todo";
+        return convertTo(audioFileType, newName);
+    }
+
+    @CanIgnoreReturnValue
+    public File convertTo(SupportedAudioFileType audioFileType, String newName) {
+
     }
 
     // todo get length via some method

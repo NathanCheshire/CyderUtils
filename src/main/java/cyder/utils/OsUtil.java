@@ -7,11 +7,7 @@ import cyder.enumerations.Dynamic;
 import cyder.enumerations.ExitCondition;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.managers.RobotManager;
-import cyder.meta.Cyder;
 import cyder.strings.CyderStrings;
 
 import java.awt.*;
@@ -20,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
@@ -33,24 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class OsUtil {
     /**
-     * The prefix the class resource must start with for the program to be counted as starting from a JAR file.
-     */
-    private static final String jarModeResourcePrefix = "jar:";
-
-    /**
-     * Whether Cyder is being run as a compiled JAR file.
-     */
-    public static final boolean JAR_MODE;
-
-    static {
-        URL resource = Cyder.class.getResource("Cyder.class");
-        JAR_MODE = Objects.requireNonNull(resource).toString().startsWith(jarModeResourcePrefix);
-        Logger.log(LogTag.DEBUG, "Jar mode set as: " + String.valueOf(JAR_MODE).toUpperCase());
-        ProgramModeManager.INSTANCE.refreshProgramMode();
-    }
-
-    /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private OsUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -69,11 +49,7 @@ public final class OsUtil {
      */
     public static void exit(ExitCondition exitCondition) {
         Preconditions.checkNotNull(exitCondition);
-
-        try {
-            Logger.log(LogTag.PROGRAM_EXIT, exitCondition);
-        } catch (Exception ignored) {}
-
+        // todo runnables before hand maybe? exit if?
         System.exit(exitCondition.getCode());
     }
 
@@ -285,7 +261,7 @@ public final class OsUtil {
                 case UNKNOWN -> throw new IllegalStateException("Unsupported operating system: " + OPERATING_SYSTEM);
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
     }
 
@@ -362,7 +338,7 @@ public final class OsUtil {
             InetAddress address = InetAddress.getLocalHost();
             name = address.getHostName();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+           e.printStackTrace();
         }
 
         return name;
@@ -378,7 +354,7 @@ public final class OsUtil {
         try {
             RobotManager.INSTANCE.getRobot().mouseMove(x, y);
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -398,7 +374,7 @@ public final class OsUtil {
 
             setMouseLocation(x, y);
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+        ex.printStackTrace();
         }
     }
 
@@ -427,10 +403,6 @@ public final class OsUtil {
     public static boolean deleteFile(File fileOrFolder, boolean log) {
         checkNotNull(fileOrFolder);
 
-        if (log) {
-            Logger.log(LogTag.SYSTEM_IO, "Requested deletion of: " + fileOrFolder.getAbsolutePath());
-        }
-
         // directory means recursive case to delete contents
         if (fileOrFolder.isDirectory()) {
             File[] files = fileOrFolder.listFiles();
@@ -448,11 +420,6 @@ public final class OsUtil {
             }
 
             inc++;
-        }
-
-        if (fileOrFolder.exists() && log) {
-            Logger.log(LogTag.SYSTEM_IO, DELETION_FAILED_TAG
-                    + " file: " + fileOrFolder.getAbsolutePath());
         }
 
         return false;
@@ -491,7 +458,7 @@ public final class OsUtil {
                 attempts++;
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return false;
@@ -516,7 +483,7 @@ public final class OsUtil {
             Collections.list(networks).forEach(networkInterface
                     -> ret.add(new NetworkDevice(networkInterface.getDisplayName(), networkInterface.getName())));
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ImmutableList.copyOf(ret);
@@ -553,33 +520,6 @@ public final class OsUtil {
         }
 
         return true;
-    }
-
-    /**
-     * Returns whether the provided exe exist in the dynamic/exes directory.
-     *
-     * @param filename the filename of the exe such as ffmpeg.exe
-     * @return whether the file could be located
-     */
-    public static boolean isBinaryInExes(String filename) {
-        checkNotNull(filename);
-        checkArgument(!filename.isEmpty());
-
-        File exes = Dynamic.buildDynamic(Dynamic.EXES.getFileName());
-
-        if (exes.exists()) {
-            File[] exeFiles = exes.listFiles();
-
-            if (!ArrayUtil.nullOrEmpty(exeFiles)) {
-                for (File exe : exeFiles) {
-                    if (exe.getName().equalsIgnoreCase(filename)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     /**

@@ -1,13 +1,13 @@
 package cyder.enumerations;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.logging.Logger;
 import cyder.utils.OsUtil;
 
 import java.io.File;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+// todo do away with
 /**
  * The folders/files contained in the dynamic directory.
  * Dynamic contains all the components which may be changed during runtime.

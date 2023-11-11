@@ -49,12 +49,11 @@ public final class BoostrapUtil {
             } else if (!Props.attemptBootstrap.getValue()) {
                 onFailedBoostrap("attempt_boostrap prop set to false");
             } else {
-                Logger.log(LogTag.WATCHDOG, "Boostrap conditions met, attempting bootstrap");
+                // todo on bootstrap runnables?
                 bootstrap();
                 return true;
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
             onFailedBoostrap(e.getMessage());
         }
 
@@ -87,7 +86,7 @@ public final class BoostrapUtil {
      * @param reason the reason the bootstrap  failed
      */
     private static void onFailedBoostrap(String reason) {
-        Logger.log(LogTag.WATCHDOG, "Failed to boostrap: " + reason);
+        // todo on failed bootstrap?
         OsUtil.exit(ExitCondition.WatchdogBootstrapFail);
     }
 }
