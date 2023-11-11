@@ -12,12 +12,12 @@ import java.util.Arrays;
  */
 public enum SupportedAudioFileType {
     /**
-     * The MP3 audio extension.
+     * The MP3 audio file type.
      */
     MP3(".mp3", ImmutableList.of(0x49, 0x44, 0x33)),
 
     /**
-     * The wave file extension.
+     * The wave audio file type.
      */
     WAVE(".wav", ImmutableList.of(0x52, 0x49, 0x46, 0x46));
 

@@ -1,35 +1,36 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
-import cyder.files.FileUtil;
-import cyder.strings.StringUtil;
 
 import java.io.File;
 
 /**
- * A Cyder wrapper class around a {@link java.io.File} of a supported audio type as defined by
- * {@link CyderAudioFile#isSupportedAudioExtension} for performing certain operations or mutations.
+ * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
+ * {@link SupportedAudioFileType#isSupported(File)}, for performing certain operations or mutations.
  */
 public final class CyderAudioFile {
+    /**
+     * The encapsulated audio file.
+     */
+    private final File audioFile;
 
     /**
-     * Returns whether the provided file is a supported audio file by validating
-     * the file extension and the file byte signature.
+     * Constructs a new CyderAudioFile.
      *
-     * @param file the audio file
-     * @return whether the provided file is a supported audio file
-     * @throws NullPointerException if the provided file is null
+     * @param audioFile the audio file
+     * @throws NullPointerException     if the provided audio file is null
+     * @throws IllegalArgumentException if the provided audio file does not
+     *                                  exist or is not a file or is not a supported audio type
      */
-    public static boolean isSupportedAudioExtension(File file) {
-        Preconditions.checkNotNull(file);
+    public CyderAudioFile(File audioFile) {
+        Preconditions.checkNotNull(audioFile);
+        Preconditions.checkArgument(audioFile.exists());
+        Preconditions.checkArgument(audioFile.isFile());
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
-        String name = file.getName();
-        if (StringUtil.isNullOrEmpty(name)) return false;
-
-        String extension = FileUtil.getExtension(name);
-        if (StringUtil.isNullOrEmpty(extension)) return false;
-
-        return StringUtil.in(extension, true, SUPPORTED_AUDIO_EXTENSIONS)
-                && (FileUtil.fileMatchesSignature(file, WAV_SIGNATURE) || fileMatchesSignature(file, MP3_SIGNATURE));
+        this.audioFile = audioFile;
     }
+
+    // todo get length via some method
+    // todo dreamify, returns a new object
 }
