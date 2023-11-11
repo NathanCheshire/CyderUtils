@@ -9,3 +9,4 @@ props/propkeys.ini
 __pycache__/
 venv/
 dynamic/logs/
+.DS_Store
