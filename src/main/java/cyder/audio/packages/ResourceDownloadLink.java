@@ -3,20 +3,40 @@ package cyder.audio.packages;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.enumerations.Dynamic;
+import cyder.enumerations.Extension;
+import cyder.files.FileUtil;
+import cyder.network.NetworkUtil;
+import cyder.process.Program;
+import cyder.threads.CyderThreadFactory;
+import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.File;
+import java.util.concurrent.Executors;
 
 /**
  * An encapsulator class for holding direct download links for resources depending on the operating system.
  * Links are presumed to be zipped binaries/direct executables. The caller may download and extract said
  * compressed binary and immediately invoke it from the extracted location.
  */
+@SuppressWarnings("ClassCanBeRecord") /* Readability */
 public final class ResourceDownloadLink {
+    // todo need general holder consts class for this,
+    private static final ImmutableMap<OperatingSystem, String> ffmpegDownloadLinks = ImmutableMap.of(
+            OperatingSystem.WINDOWS,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
+            OperatingSystem.OSX,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
+            OperatingSystem.UNIX,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
+    );
+    public static final ResourceDownloadLink FFMPEG_RESOURCE_DOWNLOADS = new ResourceDownloadLink(ffmpegDownloadLinks);
+
     /**
      * The map of operating systems to direct resource download links.
      */
-    private final ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks;
+    private final ImmutableMap<OperatingSystem, String> resourceDownloadLinks;
 
     /**
      * Constructs a new ResourceDownloadLink using the provided map.
@@ -25,7 +45,7 @@ public final class ResourceDownloadLink {
      * @throws NullPointerException     if the provided map is null
      * @throws IllegalArgumentException if the provided map is empty
      */
-    public ResourceDownloadLink(ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks) {
+    public ResourceDownloadLink(ImmutableMap<OperatingSystem, String> resourceDownloadLinks) {
         Preconditions.checkNotNull(resourceDownloadLinks);
         Preconditions.checkArgument(!resourceDownloadLinks.isEmpty());
 
@@ -41,7 +61,7 @@ public final class ResourceDownloadLink {
      * @throws IllegalArgumentException if the provided operating systems is not
      *                                  contained in the internal resource download link map
      */
-    public String getResourceDownloadLink(OsUtil.OperatingSystem operatingSystem) {
+    public String getResourceDownloadLink(OperatingSystem operatingSystem) {
         Preconditions.checkNotNull(operatingSystem);
         Preconditions.checkArgument(resourceDownloadLinks.containsKey(operatingSystem));
 
@@ -53,7 +73,7 @@ public final class ResourceDownloadLink {
      *
      * @return the resource download links map
      */
-    public ImmutableMap<OsUtil.OperatingSystem, String> getResourceDownloadLinks() {
+    public ImmutableMap<OperatingSystem, String> getResourceDownloadLinks() {
         return resourceDownloadLinks;
     }
 
@@ -66,15 +86,29 @@ public final class ResourceDownloadLink {
      * @return the downloaded and extracted file
      */
     @CanIgnoreReturnValue
-    public File downloadAndExtractResource(OsUtil.OperatingSystem operatingSystem, File directoryToDownloadTo) {
+    public File downloadAndExtractResource(OperatingSystem operatingSystem, File directoryToDownloadTo) {
         Preconditions.checkNotNull(operatingSystem);
         Preconditions.checkNotNull(directoryToDownloadTo);
         Preconditions.checkArgument(directoryToDownloadTo.exists());
         Preconditions.checkArgument(directoryToDownloadTo.isDirectory());
 
-        // todo
+        CyderThreadFactory threadFactory = new CyderThreadFactory("todo name me"); // todo
+        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
+            File downloadZip = Dynamic.buildDynamic(
+                    Dynamic.EXES.getFileName(), Program.YOUTUBE_DL.getProgramName()
+                            + Extension.ZIP.getExtension());
 
-        return null;
+            NetworkUtil.downloadResource(youtubeDlResourceDownload, downloadZip);
+            while (!downloadZip.exists()) Thread.onSpinWait();
+
+            File extractFolder = Dynamic.buildDynamic(Dynamic.EXES.getFileName());
+
+            FileUtil.unzip(downloadZip, extractFolder);
+            OsUtil.deleteFile(downloadZip);
+
+            return Dynamic.buildDynamic(Dynamic.EXES.getFileName(),
+                    Program.YOUTUBE_DL.getProgramName() + Extension.EXE.getExtension()).exists();
+        });
     }
 
     /**

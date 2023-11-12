@@ -1,7 +1,6 @@
 package cyder.audio.packages;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.files.FileUtil;
 import cyder.network.NetworkUtil;
@@ -42,16 +41,6 @@ public enum AudioPackage {
     AudioPackage(String versionCommand) {
         this.versionCommand = versionCommand;
     }
-
-    private static final ImmutableMap<OsUtil.OperatingSystem, String> ffmpegDownloadLinks = ImmutableMap.of(
-            OsUtil.OperatingSystem.WINDOWS,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
-            OsUtil.OperatingSystem.OSX,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
-            OsUtil.OperatingSystem.UNIX,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
-    );
-    private static final ResourceDownloadLink FFMPEG_RESOURCE_DOWNLOADS = new ResourceDownloadLink(ffmpegDownloadLinks);
 
     /**
      * Downloads this audio package to the provided directory.

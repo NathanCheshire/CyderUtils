@@ -3,7 +3,6 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.enumerations.Dynamic;
 import cyder.enumerations.ExitCondition;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
@@ -51,73 +50,6 @@ public final class OsUtil {
         Preconditions.checkNotNull(exitCondition);
         // todo runnables before hand maybe? exit if?
         System.exit(exitCondition.getCode());
-    }
-
-    /**
-     * The primary operating systems.
-     */
-    public enum OperatingSystem {
-        /**
-         * Macintosh OS.
-         */
-        OSX("mac"),
-
-        /**
-         * The Windows operating system.
-         */
-        WINDOWS("win"),
-
-        /**
-         * Any Unix based operating system.
-         */
-        UNIX(ImmutableList.of("nix", "nux", "aix")),
-
-        /**
-         * The SunOS specific Unix operating system.
-         */
-        SOLARIS("sunos"),
-
-        /**
-         * An indeterminable operating system.
-         */
-        UNKNOWN("");
-
-        /**
-         * The substrings to detect this operating system
-         */
-        private final ImmutableList<String> substrings;
-
-        OperatingSystem(String substring) {
-            this(ImmutableList.of(substring));
-        }
-
-        OperatingSystem(ImmutableList<String> substrings) {
-            this.substrings = substrings;
-        }
-
-        /**
-         * Returns the substrings to detect this operating system.
-         *
-         * @return the substrings to detect this operating system
-         */
-        public ImmutableList<String> getSubstrings() {
-            return substrings;
-        }
-
-        /**
-         * Returns whether this operating system is the host OS for Cyder.
-         *
-         * @return whether this operating system is the host OS for Cyder
-         */
-        public boolean isCurrentOperatingSystem() {
-            for (String substring : getSubstrings()) {
-                if (OPERATING_SYSTEM_NAME.toLowerCase().contains(substring)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 
     /**

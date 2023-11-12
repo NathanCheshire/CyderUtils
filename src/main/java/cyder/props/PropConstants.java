@@ -3,6 +3,7 @@ package cyder.props;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
+import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.File;
@@ -77,7 +78,7 @@ final class PropConstants {
     /**
      * The string to split a prop file contents at to separate the raw file master string into separate lines.
      */
-    static final String splitPropFileContentsAt = OsUtil.OPERATING_SYSTEM == OsUtil.OperatingSystem.WINDOWS
+    static final String splitPropFileContentsAt = OsUtil.OPERATING_SYSTEM == OperatingSystem.WINDOWS
             ? CyderStrings.carriageReturnChar + CyderStrings.newline : CyderStrings.newline;
 
     /**

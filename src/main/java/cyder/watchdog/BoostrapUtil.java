@@ -12,6 +12,7 @@ import cyder.props.Props;
 import cyder.session.SessionManager;
 import cyder.strings.CyderStrings;
 import cyder.utils.JvmUtil;
+import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public final class BoostrapUtil {
      * The following conditions must be met in order for a boostrap to be attempted:
      *
      * <ul>
-     *     <li>The operating system is {@link cyder.utils.OsUtil.OperatingSystem#WINDOWS}</li>
+     *     <li>The operating system is {@link OperatingSystem#WINDOWS}</li>
      *     <li>The attempt_boostrap prop is true if present</li>
      *     <li>The current JVM instance was not launched with JDWP args (debug mode)</li>
      * </ul>
