@@ -189,9 +189,7 @@ public final class AudioUtil {
 
             // another precaution to ensure process is completed before file is returned
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while (reader.readLine() != null) {
-                Thread.onSpinWait();
-            }
+            while (reader.readLine() != null) Thread.onSpinWait();
 
             // wait for file to be created by ffmpeg
             while (!outputFile.exists()) {

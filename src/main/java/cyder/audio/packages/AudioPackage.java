@@ -1,4 +1,4 @@
-package cyder.audio;
+package cyder.audio.packages;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -41,19 +41,6 @@ public enum AudioPackage {
 
     AudioPackage(String versionCommand) {
         this.versionCommand = versionCommand;
-    }
-
-    private class ResourceDownloadLink {
-        private final ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks;
-
-        public ResourceDownloadLink(ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks) {
-            this.resourceDownloadLinks = resourceDownloadLinks;
-        }
-
-        public String getResourceDownloadLink(OsUtil.OperatingSystem operatingSystem) {
-            Preconditions.checkArgument(resourceDownloadLinks.containsKey(operatingSystem));
-            return resourceDownloadLinks.get(operatingSystem);
-        }
     }
 
     private static final ImmutableMap<OsUtil.OperatingSystem, String> ffmpegDownloadLinks = ImmutableMap.of(
