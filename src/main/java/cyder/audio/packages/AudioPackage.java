@@ -1,89 +1,113 @@
 package cyder.audio.packages;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
-import javax.naming.Name;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.Future;
 
 /**
- * Audio package and third party library binaries Cyder uses.
+ * Audio package and third-party binaries Cyder uses.
  */
 public enum AudioPackage {
+
+
     /**
      * A suite of libraries for handling video, audio, and other multimedia files and streams.
      */
-    FFMPEG("ffmpeg -version", new ResourceDownloadLink(ImmutableMap.of(
-            OperatingSystem.WINDOWS, new NamedLink("ffmpeg_windows",
-                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip"),
-            OperatingSystem.MAC, new NamedLink("ffmpeg_mac",
-                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip"),
-            OperatingSystem.GNU_LINUX, new NamedLink("ffmpeg_linux",
-                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/linux/ffmpeg_linux.zip")
+    FFMPEG("ffmpeg", "-version", new ResourceDownloadLink(ImmutableMap.of(
+            OperatingSystem.WINDOWS,
+            new NamedResourceLink("ffmpeg_windows.zip", ffmpegResourceHeader + "windows/ffmpeg_windows.zip"),
+            OperatingSystem.MAC,
+            new NamedResourceLink("ffmpeg_mac.zip", ffmpegResourceHeader + "mac/ffmpeg_mac.zip"),
+            OperatingSystem.GNU_LINUX,
+            new NamedResourceLink("ffmpeg_linux.zip", ffmpegResourceHeader + "linux/ffmpeg_linux.zip")
     ))),
 
     /**
      * A command line tool in the ffmpeg library that analyzes multimedia streams and prints information about them.
      */
-    FFPROBE("ffprobe -version", FFMPEG.resourceDownloadLinks),
+    FFPROBE("ffprobe", "-version", FFMPEG.resourceDownloadLinks),
 
     /**
      * A command line media player that supports most video and audio filters.
      */
-    FFPLAY("ffplay -version", FFMPEG.resourceDownloadLinks),
+    FFPLAY("ffplay", "-version", FFMPEG.resourceDownloadLinks),
 
     /**
      * A command line tool to download videos from YouTube and other video sites.
      */
-    YOUTUBE_DL("youtube-dl --version", new ResourceDownloadLink(ImmutableMap.of(
-            OperatingSystem.WINDOWS, new NamedLink("", ""), // todo
-            OperatingSystem.MAC, new NamedLink("", ""), // todo
-            OperatingSystem.GNU_LINUX, new NamedLink("", "") // todo
+    YOUTUBE_DL("youtube-dl", "--version", new ResourceDownloadLink(ImmutableMap.of(
+            OperatingSystem.WINDOWS,
+            new NamedResourceLink("youtube_dl_windows.zip", ""), // todo
+            OperatingSystem.MAC,
+            new NamedResourceLink("youtube_dl_mac.zip", ""), // todo
+            OperatingSystem.GNU_LINUX,
+            new NamedResourceLink("youtube_dl_linux.zip", "") // todo
     )));
 
+    private static final String ffmpegResourceHeader
+            = "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/";
+
+    /**
+     * A cache of audio packages which were found to be present and invokable.
+     */
     private static final HashMap<AudioPackage, Boolean> presentAndInvokableCache = new HashMap<>();
 
-    private final String versionCommand;
+    /**
+     * The invocation name of this audio package.
+     */
+    private final String invocationName;
+
+    /**
+     * The argument used with the invocation name to determine the audio package's version.
+     */
+    private final String versionArgument;
+
+    /**
+     * The ResourceDownloadLink to download and extract the binary for different operating systems.
+     */
     private final ResourceDownloadLink resourceDownloadLinks;
 
-    AudioPackage(String versionCommand, ResourceDownloadLink resourceDownloadLinks) {
-        this.versionCommand = versionCommand;
+    AudioPackage(String invocationName, String versionArgument, ResourceDownloadLink resourceDownloadLinks) {
+        this.invocationName = invocationName;
+        this.versionArgument = versionArgument;
         this.resourceDownloadLinks = resourceDownloadLinks;
     }
 
     /**
      * Downloads this audio package to the provided directory.
      * Note the binary is compressed in zip format when downloaded.
-     * See {@link #downloadAndExtractBinary(File, boolean)} to both download and extract.
+     * Thus, the binary is extracted from compression and the old compressed file is deleted.
      *
      * @param directoryToDownloadTo the directory to download the compressed binary to
-     * @return the compressed binary once downloaded
+     * @return the binary once downloaded and extracted
      */
     @CanIgnoreReturnValue
-    public File downloadBinary(File directoryToDownloadTo) {
-        return resourceDownloadLinks.downloadAndExtractResource(OsUtil.OPERATING_SYSTEM, directoryToDownloadTo)
+    public Future<File> downloadAndExtractBinary(File directoryToDownloadTo) {
+        return resourceDownloadLinks.downloadAndExtractResource(OsUtil.OPERATING_SYSTEM, directoryToDownloadTo);
     }
 
-    @CanIgnoreReturnValue
-    public File downloadAndExtractBinary(File directoryToDownloadTo, boolean deleteZipArchive) {
-        Preconditions.checkNotNull(directoryToDownloadTo);
-        Preconditions.checkArgument(directoryToDownloadTo.exists());
-        Preconditions.checkArgument(directoryToDownloadTo.isDirectory());
-
-        File downloadedBinaryZipped = downloadBinary(directoryToDownloadTo);
-        // todo unzip
-        // todo delete zip archive
-
-        return null;
+    /**
+     * Returns the string to use in combination with the process API to invoke this audio package binary.
+     *
+     * @return the string to use in combination with the process API to invoke this audio package binary
+     */
+    public String getInvocationName() {
+        return invocationName;
     }
 
-    public String getInvocationCommand() {
-        return "todo";
+    /**
+     * Returns the argument this audio package binary uses to determine the version.
+     *
+     * @return the argument this audio package binary uses to determine the version
+     */
+    public String getVersionArgument() {
+        return versionArgument;
     }
 
     /**
@@ -97,6 +121,7 @@ public enum AudioPackage {
         if (presentAndInvokableCache.containsKey(this) && presentAndInvokableCache.containsKey(this)) return true;
         boolean ret = true;
         try {
+            String versionCommand = invocationName + " " + versionArgument;
             Runtime.getRuntime().exec(versionCommand);
         } catch (IOException e) {
             ret = false;

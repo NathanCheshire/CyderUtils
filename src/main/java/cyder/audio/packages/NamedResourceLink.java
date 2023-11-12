@@ -8,11 +8,11 @@ import com.google.errorprone.annotations.Immutable;
  */
 @SuppressWarnings("ClassCanBeRecord") /* Readability */
 @Immutable
-public final class NamedLink {
+public final class NamedResourceLink {
     /**
-     * The name of the resource link.
+     * The filename to use for the downloaded resource.
      */
-    private final String name;
+    private final String filename;
 
     /**
      * The remote resource link.
@@ -22,34 +22,34 @@ public final class NamedLink {
     /**
      * Constructs a new NamedLink.
      *
-     * @param name the name of the remote link
-     * @param link the link
+     * @param filename the name to use for the downloaded resource
+     * @param link the remote resource link
      * @throws NullPointerException     if either the name or link are null
      * @throws IllegalArgumentException if either the name or link are empty
      */
-    public NamedLink(String name, String link) {
-        Preconditions.checkNotNull(name);
+    public NamedResourceLink(String filename, String link) {
+        Preconditions.checkNotNull(filename);
         Preconditions.checkNotNull(link);
-        Preconditions.checkArgument(!name.trim().isEmpty());
+        Preconditions.checkArgument(!filename.trim().isEmpty());
         Preconditions.checkArgument(!link.trim().isEmpty());
 
-        this.name = name;
+        this.filename = filename;
         this.link = link;
     }
 
     /**
-     * Returns the name of the resource link.
+     * Returns the name to use for the downloaded resource.
      *
-     * @return the name of the resource link
+     * @return the name to use for the downloaded resource
      */
-    public String getName() {
-        return name;
+    public String getFilename() {
+        return filename;
     }
 
     /**
-     * Returns the link.
+     * Returns the remote resource link.
      *
-     * @return the link
+     * @return the remote resource link
      */
     public String getLink() {
         return link;
@@ -60,7 +60,7 @@ public final class NamedLink {
      */
     @Override
     public int hashCode() {
-        int ret = name.hashCode();
+        int ret = filename.hashCode();
         ret = 31 * ret + link.hashCode();
         return ret;
     }
@@ -71,7 +71,7 @@ public final class NamedLink {
     @Override
     public String toString() {
         return "NamedLink{"
-                + "name=\"" + name
+                + "name=\"" + filename
                 + "\", link=\"" + link
                 + "\"}";
     }
@@ -83,12 +83,12 @@ public final class NamedLink {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof NamedLink)) {
+        } else if (!(o instanceof NamedResourceLink)) {
             return false;
         }
 
-        NamedLink other = (NamedLink) o;
+        NamedResourceLink other = (NamedResourceLink) o;
         return other.link.equals(link)
-                && other.name.equals(name);
+                && other.filename.equals(filename);
     }
 }

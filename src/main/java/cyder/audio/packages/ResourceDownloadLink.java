@@ -3,11 +3,8 @@ package cyder.audio.packages;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.enumerations.Dynamic;
-import cyder.enumerations.Extension;
 import cyder.files.FileUtil;
 import cyder.network.NetworkUtil;
-import cyder.process.Program;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
@@ -25,7 +22,7 @@ public final class ResourceDownloadLink {
     /**
      * The map of operating systems to direct resource download links.
      */
-    private final ImmutableMap<OperatingSystem, NamedLink> resourceDownloadLinks;
+    private final ImmutableMap<OperatingSystem, NamedResourceLink> downloadLinks;
 
     /**
      * Constructs a new ResourceDownloadLink using the provided map.
@@ -34,11 +31,11 @@ public final class ResourceDownloadLink {
      * @throws NullPointerException     if the provided map is null
      * @throws IllegalArgumentException if the provided map is empty
      */
-    public ResourceDownloadLink(ImmutableMap<OperatingSystem, NamedLink> resourceDownloadLinks) {
+    public ResourceDownloadLink(ImmutableMap<OperatingSystem, NamedResourceLink> resourceDownloadLinks) {
         Preconditions.checkNotNull(resourceDownloadLinks);
         Preconditions.checkArgument(!resourceDownloadLinks.isEmpty());
 
-        this.resourceDownloadLinks = resourceDownloadLinks;
+        this.downloadLinks = resourceDownloadLinks;
     }
 
     /**
@@ -50,11 +47,11 @@ public final class ResourceDownloadLink {
      * @throws IllegalArgumentException if the provided operating systems is not
      *                                  contained in the internal resource download link map
      */
-    public NamedLink getResourceDownloadLink(OperatingSystem operatingSystem) {
+    public NamedResourceLink getNamedLink(OperatingSystem operatingSystem) {
         Preconditions.checkNotNull(operatingSystem);
-        Preconditions.checkArgument(resourceDownloadLinks.containsKey(operatingSystem));
+        Preconditions.checkArgument(downloadLinks.containsKey(operatingSystem));
 
-        return resourceDownloadLinks.get(operatingSystem);
+        return downloadLinks.get(operatingSystem);
     }
 
     /**
@@ -62,8 +59,8 @@ public final class ResourceDownloadLink {
      *
      * @return the resource download links map
      */
-    public ImmutableMap<OperatingSystem, NamedLink> getResourceDownloadLinks() {
-        return resourceDownloadLinks;
+    public ImmutableMap<OperatingSystem, NamedResourceLink> getDownloadLinks() {
+        return downloadLinks;
     }
 
     /**
@@ -73,6 +70,9 @@ public final class ResourceDownloadLink {
      * @param operatingSystem       the host operating system
      * @param directoryToDownloadTo the directory to download and extract the resource to
      * @return the downloaded and extracted file
+     * @throws NullPointerException     if either the provided operating system or directory to download to are null
+     * @throws IllegalArgumentException if the directory to download to does not exist or is not a directory or if the
+     *                                  resource download links does not contain a key for the provided operating system
      */
     @CanIgnoreReturnValue
     public Future<File> downloadAndExtractResource(OperatingSystem operatingSystem, File directoryToDownloadTo) {
@@ -80,22 +80,23 @@ public final class ResourceDownloadLink {
         Preconditions.checkNotNull(directoryToDownloadTo);
         Preconditions.checkArgument(directoryToDownloadTo.exists());
         Preconditions.checkArgument(directoryToDownloadTo.isDirectory());
+        Preconditions.checkArgument(downloadLinks.containsKey(operatingSystem));
+
+        NamedResourceLink namedResourceLink = downloadLinks.get(operatingSystem);
+        @SuppressWarnings("DataFlowIssue") // Safe due to precondition check
+        String resourceName = namedResourceLink.getFilename();
+        String resourceLink = namedResourceLink.getLink();
+
 
         // todo configure thread factory name
         CyderThreadFactory threadFactory = new CyderThreadFactory("todo name me");
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            File downloadZip = new File(""); // todo name and extension and path
+            File compressedBinary = OsUtil.buildFile(directoryToDownloadTo.getAbsolutePath(), resourceName);
+            NetworkUtil.downloadResource(resourceLink, compressedBinary);
+            while (!compressedBinary.exists()) Thread.onSpinWait();
+            FileUtil.unzip(compressedBinary, directoryToDownloadTo);
+            OsUtil.deleteFile(compressedBinary);
 
-            NetworkUtil.downloadResource(youtubeDlResourceDownload, downloadZip);
-            while (!downloadZip.exists()) Thread.onSpinWait();
-
-            File extractFolder = Dynamic.buildDynamic(Dynamic.EXES.getFileName());
-
-            FileUtil.unzip(downloadZip, extractFolder);
-            OsUtil.deleteFile(downloadZip);
-
-            return Dynamic.buildDynamic(Dynamic.EXES.getFileName(),
-                    Program.YOUTUBE_DL.getProgramName() + Extension.EXE.getExtension()).exists();
         });
     }
 
@@ -104,7 +105,7 @@ public final class ResourceDownloadLink {
      */
     @Override
     public int hashCode() {
-        return resourceDownloadLinks.hashCode();
+        return downloadLinks.hashCode();
     }
 
     /**
@@ -119,7 +120,7 @@ public final class ResourceDownloadLink {
         }
 
         ResourceDownloadLink other = (ResourceDownloadLink) o;
-        return resourceDownloadLinks.equals(other.resourceDownloadLinks);
+        return downloadLinks.equals(other.downloadLinks);
     }
 
     /**
@@ -127,6 +128,6 @@ public final class ResourceDownloadLink {
      */
     @Override
     public String toString() {
-        return "ResourceDownloadLink{resourceDownloadLinks=" + resourceDownloadLinks + "}";
+        return "ResourceDownloadLink{resourceDownloadLinks=" + downloadLinks + "}";
     }
 }
