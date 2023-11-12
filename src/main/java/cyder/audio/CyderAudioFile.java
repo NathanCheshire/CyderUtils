@@ -44,6 +44,15 @@ public final class CyderAudioFile {
 
     }
 
-    // todo get length via some method
-    // todo dreamify, returns a new object
+
+    public enum AudioLen
+
+    // todo get length via some method (enum for method)
+    public File dreamify() {
+
+    }
+
+    public File dreamify(String filename) {
+
+    }
 }

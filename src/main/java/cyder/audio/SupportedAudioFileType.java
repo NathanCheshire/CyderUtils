@@ -19,7 +19,12 @@ public enum SupportedAudioFileType {
     /**
      * The wave audio file type.
      */
-    WAVE(".wav", ImmutableList.of(0x52, 0x49, 0x46, 0x46));
+    WAVE(".wav", ImmutableList.of(0x52, 0x49, 0x46, 0x46)),
+
+    /**
+     * The OGG audio file type.
+     */
+    OGG(".ogg", ImmutableList.of(0x4F, 0x67, 0x67, 0x53));
 
     private final String extension;
     private final ImmutableList<Integer> signature;

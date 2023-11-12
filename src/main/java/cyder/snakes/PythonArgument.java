@@ -8,6 +8,7 @@ import cyder.strings.CyderStrings;
 public enum PythonArgument {
     COMMAND("c", "command", true),
     INPUT("i", "input", false),
+    // todo this was only used for gaussian blur, let's just implement the algorithm on our own and unit test it ofc
     RADIUS("r", "radius", false);
 
     /**

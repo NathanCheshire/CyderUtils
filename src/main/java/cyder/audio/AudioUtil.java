@@ -36,29 +36,6 @@ import static cyder.strings.CyderStrings.*;
  * Utilities related to supported audio files.
  */
 public final class AudioUtil {
-    /**
-     * The resource link to download the ffmpeg binary.
-     */
-    private static final String ffmpegResourceDownload =
-            "https://github.com/NathanCheshire/Cyder/raw/main/resources/ffmpeg.zip";
-
-    /**
-     * The resource link to download the ffplay binary.
-     */
-    private static final String ffplayResourceDownload =
-            "https://github.com/NathanCheshire/Cyder/raw/main/resources/ffplay.zip";
-
-    /**
-     * The resource link to download the ffprobe binary.
-     */
-    private static final String ffprobeResourceDownload =
-            "https://github.com/NathanCheshire/Cyder/raw/main/resources/ffprobe.zip";
-
-    /**
-     * The resource link to download the YouTube-dl binary.
-     */
-    private static final String youtubeDlResourceDownload =
-            "https://github.com/NathanCheshire/Cyder/raw/main/resources/youtube-dl.zip";
 
     /**
      * The users keyword.
@@ -205,7 +182,7 @@ public final class AudioUtil {
             String safePath = quote + builtPath + quote;
 
             File outputFile = new File(builtPath);
-            ProcessBuilder pb = new ProcessBuilder(getFfmpegCommand(), INPUT_FLAG,
+            ProcessBuilder pb = new ProcessBuilder("ffmpeg", INPUT_FLAG,
                     quote + wavFile.getAbsolutePath() + quote, safePath);
             pb.redirectErrorStream();
             Process process = pb.start();
@@ -251,7 +228,7 @@ public final class AudioUtil {
             String safeOutputFilename = quote + outputFile.getAbsolutePath() + quote;
 
             String[] command = {
-                    getFfmpegCommand(),
+                    "ffmpeg",
                     INPUT_FLAG,
                     safeFilename,
                     FILTER_DASH_A,
@@ -274,84 +251,6 @@ public final class AudioUtil {
 
             return Optional.of(outputFile);
         });
-    }
-
-    /**
-     * Returns whether ffmpeg is installed by attempting
-     * validation on the set path to the exe and attempting
-     * to invoke ffmpeg in the console.
-     *
-     * @return whether ffmpeg is installed
-     */
-    public static boolean ffmpegInstalled() {
-        if (Program.FFMPEG.isInstalled()) return true;
-
-        return OsUtil.isBinaryInExes(Program.FFMPEG.getProgramName() + Extension.EXE.getExtension());
-    }
-
-    /**
-     * Returns whether YouTube-dl is installed by attempting
-     * validation on the set path to the exe and attempting
-     * to invoke YouTube-dl in the console.
-     *
-     * @return whether YouTube-dl is installed
-     */
-    public static boolean youTubeDlInstalled() {
-        if (Program.YOUTUBE_DL.isInstalled()) return true;
-
-        return OsUtil.isBinaryInExes(Program.YOUTUBE_DL.getProgramName() + Extension.EXE.getExtension());
-    }
-
-    /**
-     * Returns whether ffprobe is installed.
-     *
-     * @return whether ffprobe is installed
-     */
-    public static boolean ffprobeInstalled() {
-        return Program.FFPROBE.isInstalled() || OsUtil.isBinaryInExes(Program.FFPROBE.getFilename());
-    }
-
-    /**
-     * Returns the command to invoke ffmpeg provided the
-     * binary exists and can be found.
-     *
-     * @return the ffmpeg command
-     */
-    public static String getFfmpegCommand() {
-        Preconditions.checkArgument(ffmpegInstalled());
-
-        return Program.FFMPEG.isInstalled()
-                ? Program.FFMPEG.getProgramName()
-                : Dynamic.buildDynamic(Dynamic.EXES.getFileName(), Program.FFPROBE.getFilename()).getAbsolutePath();
-
-    }
-
-    /**
-     * Returns the command to invoke YouTube-dl provided the
-     * binary exists and can be found.
-     *
-     * @return the YouTube-dl command
-     */
-    public static String getYoutubeDlCommand() {
-        Preconditions.checkArgument(youTubeDlInstalled());
-
-        return Program.YOUTUBE_DL.isInstalled()
-                ? Program.YOUTUBE_DL.getProgramName()
-                : Dynamic.buildDynamic(Dynamic.EXES.getFileName(), Program.YOUTUBE_DL.getFilename()).getAbsolutePath();
-    }
-
-    /**
-     * Returns the base ffprobe command.
-     *
-     * @return the base ffprobe command
-     */
-    public static String getFfprobeCommand() {
-        Preconditions.checkArgument(ffprobeInstalled());
-
-        if (Program.FFPROBE.isInstalled()) return Program.FFPROBE.getProgramName();
-
-        return Dynamic.buildDynamic(Dynamic.EXES.getFileName(),
-                Program.FFPROBE.getProgramName() + Extension.EXE.getExtension()).getAbsolutePath();
     }
 
     /**
@@ -426,15 +325,6 @@ public final class AudioUtil {
         });
     }
 
-    // todo maybe should have some encapsulated object for a general audio file
-    //  and then some enum for length extraction choices
-    private enum DetermineAudioLengthMethod {
-        FFPROBE,
-        WAVE_FILE,
-        PYTHON_MUTAGEN
-        // todo others
-    }
-
     /**
      * Returns the milliseconds of the provided audio file using ffprobe's -show_format command.
      * Note, this method is blocking. Callers should surround invocation of this method in a separate thread.
@@ -474,5 +364,14 @@ public final class AudioUtil {
         return Duration.ofMillis(millis);
     }
 
-    // todo get first mp3 file
+    /**
+     * Return the first mp3 file found on the host operating system if present. Empty optional else.
+     * Note this method will check the Music directory which varies in absolute path location depending
+     * on the host operating system.
+     *
+     * @return the first mp3 file found on the host operating system if present. Empty optional else
+     */
+    public static Optional<File> getFirstMp3File() {
+        return Optional.empty(); // todo
+    }
 }
