@@ -2,11 +2,6 @@ package cyder.watchdog;
 
 import com.google.common.base.Preconditions;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-import cyder.meta.ProgramState;
-import cyder.meta.ProgramStateManager;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
@@ -80,13 +75,8 @@ public final class CyderWatchdog {
     public static void initializeWatchDog() {
         Preconditions.checkState(!watchdogInitialized.get());
 
-        if (!Props.activateWatchdog.getValue()) {
-            Logger.log(LogTag.WATCHDOG, "Watchdog deactivated from props");
-            return;
-        } else if (JvmUtil.currentInstanceLaunchedWithDebug()) {
-            Logger.log(LogTag.WATCHDOG, "Watchdog skipped as current JVM session was launched using debug");
-            return;
-        }
+        if (!Props.activateWatchdog.getValue()) return;
+        if (JvmUtil.currentInstanceLaunchedWithDebug()) return;
 
         watchdogInitialized.set(true);
 
@@ -102,10 +92,10 @@ public final class CyderWatchdog {
                         }
                     }
                 } catch (Exception e) {
-                    Logger.log(LogTag.WATCHDOG, ExceptionHandler.getPrintableException(e));
+                    e.printStackTrace();
                 }
             }
-        }, IgnoreThread.WatchdogInitializer.getName());
+        }, "todo watchdog initialization thread");
     }
 
     /**

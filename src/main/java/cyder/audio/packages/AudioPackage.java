@@ -1,9 +1,9 @@
 package cyder.audio.packages;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.files.FileUtil;
-import cyder.network.NetworkUtil;
+import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.File;
@@ -17,29 +17,42 @@ public enum AudioPackage {
     /**
      * A suite of libraries for handling video, audio, and other multimedia files and streams.
      */
-    FFMPEG("ffmpeg -version"),
+    FFMPEG("ffmpeg -version", new ResourceDownloadLink(ImmutableMap.of(
+            OperatingSystem.WINDOWS,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
+            OperatingSystem.MAC,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
+            OperatingSystem.GNU_LINUX,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
+    ))),
 
     /**
      * A command line tool in the ffmpeg library that analyzes multimedia streams and prints information about them.
      */
-    FFPROBE("ffprobe -version"),
+    FFPROBE("ffprobe -version", FFMPEG.resourceDownloadLinks),
 
     /**
      * A command line media player that supports most video and audio filters.
      */
-    FFPLAY("ffplay -version"),
+    FFPLAY("ffplay -version", FFMPEG.resourceDownloadLinks),
 
     /**
      * A command line tool to download videos from YouTube and other video sites.
      */
-    YOUTUBE_DL("youtube-dl --version");
+    YOUTUBE_DL("youtube-dl --version", new ResourceDownloadLink(ImmutableMap.of(
+            OperatingSystem.WINDOWS, "todo",
+            OperatingSystem.MAC, "todo",
+            OperatingSystem.GNU_LINUX, "todo"
+    )));
 
     private static final HashMap<AudioPackage, Boolean> presentAndInvokableCache = new HashMap<>();
 
     private final String versionCommand;
+    private final ResourceDownloadLink resourceDownloadLinks;
 
-    AudioPackage(String versionCommand) {
+    AudioPackage(String versionCommand, ResourceDownloadLink resourceDownloadLinks) {
         this.versionCommand = versionCommand;
+        this.resourceDownloadLinks = resourceDownloadLinks;
     }
 
     /**
@@ -52,31 +65,7 @@ public enum AudioPackage {
      */
     @CanIgnoreReturnValue
     public File downloadBinary(File directoryToDownloadTo) {
-        switch (this) {
-            case FFMPEG, FFPROBE, FFPLAY -> {
-                switch (OsUtil.OPERATING_SYSTEM) {
-                    case UNIX, SOLARIS -> {
-                        String directDownloadLink = directDownloadLinkHeader + "ubuntu/ffmpeg_ubuntu.zip";
-                    }
-                    case WINDOWS -> {
-                        String directDownloadLink = directDownloadLinkHeader + "windows/ffmpeg_windows.zip";
-                    }
-                    case OSX -> {
-                        String directDownloadLink = directDownloadLinkHeader + "mac/ffmpeg_mac.zip";
-
-                        File saveToFile = OsUtil.buildFile(directoryToDownloadTo.getAbsolutePath(), "ffmpeg");
-                        NetworkUtil.downloadResource(directDownloadLink, saveToFile);
-                        while (!saveToFile.exists()) Thread.onSpinWait();
-                        FileUtil.unzip(saveToFile, directoryToDownloadTo);
-                        OsUtil.deleteFile(pairedZipFile.file());
-                    }
-                    case UNKNOWN -> throw new IllegalStateException("Unknown operating system: "
-                            + OsUtil.OPERATING_SYSTEM);
-                }
-            }
-            case YOUTUBE_DL -> {}
-            default -> throw new IllegalStateException("Unknown AudioPackage: " + this);
-        }
+        return resourceDownloadLinks.downloadAndExtractResource(OsUtil.OPERATING_SYSTEM, directoryToDownloadTo)
     }
 
     @CanIgnoreReturnValue

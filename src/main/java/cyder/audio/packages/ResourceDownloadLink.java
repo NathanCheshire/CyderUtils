@@ -14,6 +14,7 @@ import cyder.utils.OsUtil;
 
 import java.io.File;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * An encapsulator class for holding direct download links for resources depending on the operating system.
@@ -22,21 +23,11 @@ import java.util.concurrent.Executors;
  */
 @SuppressWarnings("ClassCanBeRecord") /* Readability */
 public final class ResourceDownloadLink {
-    // todo need general holder consts class for this,
-    private static final ImmutableMap<OperatingSystem, String> ffmpegDownloadLinks = ImmutableMap.of(
-            OperatingSystem.WINDOWS,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
-            OperatingSystem.OSX,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
-            OperatingSystem.UNIX,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
-    );
-    public static final ResourceDownloadLink FFMPEG_RESOURCE_DOWNLOADS = new ResourceDownloadLink(ffmpegDownloadLinks);
-
     /**
      * The map of operating systems to direct resource download links.
      */
     private final ImmutableMap<OperatingSystem, String> resourceDownloadLinks;
+    // todo second param needs to be named link maybe use record for this?
 
     /**
      * Constructs a new ResourceDownloadLink using the provided map.
@@ -86,17 +77,16 @@ public final class ResourceDownloadLink {
      * @return the downloaded and extracted file
      */
     @CanIgnoreReturnValue
-    public File downloadAndExtractResource(OperatingSystem operatingSystem, File directoryToDownloadTo) {
+    public Future<File> downloadAndExtractResource(OperatingSystem operatingSystem, File directoryToDownloadTo) {
         Preconditions.checkNotNull(operatingSystem);
         Preconditions.checkNotNull(directoryToDownloadTo);
         Preconditions.checkArgument(directoryToDownloadTo.exists());
         Preconditions.checkArgument(directoryToDownloadTo.isDirectory());
 
-        CyderThreadFactory threadFactory = new CyderThreadFactory("todo name me"); // todo
+        // todo configure thread factory name
+        CyderThreadFactory threadFactory = new CyderThreadFactory("todo name me");
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            File downloadZip = Dynamic.buildDynamic(
-                    Dynamic.EXES.getFileName(), Program.YOUTUBE_DL.getProgramName()
-                            + Extension.ZIP.getExtension());
+            File downloadZip = new File(""); // todo name and extension and path
 
             NetworkUtil.downloadResource(youtubeDlResourceDownload, downloadZip);
             while (!downloadZip.exists()) Thread.onSpinWait();

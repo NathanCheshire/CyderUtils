@@ -2,8 +2,10 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.files.FileUtil;
 
 import java.io.File;
+import java.time.Duration;
 
 /**
  * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
@@ -32,20 +34,47 @@ public final class CyderAudioFile {
         this.audioFile = audioFile;
     }
 
-
+    /**
+     * Converts the internal audio file from the current format to the provided format.
+     * The file will be named the same as the original file but with the new extension.
+     *
+     * @param audioFileType the audio file type to convert to
+     * @return the converted file
+     * @throws NullPointerException if the provided audio file type is null
+     * @throws IllegalArgumentException if the internal audio file is already of the provided type
+     */
     @CanIgnoreReturnValue
     public File convertTo(SupportedAudioFileType audioFileType) {
-        String newName = "todo";
-        return convertTo(audioFileType, newName);
+        Preconditions.checkNotNull(audioFileType);
+        Preconditions.checkArgument(!audioFileType.isAudioTypeofFile(audioFile));
+
+        return convertTo(audioFileType, FileUtil.getFilename(audioFile));
     }
 
+    /**
+     * Converts the internal audio file from the current format to the provided format.
+     * The file wil lbe named to the new name plus the new extension.
+     *
+     * @param audioFileType the audio file type to convert to
+     * @param newName the new filename
+     * @return the converted file
+     * @throws NullPointerException if either the provided audio file type or new name are null
+     * @throws IllegalArgumentException if the provided new name is invalid
+     */
     @CanIgnoreReturnValue
     public File convertTo(SupportedAudioFileType audioFileType, String newName) {
+        Preconditions.checkNotNull(audioFileType);
+        Preconditions.checkNotNull(newName);
+        Preconditions.checkArgument(FileUtil.isValidFilename(newName));
 
+        // todo using ffmpeg, convert
+
+        return null;
     }
 
+    public Duration getAudioLength(DetermineAudioLengthMethod method) {
 
-    public enum AudioLen
+    }
 
     // todo get length via some method (enum for method)
     public File dreamify() {
