@@ -3,6 +3,7 @@ package cyder.audio;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
+import cyder.files.DataUnit;
 import cyder.strings.CyderStrings;
 
 import java.io.File;
@@ -45,11 +46,6 @@ public final class AudioValidationUtil {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    // todo seems to be hinting at enum?
-    private static final int FOUR_KILOBYTES = 4096;
-    private static final int NIBBLE_LENGTH = 4;
-    private static final int BYTE_LENGTH = 8;
-
     /**
      * Validates that the provided file is a valid M4A file.
      * <p>
@@ -68,18 +64,18 @@ public final class AudioValidationUtil {
         Preconditions.checkArgument(file.isFile());
 
         try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[FOUR_KILOBYTES];
+            byte[] buffer = DataUnit.KILOBYTE.getByteArray(4);
             int bytesRead = fis.read(buffer);
             AtomicInteger byteOffset = new AtomicInteger();
 
-            while (byteOffset.get() < bytesRead - NIBBLE_LENGTH) {
-                ByteBuffer bb = ByteBuffer.wrap(buffer, byteOffset.get(), NIBBLE_LENGTH);
-                bb.order(ByteOrder.BIG_ENDIAN);
-                int boxLength = bb.getInt();
+            while (byteOffset.get() < bytesRead - (int) DataUnit.NIBBLE.getValue()) {
+                ByteBuffer byteBuffer = ByteBuffer.wrap(buffer, byteOffset.get(), (int) DataUnit.NIBBLE.getValue());
+                byteBuffer.order(ByteOrder.BIG_ENDIAN);
+                int boxLength = byteBuffer.getInt();
 
-                if (matchesByteArray(FTYP_BOX, buffer, byteOffset.get() + NIBBLE_LENGTH)) {
-                    if (VALID_BRANDS.stream().anyMatch(brand
-                            -> matchesByteArray(brand, buffer, byteOffset.get() + BYTE_LENGTH))) return true;
+                if (matchesByteArray(FTYP_BOX, buffer, byteOffset.get() + (int) DataUnit.NIBBLE.getValue())) {
+                    if (VALID_BRANDS.stream().anyMatch(brand -> matchesByteArray(brand, buffer,
+                            (int) (byteOffset.get() + DataUnit.BYTE.getValue())))) return true;
                 }
 
                 byteOffset.addAndGet(boxLength);
