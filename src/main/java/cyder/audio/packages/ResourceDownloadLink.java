@@ -21,13 +21,11 @@ import java.util.concurrent.Future;
  * Links are presumed to be zipped binaries/direct executables. The caller may download and extract said
  * compressed binary and immediately invoke it from the extracted location.
  */
-@SuppressWarnings("ClassCanBeRecord") /* Readability */
 public final class ResourceDownloadLink {
     /**
      * The map of operating systems to direct resource download links.
      */
-    private final ImmutableMap<OperatingSystem, String> resourceDownloadLinks;
-    // todo second param needs to be named link maybe use record for this?
+    private final ImmutableMap<OperatingSystem, NamedLink> resourceDownloadLinks;
 
     /**
      * Constructs a new ResourceDownloadLink using the provided map.
@@ -36,7 +34,7 @@ public final class ResourceDownloadLink {
      * @throws NullPointerException     if the provided map is null
      * @throws IllegalArgumentException if the provided map is empty
      */
-    public ResourceDownloadLink(ImmutableMap<OperatingSystem, String> resourceDownloadLinks) {
+    public ResourceDownloadLink(ImmutableMap<OperatingSystem, NamedLink> resourceDownloadLinks) {
         Preconditions.checkNotNull(resourceDownloadLinks);
         Preconditions.checkArgument(!resourceDownloadLinks.isEmpty());
 
@@ -52,7 +50,7 @@ public final class ResourceDownloadLink {
      * @throws IllegalArgumentException if the provided operating systems is not
      *                                  contained in the internal resource download link map
      */
-    public String getResourceDownloadLink(OperatingSystem operatingSystem) {
+    public NamedLink getResourceDownloadLink(OperatingSystem operatingSystem) {
         Preconditions.checkNotNull(operatingSystem);
         Preconditions.checkArgument(resourceDownloadLinks.containsKey(operatingSystem));
 
@@ -64,7 +62,7 @@ public final class ResourceDownloadLink {
      *
      * @return the resource download links map
      */
-    public ImmutableMap<OperatingSystem, String> getResourceDownloadLinks() {
+    public ImmutableMap<OperatingSystem, NamedLink> getResourceDownloadLinks() {
         return resourceDownloadLinks;
     }
 

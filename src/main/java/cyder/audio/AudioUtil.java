@@ -141,7 +141,7 @@ public final class AudioUtil {
                 }
             }
 
-            ProcessBuilder processBuilder = new ProcessBuilder(getFfmpegCommand(), INPUT_FLAG,
+            ProcessBuilder processBuilder = new ProcessBuilder("ffmpeg", INPUT_FLAG,
                     quote + mp3File.getAbsolutePath() + quote, safePath);
             processBuilder.redirectErrorStream();
             Process process = processBuilder.start();

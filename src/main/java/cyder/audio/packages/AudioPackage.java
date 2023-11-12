@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
+import javax.naming.Name;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,12 +19,12 @@ public enum AudioPackage {
      * A suite of libraries for handling video, audio, and other multimedia files and streams.
      */
     FFMPEG("ffmpeg -version", new ResourceDownloadLink(ImmutableMap.of(
-            OperatingSystem.WINDOWS,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
-            OperatingSystem.MAC,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
-            OperatingSystem.GNU_LINUX,
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
+            OperatingSystem.WINDOWS, new NamedLink("ffmpeg_windows",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip"),
+            OperatingSystem.MAC, new NamedLink("ffmpeg_mac",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip"),
+            OperatingSystem.GNU_LINUX, new NamedLink("ffmpeg_linux",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/linux/ffmpeg_linux.zip")
     ))),
 
     /**
@@ -40,9 +41,9 @@ public enum AudioPackage {
      * A command line tool to download videos from YouTube and other video sites.
      */
     YOUTUBE_DL("youtube-dl --version", new ResourceDownloadLink(ImmutableMap.of(
-            OperatingSystem.WINDOWS, "todo",
-            OperatingSystem.MAC, "todo",
-            OperatingSystem.GNU_LINUX, "todo"
+            OperatingSystem.WINDOWS, new NamedLink("", ""), // todo
+            OperatingSystem.MAC, new NamedLink("", ""), // todo
+            OperatingSystem.GNU_LINUX, new NamedLink("", "") // todo
     )));
 
     private static final HashMap<AudioPackage, Boolean> presentAndInvokableCache = new HashMap<>();
