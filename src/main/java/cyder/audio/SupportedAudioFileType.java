@@ -24,7 +24,14 @@ public enum SupportedAudioFileType {
     /**
      * The OGG audio file type.
      */
-    OGG(".ogg", ImmutableList.of(0x4F, 0x67, 0x67, 0x53));
+    OGG(".ogg", ImmutableList.of(0x4F, 0x67, 0x67, 0x53)),
+
+    /**
+     * The M4A audio file type.
+     * Note this audio file type has no specific byte signature.
+     * To determine validity of a provided {@link File}, see {@link AudioValidationUtil#isValidM4aFile(File)}.
+     */
+    M4A(".m4a", ImmutableList.of());
 
     private final String extension;
     private final ImmutableList<Integer> signature;

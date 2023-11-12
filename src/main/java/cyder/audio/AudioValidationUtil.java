@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 /**
  * Utility class for audio file validation.
@@ -88,12 +89,15 @@ public final class AudioValidationUtil {
         return false;
     }
 
+    /**
+     * Returns whether the provided byte array and buffer match.
+     *
+     * @param byteArray the byte array
+     * @param buffer the buffer
+     * @param offset the buffer offset for comparison
+     * @return whether the provided byte array matches the provided buffer at the provided offset
+     */
     private static boolean matchesByteArray(ImmutableList<Byte> byteArray, byte[] buffer, int offset) {
-        for (int i = 0 ; i < byteArray.size() ; i++) {
-            if (buffer[offset + i] != byteArray.get(i)) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, byteArray.size()).allMatch(i -> buffer[offset + i] == byteArray.get(i));
     }
 }
