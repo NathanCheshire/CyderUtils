@@ -2,7 +2,7 @@ package cyder.messaging;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.AudioUtil;
-import cyder.audio.WaveFile;
+import cyder.audio.wav.WaveFile;
 import cyder.constants.CyderColors;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;

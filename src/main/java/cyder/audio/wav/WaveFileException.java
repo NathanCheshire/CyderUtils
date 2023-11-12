@@ -1,4 +1,4 @@
-package cyder.audio;
+package cyder.audio.wav;
 
 /**
  * An exception for {@link WaveFile}s.

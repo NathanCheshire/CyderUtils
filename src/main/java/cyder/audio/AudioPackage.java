@@ -1,14 +1,15 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.enumerations.Dynamic;
 import cyder.files.FileUtil;
 import cyder.network.NetworkUtil;
 import cyder.utils.OsUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Audio package and third party library binaries Cyder uses.
@@ -34,16 +35,45 @@ public enum AudioPackage {
      */
     YOUTUBE_DL("youtube-dl --version");
 
+    private static final HashMap<AudioPackage, Boolean> presentAndInvokableCache = new HashMap<>();
+
     private final String versionCommand;
 
     AudioPackage(String versionCommand) {
         this.versionCommand = versionCommand;
     }
 
-    private final String directDownloadLinkHeader =
-            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/";
+    private class ResourceDownloadLink {
+        private final ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks;
 
+        public ResourceDownloadLink(ImmutableMap<OsUtil.OperatingSystem, String> resourceDownloadLinks) {
+            this.resourceDownloadLinks = resourceDownloadLinks;
+        }
 
+        public String getResourceDownloadLink(OsUtil.OperatingSystem operatingSystem) {
+            Preconditions.checkArgument(resourceDownloadLinks.containsKey(operatingSystem));
+            return resourceDownloadLinks.get(operatingSystem);
+        }
+    }
+
+    private static final ImmutableMap<OsUtil.OperatingSystem, String> ffmpegDownloadLinks = ImmutableMap.of(
+            OsUtil.OperatingSystem.WINDOWS,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip",
+            OsUtil.OperatingSystem.OSX,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip",
+            OsUtil.OperatingSystem.UNIX,
+            "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/ubuntu/ffmpeg_ubuntu.zip"
+    );
+    private static final ResourceDownloadLink FFMPEG_RESOURCE_DOWNLOADS = new ResourceDownloadLink(ffmpegDownloadLinks);
+
+    /**
+     * Downloads this audio package to the provided directory.
+     * Note the binary is compressed in zip format when downloaded.
+     * See {@link #downloadAndExtractBinary(File, boolean)} to both download and extract.
+     *
+     * @param directoryToDownloadTo the directory to download the compressed binary to
+     * @return the compressed binary once downloaded
+     */
     @CanIgnoreReturnValue
     public File downloadBinary(File directoryToDownloadTo) {
         switch (this) {
@@ -98,13 +128,14 @@ public enum AudioPackage {
      * PATH such that it may be invoked via the Java process API
      */
     public boolean isPresentAndInvocable() {
-        // todo think about caching this maybe
+        if (presentAndInvokableCache.containsKey(this) && presentAndInvokableCache.containsKey(this)) return true;
+        boolean ret = true;
         try {
             Runtime.getRuntime().exec(versionCommand);
         } catch (IOException e) {
-            return false;
+            ret = false;
         }
-
-        return true;
+        presentAndInvokableCache.put(this, ret);
+        return ret;
     }
 }
