@@ -10,6 +10,7 @@ import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -83,20 +84,25 @@ public final class ResourceDownloadLink {
         Preconditions.checkArgument(downloadLinks.containsKey(operatingSystem));
 
         NamedResourceLink namedResourceLink = downloadLinks.get(operatingSystem);
-        @SuppressWarnings("DataFlowIssue") // Safe due to precondition check
+        @SuppressWarnings("DataFlowIssue") // Safe due to Precondition check
         String resourceName = namedResourceLink.getFilename();
         String resourceLink = namedResourceLink.getLink();
 
+        File compressedBinary = OsUtil.buildFile(directoryToDownloadTo.getAbsolutePath(), resourceName);
 
-        // todo configure thread factory name
-        CyderThreadFactory threadFactory = new CyderThreadFactory("todo name me");
+        String threadFactoryName = "ResourceDownloadLink downloader, name: " + resourceName
+                + ", resource: " + resourceLink;
+        CyderThreadFactory threadFactory = new CyderThreadFactory(threadFactoryName);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            File compressedBinary = OsUtil.buildFile(directoryToDownloadTo.getAbsolutePath(), resourceName);
-            NetworkUtil.downloadResource(resourceLink, compressedBinary);
-            while (!compressedBinary.exists()) Thread.onSpinWait();
-            FileUtil.unzip(compressedBinary, directoryToDownloadTo);
-            OsUtil.deleteFile(compressedBinary);
-
+            try {
+                boolean noErrors = NetworkUtil.downloadResource(resourceLink, compressedBinary);
+                while (!compressedBinary.exists()) Thread.onSpinWait();
+                // todo these two return booleans we need to check and we also need to return the final file still
+                FileUtil.unzip(compressedBinary, directoryToDownloadTo);
+                OsUtil.deleteFile(compressedBinary);
+            } catch (IOException e) {
+                return null;
+            }
         });
     }
 

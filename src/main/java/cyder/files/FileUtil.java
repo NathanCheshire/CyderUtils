@@ -842,13 +842,12 @@ public final class FileUtil {
         checkNotNull(file);
         checkArgument(file.exists());
 
-        try {
-            return new FileInputStream(file).available();
+        try (FileInputStream fis = new FileInputStream((file))) {
+            return fis.available();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            // todo throw exception
+            throw new FatalException(e.getMessage());
         }
-
-        return 0L;
     }
 
     /**
@@ -863,43 +862,26 @@ public final class FileUtil {
         Preconditions.checkNotNull(filename);
         Preconditions.checkArgument(!filename.isEmpty());
 
-        filename = filename.trim();
+        final String finalFilename = filename.trim();
 
         switch (OsUtil.OPERATING_SYSTEM) {
-            case OSX:
-                return !filename.contains(CyderStrings.forwardSlash) && !filename.contains(CyderStrings.nullChar);
-            case WINDOWS:
-                if (filename.matches(CyderRegexPatterns.windowsInvalidFilenameChars.pattern())) {
-                    return false;
-                }
+            case MAC -> {
+                return !filename.contains(CyderStrings.forwardSlash)
+                        && !filename.contains(CyderStrings.nullChar);
+            }
+            case WINDOWS -> {
+                if (filename.matches(CyderRegexPatterns.windowsInvalidFilenameChars.pattern())) return false;
+                if (invalidWindowsFilenames.stream().anyMatch(finalFilename::equalsIgnoreCase)) return false;
+                if (!filename.contains(".")) return !filename.endsWith(".");
 
-                for (String invalidName : invalidWindowsFilenames) {
-                    if (filename.equalsIgnoreCase(invalidName)) {
-                        return false;
-                    }
-                }
-
-                if (filename.contains(".")) {
-                    String[] parts = filename.split("\\.");
-
-                    for (String part : parts) {
-                        for (String invalidName : invalidWindowsFilenames) {
-                            if (part.equalsIgnoreCase(invalidName)) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-
-                return !filename.endsWith(".");
-            case UNIX:
-                for (String invalidChar : invalidUnixFilenameChars) {
-                    if (filename.contains(invalidChar)) return false;
-                }
-
-                break;
-            case UNKNOWN:
-                throw new UnsupportedOsException("Unknown operating system: " + OsUtil.OPERATING_SYSTEM_NAME);
+                return Arrays.stream(filename.split("\\."))
+                        .anyMatch(part -> invalidWindowsFilenames.stream().noneMatch(part::equalsIgnoreCase));
+            }
+            case GNU_LINUX -> {
+                if (invalidUnixFilenameChars.stream().anyMatch(filename::contains)) return false;
+            }
+            case UNKNOWN ->
+                    throw new UnsupportedOsException("Unknown operating system: " + OsUtil.OPERATING_SYSTEM_NAME);
         }
 
         return true;
