@@ -241,7 +241,7 @@ public class DirectoryWatcher {
                     if (length != null) numFiles = length.length;
                 }
 
-                FileTypeSize add = new FileTypeSize(type, FileUtil.size(file), numFiles);
+                FileTypeSize add = new FileTypeSize(type, FileUtil.getFileSize(file), numFiles);
 
                 ret.put(file.getAbsolutePath(), add);
             });

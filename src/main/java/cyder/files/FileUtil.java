@@ -3,6 +3,7 @@ package cyder.files;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.Immutable;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
@@ -26,11 +27,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Static utilities having to do with files, their names, properties, and attributes.
@@ -146,7 +145,7 @@ public final class FileUtil {
      * @return whether the provided file is a supported image file
      */
     public static boolean isSupportedImageExtension(File file) {
-        checkNotNull(file);
+        Preconditions.checkNotNull(file);
 
         String name = file.getName();
         if (StringUtil.isNullOrEmpty(name)) return false;
@@ -166,7 +165,7 @@ public final class FileUtil {
      * @return whether the provided file is a supported audio file
      */
     public static boolean isSupportedAudioExtension(File file) {
-        checkNotNull(file);
+        Preconditions.checkNotNull(file);
 
         String name = file.getName();
         if (StringUtil.isNullOrEmpty(name)) return false;
@@ -185,7 +184,7 @@ public final class FileUtil {
      * @return whether the provided file is a supported font file
      */
     public static boolean isSupportedFontExtension(File file) {
-        checkNotNull(file);
+        Preconditions.checkNotNull(file);
 
         String extension = getExtension(file.getName());
         if (StringUtil.isNullOrEmpty(extension)) return false;
@@ -204,10 +203,10 @@ public final class FileUtil {
      * @return whether the given file matches the provided signature
      */
     public static boolean fileMatchesSignature(File file, ImmutableList<Integer> expectedSignature) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkNotNull(expectedSignature);
-        checkArgument(!expectedSignature.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkNotNull(expectedSignature);
+        Preconditions.checkArgument(!expectedSignature.isEmpty());
 
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             for (int n = 0 ; n < expectedSignature.size() ; n++) {
@@ -229,10 +228,10 @@ public final class FileUtil {
      * @return the requested number of bytes
      */
     public static ImmutableList<Integer> getBytes(File file, int numBytes) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkArgument(!file.isDirectory());
-        checkArgument(numBytes > 0);
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkArgument(!file.isDirectory());
+        Preconditions.checkArgument(numBytes > 0);
 
         ArrayList<Integer> ret = new ArrayList<>(numBytes);
 
@@ -256,8 +255,8 @@ public final class FileUtil {
      * @return the file name requested
      */
     public static String getFilename(String file) {
-        checkNotNull(file);
-        checkArgument(!file.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(!file.isEmpty());
 
         return file.replaceAll(filenameRegex, "");
     }
@@ -269,8 +268,8 @@ public final class FileUtil {
      * @return the file extension requested
      */
     public static String getExtension(String file) {
-        checkNotNull(file);
-        checkArgument(!file.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(!file.isEmpty());
 
         return file.replace(getFilename(file), "");
     }
@@ -283,7 +282,7 @@ public final class FileUtil {
      * @return the file name requested
      */
     public static String getFilename(File file) {
-        checkNotNull(file);
+        Preconditions.checkNotNull(file);
 
         return file.getName().replaceAll(filenameRegex, "");
     }
@@ -295,7 +294,7 @@ public final class FileUtil {
      * @return the file extension requested
      */
     public static String getExtension(File file) {
-        checkNotNull(file);
+        Preconditions.checkNotNull(file);
 
         String filename = getFilename(file);
 
@@ -309,8 +308,8 @@ public final class FileUtil {
      * @return the file extension requested
      */
     public static String getExtensionWithoutPeriod(File file) {
-        checkNotNull(file);
-        checkArgument(!file.getName().isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(!file.getName().isEmpty());
 
         String filename = getFilename(file);
         String withoutFilename = file.getName().replace(filename, "");
@@ -329,9 +328,9 @@ public final class FileUtil {
      * @return whether the provided file ends in the expected extension
      */
     public static boolean validateExtension(File file, String expectedExtension) {
-        checkNotNull(file);
-        checkNotNull(expectedExtension);
-        checkArgument(!expectedExtension.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(expectedExtension);
+        Preconditions.checkArgument(!expectedExtension.isEmpty());
 
         return getExtension(file).equalsIgnoreCase(expectedExtension);
     }
@@ -344,11 +343,11 @@ public final class FileUtil {
      * @return whether the provided file ends in one of the expected extension
      */
     public static boolean validateExtension(File file, String expectedExtension, String... expectedExtensions) {
-        checkNotNull(file);
-        checkNotNull(expectedExtension);
-        checkArgument(!expectedExtension.isEmpty());
-        checkNotNull(expectedExtensions);
-        checkArgument(expectedExtensions.length > 0);
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(expectedExtension);
+        Preconditions.checkArgument(!expectedExtension.isEmpty());
+        Preconditions.checkNotNull(expectedExtensions);
+        Preconditions.checkArgument(expectedExtensions.length > 0);
 
         ImmutableList<String> extensions = new ImmutableList.Builder<String>()
                 .add(expectedExtension)
@@ -365,9 +364,9 @@ public final class FileUtil {
      * @return whether the provided file ends in one of the expected extension
      */
     public static boolean validateExtension(File file, Collection<String> expectedExtensions) {
-        checkNotNull(file);
-        checkNotNull(expectedExtensions);
-        checkArgument(expectedExtensions.size() > 0);
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(expectedExtensions);
+        Preconditions.checkArgument(expectedExtensions.size() > 0);
 
         return StringUtil.in(getExtension(file), false, expectedExtensions);
     }
@@ -380,9 +379,9 @@ public final class FileUtil {
      * @return whether the file's name without the extension matches the expected name
      */
     public static boolean validateFileName(File file, String expectedName) {
-        checkNotNull(file);
-        checkNotNull(expectedName);
-        checkArgument(!expectedName.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(expectedName);
+        Preconditions.checkArgument(!expectedName.isEmpty());
 
         return getFilename(file).equals(expectedName);
     }
@@ -395,8 +394,8 @@ public final class FileUtil {
      * @return whether the contents of the two file are equal
      */
     public static boolean fileContentsEqual(File fileOne, File fileTwo) {
-        checkNotNull(fileOne);
-        checkNotNull(fileTwo);
+        Preconditions.checkNotNull(fileOne);
+        Preconditions.checkNotNull(fileTwo);
 
         if (!fileOne.exists() || !fileTwo.exists()) return false;
 
@@ -418,10 +417,10 @@ public final class FileUtil {
      */
     @CanIgnoreReturnValue
     public static boolean zip(String source, String destination) {
-        checkNotNull(source);
-        checkNotNull(destination);
-        checkArgument(!source.isEmpty());
-        checkArgument(!destination.isEmpty());
+        Preconditions.checkNotNull(source);
+        Preconditions.checkNotNull(destination);
+        Preconditions.checkArgument(!source.isEmpty());
+        Preconditions.checkArgument(!destination.isEmpty());
 
         try {
             FileOutputStream fos = new FileOutputStream(destination);
@@ -458,10 +457,10 @@ public final class FileUtil {
      */
     @CanIgnoreReturnValue /* Some callers don't care */
     public static boolean unzip(File sourceZip, File destinationFolder) {
-        checkNotNull(sourceZip);
-        checkNotNull(destinationFolder);
-        checkArgument(sourceZip.exists());
-        checkArgument(destinationFolder.exists());
+        Preconditions.checkNotNull(sourceZip);
+        Preconditions.checkNotNull(destinationFolder);
+        Preconditions.checkArgument(sourceZip.exists());
+        Preconditions.checkArgument(destinationFolder.exists());
 
         try {
             ZipFile zipFile = new ZipFile(sourceZip);
@@ -497,12 +496,14 @@ public final class FileUtil {
      * @param directory the directory the file will be placed in
      * @return a unique name for the file. Note this may or may not equal
      * the original file name
+     * @throws NullPointerException     if either the provided file or directory are null
+     * @throws IllegalArgumentException if the directory does not exist or the file is a directory
      */
     public static String constructUniqueName(File file, File directory) {
-        checkNotNull(file);
-        checkNotNull(directory);
-        checkArgument(directory.exists());
-        checkArgument(directory.isDirectory());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(directory);
+        Preconditions.checkArgument(directory.exists());
+        Preconditions.checkArgument(directory.isDirectory());
 
         File[] files = directory.listFiles();
         if (files == null || ArrayUtil.isEmpty(files)) return file.getName();
@@ -556,27 +557,24 @@ public final class FileUtil {
      * @return an immutable list of files found within the provided directory
      */
     public static ImmutableList<File> getFiles(File topLevelDirectory, boolean recursive, String extensionRegex) {
-        checkNotNull(topLevelDirectory);
-        checkArgument(topLevelDirectory.exists());
-        checkArgument(topLevelDirectory.isDirectory());
-        checkNotNull(extensionRegex);
+        Preconditions.checkNotNull(topLevelDirectory);
+        Preconditions.checkArgument(topLevelDirectory.exists());
+        Preconditions.checkArgument(topLevelDirectory.isDirectory());
+        Preconditions.checkNotNull(extensionRegex);
 
         File[] topLevelFiles = topLevelDirectory.listFiles();
         if (topLevelFiles == null || ArrayUtil.isEmpty(topLevelFiles)) return ImmutableList.of();
 
         ArrayList<File> ret = new ArrayList<>();
 
-        for (File file : topLevelFiles) {
+        Arrays.stream(topLevelFiles).forEach(file -> {
             if (file.isFile()) {
                 String extension = FileUtil.getExtension(file).replace("\\.", "");
-
-                if (extensionRegex.isEmpty() || extension.matches(extensionRegex)) {
-                    ret.add(file);
-                }
+                if (extensionRegex.isEmpty() || extension.matches(extensionRegex)) ret.add(file);
             } else if (recursive && file.isDirectory()) {
                 ret.addAll(getFiles(file, true, extensionRegex));
             }
-        }
+        });
 
         return ImmutableList.copyOf(ret);
     }
@@ -599,9 +597,9 @@ public final class FileUtil {
      * @return a list of folders found within the provided directory
      */
     public static ImmutableList<File> getFolders(File topLevelDirectory, boolean recursive) {
-        checkNotNull(topLevelDirectory);
-        checkArgument(topLevelDirectory.exists());
-        checkArgument(topLevelDirectory.isDirectory());
+        Preconditions.checkNotNull(topLevelDirectory);
+        Preconditions.checkArgument(topLevelDirectory.exists());
+        Preconditions.checkArgument(topLevelDirectory.isDirectory());
 
         ArrayList<File> ret = new ArrayList<>();
 
@@ -609,13 +607,9 @@ public final class FileUtil {
 
         if (topLevelFiles != null && topLevelFiles.length > 0) {
             Arrays.stream(topLevelFiles).forEach(file -> {
-                if (file.isDirectory()) {
-                    ret.add(file);
-
-                    if (recursive) {
-                        ret.addAll(getFolders(file, true));
-                    }
-                }
+                if (!file.isDirectory()) return;
+                ret.add(file);
+                if (recursive) ret.addAll(getFolders(file, true));
             });
         }
 
@@ -630,8 +624,8 @@ public final class FileUtil {
      * @throws IOException if reading the file fails
      */
     public static String readFileContents(File file) throws IOException {
-        checkNotNull(file);
-        checkArgument(file.exists());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
 
         return Files.readString(Path.of(file.getAbsolutePath()));
     }
@@ -643,9 +637,9 @@ public final class FileUtil {
      * @return the String of hex data from the file
      */
     public static String getHexString(File file) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkArgument(FileUtil.validateExtension(file, Extension.BIN.getExtension()));
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkArgument(FileUtil.validateExtension(file, Extension.BIN.getExtension()));
 
         try {
             BufferedReader fis = new BufferedReader(new FileReader(file));
@@ -672,9 +666,9 @@ public final class FileUtil {
      * @return the String of binary data from the file
      */
     public static String getBinaryString(File file) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkArgument(FileUtil.validateExtension(file, Extension.BIN.getExtension()));
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkArgument(FileUtil.validateExtension(file, Extension.BIN.getExtension()));
 
         try {
             BufferedReader fis = new BufferedReader(new FileReader(file));
@@ -697,8 +691,8 @@ public final class FileUtil {
      */
     @CanIgnoreReturnValue
     public static Future<Boolean> openResource(String resource, boolean allowCyderHandlers) {
-        checkNotNull(resource);
-        checkArgument(!resource.isEmpty());
+        Preconditions.checkNotNull(resource);
+        Preconditions.checkArgument(!resource.isEmpty());
 
         String threadName = "Resource opener: " + resource;
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
@@ -730,8 +724,8 @@ public final class FileUtil {
      */
     @CanIgnoreReturnValue
     public static boolean openResourceUsingNativeProgram(String resource) {
-        checkNotNull(resource);
-        checkArgument(!resource.isEmpty());
+        Preconditions.checkNotNull(resource);
+        Preconditions.checkArgument(!resource.isEmpty());
 
         try {
             File filePointer = new File(resource);
@@ -755,9 +749,9 @@ public final class FileUtil {
      * @return a list of lines from the provided file
      */
     public static ImmutableList<String> getFileLines(File file) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkArgument(file.isFile());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkArgument(file.isFile());
 
         ArrayList<String> ret = new ArrayList<>();
 
@@ -781,11 +775,11 @@ public final class FileUtil {
      * @param append whether to append the lines or overwrite the existing content, if any, with the new content
      */
     public static void writeLinesToFile(File file, List<String> lines, boolean append) {
-        checkNotNull(file);
-        checkArgument(file.exists());
-        checkArgument(file.isFile());
-        checkNotNull(lines);
-        checkArgument(!lines.isEmpty());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+        Preconditions.checkArgument(file.isFile());
+        Preconditions.checkNotNull(lines);
+        Preconditions.checkArgument(!lines.isEmpty());
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, append))) {
             for (String line : lines) {
@@ -798,38 +792,29 @@ public final class FileUtil {
     }
 
     /**
-     * Returns the size of the file in bytes.
+     * Returns the size of the file/directory in bytes.
      * If the provided file is a directory, the sum of contained files is returned recursively.
      * Empty directories are reported as length 0, files which do not exist are also reported as 0.
      *
      * @param file the file
      * @return the size of the file in bytes
+     * @throws NullPointerException if the provided file is null
+     * @throws IOException          if an IOException occurs when calling {@link Files#size(Path)}
      */
-    public static long size(File file) {
-        checkNotNull(file);
+    public static long getFileSize(File file) throws IOException {
+        Preconditions.checkNotNull(file);
+        if (!file.exists()) return 0L;
+        if (file.isFile()) return Files.size(Paths.get(file.getAbsolutePath()));
 
-        if (file.exists()) {
-            if (file.isFile()) {
-                try {
-                    return Files.size(Paths.get(file.getAbsolutePath()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                long ret = 0L;
-                File[] files = file.listFiles();
-
-                if (files != null && files.length > 0) {
-                    for (File child : files) {
-                        ret += size(child);
-                    }
-                }
-
-                return ret;
-            }
-        }
-
-        return 0L;
+        AtomicLong ret = new AtomicLong(0L);
+        File[] files = file.listFiles();
+        if (files != null) Arrays.stream(files).forEach(child -> {
+            try {
+                long childSize = getFileSize(child);
+                ret.addAndGet(childSize);
+            } catch (IOException ignored) {}
+        });
+        return ret.get();
     }
 
     /**
@@ -839,8 +824,8 @@ public final class FileUtil {
      * @return the total bytes of the file
      */
     public static long getTotalBytes(File file) {
-        checkNotNull(file);
-        checkArgument(file.exists());
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
 
         try (FileInputStream fis = new FileInputStream((file))) {
             return fis.available();
