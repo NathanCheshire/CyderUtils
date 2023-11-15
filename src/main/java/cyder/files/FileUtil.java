@@ -3,7 +3,6 @@ package cyder.files;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.errorprone.annotations.Immutable;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
@@ -13,7 +12,8 @@ import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.ArrayUtil;
 import cyder.utils.OsUtil;
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 import java.awt.*;
 import java.io.*;
@@ -35,8 +35,9 @@ import java.util.zip.ZipOutputStream;
  * Static utilities having to do with files, their names, properties, and attributes.
  */
 public final class FileUtil {
+    //todo could we generate these maybe?
     /**
-     * The invalid Com names which files may not contains on Windows.
+     * The invalid COM names which files may not contain substrings of on Windows.
      * These exist in Windows for backwards compatibility.
      */
     public static final ImmutableList<String> invalidWindowsComNames = ImmutableList.of(
@@ -46,7 +47,7 @@ public final class FileUtil {
     );
 
     /**
-     * The invalid LPT (Line Printer Terminal) names which files may not contains on Windows.
+     * The invalid LPT (Line Printer Terminal) names which files may not contain substrings of on Windows.
      * These exist in Windows for backwards compatibility.
      */
     public static final ImmutableList<String> invalidWindowsLptNames = ImmutableList.of(
@@ -56,8 +57,7 @@ public final class FileUtil {
     );
 
     /**
-     * The additional invalid windows filenames aside from
-     * {@link #invalidWindowsComNames} and {@link #invalidWindowsLptNames}.
+     * The additional invalid Windows filenames aside from the COM and LPT names.
      * These exist in Windows for backwards compatibility.
      */
     public static final ImmutableList<String> otherInvalidWindowsNames = ImmutableList.of(
@@ -78,7 +78,7 @@ public final class FileUtil {
      * The list of invalid characters for a file name on unix based systems.
      */
     public static final ImmutableList<String> invalidUnixFilenameChars = ImmutableList.of(
-            CyderStrings.forwardSlash, "<", ">", "|", "&", CyderStrings.colon
+            "/", "<", ">", "|", "&", ":"
     );
 
     /**
@@ -132,6 +132,8 @@ public final class FileUtil {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private FileUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -339,7 +341,7 @@ public final class FileUtil {
      * Returns whether the provided file ends in one of the expected extensions.
      *
      * @param file               the file to validate the extension again
-     * @param expectedExtensions the expected extensions such as ".json", ".mp3", ".png", etc.
+     * @param expectedExtensions the expected extensions such as ".json", ".mp3", ".png", etc
      * @return whether the provided file ends in one of the expected extension
      */
     public static boolean validateExtension(File file, String expectedExtension, String... expectedExtensions) {
@@ -388,25 +390,32 @@ public final class FileUtil {
 
     /**
      * Returns whether the contents of the two files are equal.
+     * If either of the files does not exist then false is returned.
      *
-     * @param fileOne the first file
+     * @param file    the first file
      * @param fileTwo the second file
      * @return whether the contents of the two file are equal
+     * @throws NullPointerException iof either of the files are null
      */
-    public static boolean fileContentsEqual(File fileOne, File fileTwo) {
-        Preconditions.checkNotNull(fileOne);
+    public static boolean fileContentsEqual(File file, File fileTwo) {
+        Preconditions.checkNotNull(file);
         Preconditions.checkNotNull(fileTwo);
 
-        if (!fileOne.exists() || !fileTwo.exists()) return false;
+        if (!file.exists() || !fileTwo.exists()) return false;
 
         try {
-            return com.google.common.io.Files.equal(fileOne, fileTwo);
+            // todo static
+            return com.google.common.io.Files.equal(file, fileTwo);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
     }
+
+    // todo zip file util
+
+    // todo this should be files obviously right?
 
     /**
      * Zips the provided file/folder and deletes the original if successful and requested.
@@ -424,22 +433,22 @@ public final class FileUtil {
 
         try {
             FileOutputStream fos = new FileOutputStream(destination);
-            ZipOutputStream zipOut = new ZipOutputStream(fos);
+            ZipOutputStream zos = new ZipOutputStream(fos);
 
             File fileToZip = new File(source);
             FileInputStream fis = new FileInputStream(fileToZip);
             ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-            zipOut.putNextEntry(zipEntry);
+            zos.putNextEntry(zipEntry);
 
-            byte[] bytes = new byte[1024];
+            byte[] bytes = DataUnit.KILOBYTE.getByteArray(1);
             int length;
             while ((length = fis.read(bytes)) >= 0) {
-                zipOut.write(bytes, 0, length);
+                zos.write(bytes, 0, length);
             }
 
-            zipOut.close();
-            fis.close();
-            fos.close();
+            closeIfNotNull(zos);
+            closeIfNotNull(fis);
+            closeIfNotNull(fos);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -453,19 +462,18 @@ public final class FileUtil {
      *
      * @param sourceZip         the source zip archive
      * @param destinationFolder the folder to extract the contents of the zip archive to
-     * @return whether the unzipping process was successful
+     * @return the file or list of files that were extracted
      */
-    @CanIgnoreReturnValue /* Some callers don't care */
-    public static boolean unzip(File sourceZip, File destinationFolder) {
+    @CanIgnoreReturnValue
+    public static ImmutableList<File> unzip(File sourceZip, File destinationFolder) {
         Preconditions.checkNotNull(sourceZip);
         Preconditions.checkNotNull(destinationFolder);
         Preconditions.checkArgument(sourceZip.exists());
         Preconditions.checkArgument(destinationFolder.exists());
 
-        try {
-            ZipFile zipFile = new ZipFile(sourceZip);
+        try (ZipFile zipFile = new ZipFile(sourceZip)) {
             zipFile.extractAll(destinationFolder.getAbsolutePath());
-        } catch (Exception e) {
+        } catch (IOException e) {
             return false;
         }
 
@@ -478,13 +486,10 @@ public final class FileUtil {
      * @param closable the object to close and free
      */
     public static void closeIfNotNull(Closeable closable) {
-        if (closable != null) {
-            try {
-                closable.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        if (closable == null) return;
+        try {
+            closable.close();
+        } catch (IOException ignored) {}
     }
 
     /**
