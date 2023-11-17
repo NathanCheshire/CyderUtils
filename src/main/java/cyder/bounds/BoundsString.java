@@ -29,6 +29,8 @@ public final class BoundsString {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private BoundsString() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
@@ -40,6 +42,8 @@ public final class BoundsString {
      * @param text   the text
      * @param width  the width for the text
      * @param height the height for the text
+     * @throws NullPointerException     if the provided text is null
+     * @throws IllegalArgumentException if the provided width or height is less than zero
      */
     public BoundsString(String text, int width, int height) {
         Preconditions.checkNotNull(text);
@@ -95,9 +99,10 @@ public final class BoundsString {
     @Override
     public String toString() {
         return "BoundsString{"
-                + "text=" + CyderStrings.quote + text + CyderStrings.quote + CyderStrings.comma
-                + CyderStrings.space + "width=" + width + CyderStrings.quote + CyderStrings.comma
-                + CyderStrings.space + "height=" + height + "}";
+                + "text=\"" + text + "\", "
+                + "width=" + width + ", "
+                + "height=" + height
+                + "}";
     }
 
     /**

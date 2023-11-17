@@ -17,6 +17,8 @@ public final class HtmlString extends StringContainer {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private HtmlString() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
@@ -26,6 +28,7 @@ public final class HtmlString extends StringContainer {
      * Constructs a new html string.
      *
      * @param containedString the contained string
+     * @throws NullPointerException if the provided string is null
      */
     public HtmlString(String containedString) {
         Preconditions.checkNotNull(containedString);

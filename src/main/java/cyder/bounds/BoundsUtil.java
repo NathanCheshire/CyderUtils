@@ -24,12 +24,12 @@ public final class BoundsUtil {
     private static final int DEFAULT_MAX_WIDTH = 1200;
 
     /**
-     * The opening html tag char.
+     * The opening HTML tag char.
      */
     public static final char openingHtmlTagChar = '<';
 
     /**
-     * The closing html tag char.
+     * The closing HTML tag char.
      */
     public static final char closingHtmlTagChar = '>';
 
@@ -40,6 +40,8 @@ public final class BoundsUtil {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private BoundsUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -53,8 +55,11 @@ public final class BoundsUtil {
      *
      * @param text the string to display
      * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
+     * @throws NullPointerException if the provided text is null
      */
     public static BoundsString widthHeightCalculation(String text) {
+        Preconditions.checkNotNull(text);
+
         return widthHeightCalculation(text, CyderFonts.DEFAULT_FONT_SMALL, DEFAULT_MAX_WIDTH);
     }
 
@@ -66,8 +71,12 @@ public final class BoundsUtil {
      * @param text the string to display
      * @param font the font to be used
      * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
+     * @throws NullPointerException if the provided text or font is null
      */
     public static BoundsString widthHeightCalculation(String text, Font font) {
+        Preconditions.checkNotNull(text);
+        Preconditions.checkNotNull(font);
+
         return widthHeightCalculation(text, font, DEFAULT_MAX_WIDTH);
     }
 
@@ -80,6 +89,8 @@ public final class BoundsUtil {
      * @param maxWidth the maximum width allowed
      * @param font     the font to be used
      * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
+     * @throws NullPointerException if the text or font is null
+     * @throws IllegalArgumentException if the provided text is empty or max width is less than or equal to zero
      */
     public static BoundsString widthHeightCalculation(String text, Font font, int maxWidth) {
         Preconditions.checkNotNull(text);

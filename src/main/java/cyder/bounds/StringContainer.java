@@ -1,7 +1,7 @@
 package cyder.bounds;
 
 /**
- * A string container.
+ * A container for some {@link String} content.
  */
 public abstract class StringContainer {
     /**
