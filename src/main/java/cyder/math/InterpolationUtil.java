@@ -9,6 +9,8 @@ import cyder.strings.CyderStrings;
 public final class InterpolationUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private InterpolationUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -34,7 +36,7 @@ public final class InterpolationUtil {
      * @param value1 the first value
      * @param value2 the second value
      * @param amount the amount to interpolate between the two values value.
-     *               Typically this value falls in the range [0.0, 1.0]
+     *               Typically, this value falls in the range [0.0, 1.0]
      * @return the linearly interpolated value
      */
     private static double linearlyInterpolate(double value1, double value2, double amount) {

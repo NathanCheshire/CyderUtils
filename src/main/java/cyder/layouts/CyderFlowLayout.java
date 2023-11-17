@@ -3,8 +3,6 @@ package cyder.layouts;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 import cyder.ui.pane.CyderPanel;
 
@@ -130,8 +128,6 @@ public class CyderFlowLayout extends CyderLayout {
         Preconditions.checkArgument(verticalGap > -1);
         this.horizontalGap = horizontalGap;
         this.verticalGap = verticalGap;
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

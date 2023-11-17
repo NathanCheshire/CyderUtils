@@ -8,7 +8,6 @@ import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
 import cyder.ui.UiUtil;
@@ -198,7 +197,7 @@ public final class MessagingUtil {
                     if (futureWav.get().isPresent()) wavOrMp3FileReference.set(futureWav.get().get());
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
 
             if (FileUtil.validateExtension(wavOrMp3FileReference.get(), Extension.MP3.getExtension())) {
@@ -373,7 +372,6 @@ public final class MessagingUtil {
         try {
             readImage = ImageUtil.read(imageFile);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
             throw new FatalException("Failed to read image: " + imageFile.getAbsolutePath());
         }
 
