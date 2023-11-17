@@ -9,7 +9,6 @@ import cyder.console.Console;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
-import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.ui.exceptions.DeviceNotFoundException;
 import cyder.exceptions.FatalException;

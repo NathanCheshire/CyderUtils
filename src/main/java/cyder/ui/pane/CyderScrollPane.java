@@ -3,7 +3,7 @@ package cyder.ui.pane;
 import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;

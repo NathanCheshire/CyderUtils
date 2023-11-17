@@ -3,7 +3,6 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.enumerations.Direction;
-import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.internal.ExceptionHandler;

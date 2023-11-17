@@ -2,7 +2,7 @@ package cyder.handlers.external;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;

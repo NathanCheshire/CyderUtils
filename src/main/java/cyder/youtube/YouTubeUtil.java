@@ -2,33 +2,21 @@ package cyder.youtube;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.audio.AudioUtil;
-import cyder.console.Console;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.CyderUrls;
-import cyder.enumerations.Dynamic;
-import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.input.BaseInputHandler;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.strings.LevenshteinUtil;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
-import cyder.ui.button.CyderButton;
-import cyder.user.UserFile;
 import cyder.utils.ArrayUtil;
 import cyder.utils.ImageUtil;
 import cyder.utils.SecurityUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -46,6 +34,8 @@ import static cyder.youtube.YouTubeConstants.*;
 public final class YouTubeUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private YouTubeUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -54,22 +44,20 @@ public final class YouTubeUtil {
     /**
      * Downloads the YouTube video with the provided url.
      *
-     * @param url              the url of the video to download
-     * @param baseInputHandler the handler to use to print updates about the download to
+     * @param url the url of the video to download
      */
-    public static void downloadYouTubeAudio(String url, BaseInputHandler baseInputHandler) {
+    public static void downloadYouTubeAudio(String url) {
         Preconditions.checkNotNull(url);
         Preconditions.checkArgument(!url.isEmpty());
-        Preconditions.checkNotNull(baseInputHandler);
 
-        if (AudioUtil.ffmpegInstalled() && AudioUtil.youTubeDlInstalled()) {
-            YouTubeAudioDownload youTubeDownload = new YouTubeAudioDownload();
-            youTubeDownload.setVideoLink(url);
-            youTubeDownload.setPrintOutputHandler(baseInputHandler);
-            youTubeDownload.downloadAudioAndThumbnail();
-        } else {
-            onNoFfmpegOrYoutubeDlInstalled();
-        }
+        //        if (AudioUtil.ffmpegInstalled() && AudioUtil.youTubeDlInstalled()) {
+        //            YouTubeAudioDownload youTubeDownload = new YouTubeAudioDownload();
+        //            youTubeDownload.setVideoLink(url);
+        //            youTubeDownload.setPrintOutputHandler(baseInputHandler);
+        //            youTubeDownload.downloadAudioAndThumbnail();
+        //        } else {
+        //            onNoFfmpegOrYoutubeDlInstalled();
+        //        }
     }
 
     /**
@@ -145,68 +133,21 @@ public final class YouTubeUtil {
      * Outputs instructions to the console due to YouTube-dl or ffmpeg not being installed.
      */
     private static void onNoFfmpegOrYoutubeDlInstalled() {
-        Console.INSTANCE.getInputHandler().println("Sorry, but ffmpeg and/or YouTube-dl "
-                + "couldn't be located. Please make sure they are both installed and added to your PATH Windows "
-                + "variable. Remember to also set the path to your YouTube-dl executable in the user editor");
-
-        CyderButton environmentVariableHelp = new CyderButton("Add Environment Variables");
-        environmentVariableHelp.addActionListener(e -> NetworkUtil.openUrl(environmentVariables));
-        Console.INSTANCE.getInputHandler().println(environmentVariableHelp);
-
-        CyderButton downloadFFMPEG = new CyderButton("Download FFMPEG");
-        downloadFFMPEG.addActionListener(e -> NetworkUtil.openUrl(CyderUrls.FFMPEG_INSTALLATION));
-        Console.INSTANCE.getInputHandler().println(downloadFFMPEG);
-
-        CyderButton downloadYoutubeDL = new CyderButton("Download YouTube-dl");
-        downloadYoutubeDL.addActionListener(e -> NetworkUtil.openUrl(CyderUrls.YOUTUBE_DL_INSTALLATION));
-        Console.INSTANCE.getInputHandler().println(downloadYoutubeDL);
-    }
-
-    /**
-     * Attempts to set the console background to the provided YouTube video's thumbnail
-     *
-     * @param url the url of the YouTube video
-     */
-    public static void setAsConsoleBackground(String url) {
-        Preconditions.checkNotNull(url);
-        Preconditions.checkArgument(NetworkUtil.isValidUrl(url));
-
-        Dimension consoleDimension = Console.INSTANCE.getConsoleCyderFrame().getSize();
-
-        Optional<BufferedImage> maxThumbnailOptional = getMaxResolutionThumbnail(extractUuid(url));
-
-        if (maxThumbnailOptional.isEmpty()) {
-            throw new YoutubeException("Could not get max resolution thumbnail");
-        }
-
-        BufferedImage maxThumbnail = maxThumbnailOptional.get();
-
-        int newConsoleWidth = (int) consoleDimension.getWidth();
-        int newConsoleHeight = (int) consoleDimension.getHeight();
-
-        // if console is bigger than a dimension of the thumbnail, use thumbnail dimensions
-        if (consoleDimension.getWidth() > maxThumbnail.getWidth()
-                || consoleDimension.getHeight() > maxThumbnail.getHeight()) {
-            newConsoleWidth = maxThumbnail.getWidth();
-            newConsoleHeight = maxThumbnail.getHeight();
-        }
-
-        maxThumbnail = ImageUtil.resizeImage(maxThumbnail, maxThumbnail.getType(), newConsoleWidth, newConsoleHeight);
-
-        String saveNameAndExtension = getDownloadSaveName(url) + Extension.PNG.getExtension();
-
-        File fullSaveFile = Dynamic.buildDynamic(
-                Dynamic.USERS.getFileName(),
-                Console.INSTANCE.getUuid(),
-                UserFile.BACKGROUNDS.getName(),
-                saveNameAndExtension);
-
-        try {
-            ImageIO.write(maxThumbnail, Extension.PNG.getExtensionWithoutPeriod(), fullSaveFile);
-            Console.INSTANCE.setBackgroundFile(fullSaveFile);
-        } catch (IOException e) {
-            ExceptionHandler.handle(e);
-        }
+        //        Console.INSTANCE.getInputHandler().println("Sorry, but ffmpeg and/or YouTube-dl "
+        //                + "couldn't be located. Please make sure they are both installed and added to your PATH Windows "
+        //                + "variable. Remember to also set the path to your YouTube-dl executable in the user editor");
+        //
+        //        CyderButton environmentVariableHelp = new CyderButton("Add Environment Variables");
+        //        environmentVariableHelp.addActionListener(e -> NetworkUtil.openUrl(environmentVariables));
+        //        Console.INSTANCE.getInputHandler().println(environmentVariableHelp);
+        //
+        //        CyderButton downloadFFMPEG = new CyderButton("Download FFMPEG");
+        //        downloadFFMPEG.addActionListener(e -> NetworkUtil.openUrl(CyderUrls.FFMPEG_INSTALLATION));
+        //        Console.INSTANCE.getInputHandler().println(downloadFFMPEG);
+        //
+        //        CyderButton downloadYoutubeDL = new CyderButton("Download YouTube-dl");
+        //        downloadYoutubeDL.addActionListener(e -> NetworkUtil.openUrl(CyderUrls.YOUTUBE_DL_INSTALLATION));
+        //        Console.INSTANCE.getInputHandler().println(downloadYoutubeDL);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
 import cyder.console.Console;
 import cyder.constants.*;
+import cyder.font.CyderFonts;
 import cyder.getter.GetConfirmationBuilder;
 import cyder.getter.GetterUtil;
 import cyder.handlers.internal.ExceptionHandler;

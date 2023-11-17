@@ -5,7 +5,7 @@ import com.google.errorprone.annotations.DoNotCall;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.ui.drag.CyderDragLabel;
 import cyder.ui.frame.CyderFrame;

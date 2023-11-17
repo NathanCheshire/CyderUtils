@@ -3,7 +3,7 @@ package cyder.ui.drag.button;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;
 import cyder.strings.StringUtil;

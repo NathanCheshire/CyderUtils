@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;

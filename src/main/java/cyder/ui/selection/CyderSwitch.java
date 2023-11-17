@@ -5,7 +5,7 @@ import com.google.common.collect.Range;
 import cyder.animation.ComponentAnimator;
 import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.enumerations.Direction;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderButton;

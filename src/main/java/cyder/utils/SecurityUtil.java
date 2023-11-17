@@ -1,7 +1,6 @@
 package cyder.utils;
 
 import com.google.common.base.Preconditions;
-import cyder.enumerations.Dynamic;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.internal.ExceptionHandler;

@@ -14,6 +14,8 @@ public final class CyderNumbers {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private CyderNumbers() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

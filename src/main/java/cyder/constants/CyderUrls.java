@@ -9,6 +9,8 @@ import cyder.strings.CyderStrings;
 public final class CyderUrls {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private CyderUrls() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

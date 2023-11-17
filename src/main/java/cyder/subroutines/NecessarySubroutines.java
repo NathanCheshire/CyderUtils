@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.ClassPath;
 import cyder.annotations.*;
 import cyder.enumerations.CyderInspection;
-import cyder.enumerations.Dynamic;
-import cyder.enumerations.ExitCondition;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;

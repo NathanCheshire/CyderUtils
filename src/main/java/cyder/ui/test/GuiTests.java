@@ -1,7 +1,7 @@
 package cyder.ui.test;
 
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.constants.CyderIcons;
 import cyder.exceptions.IllegalMethodException;
 import cyder.handlers.internal.InformHandler;

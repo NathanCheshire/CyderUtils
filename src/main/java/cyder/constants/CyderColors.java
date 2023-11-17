@@ -3,7 +3,6 @@ package cyder.constants;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
-import cyder.user.UserDataManager;
 
 import java.awt.*;
 
@@ -113,7 +112,7 @@ public final class CyderColors {
     public static final Color brownDirt = new Color(131, 101, 57);
 
     /**
-     * The possible border colors to use for the taskbar icon
+     * The possible border colors to use for the taskbar icon.
      */
     public static final ImmutableList<Color> TASKBAR_BORDER_COLORS = ImmutableList.of(
             new Color(22, 124, 237),
@@ -123,11 +122,14 @@ public final class CyderColors {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalArgumentException if invoked
      */
     private CyderColors() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
+    // todo should have a manager for this
     /**
      * The color to use for frame borders and other ui components throughout Cyder.
      */
@@ -149,12 +151,5 @@ public final class CyderColors {
      */
     public static Color getGuiThemeColor() {
         return guiThemeColor;
-    }
-
-    /**
-     * Instantiates the gui theme color based on the current user's data.
-     */
-    public static void refreshGuiThemeColor() {
-        setGuiThemeColor(UserDataManager.INSTANCE.getFrameColor());
     }
 }

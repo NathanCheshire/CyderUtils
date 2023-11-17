@@ -114,6 +114,8 @@ public final class CyderRegexPatterns {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private CyderRegexPatterns() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

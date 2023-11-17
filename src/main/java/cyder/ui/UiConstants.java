@@ -1,8 +1,9 @@
 package cyder.ui;
 
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
+import cyder.font.FontBuilder;
 import cyder.strings.CyderStrings;
 
 import javax.swing.*;
@@ -56,7 +57,7 @@ public final class UiConstants {
     /**
      * The font used for default Java tooltips.
      */
-    static final Font TOOLTIP_FONT = new CyderFonts.FontBuilder(CyderFonts.TAHOMA).setSize(20).generate();
+    static final Font TOOLTIP_FONT = new FontBuilder(CyderFonts.TAHOMA).setSize(20).generate();
 
     /**
      * The default color for the background of tooltips throughout Cyder

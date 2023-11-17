@@ -1,7 +1,9 @@
 package cyder.enumerations;
 
+import com.google.common.base.Preconditions;
+
 /**
- * A standard cardinal direction.
+ * A cardinal direction.
  */
 public enum Direction {
     LEFT,
@@ -14,8 +16,11 @@ public enum Direction {
      *
      * @param direction the direction
      * @return whether the direction points horizontally
+     * @throws NullPointerException if the provided direction is null
      */
     public static boolean isHorizontal(Direction direction) {
+        Preconditions.checkNotNull(direction);
+
         return direction == LEFT || direction == RIGHT;
     }
 
@@ -24,8 +29,11 @@ public enum Direction {
      *
      * @param direction the direction
      * @return whether the direction points vertically
+     * @throws NullPointerException if the provided direction is null
      */
     public static boolean isVertical(Direction direction) {
+        Preconditions.checkNotNull(direction);
+
         return direction == TOP || direction == BOTTOM;
     }
 }

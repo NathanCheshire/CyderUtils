@@ -6,7 +6,7 @@ import cyder.bounds.HtmlString;
 import cyder.bounds.PlainString;
 import cyder.bounds.StringContainer;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.constants.HtmlTags;
 import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;

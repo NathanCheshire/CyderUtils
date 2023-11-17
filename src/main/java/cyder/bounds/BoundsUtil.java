@@ -1,7 +1,7 @@
 package cyder.bounds;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;

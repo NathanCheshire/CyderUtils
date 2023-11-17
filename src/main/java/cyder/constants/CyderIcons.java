@@ -20,11 +20,6 @@ public final class CyderIcons {
     public static final ImageIcon CYDER_ICON = new ImageIcon(StaticUtil.getStaticPath("CyderIcon.png"));
 
     /**
-     * The x Easter egg icon.
-     */
-    public static final ImageIcon X_ICON = new ImageIcon(StaticUtil.getStaticPath("x.png"));
-
-    /**
      * The length of the default background.
      */
     private static final int DEFAULT_BACKGROUND_LEN = 1000;
@@ -44,13 +39,6 @@ public final class CyderIcons {
             DEFAULT_BACKGROUND_LEN);
 
     /**
-     * A default image that spans the size of the primary display
-     */
-    public static final ImageIcon defaultBackgroundLarge = generateDefaultBackground(
-            DEFAULT_LARGE_BACKGROUND_LEN,
-            DEFAULT_LARGE_BACKGROUND_LEN);
-
-    /**
      * The length of the default solid background.
      */
     private static final int DEFAULT_SOLID_BACKGROUND_LEN = 800;
@@ -58,12 +46,13 @@ public final class CyderIcons {
     /**
      * The default background to use for account creation when a network connection is unavailable.
      */
-    public static final BufferedImage DEFAULT_USER_SOLID_COLOR_BACKGROUND
-            = ImageUtil.toBufferedImage(ImageUtil.imageIconFromColor(Color.black,
-            DEFAULT_SOLID_BACKGROUND_LEN, DEFAULT_SOLID_BACKGROUND_LEN));
+    public static final BufferedImage DEFAULT_USER_SOLID_COLOR_BACKGROUND = ImageUtil.toBufferedImage(
+            ImageUtil.imageIconFromColor(Color.black, DEFAULT_SOLID_BACKGROUND_LEN, DEFAULT_SOLID_BACKGROUND_LEN));
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private CyderIcons() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

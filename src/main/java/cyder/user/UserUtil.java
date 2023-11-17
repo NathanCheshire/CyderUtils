@@ -6,7 +6,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.console.Console;
 import cyder.constants.CyderIcons;
 import cyder.constants.CyderUrls;
-import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;

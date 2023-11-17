@@ -2,7 +2,7 @@ package cyder.ui.button;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.handlers.internal.ExceptionHandler;
 import cyder.logging.LogTag;
 import cyder.logging.Logger;

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.audio.parsers.ShowStreamOutput;
 import cyder.constants.CyderRegexPatterns;
-import cyder.enumerations.Dynamic;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;

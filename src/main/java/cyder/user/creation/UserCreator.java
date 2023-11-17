@@ -2,12 +2,11 @@ package cyder.user.creation;
 
 import cyder.annotations.*;
 import cyder.constants.CyderColors;
-import cyder.constants.CyderFonts;
+import cyder.font.CyderFonts;
 import cyder.constants.CyderIcons;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.CyderInspection;
 import cyder.enumerations.Direction;
-import cyder.enumerations.Dynamic;
 import cyder.exceptions.IllegalMethodException;
 import cyder.getter.GetFileBuilder;
 import cyder.getter.GetterUtil;
