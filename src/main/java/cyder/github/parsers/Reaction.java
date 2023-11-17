@@ -2,8 +2,6 @@ package cyder.github.parsers;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * A json serialization class for a GitHub issue reaction.
@@ -66,9 +64,7 @@ public class Reaction {
     /**
      * Creates a new Reaction for a GitHub issue.
      */
-    public Reaction() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Reaction() {}
 
     /**
      * Returns the url to get the list of reactions for the issue referenced by this reaction.

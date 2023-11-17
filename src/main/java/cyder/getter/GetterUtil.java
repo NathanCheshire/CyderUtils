@@ -5,9 +5,6 @@ import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.ui.button.CyderButton;
@@ -44,9 +41,7 @@ public final class GetterUtil {
     /**
      * To obtain an instance, use {@link GetterUtil#getInstance()}.
      */
-    private GetterUtil() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    private GetterUtil() {}
 
     /**
      * Returns a GetterUtil instance.
@@ -610,7 +605,7 @@ public final class GetterUtil {
                 String fieldText = getFileBuilder.getInitialFieldText();
                 if (!StringUtil.isNullOrEmpty(fieldText)) directoryField.setText(fieldText);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, threadName);
 
@@ -887,7 +882,7 @@ public final class GetterUtil {
                 confirmationFrame.setVisible(true);
                 OsUtil.setMouseLocation(noButton);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, threadName);
 

@@ -3,11 +3,8 @@ package cyder.github;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
-import cyder.console.Console;
 import cyder.exceptions.IllegalMethodException;
 import cyder.github.parsers.Issue;
-import cyder.handlers.input.BaseInputHandler;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.process.ProcessUtil;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
@@ -16,6 +13,7 @@ import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -134,9 +132,7 @@ public final class GitHubUtil {
             String rawJson = sb.toString();
 
             ret = SerializationUtil.fromJson(rawJson, Issue[].class);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        } catch (IOException ignored) {}
 
         return ImmutableList.copyOf(ret);
     }
@@ -165,24 +161,9 @@ public final class GitHubUtil {
 
             Type type = new TypeToken<HashMap<String, Integer>>() {}.getType();
             ret = SerializationUtil.fromJson(rawJson, type);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        } catch (IOException ignored) {}
 
         return ret;
-    }
-
-    /**
-     * Clones the provided github repo to the provided directory.
-     * Updates are printed to the {@link Console}s {@link BaseInputHandler}.
-     *
-     * @param cloneLink the URL of the github repository to clone
-     * @param directory the directory to save the repo to
-     *                  Note this directory must exist prior to method invocation
-     * @return whether the repo was successfully cloned and saved
-     */
-    public static Future<Boolean> cloneRepoToDirectory(String cloneLink, File directory) {
-        return cloneRepoToDirectory(cloneLink, directory, Console.INSTANCE.getInputHandler());
     }
 
     /**
@@ -191,70 +172,31 @@ public final class GitHubUtil {
      * @param cloneLink    the URL of the github repository to clone
      * @param directory    the directory to save the repo to
      *                     Note this directory must exist prior to method invocation
-     * @param inputHandler the input handler to print operation updates to. Provide {@code null} to avoid
      * @return whether the repo was successfully cloned and saved
      */
-    public static Future<Boolean> cloneRepoToDirectory(String cloneLink, File directory,
-                                                       BaseInputHandler inputHandler) {
+    public static Future<Boolean> cloneRepoToDirectory(String cloneLink, File directory) {
         Preconditions.checkNotNull(cloneLink);
         Preconditions.checkArgument(!cloneLink.isEmpty());
         Preconditions.checkNotNull(directory);
         Preconditions.checkArgument(directory.exists());
         Preconditions.checkArgument(directory.isDirectory());
 
-        boolean print = inputHandler != null;
-
         return cloningExecutor.submit(() -> {
-            if (print) {
-                inputHandler.println("Validating GitHub clone link: " + cloneLink);
-            }
-
             GithubCloneRepoLink githubCloneRepoLink = null;
 
             try {
                 githubCloneRepoLink = new GithubCloneRepoLink(cloneLink);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
-                if (print) {
-                    inputHandler.println("Failed to create github clone repo link wrapper object: " + e.getMessage());
-                }
+                e.printStackTrace();
             }
 
-            if (githubCloneRepoLink == null) {
-                return false;
-            }
+            if (githubCloneRepoLink == null) return false;
 
             String repoName = githubCloneRepoLink.getRepository();
             File saveDirectory = OsUtil.buildFile(directory.getAbsolutePath(), repoName);
 
-            if (!saveDirectory.exists()) {
-                if (!saveDirectory.mkdirs()) {
-                    if (print) {
-                        inputHandler.println("Failed to create save directory"
-                                + colon + space + saveDirectory.getAbsolutePath());
-                    }
-                    return false;
-                }
-            }
-
-            if (print) {
-                inputHandler.println("Checking for git");
-            }
-
-            if (!OsUtil.isBinaryInstalled(GIT)) {
-                if (print) {
-                    inputHandler.println("Git not installed. Please install it at: " + GIT_DOWNLOAD_URL);
-                }
-                return false;
-            }
-
-            if (print) {
-                String printString = "Cloning" + space + StringUtil.getPlural(
-                        StringUtil.capsFirstWord(githubCloneRepoLink.getUser()))
-                        + space + quote + StringUtil.capsFirstWord(repoName) + quote + space + "to" + space
-                        + quote + saveDirectory.getName() + OsUtil.FILE_SEP + quote;
-                inputHandler.println(printString);
-            }
+            if (!saveDirectory.exists() && !saveDirectory.mkdirs()) return false;
+            if (!OsUtil.isBinaryInstalled(GIT)) return false;
 
             try {
                 String command = GIT + space
@@ -262,9 +204,6 @@ public final class GitHubUtil {
                         + space + saveDirectory.getAbsolutePath();
                 ProcessUtil.runAndWaitForProcess(command);
             } catch (Exception ignored) {
-                if (print) {
-                    inputHandler.println("Failed to clone repo " + repoName);
-                }
                 return false;
             }
 

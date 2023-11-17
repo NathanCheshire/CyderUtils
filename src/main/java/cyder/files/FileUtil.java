@@ -154,8 +154,9 @@ public final class FileUtil {
         String extension = getExtension(name);
         if (StringUtil.isNullOrEmpty(extension)) return false;
 
-        return StringUtil.in(extension, true, SUPPORTED_IMAGE_EXTENSIONS)
-                && (fileMatchesSignature(file, PNG_SIGNATURE) || fileMatchesSignature(file, JPG_SIGNATURE));
+        boolean fileSignatureMatches = fileMatchesSignature(file, PNG_SIGNATURE) || fileMatchesSignature(file, JPG_SIGNATURE);
+        boolean extensionValid = StringUtil.in(extension, true, SUPPORTED_IMAGE_EXTENSIONS);
+        return  extensionValid && fileSignatureMatches;
     }
 
     /**

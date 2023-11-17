@@ -2,7 +2,6 @@ package cyder.files;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.audio.player.AudioPlayer;
 import cyder.enumerations.Extension;
 import cyder.handlers.external.DirectoryViewer;
 import cyder.handlers.external.ImageViewer;
@@ -16,19 +15,8 @@ import java.util.function.Function;
  * A Cyder handler for a specific file type.
  */
 public enum CyderFileHandler {
-    TEXT(file -> {
-        return FileUtil.getExtension(file).equals(Extension.TXT.getExtension());
-    }, file -> {
-        return TextViewer.getInstance(file).showGui();
-    }),
-    AUDIO(FileUtil::isSupportedAudioExtension, (file) -> {
-        try {
-            AudioPlayer.showGui(file);
-            return true;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }),
+    TEXT(file -> FileUtil.getExtension(file).equals(Extension.TXT.getExtension()),
+            file -> TextViewer.getInstance(file).showGui()),
     IMAGE(FileUtil::isSupportedImageExtension, file -> {
         Future<Boolean> futureBoolean = ImageViewer.getInstance(file).showGui();
         while (!futureBoolean.isDone()) Thread.onSpinWait();

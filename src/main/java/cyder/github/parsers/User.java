@@ -2,8 +2,6 @@ package cyder.github.parsers;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * A json serialization class for a GitHub user.
@@ -193,9 +191,7 @@ public class User {
     /**
      * Constructs a new GitHub user object.
      */
-    public User() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public User() {}
 
     /**
      * Returns this user's username.

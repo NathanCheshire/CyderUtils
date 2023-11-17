@@ -1,8 +1,6 @@
 package cyder.github.parsers;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -168,9 +166,7 @@ public class Issue {
     /**
      * Creates a new issue object.
      */
-    public Issue() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Issue() {}
 
     /**
      * Returns the url for this issue.

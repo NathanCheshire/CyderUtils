@@ -2,9 +2,9 @@ package cyder.files;
 
 import com.google.common.base.Preconditions;
 import cyder.exceptions.FatalException;
-import cyder.handlers.internal.ExceptionHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.DosFileAttributes;
@@ -83,7 +83,7 @@ public enum DosAttribute {
 
     /**
      * Returns the DOS attribute for the provided file.
-     *
+     *1
      * @param file      the file
      * @param attribute the DOS attribute
      * @return the DOS attribute for the provided file
@@ -110,9 +110,7 @@ public enum DosAttribute {
                 case LAST_ACCESS_TIME -> String.valueOf(dosAttributes.lastAccessTime());
                 case LAST_MODIFIED_TIME -> String.valueOf(dosAttributes.lastModifiedTime());
             };
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
+        } catch (IOException ignored) {}
 
         throw new FatalException("Could not get DOS attribute " + attribute + " for file: " + file.getAbsolutePath());
     }

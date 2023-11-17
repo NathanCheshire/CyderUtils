@@ -2,11 +2,9 @@ package cyder.handlers.external;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.console.Console;
 import cyder.constants.CyderColors;
 import cyder.enumerations.Extension;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.layouts.CyderPartitionedLayout;
 import cyder.strings.CyderStrings;
 import cyder.ui.button.CyderButton;
@@ -23,6 +21,7 @@ import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -141,7 +140,7 @@ public class TextViewer {
         contentsArea.setFocusable(true);
         contentsArea.setEditable(true);
         contentsArea.setSelectionColor(CyderColors.selectionColor);
-        contentsArea.setFont(Console.INSTANCE.generateUserFont());
+        contentsArea.setFont(nameFieldFont);
         contentsArea.setForeground(CyderColors.navy);
         contentsArea.setCaret(new CyderCaret(CyderColors.navy));
         contentsArea.setCaretColor(contentsArea.getForeground());
@@ -185,8 +184,8 @@ public class TextViewer {
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
             return new String(encoded, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         throw new IllegalStateException("Could not read contents of current note file");
@@ -223,7 +222,7 @@ public class TextViewer {
         try (BufferedWriter write = new BufferedWriter(new FileWriter(file))) {
             write.write(contents);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         textFrame.notify("Saved file and contents under: \"" + requestedName + CyderStrings.quote);
@@ -246,8 +245,8 @@ public class TextViewer {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(contents);
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 }

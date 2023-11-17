@@ -281,7 +281,8 @@ public class ImageViewer {
     private void onRenameButtonClicked() {
         File currentRename = new File(validDirectoryImages.get(currentIndex).getAbsolutePath());
 
-        if (currentRename.getAbsolutePath().equals(currentBackground.getAbsolutePath())) {
+        // todo allow for certain paths to be excluded if you don't want them changed
+        if (false) {
             pictureFrame.notify("Sorry, " + UserDataManager.INSTANCE.getUsername()
                     + ", but you're not allowed to rename the background you are currently using");
             return;
@@ -323,7 +324,7 @@ public class ImageViewer {
                 }
 
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, "ImageViewer File Renamer, file" + colon + space + initialFieldText);
     }
@@ -344,7 +345,7 @@ public class ImageViewer {
             int height = image.getHeight();
             pictureFrame.setTitle(title + space + openingBracket + width + "x" + height + closingBracket);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             pictureFrame.setTitle(title);
         }
     }

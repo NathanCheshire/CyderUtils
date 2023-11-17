@@ -7,6 +7,7 @@ import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -241,8 +242,12 @@ public class DirectoryWatcher {
                     if (length != null) numFiles = length.length;
                 }
 
-                FileTypeSize add = new FileTypeSize(type, FileUtil.getFileSize(file), numFiles);
+                long childSize = 0L;
+                try {
+                    childSize = FileUtil.getFileSize(file);
+                } catch (IOException ignored) {}
 
+                FileTypeSize add = new FileTypeSize(type, childSize, numFiles);
                 ret.put(file.getAbsolutePath(), add);
             });
         }
