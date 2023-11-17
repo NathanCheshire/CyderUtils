@@ -14,18 +14,19 @@ import java.util.concurrent.Future;
  * Audio package and third-party binaries Cyder uses.
  */
 public enum AudioPackage {
-
-
     /**
      * A suite of libraries for handling video, audio, and other multimedia files and streams.
      */
     FFMPEG("ffmpeg", "-version", new ResourceDownloadLink(ImmutableMap.of(
             OperatingSystem.WINDOWS,
-            new NamedResourceLink("ffmpeg_windows.zip", ffmpegResourceHeader + "windows/ffmpeg_windows.zip"),
+            new NamedResourceLink("ffmpeg_windows.zip",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/windows/ffmpeg_windows.zip"),
             OperatingSystem.MAC,
-            new NamedResourceLink("ffmpeg_mac.zip", ffmpegResourceHeader + "mac/ffmpeg_mac.zip"),
+            new NamedResourceLink("ffmpeg_mac.zip",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/mac/ffmpeg_mac.zip"),
             OperatingSystem.GNU_LINUX,
-            new NamedResourceLink("ffmpeg_linux.zip", ffmpegResourceHeader + "linux/ffmpeg_linux.zip")
+            new NamedResourceLink("ffmpeg_linux.zip",
+                    "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/linux/ffmpeg_linux.zip")
     ))),
 
     /**
@@ -49,9 +50,6 @@ public enum AudioPackage {
             OperatingSystem.GNU_LINUX,
             new NamedResourceLink("youtube_dl_linux.zip", "") // todo
     )));
-
-    private static final String ffmpegResourceHeader
-            = "https://github.com/NathanCheshire/CyderUtils/raw/main/src/main/java/cyder/audio/resources/";
 
     /**
      * A cache of audio packages which were found to be present and invokable.

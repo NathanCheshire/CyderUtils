@@ -1,11 +1,13 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.files.FileUtil;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.concurrent.Future;
 
 /**
  * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
@@ -73,15 +75,25 @@ public final class CyderAudioFile {
     }
 
     public Duration getAudioLength(DetermineAudioLengthMethod method) {
+        Preconditions.checkNotNull(method);
 
+        return null;
     }
 
     // todo get length via some method (enum for method)
     public File dreamify() {
-
+        return null; // todo
     }
 
-    public File dreamify(String filename) {
+    /**
+     * Dreamifies the encapsulated file and returns a reference to the new dreamified audio file.
+     *
+     * @return
+     */
+    public Future<File> dreamify(File saveToFile) {
+        return Futures.immediateFuture(null);
 
+        // todo figure out name and pass to other method which accepts an empty file pointer for
+        //  which we should use create the file for and save it to
     }
 }

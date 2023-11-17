@@ -9,10 +9,8 @@ import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.network.NetworkUtil;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
-import cyder.process.Program;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
@@ -36,17 +34,6 @@ import static cyder.strings.CyderStrings.*;
  * Utilities related to supported audio files.
  */
 public final class AudioUtil {
-
-    /**
-     * The users keyword.
-     */
-    private static final String USERS = "users";
-
-    /**
-     * The music keyword.
-     */
-    private static final String MUSIC = "Music";
-
     /**
      * The ffmpeg input flag.
      */
@@ -63,12 +50,12 @@ public final class AudioUtil {
     private static final int HIGHPASS = 200;
 
     /**
-     * The lowpass value for dreamifying an audio file.
+     * The low pass value for dreamifying an audio file.
      */
-    private static final int LOWPASS = 1500;
+    private static final int LOW_PASS = 1500;
 
     /**
-     * The audio dreamifier thread name prefix.
+     * The audio dreamier thread name prefix.
      */
     private static final String audioDreamifierThreadNamePrefix = "Audio Dreamifier: ";
 
@@ -81,22 +68,7 @@ public final class AudioUtil {
      * The high and low pass argument string.
      */
     private static final String HIGHPASS_LOWPASS_ARGS = quote + "highpass=f="
-            + HIGHPASS + comma + space + "lowpass=f=" + LOWPASS + quote;
-
-    /**
-     * The thread name for the ffmpeg downloader
-     */
-    private static final String FFMPEG_DOWNLOADER_THREAD_NAME = "FFMPEG Downloader";
-
-    /**
-     * A record to associate a destination file with a url to download the file, typically a zip archive, from.
-     */
-    private record PairedFile(File file, String url) {}
-
-    /**
-     * The name of the thread that downloads YouTube-dl if missing and needed.
-     */
-    private static final String YOUTUBE_DL_DOWNLOADER_THREAD_NAME = "YouTubeDl Downloader";
+            + HIGHPASS + comma + space + "lowpass=f=" + LOW_PASS + quote;
 
     /**
      * A cache of previously computed millisecond times from audio files.
@@ -252,78 +224,6 @@ public final class AudioUtil {
     }
 
     /**
-     * Downloads ffmpeg, ffplay, and ffprobe to the exes dynamic
-     * directory and sets the user path for ffmpeg to the one in dynamic.
-     *
-     * @return whether the download was successful
-     */
-    public static Future<Boolean> downloadFfmpegStack() {
-        return Executors.newSingleThreadExecutor(
-                new CyderThreadFactory(FFMPEG_DOWNLOADER_THREAD_NAME)).submit(() -> {
-            ImmutableList<PairedFile> downloadZips = ImmutableList.of(
-                    new PairedFile(Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFMPEG.getProgramName()
-                                    + Extension.ZIP.getExtension()), ffmpegResourceDownload),
-                    new PairedFile(Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFPROBE.getProgramName()
-                                    + Extension.ZIP.getExtension()), ffprobeResourceDownload),
-                    new PairedFile(Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFPLAY.getProgramName()
-                                    + Extension.ZIP.getExtension()), ffplayResourceDownload)
-            );
-
-            for (PairedFile pairedZipFile : downloadZips) {
-                NetworkUtil.downloadResource(pairedZipFile.url(), pairedZipFile.file());
-
-                while (!pairedZipFile.file().exists()) {
-                    Thread.onSpinWait();
-                }
-
-                File extractFolder = Dynamic.buildDynamic(Dynamic.EXES.getFileName());
-                FileUtil.unzip(pairedZipFile.file(), extractFolder);
-                OsUtil.deleteFile(pairedZipFile.file());
-            }
-
-            ImmutableList<File> resultingFiles = ImmutableList.of(
-                    Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFMPEG.getFilename()),
-                    Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFPROBE.getFilename()),
-                    Dynamic.buildDynamic(
-                            Dynamic.EXES.getFileName(), Program.FFPLAY.getFilename())
-            );
-
-            return resultingFiles.stream().filter(File::exists).count() == downloadZips.size();
-        });
-    }
-
-    /**
-     * Downloads the YouTube-dl binary from the remote resources.
-     * Returns whether the download was successful.
-     *
-     * @return whether YouTube-dl could be downloaded from the remote resources
-     */
-    public static Future<Boolean> downloadYoutubeDl() {
-        return Executors.newSingleThreadExecutor(
-                new CyderThreadFactory(YOUTUBE_DL_DOWNLOADER_THREAD_NAME)).submit(() -> {
-            File downloadZip = Dynamic.buildDynamic(
-                    Dynamic.EXES.getFileName(), Program.YOUTUBE_DL.getProgramName()
-                            + Extension.ZIP.getExtension());
-
-            NetworkUtil.downloadResource(youtubeDlResourceDownload, downloadZip);
-            while (!downloadZip.exists()) Thread.onSpinWait();
-
-            File extractFolder = Dynamic.buildDynamic(Dynamic.EXES.getFileName());
-
-            FileUtil.unzip(downloadZip, extractFolder);
-            OsUtil.deleteFile(downloadZip);
-
-            return Dynamic.buildDynamic(Dynamic.EXES.getFileName(),
-                    Program.YOUTUBE_DL.getProgramName() + Extension.EXE.getExtension()).exists();
-        });
-    }
-
-    /**
      * Returns the milliseconds of the provided audio file using ffprobe's -show_format command.
      * Note, this method is blocking. Callers should surround invocation of this method in a separate thread.
      *
@@ -341,7 +241,7 @@ public final class AudioUtil {
         if (milliTimes.containsKey(audioFile)) return Duration.ofMillis(milliTimes.get(audioFile));
 
         ImmutableList<String> command = ImmutableList.of(
-                getFfprobeCommand(),
+                "ffmpeg",
                 "-v", "quiet",
                 "-print_format", "json",
                 "-show_streams",

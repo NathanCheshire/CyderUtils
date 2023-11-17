@@ -13,7 +13,6 @@ import cyder.threads.CyderThreadFactory;
 import cyder.utils.ArrayUtil;
 import cyder.utils.OsUtil;
 import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 import java.awt.*;
 import java.io.*;
@@ -473,11 +472,9 @@ public final class FileUtil {
 
         try (ZipFile zipFile = new ZipFile(sourceZip)) {
             zipFile.extractAll(destinationFolder.getAbsolutePath());
-        } catch (IOException e) {
-            return false;
-        }
+        } catch (IOException e) {}
 
-        return true;
+        return null; // todo fix me, will probably need to use a directory watcher?
     }
 
     /**
