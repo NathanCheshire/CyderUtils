@@ -2,9 +2,7 @@ package cyder.threads;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.console.Console;
 import cyder.exceptions.FatalException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.math.NumberUtil;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
@@ -15,22 +13,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 /**
- * A class used to perform bletchy animations on a specific JTextPane.
+ * A class used to perform Bletchy animations on a specific JTextPane.
  */
 public enum BletchyAnimationManager {
     /**
-     * The bletchy animation manager instance.
+     * The Bletchy animation manager instance.
      */
     INSTANCE;
 
     /**
-     * The number of iterations per char of the bletchy animation.
+     * The number of iterations per char of the Bletchy animation.
      */
     @SuppressWarnings("FieldCanBeLocal")
     private final int iterationsPerChar = 5;
 
     /**
-     * Whether the bletchy animation animator has been initialized.
+     * Whether the Bletchy animation animator has been initialized.
      */
     private final AtomicBoolean initialized = new AtomicBoolean();
 
@@ -177,8 +175,9 @@ public enum BletchyAnimationManager {
         Preconditions.checkArgument(millisDelay > 0);
 
         if (isActive() || YoutubeUuidCheckerManager.INSTANCE.hasActiveCheckers()) {
-            Console.INSTANCE.getConsoleCyderFrame().notify("Cannot start bletchy/YouTube thread"
-                    + " at the same time as another instance.");
+            // todo
+//            Console.INSTANCE.getConsoleCyderFrame().notify("Cannot start bletchy/YouTube thread"
+//                    + " at the same time as another instance.");
         } else {
             animator = new Animator(decodeString, useNumbers, useUnicode, millisDelay);
             animator.start();
@@ -247,8 +246,8 @@ public enum BletchyAnimationManager {
             Preconditions.checkArgument(!animationActive.get());
             animationActive.set(true);
 
-            String threadName = "Bletchy printing thread, finalString: " + CyderStrings.quote
-                    + animationSteps.get(animationSteps.size() - 1) + CyderStrings.quote;
+            String threadName = "Bletchy printing thread, finalString: \""
+                    + animationSteps.get(animationSteps.size() - 1) + "\"";
             CyderThreadRunner.submit(() -> {
                 try {
                     if (!outputPane.acquireLock()) {
@@ -258,21 +257,25 @@ public enum BletchyAnimationManager {
                     animationSteps.forEach(print -> {
                         if (!animationActive.get()) return;
 
-                        printer.println(print);
+                        try {
+                            printer.println(print);
 
-                        ThreadUtil.sleep(millisDelay);
+                            ThreadUtil.sleep(millisDelay);
 
-                        printer.removeLastElement();
-                        printer.removeLastElement();
+                            printer.removeLastElement();
+                            printer.removeLastElement();
 
-                        if (printer.documentContainsMoreThanDefaultElements()) {
-                            printer.println("");
+                            if (printer.documentContainsMoreThanDefaultElements()) {
+                                printer.println("");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
 
                     printer.println(animationSteps.get(animationSteps.size() - 1));
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 } finally {
                     outputPane.releaseLock();
                     kill();

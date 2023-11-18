@@ -1,10 +1,8 @@
 package cyder.utils;
 
 import com.google.common.base.Preconditions;
-import cyder.console.Console;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 
 import javax.swing.*;
@@ -87,10 +85,11 @@ public final class SpotlightUtil {
                 File[] files = spotlightDirectory.listFiles();
                 int length = files == null ? 0 : files.length;
 
-                Console.INSTANCE.getInputHandler().println("Windows spotlight images wiped from directory:"
-                        + CyderStrings.newline + CyderStrings.quote
-                        + spotlightsDir.getAbsolutePath() + CyderStrings.quote);
-                Console.INSTANCE.getInputHandler().println("Spotlights found: " + length);
+                // todo on wipe hook
+                //                Console.INSTANCE.getInputHandler().println("Windows spotlight images wiped from directory:"
+                //                        + CyderStrings.newline + CyderStrings.quote
+                //                        + spotlightsDir.getAbsolutePath() + CyderStrings.quote);
+                //                Console.INSTANCE.getInputHandler().println("Spotlights found: " + length);
 
                 if (files != null && files.length > 0) {
                     Arrays.stream(files).forEach(OsUtil::deleteFile);
@@ -99,9 +98,10 @@ public final class SpotlightUtil {
                 files = spotlightDirectory.listFiles();
                 length = files == null ? 0 : files.length;
 
-                Console.INSTANCE.getInputHandler().println("Spotlights left: " + length);
+                // todo hook
+                //                Console.INSTANCE.getInputHandler().println("Spotlights left: " + length);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }
     }
@@ -154,13 +154,13 @@ public final class SpotlightUtil {
                 try {
                     Files.copy(spotlight.toPath(), Paths.get(savePath), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
 
                 spotlightIndex++;
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
     }
 }

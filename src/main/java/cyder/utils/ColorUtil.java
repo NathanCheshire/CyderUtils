@@ -68,6 +68,8 @@ public final class ColorUtil {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private ColorUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -86,7 +88,7 @@ public final class ColorUtil {
         checkNotNull(hex);
         checkArgument(!hex.isEmpty());
 
-        hex = hex.replace(CyderStrings.hash, "");
+        hex = hex.replace("#", "");
         Preconditions.checkArgument(validHexLengths.contains(hex.length()));
 
         if (hex.length() == shorthandHexLength) {
@@ -143,12 +145,12 @@ public final class ColorUtil {
     public String hexToRgbString(String hex) {
         checkNotNull(hex);
 
-        hex = hex.replace(CyderStrings.hash, "");
+        hex = hex.replace("#", "");
         if (hex.length() == shorthandHexLength) hex = expandShorthandHexColor(hex);
 
         return Integer.valueOf(hex.substring(0, 2), HEX_BASE)
-                + CyderStrings.comma + Integer.valueOf(hex.substring(2, 4), HEX_BASE)
-                + CyderStrings.comma + Integer.valueOf(hex.substring(4, 6), HEX_BASE);
+                + "," + Integer.valueOf(hex.substring(2, 4), HEX_BASE)
+                + "," + Integer.valueOf(hex.substring(4, 6), HEX_BASE);
     }
 
     /**

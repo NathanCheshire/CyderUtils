@@ -1,7 +1,6 @@
 package cyder.utils;
 
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -108,7 +107,7 @@ public final class AstronomyUtil {
         } catch (HttpStatusException e) {
             return Optional.empty();
         } catch (IOException e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             return Optional.empty();
         }
 

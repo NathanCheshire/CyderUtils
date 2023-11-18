@@ -13,7 +13,6 @@ import cyder.time.TimeUtil;
 import cyder.ui.frame.CyderFrame;
 import cyder.ui.frame.enumerations.TitlePosition;
 import cyder.ui.pane.CyderOutputPane;
-import cyder.user.UserDataManager;
 import cyder.utils.ArrayUtil;
 import cyder.utils.ImageUtil;
 import cyder.youtube.YouTubeConstants;
@@ -22,6 +21,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -179,7 +179,8 @@ public class YoutubeUuidChecker {
 
         String threadName = "YoutubeUuidChecker#" + YoutubeUuidCheckerManager.INSTANCE.getActiveUuidCheckersLength();
         CyderThreadRunner.submit(() -> {
-            currentUuid = UserDataManager.INSTANCE.getYouTubeUuid();
+            // todo allow accepting
+            currentUuid = "aaaaaaaaaaa";
 
             Preconditions.checkNotNull(currentUuid);
             Preconditions.checkArgument(currentUuid.length() == YouTubeConstants.UUID_LENGTH);
@@ -243,8 +244,10 @@ public class YoutubeUuidChecker {
         pictureLabel.setToolTipText("Open video " + title);
         pictureLabel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                NetworkUtil.openUrl(videoUrl);
+            public void mouseClicked(MouseEvent ignoredEvent) {
+                try {
+                    NetworkUtil.openUrl(videoUrl);
+                } catch (IOException ignored) {}
             }
         });
         pictureLabel.setBounds(0, 0, thumbnailFrame.getWidth(), thumbnailFrame.getHeight());
@@ -254,7 +257,7 @@ public class YoutubeUuidChecker {
     }
 
     /**
-     * Increments the current UUID by one.
+     * Increments the current UUID by one ordinal.
      */
     private void incrementUuid() {
         currentUuid = String.valueOf(incrementUuid(currentUuid.toCharArray()));

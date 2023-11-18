@@ -2,8 +2,6 @@ package cyder.structures;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.function.Function;
 
@@ -26,9 +24,7 @@ public class Cache<T> {
     /**
      * Constructs a new cache.
      */
-    public Cache() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Cache() {}
 
     /**
      * Constructs a new cache.

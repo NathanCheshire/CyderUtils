@@ -2,7 +2,6 @@ package cyder.time;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
-import cyder.strings.CyderStrings;
 
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -11,6 +10,7 @@ import java.util.Calendar;
  * A class used to represent a month and date such as July 4th.
  */
 @Immutable
+@SuppressWarnings("ClassCanBeRecord")
 public final class MonthDay {
     /**
      * The calendar instance for querying today's month and date.
@@ -109,7 +109,7 @@ public final class MonthDay {
      * @return the month date string
      */
     public String getMonthDateString() {
-        return getMonthString() + CyderStrings.space + THE + CyderStrings.space + getDateString();
+        return getMonthString() + " " + THE + " " + getDateString();
     }
 
     /**

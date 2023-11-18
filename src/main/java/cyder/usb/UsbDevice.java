@@ -34,6 +34,8 @@ public class UsbDevice {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private UsbDevice() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -105,10 +107,10 @@ public class UsbDevice {
     @Override
     public String toString() {
         return "UsbDevice{"
-                + "status=" + CyderStrings.quote + status + CyderStrings.quote
-                + ", type=" + CyderStrings.quote + type + CyderStrings.quote
-                + ", friendlyName=" + CyderStrings.quote + friendlyName + CyderStrings.quote
-                + ", instanceId=" + CyderStrings.quote + instanceId + CyderStrings.quote
+                + "status=\"" + status + "\""
+                + ", type=\"" + type + "\""
+                + ", friendlyName=\"" + friendlyName + "\""
+                + ", instanceId=\""  + instanceId + "\""
                 + "}";
     }
 

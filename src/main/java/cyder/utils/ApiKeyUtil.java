@@ -5,6 +5,7 @@ import cyder.constants.CyderUrls;
 import cyder.exceptions.IllegalMethodException;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
+import cyder.weather.MeasurementScale;
 import cyder.weather.WeatherUtil;
 import cyder.youtube.parsers.YouTubeSearchResultPage;
 import cyder.youtube.search.YouTubeSearchQuery;
@@ -36,9 +37,9 @@ public final class ApiKeyUtil {
     }
 
     /**
-     * Validates the weather key from the propkeys.ini file.
+     * Validates the weather key.
      *
-     * @return whether the weather key was valid
+     * @return whether the provided weather key was valid
      */
     public static boolean validateWeatherKey(String weatherDataApiKey) {
         Preconditions.checkNotNull(weatherDataApiKey);
@@ -47,7 +48,7 @@ public final class ApiKeyUtil {
         String openString = CyderUrls.OPEN_WEATHER_BASE
                 + weatherDataApiKey
                 + APP_ID_ARG + Props.weatherKey.getValue()
-                + UNITS_ARG + WeatherUtil.MeasurementScale.IMPERIAL.getWeatherDataRepresentation();
+                + UNITS_ARG + MeasurementScale.IMPERIAL.getWeatherDataRepresentation();
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new URL(openString).openStream()))) {

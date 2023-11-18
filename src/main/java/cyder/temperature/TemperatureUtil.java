@@ -19,66 +19,68 @@ public final class TemperatureUtil {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private TemperatureUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
     /**
-     * Converts the provided fahrenheit value to kelvin.
+     * Converts the provided Fahrenheit value to Kelvin.
      *
      * @param fahrenheit the value
-     * @return the provided fahrenheit value in kelvin
+     * @return the provided Fahrenheit value in Kelvin
      */
     public static double fahrenheitToKelvin(double fahrenheit) {
         return (fahrenheit - fahrenheitFreezingPoint) * (5.0 / 9.0) + kelvinAdditive;
     }
 
     /**
-     * Converts the provided celsius value to kelvin.
+     * Converts the provided Celsius value to Kelvin.
      *
      * @param celsius the value
-     * @return the provided celsius value in kelvin
+     * @return the provided Celsius value in Kelvin
      */
     public static double celsiusToKelvin(double celsius) {
         return celsius + kelvinAdditive;
     }
 
     /**
-     * Converts the provided fahrenheit value to celsius.
+     * Converts the provided Fahrenheit value to Celsius.
      *
      * @param fahrenheit the value
-     * @return the provided fahrenheit value in celsius
+     * @return the provided Fahrenheit value in Celsius
      */
     public static double fahrenheitToCelsius(double fahrenheit) {
         return (fahrenheit - fahrenheitFreezingPoint) * (5.0 / 9.0);
     }
 
     /**
-     * Converts the provided kelvin value to celsius.
+     * Converts the provided Kelvin value to Celsius.
      *
      * @param kelvin the value
-     * @return the provided kelvin value in celsius
+     * @return the provided Kelvin value in Celsius
      */
     public static double kelvinToCelsius(double kelvin) {
         return kelvin - kelvinAdditive;
     }
 
     /**
-     * Converts the provided celsius value to fahrenheit.
+     * Converts the provided Celsius value to Fahrenheit.
      *
      * @param celsius the value
-     * @return the provided celsius value in fahrenheit
+     * @return the provided Celsius value in Fahrenheit
      */
     public static double celsiusToFahrenheit(double celsius) {
         return celsius * 1.8 + fahrenheitFreezingPoint;
     }
 
     /**
-     * Converts the provided kelvin value to fahrenheit.
+     * Converts the provided Kelvin value to Fahrenheit.
      *
      * @param kelvin the value
-     * @return the provided kelvin value in fahrenheit
+     * @return the provided Kelvin value in Fahrenheit
      */
     public static double kelvinToFahrenheit(double kelvin) {
         return 1.8 * (kelvin - kelvinAdditive) + fahrenheitFreezingPoint;

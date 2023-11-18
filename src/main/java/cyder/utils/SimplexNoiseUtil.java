@@ -1,7 +1,5 @@
 package cyder.utils;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 
 /**
@@ -50,7 +48,6 @@ public final class SimplexNoiseUtil {
 
     public SimplexNoiseUtil() {
         this(DEFAULT_SEED);
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     public SimplexNoiseUtil(short[] perm) {
@@ -64,8 +61,6 @@ public final class SimplexNoiseUtil {
             permGrad3[i] = GRADIENTS_3D[perm[i]];
             permGrad4[i] = GRADIENTS_4D[perm[i]];
         }
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     public SimplexNoiseUtil(long seed) {
@@ -87,8 +82,6 @@ public final class SimplexNoiseUtil {
             permGrad4[i] = GRADIENTS_4D[perm[i]];
             source[r] = source[i];
         }
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     // 2D OpenSimplex Noise.
@@ -2086,8 +2079,6 @@ public final class SimplexNoiseUtil {
         public Grad2(double dx, double dy) {
             this.dx = dx;
             this.dy = dy;
-
-            Logger.log(LogTag.OBJECT_CREATION, this);
         }
     }
 
@@ -2098,8 +2089,6 @@ public final class SimplexNoiseUtil {
             this.dx = dx;
             this.dy = dy;
             this.dz = dz;
-
-            Logger.log(LogTag.OBJECT_CREATION, this);
         }
     }
 
@@ -2111,8 +2100,6 @@ public final class SimplexNoiseUtil {
             this.dy = dy;
             this.dz = dz;
             this.dw = dw;
-
-            Logger.log(LogTag.OBJECT_CREATION, this);
         }
     }
 

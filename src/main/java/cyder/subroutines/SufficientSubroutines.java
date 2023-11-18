@@ -1,11 +1,7 @@
 package cyder.subroutines;
 
 import com.google.common.collect.ImmutableList;
-import cyder.console.Console;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.process.PythonPackage;
 import cyder.snakes.PythonUtil;
 import cyder.strings.CyderStrings;
@@ -60,13 +56,14 @@ public final class SufficientSubroutines {
                     ImmutableList<PythonPackage> missingPackages = futureMissingPackages.get();
 
                     for (PythonPackage missingPackage : missingPackages) {
-                        Logger.log(LogTag.PYTHON, "Missing required Python package: "
-                                + missingPackage.getPackageName());
+                        // todo on missing package found
+                        //                        Logger.log(LogTag.PYTHON, "Missing required Python package: "
+                        //                                + missingPackage.getPackageName());
                     }
 
                     return missingPackages.isEmpty();
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
 
                 return false;
@@ -82,7 +79,7 @@ public final class SufficientSubroutines {
                 } catch (Exception ignored) {}
 
                 if (optionalVersion.isEmpty()) {
-                    Logger.log(LogTag.PYTHON, "Failed to find installed Python version");
+                    // todo on failed to find python version
                     return false;
                 }
 
@@ -92,32 +89,20 @@ public final class SufficientSubroutines {
                 try {
                     version = Integer.parseInt(String.valueOf(versionString.charAt(0)));
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
 
                 if (version == -1) {
-                    Logger.log(LogTag.PYTHON, "Could not find Python version number");
+                    // todo save as above, hook here though
                     return false;
                 }
 
                 if (version >= MIN_PYTHON_MAJOR_VERSION) {
-                    Logger.log(LogTag.PYTHON, "Found Python version " + version);
+                    // todo on successful and valid version found
                     return true;
                 }
 
-                String message = "Installed Python does not meet minimum standards, version"
-                        + CyderStrings.colon
-                        + CyderStrings.space
-                        + version
-                        + CyderStrings.comma
-                        + CyderStrings.space
-                        + "min acceptable version"
-                        + CyderStrings.colon
-                        + CyderStrings.space
-                        + MIN_PYTHON_MAJOR_VERSION;
-
-                Logger.log(LogTag.PYTHON, message);
-                Console.INSTANCE.getInputHandler().println(message);
+                // todo on too old version found hook
                 return false;
             }, PYTHON_3_INSTALLED_ENSURER)
     );

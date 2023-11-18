@@ -121,14 +121,9 @@ public final class Subroutine {
     @Override
     public String toString() {
         return "Subroutine{"
-                + "routine="
-                + routine
-                + ", threadName="
-                + CyderStrings.quote
-                + threadName
-                + CyderStrings.quote
-                + ", onFailureMessage="
-                + onFailureMessage
+                + "routine=" + routine
+                + ", threadName=\"" + threadName + "\""
+                + ", onFailureMessage=\"" + onFailureMessage + "\""
                 + "}";
     }
 }

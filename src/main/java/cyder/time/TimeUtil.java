@@ -6,7 +6,6 @@ import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
-import cyder.user.User;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -114,16 +113,6 @@ public final class TimeUtil {
             new SimpleDateFormat("h:mm:ss aa EEEEEEEEEEEEE MMMMMMMMMMMMMMMMMM dd, yyyy");
 
     /**
-     * The date formatter to use when the log sub dir time is requested.
-     */
-    public static final SimpleDateFormat logSubDirFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    /**
-     * The date formatter to use when the log line time is requested.
-     */
-    public static final SimpleDateFormat LOG_TIME_FORMAT = new SimpleDateFormat("HH-mm-ss");
-
-    /**
      * The date formatter to use when a screenshot is taken for the timestamp suffix.
      */
     public static final SimpleDateFormat SCREENSHOT_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -137,17 +126,7 @@ public final class TimeUtil {
      * The date formatter to use when formatting a date object to the notified at time.
      */
     public static final SimpleDateFormat notificationFormat = new SimpleDateFormat("HH:mm:ss");
-
-    /**
-     * The date formatter to use when formatting a date object to the console clock time format.
-     */
-    public static final SimpleDateFormat userFormat = new SimpleDateFormat("EEEEEEEEE, MM/dd/yyyy hh:mmaa zzz");
-
-    /**
-     * The date formatter to use when formatting a date object to the console clock time format.
-     */
-    public static final SimpleDateFormat consoleSecondFormat = new SimpleDateFormat(User.DEFAULT_CONSOLE_CLOCK_FORMAT);
-
+    
     /**
      * The date formatter to use when formatting a date object to the console clock time format without seconds.
      */
@@ -283,24 +262,6 @@ public final class TimeUtil {
     }
 
     /**
-     * Returns the time used for log subdirectories.
-     *
-     * @return the time used for log subdirectories
-     */
-    public static String logSubDirTime() {
-        return getFormattedTime(logSubDirFormat);
-    }
-
-    /**
-     * Returns the time used for log files.
-     *
-     * @return the time used for log files
-     */
-    public static String logTime() {
-        return getFormattedTime(LOG_TIME_FORMAT);
-    }
-
-    /**
      * Returns the time used for screenshot images.
      *
      * @return the time used for screenshot images
@@ -308,16 +269,7 @@ public final class TimeUtil {
     public static String screenshotTime() {
         return getFormattedTime(SCREENSHOT_FORMAT);
     }
-
-    /**
-     * The time used for lines of log files.
-     *
-     * @return time used for lines of log files
-     */
-    public static String getLogLineTime() {
-        return getFormattedTime(LOG_LINE_TIME_FORMAT);
-    }
-
+    
     /**
      * Returns the time used for determining what time notifications were originally added to the queue at.
      *
@@ -325,33 +277,6 @@ public final class TimeUtil {
      */
     public static String notificationTime() {
         return getFormattedTime(notificationFormat);
-    }
-
-    /**
-     * Returns a nice, easy to read time.
-     *
-     * @return a nice, easy to read time
-     */
-    public static String userReadableTime() {
-        return getFormattedTime(userFormat);
-    }
-
-    /**
-     * Returns the default console clock format with seconds showing.
-     *
-     * @return the default console clock format with seconds showing
-     */
-    public static String consoleSecondTime() {
-        return getFormattedTime(consoleSecondFormat);
-    }
-
-    /**
-     * Returns the default console clock format without seconds showing.
-     *
-     * @return the default console clock format without seconds
-     */
-    public static String consoleNoSecondTime() {
-        return getFormattedTime(consoleNoSecondFormat);
     }
 
     /**
@@ -776,7 +701,7 @@ public final class TimeUtil {
         MonthDay sundayDate = getEasterSundayDate(getCurrentYear());
 
         return monthFromNumber(sundayDate.getMonth())
-                + CyderStrings.space + formatNumberSuffix(sundayDate.getDate());
+                + " " + formatNumberSuffix(sundayDate.getDate());
     }
 
     /**
@@ -922,30 +847,30 @@ public final class TimeUtil {
         months -= years * monthsInyear;
 
         if (years != 0) {
-            sb.append(milliFormatter.format(years)).append(YEAR_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(years)).append(YEAR_ABBREVIATION).append(" ");
         }
         if (months != 0) {
-            sb.append(milliFormatter.format(months)).append(MONTH_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(months)).append(MONTH_ABBREVIATION).append(" ");
         }
         if (days != 0) {
-            sb.append(milliFormatter.format(days)).append(DAY_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(days)).append(DAY_ABBREVIATION).append(" ");
         }
         if (hours != 0) {
-            sb.append(milliFormatter.format(hours)).append(HOUR_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(hours)).append(HOUR_ABBREVIATION).append(" ");
         }
         if (minutes != 0) {
-            sb.append(milliFormatter.format(minutes)).append(MINUTE_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(minutes)).append(MINUTE_ABBREVIATION).append(" ");
         }
         if (seconds != 0) {
-            sb.append(milliFormatter.format(seconds)).append(SECOND_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(seconds)).append(SECOND_ABBREVIATION).append(" ");
         }
         if (milliseconds != 0) {
-            sb.append(milliFormatter.format(milliseconds)).append(MILLISECOND_ABBREVIATION).append(CyderStrings.space);
+            sb.append(milliFormatter.format(milliseconds)).append(MILLISECOND_ABBREVIATION).append(" ");
         }
 
         String ret = sb.toString();
 
-        if (ret.startsWith(CyderStrings.comma)) ret = ret.substring(1);
+        if (ret.startsWith(",")) ret = ret.substring(1);
         if (ret.length() == 0) return 0 + MILLISECOND_ABBREVIATION;
 
         return StringUtil.getTrimmedText(ret).trim();

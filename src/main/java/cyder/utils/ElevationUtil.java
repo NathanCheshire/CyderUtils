@@ -2,7 +2,6 @@ package cyder.utils;
 
 import com.google.common.base.Preconditions;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.parsers.elevation.ElevationData;
 import cyder.strings.CyderStrings;
 
@@ -55,7 +54,7 @@ public final class ElevationUtil {
             ElevationData elevationData = SerializationUtil.fromJson(reader, ElevationData.class);
             return Optional.of(Double.parseDouble(elevationData.uepqs.elevationQuery.elevation));
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return Optional.empty();

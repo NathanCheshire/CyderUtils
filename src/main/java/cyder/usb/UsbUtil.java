@@ -58,7 +58,7 @@ public final class UsbUtil {
     public static Future<ImmutableList<UsbDevice>> getUsbDevices() {
         ArrayList<UsbDevice> ret = new ArrayList<>();
 
-        String command = POWER_SHELL + CyderStrings.space + usbConnectedDevicesCommand;
+        String command = POWER_SHELL + " " + usbConnectedDevicesCommand;
 
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(USB_DEVICE_THREAD_NAME)).submit(() -> {

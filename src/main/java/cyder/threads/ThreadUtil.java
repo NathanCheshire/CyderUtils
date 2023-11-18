@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 public final class ThreadUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private ThreadUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

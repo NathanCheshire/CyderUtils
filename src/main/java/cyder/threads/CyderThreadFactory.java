@@ -2,8 +2,6 @@ package cyder.threads;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -21,14 +19,14 @@ public final class CyderThreadFactory implements ThreadFactory {
      * Constructs a new thread factory using the provided name
      *
      * @param name the name of the thread factory
+     * @throws NullPointerException if the provided name is null
+     * @throws IllegalArgumentException if the provided name is empty
      */
     public CyderThreadFactory(String name) {
         Preconditions.checkNotNull(name);
-        Preconditions.checkArgument(!name.isEmpty());
+        Preconditions.checkArgument(!name.trim().isEmpty());
 
         this.name = name;
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

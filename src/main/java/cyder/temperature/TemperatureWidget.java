@@ -6,8 +6,6 @@ import cyder.annotations.ForReadability;
 import cyder.annotations.Vanilla;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderModernButton;
 import cyder.ui.button.ThemeBuilder;
@@ -80,15 +78,7 @@ public final class TemperatureWidget {
     /**
      * Temperature converter widget to convert between kelvin, fahrenheit, and celsius.
      */
-    private TemperatureWidget() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
-
-    /**
-     * The description for the widget.
-     */
-    private static final String description
-            = "A temperature conversion widget for the three standard temperature units";
+    private TemperatureWidget() {}
 
     /**
      * The decimal formatter for the result.
@@ -163,14 +153,17 @@ public final class TemperatureWidget {
      */
     private static final String MEASUREMENT = "Measurement:";
 
+    /**
+     * Shows a new TemperatureWidget.
+     */
     public static void showGui() {
-        getInstance().innerShowGUI();
+        getInstance().innerShowGui();
     }
 
     /**
-     * Shows the temperature widget gui.
+     * Shows the temperature widget GUI.
      */
-    private void innerShowGUI() {
+    private void innerShowGui() {
         UiUtil.closeIfOpen(temperatureFrame);
 
         temperatureFrame = new CyderFrame.Builder()

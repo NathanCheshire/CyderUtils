@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+// todo we need to allow for instances of this and then expose a manager
+
 /**
  * A class used to submit runnables and executors.
  */

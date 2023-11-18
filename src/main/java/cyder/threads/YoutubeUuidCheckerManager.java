@@ -1,12 +1,8 @@
 package cyder.threads;
 
 import com.google.common.base.Preconditions;
-import cyder.console.Console;
-import cyder.enumerations.Units;
 import cyder.time.TimeUtil;
-import cyder.ui.frame.CyderFrame;
 import cyder.ui.pane.CyderOutputPane;
-import cyder.user.UserDataManager;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -123,7 +119,7 @@ public enum YoutubeUuidCheckerManager {
     public void killAll() {
         youTubeUuidCheckers.forEach(youtubeUuidChecker -> {
             String lastCheckedUuid = youtubeUuidChecker.kill();
-            UserDataManager.INSTANCE.setYouTubeUuid(lastCheckedUuid);
+            // todo do something with last checked?
         });
         youTubeUuidCheckers.clear();
 
@@ -139,12 +135,6 @@ public enum YoutubeUuidCheckerManager {
         Preconditions.checkArgument(number > 0);
         Preconditions.checkState(initialized.get());
 
-        if (BletchyAnimationManager.INSTANCE.isActive() || hasActiveCheckers()) {
-            notifyOnConsoleIfPossible("Cannot start bletchy/YouTube thread"
-                    + " at the same time as another instance");
-            return;
-        }
-
         checkIfStartingFirstThreads();
 
         IntStream.range(0, number).forEach(i -> {
@@ -152,8 +142,6 @@ public enum YoutubeUuidCheckerManager {
             checker.startChecking();
             youTubeUuidCheckers.add(checker);
         });
-
-        notifyOnConsoleIfPossible("Type \"stop script\" or press ctrl + c to halt");
 
         isActive = true;
     }
@@ -208,25 +196,6 @@ public enum YoutubeUuidCheckerManager {
         double urlsPerSecond = urlsPerMs * TimeUtil.millisInSecond;
         double urlsPerMinute = urlsPerSecond * TimeUtil.secondsInMinute;
 
-        notifyOnConsoleIfPossible("Current YouTube thread rate: "
-                + urlsPerMinute + " / " + Units.MINUTES.getAbbreviation());
-    }
-
-    /**
-     * Notifies the user of the provided string using the Console if possible. If not possible,
-     * the notify string is printed via the {@link #outputPane}.
-     *
-     * @param notifyString the string to notify to the user
-     */
-    private void notifyOnConsoleIfPossible(String notifyString) {
-        Preconditions.checkNotNull(notifyString);
-        Preconditions.checkArgument(!notifyString.isEmpty());
-
-        CyderFrame console = Console.INSTANCE.getConsoleCyderFrame();
-        if (console != null) {
-            console.notify(notifyString);
-        } else {
-            outputPane.getStringUtil().println(notifyString);
-        }
+        // todo store these off and allow accessor for current rate and accept a unit such as urls per sec, min, etc.
     }
 }
