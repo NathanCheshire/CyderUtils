@@ -1,6 +1,7 @@
 package cyder.strings;
 
 import com.google.common.collect.ImmutableList;
+import cyder.exceptions.IllegalMethodException;
 
 /**
  * Common strings used throughout Cyder.
@@ -20,11 +21,6 @@ public final class CyderStrings {
      * Error message for static classes upon attempted instantiation.
      */
     public static final String ATTEMPTED_INSTANTIATION = "Instances are not permitted for this class";
-
-    /**
-     * A statement I like using in code if something happens that shouldn't ever happen.
-     */
-    public static final String EUROPEAN_TOY_MAKER = "What are you, some kind of European toy maker?";
 
     /**
      * A bullet point character used for numerous purposes.
@@ -47,74 +43,9 @@ public final class CyderStrings {
     public static final String NOT_AVAILABLE = "N/A";
 
     /**
-     * Don't change your number.
-     */
-    public static final String JENNY = "8675309";
-
-    /**
      * The string used for loading labels when waiting for future processes to complete.
      */
     public static final String LOADING = "Loading...";
-
-    /**
-     * An opening bracket.
-     */
-    public static final String openingBracket = "[";
-
-    /**
-     * A closing bracket.
-     */
-    public static final String closingBracket = "]";
-
-    /**
-     * An opening parenthesis.
-     */
-    public static final String openingParenthesis = "(";
-
-    /**
-     * A closing parenthesis.
-     */
-    public static final String closingParenthesis = ")";
-
-    /**
-     * A comma.
-     */
-    public static final String comma = ",";
-
-    /**
-     * A space.
-     */
-    public static final String space = " ";
-
-    /**
-     * A colon.
-     */
-    public static final String colon = ":";
-
-    /**
-     * A quote.
-     */
-    public static final String quote = "\"";
-
-    /**
-     * A forward slash.
-     */
-    public static final String forwardSlash = "/";
-
-    /**
-     * A back slash.
-     */
-    public static final String backSlash = "\\";
-
-    /**
-     * A hash.
-     */
-    public static final String hash = "#";
-
-    /**
-     * A dash.
-     */
-    public static final String dash = "-";
 
     /**
      * A newline character.
@@ -142,11 +73,6 @@ public final class CyderStrings {
     public static final String EMPTY = "";
 
     /**
-     * A single quote string.
-     */
-    public static final String singleQuote = "'";
-
-    /**
      * A null character.
      */
     public static final String nullChar = "\0";
@@ -157,24 +83,16 @@ public final class CyderStrings {
     public static final String carriageReturnChar = "\r";
 
     /**
-     * A lowercase x char.
-     */
-    public static final String X = "x";
-
-    /**
-     * An underscore character.
-     */
-    public static final String underscore = "_";
-
-    /**
      * The dots for a title or menu item that is cut off due to being too long.
      */
-    public static final String dots = "...";
+    public static final String ellipseDots = "...";
 
     /**
      * Suppress default constructor.
+     *
+     * @throws cyder.exceptions.IllegalMethodException if invoked.
      */
     private CyderStrings() {
-        throw new IllegalStateException(ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException(ATTEMPTED_INSTANTIATION);
     }
 }

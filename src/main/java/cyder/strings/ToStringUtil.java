@@ -3,15 +3,12 @@ package cyder.strings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.ui.frame.CyderFrame;
 import cyder.utils.ReflectionUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
-
-import static cyder.strings.CyderStrings.quote;
 
 /**
  * Utilities for casting things to strings.
@@ -133,7 +130,7 @@ public final class ToStringUtil {
                 }
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         StringBuilder ret = new StringBuilder();
@@ -150,7 +147,7 @@ public final class ToStringUtil {
             String result = specialMethod.getMethodResult();
             if (result != null && !result.isEmpty()) {
                 ret.append(", ").append(specialMethod.getStartsWith())
-                        .append(": ").append(quote).append(result).append(quote);
+                        .append(": ").append("\"").append(result).append("\"");
             }
         });
 

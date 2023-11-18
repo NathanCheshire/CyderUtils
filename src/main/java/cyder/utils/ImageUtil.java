@@ -3,14 +3,10 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.enumerations.Direction;
-import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
 import cyder.math.AngleUtil;
 import cyder.network.NetworkUtil;
 import cyder.process.Program;
-import cyder.snakes.PythonArgument;
-import cyder.snakes.PythonCommand;
-import cyder.snakes.PythonFunctionsWrapper;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
 import cyder.ui.drag.CyderDragLabel;
@@ -32,7 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static cyder.strings.CyderStrings.quote;
 import static cyder.strings.CyderStrings.space;
 
 /**
@@ -970,27 +965,7 @@ public final class ImageUtil {
 
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(GAUSSIAN_IMAGE_BLURER_THREAD_NAME)).submit(() -> {
-            try {
-                String command = PythonArgument.COMMAND.getFullArgument()
-                        + space + PythonCommand.BLUR.getCommand()
-                        + space + PythonArgument.INPUT.getFullArgument()
-                        + space + quote + imageFile.getAbsolutePath() + quote
-                        + space + PythonArgument.RADIUS.getFullArgument()
-                        + space + radius;
-                Future<String> futureResult = PythonFunctionsWrapper.invokeCommand(command);
-                while (!futureResult.isDone()) Thread.onSpinWait();
-                String result = futureResult.get();
-
-                String parsedResult = PythonCommand.BLUR.parseResponse(result);
-
-                File resultingBlurredImage = new File(parsedResult);
-                if (resultingBlurredImage.exists()) {
-                    return Optional.of(resultingBlurredImage);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            // todo need to do this logic on our own now
             return Optional.empty();
         });
     }

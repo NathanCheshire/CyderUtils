@@ -14,7 +14,12 @@ public enum PythonPackage {
     /**
      * Pillow package for image utilities.
      */
-    PILLOW("Pillow");
+    PILLOW("Pillow"),
+
+    /**
+     * Mutagen package for audio metadata parsing.
+     */
+    MUTAGEN("Mutagen");
 
     /**
      * The package name for this python package.
@@ -36,6 +41,8 @@ public enum PythonPackage {
 
     /**
      * Installs this python package using pip if not already present.
+     *
+     * // todo return future boolean for whether it was installed properly or not
      */
     public void install() {
         PythonUtil.installPipDependency(this);

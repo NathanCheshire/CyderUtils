@@ -402,7 +402,7 @@ public final class StringUtil {
 
         Arrays.stream(sentence.split(CyderRegexPatterns.whiteSpaceRegex)).forEach(wordy -> {
             sb.append(Character.toUpperCase(wordy.charAt(0)));
-            sb.append(wordy.substring(1).toLowerCase()).append(CyderStrings.space);
+            sb.append(wordy.substring(1).toLowerCase()).append(" ");
         });
 
         return sb.toString().trim();
@@ -436,7 +436,7 @@ public final class StringUtil {
 
         StringBuilder sb = new StringBuilder();
         Arrays.stream(words).forEach(word ->
-                sb.append(replaceLeetChars(word)).append(CyderStrings.space));
+                sb.append(replaceLeetChars(word)).append(" "));
         return sb.toString().trim();
     }
 
@@ -697,8 +697,7 @@ public final class StringUtil {
     /**
      * The string to split the wikisum results on.
      */
-    private static final String wikiSumSplitOn = CyderStrings.quote + "extract"
-            + CyderStrings.quote + CyderStrings.colon + CyderStrings.quote;
+    private static final String wikiSumSplitOn = "\"extract\":\"";
 
     /**
      * Web scrapes Wikipedia for the appropriate article and returns the body of the wiki article.
@@ -836,7 +835,7 @@ public final class StringUtil {
     public static String getTrimmedText(String text) {
         Preconditions.checkNotNull(text);
 
-        return text.replaceAll(CyderRegexPatterns.whiteSpaceRegex, CyderStrings.space).trim();
+        return text.replaceAll(CyderRegexPatterns.whiteSpaceRegex, " ").trim();
     }
 
     /**
@@ -972,7 +971,7 @@ public final class StringUtil {
     public static String removeNonAscii(String string) {
         Preconditions.checkNotNull(string);
 
-        return getTrimmedText(string.replaceAll(nonAsciiRegex, CyderStrings.space));
+        return getTrimmedText(string.replaceAll(nonAsciiRegex, " "));
     }
 
     /**
@@ -996,7 +995,7 @@ public final class StringUtil {
     public static String generateSpaces(int n) {
         Preconditions.checkArgument(n >= 0);
 
-        return CyderStrings.space.repeat(n);
+        return " ".repeat(n);
     }
 
     /**
@@ -1009,8 +1008,8 @@ public final class StringUtil {
     public static String stripNewLinesAndTrim(String line) {
         Preconditions.checkNotNull(line);
 
-        return line.replace(CyderStrings.newline, CyderStrings.space)
-                .replace(CyderStrings.carriageReturnChar, CyderStrings.space).trim();
+        return line.replace(CyderStrings.newline, " ")
+                .replace(CyderStrings.carriageReturnChar, " ").trim();
     }
 
     /**

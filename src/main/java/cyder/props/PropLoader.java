@@ -7,9 +7,6 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.utils.ArrayUtil;
@@ -170,7 +167,7 @@ public final class PropLoader {
 
         discoverPropFiles(propsDirectory)
                 .forEach(propFile -> {
-                    Logger.log(LogTag.PROPS_ACTION, "Discovered prop file: " + propFile.getAbsolutePath());
+                    // todo Logger.log(LogTag.PROPS_ACTION, "Discovered prop file: " + propFile.getAbsolutePath());
                     ret.putAll(extractPropsFromFile(propFile));
                 });
 
@@ -198,7 +195,7 @@ public final class PropLoader {
             String fileContents = FileUtil.readFileContents(propFile);
             currentFileLines = ImmutableList.copyOf(fileContents.split(splitPropFileContentsAt));
         } catch (IOException e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         boolean logNextProp = true;
@@ -231,7 +228,7 @@ public final class PropLoader {
             ret.put(key, value);
 
             String logValue = logNextProp ? ", value: " + value : "";
-            Logger.log(LogTag.PROPS_ACTION, "key: " + key + logValue);
+            // todo Logger.log(LogTag.PROPS_ACTION, "key: " + key + logValue);
 
             logNextProp = true;
             previousLinesOfMultilineProp = new StringBuilder();

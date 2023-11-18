@@ -3,7 +3,6 @@ package cyder.props;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
-import cyder.user.UserData;
 
 import static cyder.strings.CyderStrings.EMPTY;
 
@@ -16,31 +15,6 @@ public final class Props {
      */
     public static final Prop<Boolean> propsReloadable =
             new Prop<>("props_reloadable", false, Boolean.class);
-
-    /**
-     * The default location for services which require a location.
-     * (All about a buck, baby, bay just like Tampa)
-     */
-    public static final Prop<String> defaultLocation =
-            new Prop<>("default_location", "Tampa,FL,USA", String.class);
-
-    /**
-     * The data stored within a User object which should not be logged on access.
-     */
-    public static final Prop<PropValueList> ignoreAccessInvocations =
-            new Prop<>("ignore_accessor_invocations", new PropValueList(ImmutableList.of(
-                    UserData.TYPING_ANIMATION,
-                    UserData.SHOW_CONSOLE_CLOCK_SECONDS,
-                    UserData.ROUNDED_FRAME_BORDERS,
-                    UserData.FRAME_COLOR,
-                    UserData.SHOW_AUDIO_TOTAL_LENGTH,
-                    UserData.CAPS_MODE,
-                    UserData.PLAY_TYPING_SOUND,
-                    UserData.SHOW_BUSY_ANIMATION,
-                    UserData.DRAW_CONSOLE_CLOCK,
-                    UserData.SHOW_CONSOLE_CLOCK_SECONDS,
-                    UserData.CONSOLE_CLOCK_FORMAT,
-                    UserData.DO_ANIMATIONS)), PropValueList.class);
 
     /**
      * The font metric for the input/output areas (One of: bold, italic, bold-italic, or plain).
@@ -141,31 +115,6 @@ public final class Props {
      */
     public static final Prop<Boolean> autoTriggerSimilarCommands =
             new Prop<>("auto_trigger_similar_commands", false, Boolean.class);
-
-    /**
-     * The tolerance required to automatically trigger a similar command.
-     */
-    public static final Prop<Float> autoTriggerSimilarCommandTolerance =
-            new Prop<>("auto_trigger_similar_command_tolerance", 0.95f, Float.class);
-
-    /**
-     * The IP to ping when determining the system network latency.
-     */
-    public static final Prop<String> latencyIp =
-            new Prop<>("latency_ip", "172.217.4.78", String.class);
-
-    /**
-     * The port to ping when determine the system network latency.
-     */
-    public static final Prop<Integer> latencyPort =
-            new Prop<>("latency_port", 80, Integer.class);
-
-    /**
-     * The name of the domain being pinged when determining the network latency
-     * (If absent the DNS records will be used to determine the name).
-     */
-    public static final Prop<String> latencyName =
-            new Prop<>("latency_name", "Google", String.class);
 
     /**
      * The size of drag label buttons (One of: small, medium, large, full_drag_label).

@@ -14,17 +14,17 @@ public final class PropValueList {
     /**
      * The list containing the values for a prop.
      */
-    public final ImmutableList<String> list;
+    public final ImmutableList<String> propValues;
 
     /**
      * Constructs a new prop value list object.
      *
-     * @param list the values list.
+     * @param propValues the values list.
      */
-    public PropValueList(List<String> list) {
-        Preconditions.checkNotNull(list);
+    public PropValueList(List<String> propValues) {
+        Preconditions.checkNotNull(propValues);
 
-        this.list = ImmutableList.copyOf(list);
+        this.propValues = ImmutableList.copyOf(propValues);
     }
 
     /**
@@ -32,8 +32,8 @@ public final class PropValueList {
      *
      * @return the list containing the values for a prop
      */
-    public ImmutableList<String> getList() {
-        return list;
+    public ImmutableList<String> getPropValues() {
+        return propValues;
     }
 
     /**
@@ -48,7 +48,7 @@ public final class PropValueList {
         }
 
         PropValueList other = (PropValueList) o;
-        return other.getList().equals(list);
+        return other.propValues.equals(propValues);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class PropValueList {
      */
     @Override
     public int hashCode() {
-        return list.hashCode();
+        return propValues.hashCode();
     }
 
     /**
@@ -64,6 +64,6 @@ public final class PropValueList {
      */
     @Override
     public String toString() {
-        return "PropValueList{list=" + list + "}";
+        return "PropValueList{propValues=" + propValues + "}";
     }
 }

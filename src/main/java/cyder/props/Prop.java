@@ -15,7 +15,6 @@ import java.util.Optional;
  * @param <T> the type of the value of the prop
  */
 @Immutable
-@SuppressWarnings("ClassCanBeRecord") /* No */
 public final class Prop<T> {
     /**
      * The key for the prop.

@@ -217,7 +217,7 @@ public final class SerializationUtil {
             String firstPart = logStatement.substring(0, charsToLog / 2);
             String secondPart = logStatement.substring(length - charsToLog / 2 - 1, length);
             logStatement = CyderStrings.quote + firstPart + CyderStrings.quote
-                    + CyderStrings.dots + CyderStrings.quote + secondPart + CyderStrings.quote;
+                    + CyderStrings.ellipseDots + CyderStrings.quote + secondPart + CyderStrings.quote;
         }
         Logger.log(tags, logStatement);
     }
@@ -230,7 +230,7 @@ public final class SerializationUtil {
      * @return whether the provided object or type should not be logged
      */
     private static <T> boolean shouldIgnoreObjectSerializationOrDeserialization(T classOrType) {
-        ImmutableList<String> ignoreClasses = Props.ignoreSerializationData.getValue().getList();
+        ImmutableList<String> ignoreClasses = Props.ignoreSerializationData.getValue().getPropValues();
         if (ignoreClasses.contains("all")) return true;
 
         if (classOrType instanceof Class<?> clazz) {

@@ -4,9 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
 import cyder.process.Program;
@@ -81,26 +78,29 @@ public final class PythonUtil {
                         try {
                             boolean installed = futureInstalled.get();
                             if (installed) {
-                                Logger.log(LogTag.PYTHON, "Found package "
-                                        + pythonPackage.getPackageName() + " to be installed");
+                                // todo on installed hook
+//                                Logger.log(LogTag.PYTHON, "Found package "
+//                                        + pythonPackage.getPackageName() + " to be installed");
 
                                 if (Props.logPythonPackageVersionsOnInstallationDiscovery.getValue()) {
                                     Future<Optional<String>> futureVersion = pythonPackage.getInstalledVersion();
                                     while (!futureVersion.isDone()) Thread.onSpinWait();
                                     Optional<String> optionalVersion = futureVersion.get();
                                     if (optionalVersion.isPresent()) {
-                                        Logger.log(LogTag.PYTHON, pythonPackage.getPackageName()
-                                                + " version: " + optionalVersion.get());
+                                        // todo on version discovered hook
+//                                        Logger.log(LogTag.PYTHON, pythonPackage.getPackageName()
+//                                                + " version: " + optionalVersion.get());
                                     } else {
-                                        Logger.log(LogTag.PYTHON, pythonPackage.getPackageName()
-                                                + " could not be found");
+                                        // todo on version not found hook
+//                                        Logger.log(LogTag.PYTHON, pythonPackage.getPackageName()
+//                                                + " could not be found");
                                     }
                                 }
                             } else {
                                 missingPackages.add(pythonPackage);
                             }
                         } catch (Exception e) {
-                            ExceptionHandler.handle(e);
+                            e.printStackTrace();
                         }
                     });
 
@@ -135,7 +135,7 @@ public final class PythonUtil {
 
                         return Optional.of(line.substring(pythonVersionResultPrefix.length()).trim());
                     } catch (Exception e) {
-                        ExceptionHandler.handle(e);
+                        e.printStackTrace();
                     }
 
                     return Optional.empty();
@@ -196,7 +196,7 @@ public final class PythonUtil {
                                 && line.substring(namePrefix.length())
                                 .equalsIgnoreCase(pythonPackage.getPackageName()));
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
 
             return false;
@@ -237,7 +237,7 @@ public final class PythonUtil {
                     }
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
 
             return Optional.empty();

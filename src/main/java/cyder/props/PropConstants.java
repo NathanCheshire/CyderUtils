@@ -71,7 +71,7 @@ final class PropConstants {
     static final String keyValueSeparator = CyderStrings.colon;
 
     /**
-     * The escape char for comma.
+     * The escape character for comma.
      */
     static final String escapeSequence = CyderStrings.backSlash;
 
@@ -88,6 +88,8 @@ final class PropConstants {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private PropConstants() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

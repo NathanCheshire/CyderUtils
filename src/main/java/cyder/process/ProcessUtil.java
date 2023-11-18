@@ -26,6 +26,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class ProcessUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private ProcessUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

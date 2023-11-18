@@ -3195,7 +3195,7 @@ public class CyderFrame extends JFrame {
 
         // Overflow
         if (text.length() > MAXIMUM_MENU_ITEM_TEXT_LENGTH) {
-            text = (text.substring(0, MAXIMUM_MENU_ITEM_TEXT_LENGTH - 3).trim() + CyderStrings.dots);
+            text = (text.substring(0, MAXIMUM_MENU_ITEM_TEXT_LENGTH - 3).trim() + CyderStrings.ellipseDots);
         }
 
         JLabel newLabel = new JLabel(text);

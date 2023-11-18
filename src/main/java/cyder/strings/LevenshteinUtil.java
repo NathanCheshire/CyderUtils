@@ -10,6 +10,8 @@ import cyder.math.NumberUtil;
 public final class LevenshteinUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private LevenshteinUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
