@@ -1,7 +1,5 @@
 package cyder.parsers.ip;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.Objects;
 
@@ -37,9 +35,7 @@ public class TimeZone {
     /**
      * Creates a new timezone object.
      */
-    public TimeZone() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public TimeZone() {}
 
     /**
      * Returns the name of the timezone.

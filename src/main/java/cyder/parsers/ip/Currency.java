@@ -1,8 +1,6 @@
 package cyder.parsers.ip;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.Objects;
 
@@ -39,9 +37,7 @@ public class Currency {
     /**
      * Constructs a new currency object.
      */
-    public Currency() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Currency() {}
 
     /**
      * Sets the name of the currency.

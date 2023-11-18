@@ -1,8 +1,6 @@
 package cyder.parsers.ip;
 
 import com.google.common.collect.ImmutableList;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -124,9 +122,7 @@ public class IpData {
     /**
      * Constructs a new IpData object.
      */
-    public IpData() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public IpData() {}
 
     /**
      * Returns the ip address.

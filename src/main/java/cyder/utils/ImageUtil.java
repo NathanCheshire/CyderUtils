@@ -5,7 +5,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.enumerations.Direction;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.math.AngleUtil;
 import cyder.network.NetworkUtil;
 import cyder.process.Program;
@@ -227,23 +226,24 @@ public final class ImageUtil {
         Preconditions.checkArgument(height > 0);
         Preconditions.checkNotNull(icon);
 
-        BufferedImage ReturnImage = null;
+        BufferedImage ret = null;
 
         try {
-            Image ConsoleImage = icon.getImage();
-            Image TransferImage = ConsoleImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ReturnImage = new BufferedImage(TransferImage.getWidth(null),
-                    TransferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D bGr = ReturnImage.createGraphics();
+            Image image = icon.getImage();
+            Image transferImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            ret = new BufferedImage(transferImage.getWidth(null),
+                    transferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-            bGr.drawImage(TransferImage, 0, 0, null);
-            bGr.dispose();
-            return ReturnImage;
+            // todo this can be done with a helper method im sure
+            Graphics2D graphics = ret.createGraphics();
+            graphics.drawImage(transferImage, 0, 0, null);
+            graphics.dispose();
+            return ret;
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
-        return ReturnImage;
+        return ret;
     }
 
     /**
@@ -259,23 +259,23 @@ public final class ImageUtil {
         Preconditions.checkArgument(height > 0);
         Preconditions.checkNotNull(imageFile);
 
-        BufferedImage ReturnImage = null;
+        BufferedImage ret = null;
 
         try {
-            Image ConsoleImage = read(imageFile);
-            Image TransferImage = ConsoleImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ReturnImage = new BufferedImage(TransferImage.getWidth(null),
-                    TransferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D bGr = ReturnImage.createGraphics();
+            Image image = read(imageFile);
+            Image transferImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            ret = new BufferedImage(transferImage.getWidth(null),
+                    transferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-            bGr.drawImage(TransferImage, 0, 0, null);
-            bGr.dispose();
-            return ReturnImage;
+            Graphics2D graphics = ret.createGraphics();
+            graphics.drawImage(transferImage, 0, 0, null);
+            graphics.dispose();
+            return ret;
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
-        return ReturnImage;
+        return ret;
     }
 
     /**
@@ -324,10 +324,12 @@ public final class ImageUtil {
         try {
             bufferedImage = read(new File(filepath));
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         if (bufferedImage == null) {
+            // todo this pattern is used a lot we should do a CyderConditions.checkState
+            //  and some stuff like that
             throw new IllegalArgumentException("Could not get buffered image from path: " + filepath);
         }
 
@@ -605,7 +607,7 @@ public final class ImageUtil {
             ret = new ImageIcon(combined);
 
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ret;
@@ -680,7 +682,7 @@ public final class ImageUtil {
         try {
             pg.grabPixels();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         boolean allGrayscale = true;
@@ -771,7 +773,7 @@ public final class ImageUtil {
                 }
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ret;
@@ -835,7 +837,7 @@ public final class ImageUtil {
                 }
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             ret = false;
         }
 
@@ -986,7 +988,7 @@ public final class ImageUtil {
                     return Optional.of(resultingBlurredImage);
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
 
             return Optional.empty();
@@ -1017,30 +1019,6 @@ public final class ImageUtil {
         }
 
         return ret;
-    }
-
-    /**
-     * Saves the provided buffered image to the temporary directory.
-     *
-     * @param bi the buffered image to save
-     * @return whether the image was successfully saved
-     */
-    @CanIgnoreReturnValue
-    public static boolean saveImageToTemporaryDirectory(BufferedImage bi, String saveName) {
-        Preconditions.checkNotNull(bi);
-        Preconditions.checkNotNull(saveName);
-        Preconditions.checkArgument(!saveName.isEmpty());
-
-        try {
-            File tmpDir = Dynamic.buildDynamic(Dynamic.TEMP.getFileName(),
-                    saveName + Extension.PNG.getExtension());
-            ImageIO.write(bi, Extension.PNG.getExtensionWithoutPeriod(), tmpDir);
-            return true;
-        } catch (Exception e) {
-            ExceptionHandler.handle(e);
-        }
-
-        return false;
     }
 
     /**

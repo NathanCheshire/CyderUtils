@@ -1,7 +1,5 @@
 package cyder.parsers.ip;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.Objects;
 
@@ -37,9 +35,7 @@ public class Asn {
     /**
      * Creates a new Asn object.
      */
-    public Asn() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Asn() {}
 
     /**
      * Sets the asn.

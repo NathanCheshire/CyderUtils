@@ -1,8 +1,6 @@
 package cyder.parsers.ip;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.util.Objects;
 
@@ -29,9 +27,7 @@ public class Language {
     /**
      * Constructs a new language object.
      */
-    public Language() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Language() {}
 
     /**
      * Returns the name of this language.

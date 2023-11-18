@@ -1,7 +1,5 @@
 package cyder.parsers.ip;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * An object for parsing returned ip data threat objects.
@@ -56,9 +54,7 @@ public class Threat {
     /**
      * Constructs a new threat object.
      */
-    public Threat() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Threat() {}
 
     /**
      * Sets the IP address is associated with a node on the Tor network.
