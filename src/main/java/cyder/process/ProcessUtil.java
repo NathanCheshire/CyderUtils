@@ -64,7 +64,7 @@ public final class ProcessUtil {
         checkArgument(!command.isEmpty());
         checkArgument(command.stream().noneMatch((cmd) -> cmd == null));
 
-        return getProcessOutput(StringUtil.joinParts(command, CyderStrings.space));
+        return getProcessOutput(StringUtil.joinParts(command, " "));
     }
 
     /**
@@ -81,7 +81,7 @@ public final class ProcessUtil {
         checkNotNull(command);
         checkArgument(!command.trim().isEmpty());
 
-        String threadName = "getProcessOutput, command: " + CyderStrings.quote + command + CyderStrings.quote;
+        String threadName = "getProcessOutput, command: " + "\"" + command + "\"";
         AtomicReference<ProcessResult> ret = new AtomicReference<>(null);
 
         CyderThreadRunner.submit(() -> {

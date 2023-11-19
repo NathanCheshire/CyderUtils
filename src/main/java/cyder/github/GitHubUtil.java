@@ -6,7 +6,6 @@ import com.google.common.reflect.TypeToken;
 import cyder.exceptions.IllegalMethodException;
 import cyder.github.parsers.Issue;
 import cyder.process.ProcessUtil;
-import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.OsUtil;
 import cyder.utils.SerializationUtil;
@@ -22,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static cyder.strings.CyderStrings.*;
+import static cyder.strings.CyderStrings.ATTEMPTED_INSTANTIATION;
 
 /**
  * Utilities for working with REST APIs provided by <a href="https://www.github.com">GitHub.com</a>.
@@ -169,9 +168,9 @@ public final class GitHubUtil {
     /**
      * Clones the provided github repo to the provided directory.
      *
-     * @param cloneLink    the URL of the github repository to clone
-     * @param directory    the directory to save the repo to
-     *                     Note this directory must exist prior to method invocation
+     * @param cloneLink the URL of the github repository to clone
+     * @param directory the directory to save the repo to
+     *                  Note this directory must exist prior to method invocation
      * @return whether the repo was successfully cloned and saved
      */
     public static Future<Boolean> cloneRepoToDirectory(String cloneLink, File directory) {
@@ -199,9 +198,9 @@ public final class GitHubUtil {
             if (!OsUtil.isBinaryInstalled(GIT)) return false;
 
             try {
-                String command = GIT + space
-                        + "clone" + space + githubCloneRepoLink.getLink()
-                        + space + saveDirectory.getAbsolutePath();
+                String command = GIT + " "
+                        + "clone" + " " + githubCloneRepoLink.getLink()
+                        + " " + saveDirectory.getAbsolutePath();
                 ProcessUtil.runAndWaitForProcess(command);
             } catch (Exception ignored) {
                 return false;

@@ -6,7 +6,6 @@ import cyder.constants.CyderColors;
 import cyder.enumerations.Extension;
 import cyder.files.FileUtil;
 import cyder.layouts.CyderPartitionedLayout;
-import cyder.strings.CyderStrings;
 import cyder.ui.button.CyderButton;
 import cyder.ui.field.CyderCaret;
 import cyder.ui.field.CyderTextField;
@@ -210,7 +209,7 @@ public class TextViewer {
         File parent = file.getParentFile();
         File createFile = OsUtil.buildFile(parent.getAbsolutePath(), requestedName);
         if (!OsUtil.createFile(createFile, true)) {
-            textFrame.notify("Could not create file: \"" + requestedName + CyderStrings.quote);
+            textFrame.notify("Could not create file: \"" + requestedName + "\"");
         }
         if (!OsUtil.deleteFile(file)) {
             textFrame.notify("Could not update contents of file");
@@ -225,7 +224,7 @@ public class TextViewer {
             e.printStackTrace();
         }
 
-        textFrame.notify("Saved file and contents under: \"" + requestedName + CyderStrings.quote);
+        textFrame.notify("Saved file and contents under: \"" + requestedName + "\"");
     }
 
     /**

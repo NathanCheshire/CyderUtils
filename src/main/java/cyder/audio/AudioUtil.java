@@ -66,8 +66,8 @@ public final class AudioUtil {
     /**
      * The high and low pass argument string.
      */
-    private static final String HIGHPASS_LOWPASS_ARGS = quote + "highpass=f="
-            + HIGHPASS + comma + space + "lowpass=f=" + LOW_PASS + quote;
+    private static final String HIGHPASS_LOWPASS_ARGS = "\"" + "highpass=f="
+            + HIGHPASS + ", " + "lowpass=f=" + LOW_PASS + "\"";
 
     /**
      * A cache of previously computed millisecond times from audio files.
@@ -96,14 +96,13 @@ public final class AudioUtil {
 
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory("Mp3 to wav converter")).submit(() -> {
-            File tmpDir = Dynamic.buildDynamic(Dynamic.TEMP.getFileName());
+            File tmpDir = new File(""); // todo
             if (!tmpDir.exists()) {
                 tmpDir.mkdir();
             }
 
-            String builtPath = Dynamic.buildDynamic(Dynamic.TEMP.getFileName(),
-                    FileUtil.getFilename(mp3File) + Extension.WAV.getExtension()).getAbsolutePath();
-            String safePath = quote + builtPath + quote;
+            String builtPath = FileUtil.getFilename(mp3File) + Extension.WAV.getExtension();
+            String safePath = "\"" + builtPath + "\"";
 
             File outputFile = new File(builtPath);
             if (outputFile.exists()) {
@@ -113,7 +112,7 @@ public final class AudioUtil {
             }
 
             ProcessBuilder processBuilder = new ProcessBuilder("ffmpeg", INPUT_FLAG,
-                    quote + mp3File.getAbsolutePath() + quote, safePath);
+                    "\"" + mp3File.getAbsolutePath() + "\"", safePath);
             processBuilder.redirectErrorStream();
             Process process = processBuilder.start();
 
@@ -148,13 +147,12 @@ public final class AudioUtil {
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory("Wav to mp3 converter")).submit(() -> {
 
-            String builtPath = Dynamic.buildDynamic(Dynamic.TEMP.getFileName(),
-                    FileUtil.getFilename(wavFile) + Extension.MP3.getExtension()).getAbsolutePath();
-            String safePath = quote + builtPath + quote;
+            String builtPath = ""; // todo temp dir
+            String safePath = "\"" + builtPath + "\"";
 
             File outputFile = new File(builtPath);
             ProcessBuilder pb = new ProcessBuilder("ffmpeg", INPUT_FLAG,
-                    quote + wavFile.getAbsolutePath() + quote, safePath);
+                    "\"" + wavFile.getAbsolutePath() + "\"", safePath);
             pb.redirectErrorStream();
             Process process = pb.start();
 
@@ -190,11 +188,11 @@ public final class AudioUtil {
                 new CyderThreadFactory(executorThreadName)).submit(() -> {
 
             // in case the audio wav name contains spaces, surround with quotes
-            String safeFilename = quote + wavOrMp3File.getAbsolutePath() + quote;
+            String safeFilename = "\"" + wavOrMp3File.getAbsolutePath() + "\"";
 
-            File outputFile = Dynamic.buildDynamic(Dynamic.TEMP.getFileName(),
-                    FileUtil.getFilename(wavOrMp3File) + DREAMY_SUFFIX + Extension.MP3.getExtension());
-            String safeOutputFilename = quote + outputFile.getAbsolutePath() + quote;
+            File outputFile = new File(FileUtil.getFilename(wavOrMp3File)
+                    + DREAMY_SUFFIX + Extension.MP3.getExtension());
+            String safeOutputFilename = "\"" + outputFile.getAbsolutePath() + "\"";
 
             String[] command = {
                     "ffmpeg",
@@ -245,9 +243,9 @@ public final class AudioUtil {
                 "-print_format", "json",
                 "-show_streams",
                 "-show_entries", "stream=duration",
-                CyderStrings.quote + audioFile.getAbsolutePath() + CyderStrings.quote
+                "\"" + audioFile.getAbsolutePath() + "\""
         );
-        Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(StringUtil.joinParts(command, space));
+        Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(StringUtil.joinParts(command, " "));
         while (!futureResult.isDone()) Thread.onSpinWait();
         ProcessResult result = futureResult.get();
         if (result.hasErrors()) throw new FatalException("Process result contains errors");

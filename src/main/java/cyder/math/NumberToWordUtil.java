@@ -20,7 +20,7 @@ public final class NumberToWordUtil {
     /**
      * The character to denote a negative number.
      */
-    private static final String negativeChar = CyderStrings.dash;
+    private static final String negativeChar = "-";
 
     /**
      * The regex for determining if an input is equal to zero
@@ -185,7 +185,7 @@ public final class NumberToWordUtil {
 
         IntStream.range(0, prefixedTrios.size()).forEach(index ->
                 wordBuilder.append(prefixedTrios.get(prefixedTrios.size() - index - 1).trim())
-                        .append(CyderStrings.space));
+                        .append(" "));
 
         return StringUtil.capsFirstWords(StringUtil.getTrimmedText(wordBuilder.toString()));
     }
@@ -209,16 +209,16 @@ public final class NumberToWordUtil {
         String hundredsDigitString = onesPlaceStrings.get(hundredsDigit);
         String hundredsPlaceString = "";
         if (!StringUtil.isNullOrEmpty(hundredsDigitString)) {
-            hundredsPlaceString = hundredsDigitString + CyderStrings.space + "hundred";
+            hundredsPlaceString = hundredsDigitString + " " + "hundred";
         }
 
         String onesAndTensString = tensPlaceStrings.get(tensDigit)
-                + CyderStrings.space + onesPlaceStrings.get(onesDigit);
+                + " " + onesPlaceStrings.get(onesDigit);
         if (tenToTwentyRange.contains(onesAndTensDigits)) {
             onesAndTensString = tenToTwentyStrings.get(onesAndTensDigits - tenToTwentyStrings.size());
         }
 
         return StringUtil.capsFirstWords(
-                StringUtil.getTrimmedText((hundredsPlaceString + CyderStrings.space + onesAndTensString)));
+                StringUtil.getTrimmedText((hundredsPlaceString + " " + onesAndTensString)));
     }
 }

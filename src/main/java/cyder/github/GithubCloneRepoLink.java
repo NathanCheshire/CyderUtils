@@ -140,17 +140,17 @@ public class GithubCloneRepoLink {
     public String toString() {
         return "GithubCloneRepoLink{"
                 + "link="
-                + CyderStrings.quote
+                + "\""
                 + link
-                + CyderStrings.quote
+                + "\""
                 + ", user="
-                + CyderStrings.quote
+                + "\""
                 + user
-                + CyderStrings.quote
+                + "\""
                 + ", repository="
-                + CyderStrings.quote
+                + "\""
                 + repository
-                + CyderStrings.quote
+                + "\""
                 + "}";
     }
 

@@ -154,9 +154,10 @@ public final class FileUtil {
         String extension = getExtension(name);
         if (StringUtil.isNullOrEmpty(extension)) return false;
 
-        boolean fileSignatureMatches = fileMatchesSignature(file, PNG_SIGNATURE) || fileMatchesSignature(file, JPG_SIGNATURE);
+        boolean fileSignatureMatches =
+                fileMatchesSignature(file, PNG_SIGNATURE) || fileMatchesSignature(file, JPG_SIGNATURE);
         boolean extensionValid = StringUtil.in(extension, true, SUPPORTED_IMAGE_EXTENSIONS);
-        return  extensionValid && fileSignatureMatches;
+        return extensionValid && fileSignatureMatches;
     }
 
     /**
@@ -523,7 +524,7 @@ public final class FileUtil {
 
         int number = 1;
         while (StringUtil.in(ret, true, filenames)) {
-            ret = name + CyderStrings.underscore + number + "." + extension;
+            ret = name + "_" + number + "." + extension;
             number++;
         }
 
@@ -854,7 +855,7 @@ public final class FileUtil {
 
         switch (OsUtil.OPERATING_SYSTEM) {
             case MAC -> {
-                return !filename.contains(CyderStrings.forwardSlash)
+                return !filename.contains("/")
                         && !filename.contains(CyderStrings.nullChar);
             }
             case WINDOWS -> {

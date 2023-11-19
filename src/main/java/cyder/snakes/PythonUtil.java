@@ -31,12 +31,12 @@ public final class PythonUtil {
     /**
      * The prefix of the pip show output for the package name.
      */
-    private static final String namePrefix = "Name" + CyderStrings.colon + CyderStrings.space;
+    private static final String namePrefix = "Name: " ;
 
     /**
      * The prefix of the pip show output for the version.
      */
-    private static final String versionPrefix = "Version" + CyderStrings.colon + CyderStrings.space;
+    private static final String versionPrefix = "Version: " ;
 
     /**
      * The "install" keyword for pip installations.
@@ -51,7 +51,7 @@ public final class PythonUtil {
     /**
      * The Python version command result prefix.
      */
-    private static final String pythonVersionResultPrefix = "Python" + CyderStrings.space;
+    private static final String pythonVersionResultPrefix = "Python " ;
 
     /**
      * Suppress default constructor.
@@ -118,7 +118,7 @@ public final class PythonUtil {
                 .submit(() -> {
                     Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
                             Program.PYTHON.getProgramName()
-                                    + CyderStrings.space
+                                    + " "
                                     + VERSION_ARGUMENT);
 
                     while (!futureResult.isDone()) Thread.onSpinWait();
@@ -156,9 +156,9 @@ public final class PythonUtil {
 
         return ProcessUtil.getProcessOutput(
                 Program.PIP.getProgramName()
-                        + CyderStrings.space
+                        + " "
                         + INSTALL
-                        + CyderStrings.space
+                        + " "
                         + pythonPackage.getPackageName());
     }
 
@@ -174,18 +174,17 @@ public final class PythonUtil {
         Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PIP.getProgramName()));
 
         String threadName = "isPipDependencyPresent thread, packageName"
-                + CyderStrings.colon
-                + CyderStrings.space
-                + CyderStrings.quote
+                + ": "
+                + "\""
                 + pythonPackage.getPackageName()
-                + CyderStrings.quote;
+                + "\"";
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
                     Program.PIP.getProgramName()
-                            + CyderStrings.space
+                            + " "
                             + SHOW
-                            + CyderStrings.space
+                            + " "
                             + pythonPackage.getPackageName());
             while (!futureResult.isDone()) Thread.onSpinWait();
 
@@ -215,11 +214,10 @@ public final class PythonUtil {
         Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PIP.getProgramName()));
 
         String threadName = "getPipDependencyVersion thread, packageName"
-                + CyderStrings.colon
-                + CyderStrings.space
-                + CyderStrings.quote
+                + ": "
+                + "\""
                 + pythonPackage.getPackageName()
-                + CyderStrings.quote;
+                + "\"";
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             ImmutableList<String> command = ImmutableList.of(
