@@ -13,7 +13,6 @@ import cyder.ui.drag.button.LeftButton;
 import cyder.ui.drag.button.RightButton;
 import cyder.ui.frame.CyderFrame;
 import cyder.ui.frame.enumerations.TitlePosition;
-import cyder.user.UserDataManager;
 import cyder.utils.ArrayUtil;
 import cyder.utils.ImageUtil;
 
@@ -31,8 +30,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
-
-import static cyder.strings.CyderStrings.*;
 
 /**
  * A widget which displays the images supported by Cyder in a provided directory.
@@ -204,7 +201,7 @@ public class ImageViewer {
      * @return a new {@link CyderThreadFactory} for the loading {@link Executor}
      */
     private CyderThreadFactory generateThreadFactory() {
-        return new CyderThreadFactory("ImageViewer showGui thread, directory" + colon + space + imageDirectory);
+        return new CyderThreadFactory("ImageViewer showGui thread, directory" + ": " + imageDirectory);
     }
 
     /**
@@ -270,8 +267,8 @@ public class ImageViewer {
             bufferedImage = ImageUtil.ensureFitsInBounds(bufferedImage, maxFrameSize);
             return ImageUtil.toImageIcon(bufferedImage);
         } catch (Exception e) {
-            throw new IllegalStateException("Could not generate ImageIcon for file" + colon
-                    + space + imageFile.getAbsolutePath() + ", error: " + e.getMessage());
+            throw new IllegalStateException("Could not generate ImageIcon for file" + ":"
+                    + " " + imageFile.getAbsolutePath() + ", error: " + e.getMessage());
         }
     }
 
@@ -283,8 +280,6 @@ public class ImageViewer {
 
         // todo allow for certain paths to be excluded if you don't want them changed
         if (false) {
-            pictureFrame.notify("Sorry, " + UserDataManager.INSTANCE.getUsername()
-                    + ", but you're not allowed to rename the background you are currently using");
             return;
         }
 
@@ -295,7 +290,7 @@ public class ImageViewer {
         CyderThreadRunner.submit(() -> {
             try {
                 GetInputBuilder builder = new GetInputBuilder(RENAME, "New filename for"
-                        + space + quote + validDirectoryImages.get(currentIndex).getName() + quote)
+                        + " " + "\"" + validDirectoryImages.get(currentIndex).getName() + "\"")
                         .setRelativeTo(pictureFrame)
                         .setInitialFieldText(initialFieldText)
                         .setSubmitButtonText(RENAME);
@@ -309,7 +304,7 @@ public class ImageViewer {
                         .replace(FileUtil.getFilename(oldFileReference), requestedName));
 
                 if (oldFileReference.renameTo(newFileReference)) {
-                    pictureFrame.notify("Successfully renamed to" + space + quote + requestedName + quote);
+                    pictureFrame.notify("Successfully renamed to " + "\"" + requestedName + "\"");
 
                     refreshImageFiles();
                     IntStream.range(0, validDirectoryImages.size())
@@ -326,7 +321,7 @@ public class ImageViewer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, "ImageViewer File Renamer, file" + colon + space + initialFieldText);
+        }, "ImageViewer File Renamer, file" + "\" " + initialFieldText);
     }
 
     /**
@@ -343,7 +338,7 @@ public class ImageViewer {
             BufferedImage image = ImageUtil.read(validDirectoryImages.get(currentIndex));
             int width = image.getWidth();
             int height = image.getHeight();
-            pictureFrame.setTitle(title + space + openingBracket + width + "x" + height + closingBracket);
+            pictureFrame.setTitle(title + "\"" + "[" + width + "x" + height + "]");
         } catch (Exception e) {
             e.printStackTrace();
             pictureFrame.setTitle(title);

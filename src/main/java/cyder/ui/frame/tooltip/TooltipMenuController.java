@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import cyder.constants.CyderColors;
-import cyder.font.CyderFonts;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
+import cyder.font.CyderFonts;
 import cyder.getter.GetInputBuilder;
 import cyder.getter.GetterUtil;
 import cyder.props.Props;
@@ -27,6 +27,7 @@ import cyder.utils.ColorUtil;
 import cyder.utils.SecurityUtil;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,8 +40,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
-
-import static cyder.strings.CyderStrings.*;
 
 /**
  * A controller for the tooltip menu of a particular {@link CyderFrame}.
@@ -377,7 +376,9 @@ public final class TooltipMenuController {
                     .addMouseClickAction(this::onFrameSizeTooltipMenuItemPressed)
                     .buildMenuItemLabel());
         }
-        if (ProgramModeManager.INSTANCE.getProgramMode().hasDeveloperPriorityLevel()) {
+
+        // todo developer mode previously was here
+        if (false) {
             menuItems.add(new TooltipMenuItem(TooltipMenuItemType.SCREENSHOT.getLabelText())
                     .addMouseClickAction(() -> tooltipMenuLabel.setVisible(false))
                     .addMouseClickAction(() -> {
@@ -385,8 +386,8 @@ public final class TooltipMenuController {
                         if (saveFile == null) {
                             controlFrame.notify("Failed to save screenshot");
                         } else {
-                            controlFrame.notify("Saved screenshot as " + quote
-                                    + FileUtil.getFilename(saveFile) + quote);
+                            controlFrame.notify("Saved screenshot as " + "\""
+                                    + FileUtil.getFilename(saveFile) + "\"");
                         }
                     })
                     .buildMenuItemLabel());
@@ -440,10 +441,14 @@ public final class TooltipMenuController {
 
             StringUtil stringUtil = new StringUtil(new CyderOutputPane(menuPane));
             IntStream.range(0, menuItems.size()).forEach(index -> {
-                if (index == menuItems.size() - 1) {
-                    stringUtil.printComponent(menuItems.get(index));
-                } else {
-                    stringUtil.printlnComponent(menuItems.get(index));
+                try {
+                    if (index == menuItems.size() - 1) {
+                        stringUtil.printComponent(menuItems.get(index));
+                    } else {
+                        stringUtil.printlnComponent(menuItems.get(index));
+                    }
+                } catch (BadLocationException ble) {
+                    throw new FatalException(ble);
                 }
             });
 
@@ -558,16 +563,16 @@ public final class TooltipMenuController {
             tooltipMenuItemFrameLocationGetterUtil.closeAllGetFrames();
 
             Rectangle absoluteMonitorBounds = UiUtil.getMergedMonitors();
-            String boundsString = openingBracket + (int) absoluteMonitorBounds.getX() + comma + space
-                    + (int) absoluteMonitorBounds.getY() + comma + space
-                    + (int) absoluteMonitorBounds.getWidth() + comma + space
-                    + (int) absoluteMonitorBounds.getHeight() + closingBracket;
+            String boundsString = "[" + (int) absoluteMonitorBounds.getX() + "," + " "
+                    + (int) absoluteMonitorBounds.getY() + "," + " "
+                    + (int) absoluteMonitorBounds.getWidth() + ", " +
+                    +(int) absoluteMonitorBounds.getHeight() + "]";
 
-            String initialFieldText = controlFrame.getX() + comma + controlFrame.getY();
+            String initialFieldText = controlFrame.getX() + "," + controlFrame.getY();
             String prefix = UiUtil.areMultipleMonitors() ? "Merged monitor bounds: " : "Monitor bounds: ";
             GetInputBuilder builder = new GetInputBuilder("Frame location setter",
                     "Enter the requested top left frame location in the format: "
-                            + quote + "x,y" + quote
+                            + "\"" + "x,y" + "\""
                             + HtmlTags.breakTag + prefix + boundsString)
                     .setRelativeTo(controlFrame)
                     .setLabelFont(CyderFonts.DEFAULT_FONT_SMALL)
@@ -578,14 +583,14 @@ public final class TooltipMenuController {
 
             String location = optionalLocation.get().trim();
             if (location.equals(initialFieldText)) return;
-            if (!location.contains(comma)) {
-                controlFrame.notify("Could not parse location" + " from input: " + quote + location + quote);
+            if (!location.contains(",")) {
+                controlFrame.notify("Could not parse location" + " from input: " + "\"" + location + "\"");
                 return;
             }
 
-            String[] parts = location.split(comma);
+            String[] parts = location.split(",");
             if (parts.length != 2) {
-                controlFrame.notify("Could not parse x and y" + " from input: " + quote + location + quote);
+                controlFrame.notify("Could not parse x and y" + " from input: " + "\"" + location + "\"");
                 return;
             }
 
@@ -596,7 +601,7 @@ public final class TooltipMenuController {
             try {
                 requestedX = Integer.parseInt(xString);
             } catch (NumberFormatException e) {
-                controlFrame.notify("Could not parse x from: " + quote + xString + quote);
+                controlFrame.notify("Could not parse x from: " + "\"" + xString + "\"");
                 return;
             }
 
@@ -604,36 +609,36 @@ public final class TooltipMenuController {
             try {
                 requestedY = Integer.parseInt(yString);
             } catch (NumberFormatException e) {
-                controlFrame.notify("Could not parse x from: " + quote + yString + quote);
+                controlFrame.notify("Could not parse x from: " + "\"" + yString + "\"");
                 return;
             }
 
             if (requestedX < absoluteMonitorBounds.getX()) {
-                controlFrame.notify("Requested x " + quote + requestedX + quote
-                        + " is less than the absolute minimum: " + quote + absoluteMonitorBounds.getX() + quote);
+                controlFrame.notify("Requested x " + "\"" + requestedX + "\""
+                        + " is less than the absolute minimum: " + "\"" + absoluteMonitorBounds.getX() + "\"");
                 return;
             } else if (requestedY < absoluteMonitorBounds.getY()) {
-                controlFrame.notify("Requested y " + quote + requestedY + quote
-                        + " is less than the absolute minimum: " + quote + absoluteMonitorBounds.getY() + quote);
+                controlFrame.notify("Requested y " + "\"" + requestedY + "\""
+                        + " is less than the absolute minimum: " + "\"" + absoluteMonitorBounds.getY() + "\"");
                 return;
             } else if (requestedX > absoluteMonitorBounds.getX()
                     + absoluteMonitorBounds.getWidth() - controlFrame.getWidth()) {
-                controlFrame.notify("Requested x " + quote + requestedX + quote
-                        + " is greater than the absolute maximum: " + quote + (absoluteMonitorBounds.getX()
-                        + absoluteMonitorBounds.getWidth() - controlFrame.getWidth()) + quote);
+                controlFrame.notify("Requested x " + "\"" + requestedX + "\""
+                        + " is greater than the absolute maximum: " + "\"" + (absoluteMonitorBounds.getX()
+                        + absoluteMonitorBounds.getWidth() - controlFrame.getWidth()) + "\"");
                 return;
             } else if (requestedY > absoluteMonitorBounds.getY()
                     + absoluteMonitorBounds.getHeight() - controlFrame.getHeight()) {
-                controlFrame.notify("Requested y " + quote + requestedY + quote
-                        + " is greater than the absolute maximum: " + quote + (absoluteMonitorBounds.getY()
-                        + absoluteMonitorBounds.getHeight() - controlFrame.getHeight()) + quote);
+                controlFrame.notify("Requested y " + "\"" + requestedY + "\""
+                        + " is greater than the absolute maximum: " + "\"" + (absoluteMonitorBounds.getY()
+                        + absoluteMonitorBounds.getHeight() - controlFrame.getHeight()) + "\"");
                 return;
             }
 
             if (requestedX == controlFrame.getX() && requestedY == controlFrame.getY()) return;
             UiUtil.requestFramePosition(new Point(requestedX, requestedY), controlFrame);
             NotificationBuilder notificationBuilder = new NotificationBuilder("Set frame location to request: "
-                    + quote + requestedX + comma + requestedY + quote)
+                    + "\"" + requestedX + "," + requestedY + "\"")
                     .setNotificationDirection(NotificationDirection.TOP_LEFT);
             controlFrame.notify(notificationBuilder);
         }, setFrameLocationTooltipMenuWaiterThreadName);
@@ -652,14 +657,14 @@ public final class TooltipMenuController {
             Dimension minimumFrameSize = controlFrame.getMinimumSize();
             Dimension maximumFrameSize = controlFrame.getMaximumSize();
 
-            String widthBounds = openingBracket + (int) minimumFrameSize.getWidth()
-                    + comma + space + (int) maximumFrameSize.getWidth() + closingBracket;
-            String heightBounds = openingBracket + (int) minimumFrameSize.getHeight()
-                    + comma + space + (int) maximumFrameSize.getHeight() + closingBracket;
-            String initialFieldText = frameWidth + comma + frameHeight;
+            String widthBounds = "[" + (int) minimumFrameSize.getWidth()
+                    + "," + " " + (int) maximumFrameSize.getWidth() + "]";
+            String heightBounds = '[' + (int) minimumFrameSize.getHeight()
+                    + "," + " " + (int) maximumFrameSize.getHeight() + "]";
+            String initialFieldText = frameWidth + "," + frameHeight;
             GetInputBuilder getBuilder = new GetInputBuilder("Frame size setter",
                     "Enter the requested frame size in the format: "
-                            + quote + "width" + comma + "height" + quote
+                            + "\"" + "width" + "," + "height" + "\""
                             + HtmlTags.breakTag + "Width bounds: " + widthBounds
                             + HtmlTags.breakTag + "Height bounds: " + heightBounds)
                     .setRelativeTo(controlFrame)
@@ -671,16 +676,16 @@ public final class TooltipMenuController {
 
             String widthHeight = optionalWidthHeight.get().trim();
             if (widthHeight.equals(initialFieldText)) return;
-            if (!widthHeight.contains(comma)) {
+            if (!widthHeight.contains(",")) {
                 controlFrame.notify("Could not parse width and height"
-                        + " from input: " + quote + widthHeight + quote);
+                        + " from input: " + "\"" + widthHeight + "\"");
                 return;
             }
 
-            String[] parts = widthHeight.split(comma);
+            String[] parts = widthHeight.split(",");
             if (parts.length != 2) {
                 controlFrame.notify("Could not parse width and height"
-                        + " from input: " + quote + widthHeight + quote);
+                        + " from input: " + "\"" + widthHeight + "\"");
                 return;
             }
 
@@ -691,7 +696,7 @@ public final class TooltipMenuController {
             try {
                 requestedWidth = Integer.parseInt(widthString);
             } catch (NumberFormatException e) {
-                controlFrame.notify("Could not parse width from: " + quote + widthString + quote);
+                controlFrame.notify("Could not parse width from: " + "\"" + widthString + "\"");
                 return;
             }
 
@@ -699,29 +704,29 @@ public final class TooltipMenuController {
             try {
                 requestedHeight = Integer.parseInt(heightString);
             } catch (NumberFormatException e) {
-                controlFrame.notify("Could not parse width from: " + quote + heightString + quote);
+                controlFrame.notify("Could not parse width from: " + "\"" + heightString + "\"");
                 return;
             }
 
             if (requestedWidth < minimumFrameSize.getWidth()) {
-                controlFrame.notify("Requested width " + quote + requestedWidth + quote
+                controlFrame.notify("Requested width " + "\"" + requestedWidth + "\""
                         + " is less than the minimum allowable width: "
-                        + quote + minimumFrameSize.getWidth() + quote);
+                        + "\"" + minimumFrameSize.getWidth() + "\"");
                 return;
             } else if (requestedHeight < minimumFrameSize.getHeight()) {
-                controlFrame.notify("Requested height " + quote + requestedHeight + quote
+                controlFrame.notify("Requested height " + "\"" + requestedHeight + "\""
                         + " is less than the minimum allowable height: "
-                        + quote + minimumFrameSize.getHeight() + quote);
+                        + "\"" + minimumFrameSize.getHeight() + "\"");
                 return;
             } else if (requestedWidth > maximumFrameSize.getWidth()) {
-                controlFrame.notify("Requested width " + quote + requestedWidth + quote
-                        + " is greater than the maximum allowable width: " + quote
-                        + maximumFrameSize.getWidth() + quote);
+                controlFrame.notify("Requested width " + "\"" + requestedWidth + "\""
+                        + " is greater than the maximum allowable width: " + "\""
+                        + maximumFrameSize.getWidth() + "\"");
                 return;
             } else if (requestedHeight > maximumFrameSize.getHeight()) {
-                controlFrame.notify("Requested height " + quote + requestedHeight + quote
+                controlFrame.notify("Requested height " + "\"" + requestedHeight + "\""
                         + " is greater than the maximum allowable height: "
-                        + quote + maximumFrameSize.getHeight() + quote);
+                        + "\"" + maximumFrameSize.getHeight() + "\"");
                 return;
             }
 
@@ -732,7 +737,7 @@ public final class TooltipMenuController {
             controlFrame.setCenterPoint(center);
             controlFrame.refreshBackground();
             NotificationBuilder notificationBuilder = new NotificationBuilder("Set frame size to request: "
-                    + quote + requestedWidth + comma + requestedHeight + quote)
+                    + "\"" + requestedWidth + "," + requestedHeight + "\"")
                     .setNotificationDirection(NotificationDirection.TOP_LEFT);
             controlFrame.notify(notificationBuilder);
         }, setFrameSizeTooltipMenuWaiterThreadName);

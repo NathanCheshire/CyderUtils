@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import static cyder.props.PropConstants.*;
-import static cyder.strings.CyderStrings.quote;
 
 /**
  * A class for loading props from prop files from the props directory for usage throughout Cyder.
@@ -274,9 +273,9 @@ public final class PropLoader {
         Preconditions.checkArgument(!line.isEmpty());
         Preconditions.checkArgument(line.contains(keyValueSeparator),
                 "Could not find "
-                        + quote + keyValueSeparator + quote + " in prop line: "
-                        + quote + line + quote + ". Every prop key/value pair must be separated by a "
-                        + quote + keyValueSeparator + quote + " character.");
+                        + "\"" + keyValueSeparator + "\"" + " in prop line: "
+                        + "\"" + line + "\"" + ". Every prop key/value pair must be separated by a "
+                        + "\"" + keyValueSeparator + "\"" + " character.");
 
         String[] parts = line.split(keyValueSeparator);
         Preconditions.checkArgument(parts.length > 1);

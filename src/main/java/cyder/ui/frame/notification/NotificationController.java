@@ -1,14 +1,11 @@
 package cyder.ui.frame.notification;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
 import cyder.constants.CyderColors;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;
@@ -25,8 +22,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static cyder.strings.CyderStrings.quote;
 
 /**
  * A controller for the notification queue system of a particular {@link CyderFrame}.
@@ -127,7 +122,7 @@ public final class NotificationController {
      * @return the thread factory for the notification queue executor service
      */
     private CyderThreadFactory generateCyderThreadFactory() {
-        String threadName = "Notification Controller Queue, frame: " + quote + controlFrame.getTitle() + quote;
+        String threadName = "Notification Controller Queue, frame: " + "\"" + controlFrame.getTitle() + "\"";
         return new CyderThreadFactory(threadName);
     }
 
@@ -394,7 +389,6 @@ public final class NotificationController {
                 currentNotification = notificationQueue.remove(0);
                 controlFrame.getTrueContentPane().add(currentNotification, JLayeredPane.DRAG_LAYER);
                 currentNotification.appear();
-                logCurrentNotification();
                 while (!currentNotification.isKilled()) Thread.onSpinWait();
                 currentNotification = null;
                 ThreadUtil.sleep(timeBetweenNotifications.toMillis());
@@ -404,18 +398,6 @@ public final class NotificationController {
         }, queueExecutor);
     }
 
-    /**
-     * Logs the important details of the current notification using the {@link LogTag#UI_ACTION} tag.
-     */
-    private void logCurrentNotification() {
-        Optional<String> optionalLabelText = currentNotification.getLabelText();
-        ImmutableList.Builder<String> tagsBuilder = new ImmutableList.Builder<String>()
-                .add(LogTag.UI_ACTION.getLogName())
-                .add(StringUtil.capsFirstWords(controlFrame.getTitle()))
-                .add(NOTIFICATION);
-        if (optionalLabelText.isEmpty()) tagsBuilder.add("Custom Notification Container");
-        Logger.log(tagsBuilder.build(), optionalLabelText.orElse(currentNotification.getContainerToString()));
-    }
 
     /**
      * Generates a mouse adapter for a notification container.

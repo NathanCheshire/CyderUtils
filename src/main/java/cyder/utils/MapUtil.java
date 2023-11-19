@@ -5,7 +5,6 @@ import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
@@ -151,7 +150,7 @@ public final class MapUtil {
         if (builder.getLat() != Integer.MIN_VALUE && builder.getLon() != Integer.MIN_VALUE) {
             requestUrlBuilder.append(MapBoxUrlParameter.CENTER.construct());
             requestUrlBuilder.append(builder.getLat());
-            requestUrlBuilder.append(CyderStrings.comma);
+            requestUrlBuilder.append(",");
             requestUrlBuilder.append(builder.getLon());
         } else {
             String locationString = builder.getLocationString();
@@ -185,14 +184,14 @@ public final class MapUtil {
 
         requestUrlBuilder.append(MapBoxUrlParameter.SIZE.construct());
         requestUrlBuilder.append(builder.getWidth());
-        requestUrlBuilder.append(CyderStrings.comma);
+        requestUrlBuilder.append(",");
         requestUrlBuilder.append(height);
 
         ImageIcon returnedInitialImage = null;
         try {
             returnedInitialImage = ImageUtil.toImageIcon(ImageUtil.read(requestUrlBuilder.toString()));
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         if (returnedInitialImage == null) {

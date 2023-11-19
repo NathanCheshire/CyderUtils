@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.strings.CyderStrings;
 import cyder.ui.frame.CyderFrame;
 
 import java.awt.*;
@@ -412,29 +411,29 @@ public final class GetConfirmationBuilder implements GetBuilder {
     public String toString() {
         return "GetConfirmationBuilder{"
                 + "frameTitle="
-                + CyderStrings.quote
+                + "\""
                 + frameTitle
-                + CyderStrings.quote
+                + "\""
                 + ", labelText="
-                + CyderStrings.quote
+                + "\""
                 + labelText
-                + CyderStrings.quote
+                + "\""
                 + ", labelFont="
                 + labelFont
                 + ", labelColor="
                 + labelColor
                 + ", yesButtonText="
-                + CyderStrings.quote
+                + "\""
                 + yesButtonText
-                + CyderStrings.quote
+                + "\""
                 + ", yesButtonColor="
                 + yesButtonColor
                 + ", yesButtonFont="
                 + yesButtonFont
                 + ", noButtonText="
-                + CyderStrings.quote
+                + "\""
                 + noButtonText
-                + CyderStrings.quote
+                + "\""
                 + ", noButtonColor="
                 + noButtonColor
                 + ", noButtonFont="

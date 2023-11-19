@@ -39,6 +39,8 @@ import java.util.ArrayList;
 public final class GuiTests {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private GuiTests() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -174,7 +176,7 @@ public final class GuiTests {
         CyderGridLayout layout = new CyderGridLayout(3, 3);
 
         CyderTextField ctf = new CyderTextField();
-        ctf.setText(CyderStrings.QUICK_BROWN_FOX + CyderStrings.space);
+        ctf.setText(CyderStrings.QUICK_BROWN_FOX + " ");
         ctf.setSize(150, 40);
 
         CyderButton topNotify = new CyderButton("Top");

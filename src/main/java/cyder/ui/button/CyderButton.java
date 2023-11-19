@@ -3,9 +3,6 @@ package cyder.ui.button;
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -90,7 +87,7 @@ public class CyderButton extends JButton {
         super.setContentAreaFilled(false);
 
         addMouseMotionListener(new CyderDraggableComponent());
-        addActionListener(e -> Logger.log(LogTag.UI_ACTION, this));
+        // todo addActionListener(e -> Logger.log(LogTag.UI_ACTION, this));
 
         setFont(CyderFonts.SEGOE_20);
         setBackground(CyderColors.buttonColor);
@@ -99,8 +96,6 @@ public class CyderButton extends JButton {
         setBorder(new LineBorder(CyderColors.navy, 5, false));
 
         setUI(generateMetalButtonUi());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -253,7 +248,7 @@ public class CyderButton extends JButton {
                     }
                 }
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, getName() + " Alerter");
     }

@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static cyder.strings.CyderStrings.space;
-
 /**
  * Static utility methods revolving around Image manipulation.
  */
@@ -469,8 +467,8 @@ public final class ImageUtil {
         CyderFrame frame = new CyderFrame.Builder()
                 .setWidth(iconWidth + 2 * CyderFrame.BORDER_LEN)
                 .setHeight(icon.getIconHeight() + CyderFrame.BORDER_LEN + CyderDragLabel.DEFAULT_HEIGHT)
-                .setTitle(CyderStrings.openingBracket + icon.getIconWidth() + CyderStrings.X + icon.getIconHeight()
-                        + CyderStrings.closingBracket + space + frameTitle)
+                .setTitle("[" + icon.getIconWidth() +"x" + icon.getIconHeight()
+                        + "]" + " " + frameTitle)
                 .build();
 
         JLabel label = new JLabel(icon);
@@ -1074,7 +1072,7 @@ public final class ImageUtil {
      *
      * @param icon      the image to ensure fits in the provided dimension
      * @param dimension the width and height the image must fit in
-     * @return a new image image resized to fit within the provided dimension
+     * @return a new image resized to fit within the provided dimension
      */
     public static ImageIcon ensureFitsInBounds(ImageIcon icon, Dimension dimension) {
         Preconditions.checkNotNull(icon);

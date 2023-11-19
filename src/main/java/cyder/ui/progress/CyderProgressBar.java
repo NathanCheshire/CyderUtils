@@ -1,7 +1,5 @@
 package cyder.ui.progress;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 import cyder.ui.UiUtil;
 
@@ -19,8 +17,6 @@ public class CyderProgressBar extends JProgressBar {
     public CyderProgressBar(int orientation) {
         super(orientation);
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -32,8 +28,6 @@ public class CyderProgressBar extends JProgressBar {
     public CyderProgressBar(int min, int max) {
         super(min, max);
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -46,8 +40,6 @@ public class CyderProgressBar extends JProgressBar {
     public CyderProgressBar(int orientation, int min, int max) {
         super(orientation, min, max);
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

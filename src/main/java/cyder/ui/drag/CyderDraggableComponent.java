@@ -1,7 +1,5 @@
 package cyder.ui.drag;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.props.Props;
 import cyder.strings.ToStringUtil;
 
@@ -27,9 +25,7 @@ public class CyderDraggableComponent implements MouseMotionListener {
     /**
      * Constructs a new draggable component.
      */
-    public CyderDraggableComponent() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public CyderDraggableComponent() {}
 
     /**
      * {@inheritDoc}
@@ -44,7 +40,7 @@ public class CyderDraggableComponent implements MouseMotionListener {
 
         if (x >= 0 && y >= 0 && x < refFrame.getWidth() && y < refFrame.getHeight()) {
             e.getComponent().setLocation(x, y);
-            Logger.log(LogTag.UI_ACTION, x + "," + y);
+            // todo log new location
         }
     }
 

@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.StringUtil;
 import cyder.ui.drag.CyderDragLabel;
 
@@ -33,8 +31,6 @@ public class DragLabelTextButton extends JLabel {
      * Suppress default constructor.
      */
     private DragLabelTextButton() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-
         this.hovered = new AtomicBoolean();
     }
 

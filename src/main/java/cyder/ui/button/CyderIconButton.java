@@ -2,8 +2,6 @@ package cyder.ui.button;
 
 import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.time.TimeUtil;
@@ -50,8 +48,6 @@ public class CyderIconButton extends JButton {
         addMouseListener();
         addFocusListener();
         addKeyListeners();
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

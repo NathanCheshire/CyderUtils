@@ -2,10 +2,7 @@ package cyder.ui.drag.button;
 
 import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.props.Props;
-import cyder.strings.CyderStrings;
 import cyder.ui.UiUtil;
 import cyder.ui.drag.DragLabelButtonSize;
 
@@ -93,7 +90,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Logger.log(LogTag.UI_ACTION, CyderDragLabelButton.this);
+                // todo log hook
             }
         });
     }
@@ -516,7 +513,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
     @Override
     public String toString() {
         return "CyderDragLabelButton {"
-                + "rep: " + CyderStrings.quote + getSpecificStringRepresentation() + CyderStrings.quote
+                + "rep: \"" + getSpecificStringRepresentation() + "\""
                 + ", x=" + getX()
                 + ", y=" + getY()
                 + ", w=" + getWidth()

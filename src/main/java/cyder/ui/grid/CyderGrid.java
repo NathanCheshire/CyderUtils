@@ -3,11 +3,7 @@ package cyder.ui.grid;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
-import cyder.widgets.PaintWidget;
 
 import javax.swing.*;
 import java.awt.*;
@@ -130,7 +126,7 @@ public class CyderGrid extends JLabel {
             semaphore.acquire();
             return true;
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -193,8 +189,6 @@ public class CyderGrid extends JLabel {
         };
 
         increments = getNodesForMaxWidth(gridComponentLength);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -398,7 +392,7 @@ public class CyderGrid extends JLabel {
             }
             unlock();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         // set color back to draw borders
@@ -545,7 +539,7 @@ public class CyderGrid extends JLabel {
             } else if (mode == Mode.COLOR_SELECTION) {
                 for (GridNode gridNode : grid) {
                     if (gridNode.getX() == x && gridNode.getY() == y) {
-                        PaintWidget.setNewPaintColor(gridNode.getColor());
+                        // todo bad pattern PaintWidget.setNewPaintColor(gridNode.getColor());
                     }
                 }
             } else throw new IllegalStateException("Unaccounted for mode: " + mode);

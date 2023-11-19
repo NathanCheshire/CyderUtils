@@ -2,9 +2,8 @@ package cyder.ui.button;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.font.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
+import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -889,7 +888,7 @@ public class CyderModernButton extends JLabel {
                 backgroundColor = startingColor;
                 repaint();
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             } finally {
                 isFlashing = false;
             }

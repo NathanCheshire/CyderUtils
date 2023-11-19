@@ -5,17 +5,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
-import cyder.console.Console;
 import cyder.constants.*;
 import cyder.font.CyderFonts;
 import cyder.getter.GetConfirmationBuilder;
 import cyder.getter.GetterUtil;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.handlers.internal.InformHandler;
 import cyder.layouts.CyderLayout;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-import cyder.login.LoginHandler;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
@@ -39,7 +34,6 @@ import cyder.ui.pane.CyderOutputPane;
 import cyder.ui.pane.CyderPanel;
 import cyder.ui.pane.CyderScrollPane;
 import cyder.ui.resizing.CyderComponentResizer;
-import cyder.user.UserDataManager;
 import cyder.utils.ColorUtil;
 import cyder.utils.ImageUtil;
 import cyder.utils.JvmUtil;
@@ -47,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
@@ -59,9 +54,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static cyder.strings.CyderStrings.closingBracket;
-import static cyder.strings.CyderStrings.openingBracket;
-
 /**
  * A custom frame component.
  */
@@ -369,7 +361,6 @@ public class CyderFrame extends JFrame {
         setTitle(builder.title);
 
         threadsKilled.set(false);
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -677,9 +668,7 @@ public class CyderFrame extends JFrame {
         /**
          * Constructs a new builder.
          */
-        public Builder() {
-            Logger.log(LogTag.OBJECT_CREATION, this);
-        }
+        public Builder() {}
 
         /**
          * Sets the frame title.
@@ -1255,7 +1244,6 @@ public class CyderFrame extends JFrame {
 
         if (paintCyderFrameTitleOnSuperCall) setCyderFrameTitle(title);
         correctTitleLength();
-        if (!isConsole()) Console.INSTANCE.revalidateConsoleTaskbarMenu();
     }
 
     /**
@@ -1443,7 +1431,8 @@ public class CyderFrame extends JFrame {
             preMinimizeAndIconifyActions.forEach(Runnable::run);
             setRestorePoint(new Point(getX(), getY()));
 
-            if (UserDataManager.INSTANCE.shouldDoAnimations()) {
+            // todo allow turning off
+            if (true) {
                 setDisableContentRepainting(true);
                 disableDragging();
 
@@ -1462,7 +1451,7 @@ public class CyderFrame extends JFrame {
             setState(UiConstants.FRAME_ICONIFIED);
             postMinimizeAndIconifyActions.forEach(Runnable::run);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
     }
 
@@ -1572,7 +1561,7 @@ public class CyderFrame extends JFrame {
      * @param fastClose whether to animate the frame away or immediately dispose the frame
      */
     public synchronized void dispose(boolean fastClose) {
-        String threadName = openingBracket + getTitle() + closingBracket + " Dispose Thread";
+        String threadName = "[" + getTitle() + "]" + " Dispose Thread";
         CyderThreadRunner.submit(() -> {
             try {
                 if (disposed.get()) return;
@@ -1588,9 +1577,6 @@ public class CyderFrame extends JFrame {
 
                 disposed.set(true);
 
-                Logger.log(LogTag.UI_ACTION, "CyderFrame disposed with fastclose="
-                        + fastClose + ", getTitle=" + getTitle());
-
                 preCloseActions.forEach(Runnable::run);
                 if (!isBorderlessFrame()) tooltipMenuController.cancelAllTasks();
                 if (!isBorderlessFrame()) notificationController.kill();
@@ -1599,7 +1585,8 @@ public class CyderFrame extends JFrame {
                 disableDragging();
                 setDisableContentRepainting(true);
 
-                boolean closingAnimation = UserDataManager.INSTANCE.shouldDoAnimations();
+                // todo allow changing
+                boolean closingAnimation = true;
                 if (isVisible() && (!fastClose && !shouldFastClose) && closingAnimation) {
                     for (float i = getOpacity() ; i >= opacityAnimationMin ; i -= opacityAnimationDelta) {
                         setOpacity(i);
@@ -1607,15 +1594,11 @@ public class CyderFrame extends JFrame {
                     }
                 }
 
-                Console.INSTANCE.removeTaskbarIcon(this);
-                if (!StringUtil.isNullOrEmpty(removeFromFrameTaskbarExceptionsHash)) {
-                    Console.INSTANCE.removeFrameTaskbarException(removeFromFrameTaskbarExceptionsHash);
-                }
 
                 super.dispose();
                 postCloseActions.forEach(Runnable::run);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
                 super.dispose();
             }
         }, threadName);
@@ -2002,13 +1985,13 @@ public class CyderFrame extends JFrame {
         try {
             // Borderless frames are by default rounded
             boolean resizerNotPresent = cyderComponentResizer == null;
-            boolean userLoggedIn = Console.INSTANCE.getUuid() != null;
-            boolean roundedFramesEnabled = UserDataManager.INSTANCE.shouldDrawRoundedFrameBorders();
-            if (isBorderlessFrame() || (resizerNotPresent && userLoggedIn && roundedFramesEnabled)) {
+            // todo allow changing universal yet also override per frame
+            boolean roundedFramesEnabled = true;
+            if (isBorderlessFrame() || (resizerNotPresent && roundedFramesEnabled)) {
                 shape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), ROUNDED_ARC, ROUNDED_ARC);
             }
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         } finally {
             setShape(shape);
         }
@@ -2311,7 +2294,7 @@ public class CyderFrame extends JFrame {
             revalidate();
             repaint();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
     }
 
@@ -2412,14 +2395,6 @@ public class CyderFrame extends JFrame {
      */
     public boolean threadsKilled() {
         return threadsKilled.get();
-    }
-
-    /**
-     * Set the background of {@code this} to the current Console background.
-     */
-    public void replicateConsoleBackground() {
-        if (Console.INSTANCE.getCurrentBackground() == null) return;
-        iconLabel.setIcon(Console.INSTANCE.getCurrentBackground().generateScaledImageIcon(getWidth(), getHeight()));
     }
 
     /**
@@ -2693,34 +2668,6 @@ public class CyderFrame extends JFrame {
      */
     public void setCustomTaskbarIcon(@Nullable ImageIcon customTaskbarIcon) {
         this.customTaskbarIcon = customTaskbarIcon;
-    }
-
-    /**
-     * Sets the frame's visibility attribute and adds the frame to the Console menu list.
-     *
-     * @param visible whether to set the frame to be visible
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-
-        if (visible) {
-            Console.INSTANCE.addTaskbarIcon(this);
-            initializePinState();
-        }
-    }
-
-    /**
-     * Initializes the state of the pin button based on the Console's value.
-     */
-    private void initializePinState() {
-        if (isBorderlessFrame()) return;
-        CyderFrame console = Console.INSTANCE.getConsoleCyderFrame();
-        if (console == null) return;
-
-        if (console.isAlwaysOnTop() && !console.equals(this)) {
-            getTopDragLabel().getPinButton().setState(PinButton.PinState.FRAME_PINNED);
-        }
     }
 
     // -----------
@@ -3358,7 +3305,7 @@ public class CyderFrame extends JFrame {
 
                 menuLabel.setLocation(menuAnimateToPoint);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, threadName);
     }
@@ -3391,7 +3338,7 @@ public class CyderFrame extends JFrame {
 
                 menuLabel.setVisible(false);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+            e.printStackTrace();
             }
         }, threadName);
     }
@@ -3417,7 +3364,7 @@ public class CyderFrame extends JFrame {
 
             menuLabel.setSize(menuWidth, menuHeight);
         } else {
-            menuLabel.setSize(getWidth() - 10, StringUtil.getMinHeight(CyderStrings.JENNY,
+            menuLabel.setSize(getWidth() - 10, StringUtil.getMinHeight("8675309",
                     CyderFonts.DEFAULT_FONT_SMALL));
         }
 
@@ -3469,18 +3416,26 @@ public class CyderFrame extends JFrame {
 
         if (menuType == MenuType.PANEL) {
             for (int i = 0 ; i < menuItems.size() ; i++) {
-                printingUtil.printComponent(menuItems.get(i).label());
+                try {
+                    printingUtil.printComponent(menuItems.get(i).label());
 
-                if (i != menuItems.size() - 1) {
-                    printingUtil.print(CyderStrings.newline);
+                    if (i != menuItems.size() - 1) {
+                        printingUtil.print(CyderStrings.newline);
+                    }
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
                 }
             }
         } else {
             for (int i = 0 ; i < menuItems.size() ; i++) {
-                printingUtil.printComponent(menuItems.get(i).label());
+                try {
+                    printingUtil.printComponent(menuItems.get(i).label());
 
-                if (i != menuItems.size() - 1) {
-                    printingUtil.print(StringUtil.generateSpaces(4));
+                    if (i != menuItems.size() - 1) {
+                        printingUtil.print(StringUtil.generateSpaces(4));
+                    }
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -3496,7 +3451,8 @@ public class CyderFrame extends JFrame {
      * the visibility to true, and fades in the frame.
      */
     public void finalizeAndShow() {
-        finalizeAndShow(getDominantFrame());
+        setLocationRelativeTo(null);
+        innerFinalizeAndShow();
     }
 
     /**
@@ -3545,25 +3501,6 @@ public class CyderFrame extends JFrame {
 
             setOpacity(opacityAnimationMax);
         }, FADE_IN_ANIMATION_THREAD_NAME);
-    }
-
-    /**
-     * Returns the current dominant frame for Cyder.
-     *
-     * @return the current dominant frame for Cyder
-     */
-    @Nullable
-    public static CyderFrame getDominantFrame() {
-        if (!Console.INSTANCE.isClosed()) {
-            CyderFrame referenceFrame = Console.INSTANCE.getConsoleCyderFrame();
-            return (referenceFrame != null && referenceFrame.getState() != ICONIFIED) ? referenceFrame : null;
-        } else if (!LoginHandler.isLoginFrameClosed()
-                && LoginHandler.getLoginFrame() != null
-                && LoginHandler.getLoginFrame().isVisible()) {
-            return LoginHandler.getLoginFrame();
-        }
-
-        return null;
     }
 
     /**
@@ -3659,15 +3596,6 @@ public class CyderFrame extends JFrame {
         this.titleLabelFont = titleLabelFont;
         titleLabel.setFont(titleLabelFont);
         titleLabel.repaint();
-    }
-
-    /**
-     * Returns whether this frame is the console frame.
-     *
-     * @return whether this frame is the console frame
-     */
-    public boolean isConsole() {
-        return equals(Console.INSTANCE.getConsoleCyderFrame());
     }
 
     /**

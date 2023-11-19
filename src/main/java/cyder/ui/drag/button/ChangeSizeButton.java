@@ -6,7 +6,7 @@ import cyder.ui.drag.DragLabelButtonSize;
 import java.awt.*;
 
 /**
- * A change size button button for CyderFrame drag labels.
+ * A change size button for CyderFrame drag labels.
  */
 public class ChangeSizeButton extends CyderDragLabelButton {
     /**

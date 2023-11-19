@@ -3,9 +3,8 @@ package cyder.ui.list;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.constants.CyderColors;
+import cyder.exceptions.FatalException;
 import cyder.font.CyderFonts;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.strings.ToStringUtil;
 import cyder.ui.UiUtil;
@@ -13,16 +12,17 @@ import cyder.ui.frame.CyderFrame;
 import cyder.ui.label.CyderLabel;
 import cyder.ui.pane.CyderOutputPane;
 import cyder.ui.pane.CyderScrollPane;
-import cyder.user.UserDataManager;
 import org.jsoup.internal.StringUtil;
 
 import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -166,8 +166,6 @@ public class CyderScrollList {
         border = new LineBorder(darkMode
                 ? CyderColors.defaultDarkModeTextColor
                 : CyderColors.navy, 5, false);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -227,19 +225,23 @@ public class CyderScrollList {
      * </ul>
      */
     public void refreshList() {
-        boolean compactMode = UserDataManager.INSTANCE.compactTextMode();
+        // todo allow configuration
+        boolean compactMode = false;
 
         CyderOutputPane outputPane = new CyderOutputPane(listPane);
         outputPane.getJTextPane().setText("");
 
-        for (int i = 0 ; i < elements.size() ; i++) {
-            outputPane.getStringUtil().printlnComponent(elements.get(i));
+       try {
+           for (int i = 0 ; i < elements.size() ; i++) {
+               outputPane.getStringUtil().printlnComponent(elements.get(i));
 
-            if (i != elements.size() - 1 && !compactMode) {
-                outputPane.getStringUtil().printlnComponent(generateSepLabel());
-            }
-        }
-
+               if (i != elements.size() - 1 && !compactMode) {
+                   outputPane.getStringUtil().printlnComponent(generateSepLabel());
+               }
+           }
+       } catch (BadLocationException e) {
+            throw new FatalException(e);
+       }
     }
 
     /**
@@ -372,7 +374,7 @@ public class CyderScrollList {
         Preconditions.checkArgument(!labelText.isEmpty());
         Preconditions.checkNotNull(doubleClickAction);
         Preconditions.checkArgument(!elementInList(labelText),
-                labelText + " already in: " + StringUtil.join(elements, CyderStrings.comma));
+                labelText + " already in: " + StringUtil.join(elements, ","));
 
         JLabel addElement = new JLabel(labelText);
         addElement.setForeground(nonSelectedColor);

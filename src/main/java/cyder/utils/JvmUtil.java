@@ -6,10 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-import cyder.meta.Cyder;
 import cyder.network.WhatsMyIpScraper;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
@@ -19,8 +15,6 @@ import cyder.threads.CyderThreadRunner;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.Optional;
-
-import static cyder.strings.CyderStrings.*;
 
 /**
  * Utilities related to the JVM.
@@ -80,9 +74,10 @@ public final class JvmUtil {
      * The list of shutdown hooks to be added to this instance of Cyder.
      */
     private static final ImmutableList<Thread> shutdownHooks = ImmutableList.of(
-            CyderThreadRunner.createThread(() ->
-                            OsUtil.deleteFile(Dynamic.buildDynamic(Dynamic.TEMP.getFileName()), false),
-                    REMOVE_TEMP_DIRECTORY_HOOK_NAME)
+            // todo
+//            CyderThreadRunner.createThread(() ->
+//                            OsUtil.deleteFile(Dynamic.buildDynamic(Dynamic.TEMP.getFileName()), false),
+//                    REMOVE_TEMP_DIRECTORY_HOOK_NAME)
     );
 
     /**
@@ -229,23 +224,6 @@ public final class JvmUtil {
     }
 
     /**
-     * Returns a file reference to the Cyder jar file if the current session was launched from a jar file.
-     *
-     * @return the file reference to the jar file
-     * @throws FatalException if the located file is not a JAR or a file or
-     *                        if Cyder's protected domain code source location cannot be converted to a URI
-     */
-    public static Optional<File> getCyderJarReference() {
-        File jarFile = null;
-        try {
-            jarFile = new File(Cyder.class.getProtectionDomain()
-                    .getCodeSource().getLocation().toURI()).getAbsoluteFile();
-        } catch (Exception ignored) {}
-
-        return Optional.ofNullable(jarFile);
-    }
-
-    /**
      * Returns a file reference to the java home of the JVM which is running the current instance of Cyder.
      *
      * @return a file reference to the java home of the JVM which is running the current instance of Cyder
@@ -272,8 +250,8 @@ public final class JvmUtil {
      */
     public static String getJvmName() {
         return ManagementFactory.getRuntimeMXBean().getVmName()
-                + space + ManagementFactory.getRuntimeMXBean().getVmVendor()
-                + space + ManagementFactory.getRuntimeMXBean().getVmVersion();
+                + " " + ManagementFactory.getRuntimeMXBean().getVmVendor()
+                + " " + ManagementFactory.getRuntimeMXBean().getVmVersion();
     }
 
     /**
@@ -362,29 +340,29 @@ public final class JvmUtil {
     public static String getFullJvmInvocationCommand() {
         StringBuilder inputArgumentsBuilder = new StringBuilder();
         getNonMainInputArguments().forEach(arg -> inputArgumentsBuilder
-                .append(quote)
+                .append("\"")
                 .append(arg)
-                .append(quote)
-                .append(CyderStrings.space));
+                .append("\"")
+                .append(" "));
         String safeInputArguments = inputArgumentsBuilder.toString().trim();
 
         StringBuilder mainMethodArgumentsBuilder = new StringBuilder();
         getJvmMainMethodArgs().forEach(arg -> mainMethodArgumentsBuilder
-                .append(quote)
+                .append("\"")
                 .append(arg)
-                .append(quote)
-                .append(CyderStrings.space));
+                .append("\"")
+                .append(" "));
         String mainMethodArgs = mainMethodArgumentsBuilder.toString().trim();
 
         String executablePath = StringUtil.escapeQuotes(getCurrentJavaExe().getAbsolutePath());
         String classpath = StringUtil.escapeQuotes(getClassPath());
         String sunJavaCommand = StringUtil.escapeQuotes(getMainMethodClass());
 
-        return quote + executablePath + quote + CyderStrings.space
-                + safeInputArguments + CyderStrings.space
-                + CLASSPATH_ARGUMENT + CyderStrings.space
-                + quote + classpath + quote + CyderStrings.space
-                + quote + sunJavaCommand + quote + CyderStrings.space
+        return "\"" + executablePath + "\"" + " "
+                + safeInputArguments + " "
+                + CLASSPATH_ARGUMENT + " "
+                + "\"" + classpath + "\"" + " "
+                + "\"" + sunJavaCommand + "\"" + " "
                 + mainMethodArgs;
     }
 
@@ -406,49 +384,6 @@ public final class JvmUtil {
      */
     public static boolean cyderStartedFromExpectedMainMethod() {
         return getMainMethodClass().equals(EXPECTED_MAIN_METHOD);
-    }
-
-    /**
-     * Logs any main method command line arguments passed in to Cyder upon starting.
-     * {@link WhatsMyIpScraper#getIspAndNetworkDetails()} is queried and the details appended
-     * to the resulting log statement if {@link Props#autocypher} is {@code false}.
-     * This is queried in a separate thread so invoking this method on the UI thread is safe.
-     *
-     * @param cyderArgs the main method command line arguments passed in
-     */
-    public static void logMainMethodArgs(ImmutableList<String> cyderArgs) {
-        Preconditions.checkNotNull(cyderArgs);
-
-        if (Props.autocypher.getValue()) {
-            Logger.log(LogTag.JVM_ARGS, "JVM main method args obfuscated due"
-                    + " to AutoCypher, args length: " + cyderArgs.size());
-            return;
-        }
-
-        CyderThreadRunner.submit(() -> {
-            try {
-                StringBuilder argBuilder = new StringBuilder(StringUtil.joinParts(cyderArgs, comma));
-
-                WhatsMyIpScraper.IspQueryResult result = WhatsMyIpScraper.getIspAndNetworkDetails();
-
-                argBuilder.append("city")
-                        .append(colon).append(space).append(result.city())
-                        .append(comma).append(space).append("state")
-                        .append(colon).append(space).append(result.state())
-                        .append(comma).append(space).append("country")
-                        .append(colon).append(space).append(result.country())
-                        .append(comma).append(space).append("ip")
-                        .append(colon).append(space).append(result.ip())
-                        .append(comma).append(space).append("isp")
-                        .append(colon).append(space).append(result.isp())
-                        .append(comma).append(space).append("hostname")
-                        .append(colon).append(space).append(result.hostname());
-
-                Logger.log(LogTag.JVM_ARGS, argBuilder);
-            } catch (Exception e) {
-                ExceptionHandler.handle(e);
-            }
-        }, JVM_ARGS_LOGGER_THREAD_NAME);
     }
 
     /**

@@ -2,7 +2,6 @@ package cyder.ui.drag.button;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import cyder.console.Console;
 import cyder.constants.CyderColors;
 import cyder.ui.drag.DragLabelButtonSize;
 import cyder.ui.frame.CyderFrame;
@@ -112,20 +111,11 @@ public class PinButton extends CyderDragLabelButton {
     }
 
     /**
-     * The immutable map of console pin button states to their successor states.
-     */
-    private static final ImmutableMap<PinState, PinState> consolePinButtonStates = ImmutableMap.of(
-            PinState.DEFAULT, PinState.CONSOLE_PINNED,
-            PinState.CONSOLE_PINNED, PinState.DEFAULT
-    );
-
-    /**
      * The immutable map of pin button states to their successor states.
      */
     private static final ImmutableMap<PinState, PinState> pinButtonStates = ImmutableMap.of(
             PinState.DEFAULT, PinState.FRAME_PINNED,
-            PinState.FRAME_PINNED, PinState.PINNED_TO_CONSOLE,
-            PinState.PINNED_TO_CONSOLE, PinState.DEFAULT
+            PinState.FRAME_PINNED, PinState.DEFAULT
     );
 
     /**
@@ -134,11 +124,7 @@ public class PinButton extends CyderDragLabelButton {
      * @return the next state for this pin button
      */
     private PinState getNextState() {
-        if (Console.INSTANCE.getConsoleCyderFrame().equals(effectFrame)) {
-            return consolePinButtonStates.get(currentState);
-        } else {
-            return pinButtonStates.get(currentState);
-        }
+        return pinButtonStates.get(currentState);
     }
 
     /**

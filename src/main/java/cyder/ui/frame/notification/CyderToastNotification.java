@@ -6,7 +6,6 @@ import cyder.enumerations.Direction;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;
-import cyder.user.UserDataManager;
 import cyder.utils.ColorUtil;
 
 import javax.swing.*;
@@ -368,10 +367,10 @@ public class CyderToastNotification extends CyderNotification {
             Note to maintainers: yes, there are two checks here for the user preference of persisting notifications.
             This is to address the case where the user toggles it while a notification is present.
              */
-            if (UserDataManager.INSTANCE.shouldPersistNotifications()) return;
+            // todo persistent notifications check here
             if (shouldRemainVisibleUntilDismissed(visibleDuration.toMillis())) return;
             ThreadUtil.sleep(visibleDuration.toMillis());
-            if (UserDataManager.INSTANCE.shouldPersistNotifications()) return;
+            // todo persistent notifications check here
             disappear();
         }, appearAnimationService);
     }
@@ -460,7 +459,7 @@ public class CyderToastNotification extends CyderNotification {
      * @return whether a current animation should be stopped
      */
     protected boolean shouldStopAnimation() {
-        return isKilled() || !UserDataManager.INSTANCE.shouldDoAnimations();
+        return isKilled(); // todo or more hooks here
     }
 
     /**

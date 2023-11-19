@@ -113,8 +113,8 @@ public final class WhatsMyIpScraper {
         }
 
         String rawHostname = hostnameElements.get(hostnameIndex).text();
-        String rawClassResult = rawHostname.substring(rawHostname.indexOf(CyderStrings.singleQuote) + 1);
-        String hostname = rawClassResult.substring(0, rawClassResult.indexOf(CyderStrings.singleQuote));
+        String rawClassResult = rawHostname.substring(rawHostname.indexOf("'") + 1);
+        String hostname = rawClassResult.substring(0, rawClassResult.indexOf("'"));
 
         Elements ipElements = locationDocument.getElementsByClass(ipElementClassName);
         if (ipElements.isEmpty()) {

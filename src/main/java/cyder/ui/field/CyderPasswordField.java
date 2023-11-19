@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
 import cyder.exceptions.IllegalMethodException;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.ui.UiUtil;
 import cyder.utils.ImageUtil;
@@ -77,8 +75,6 @@ public class CyderPasswordField extends JPasswordField {
         shiftShowsPassword = new AtomicBoolean(true);
         addKeyListener(generateShiftShowsPasswordKeyListener(this, shiftShowsPassword));
         setShiftShowsPassword(true);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     // -------------------------------

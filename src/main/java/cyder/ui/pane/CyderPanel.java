@@ -3,8 +3,6 @@ package cyder.ui.pane;
 import com.google.common.base.Preconditions;
 import cyder.exceptions.IllegalMethodException;
 import cyder.layouts.CyderLayout;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 import cyder.ui.frame.CyderFrame;
 
@@ -43,8 +41,6 @@ public final class CyderPanel extends JLabel {
         this.cyderLayout = Preconditions.checkNotNull(cyderLayout);
         cyderLayout.setAssociatedPanel(this);
         revalidateComponents();
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

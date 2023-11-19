@@ -2,8 +2,6 @@ package cyder.ui.button;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.awt.*;
 
@@ -64,9 +62,7 @@ public class ThemeBuilder {
     /**
      * Constructs a new theme builder.
      */
-    public ThemeBuilder() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public ThemeBuilder() {}
 
     /**
      * Returns the background color for this button.

@@ -2,8 +2,6 @@ package cyder.ui.field;
 
 import com.google.common.base.Preconditions;
 import cyder.exceptions.IllegalMethodException;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 
 import javax.swing.text.BadLocationException;
@@ -49,8 +47,6 @@ public class CyderCaret extends DefaultCaret {
         this.caretColor = caretColor;
 
         setBlinkRate(defaultBlinkRate);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

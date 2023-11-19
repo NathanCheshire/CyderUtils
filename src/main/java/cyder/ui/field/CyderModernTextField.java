@@ -6,8 +6,6 @@ import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -242,8 +240,6 @@ public class CyderModernTextField extends JTextField {
 
         add(hintTextLabel);
         refreshHintLabel();
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

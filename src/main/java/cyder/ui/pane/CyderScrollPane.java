@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.ToStringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -67,8 +65,6 @@ public class CyderScrollPane extends JScrollPane {
         getViewport().setBackground(CyderColors.empty);
 
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -89,8 +85,6 @@ public class CyderScrollPane extends JScrollPane {
         getViewport().setBackground(CyderColors.empty);
 
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

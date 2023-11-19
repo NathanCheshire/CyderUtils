@@ -3,8 +3,6 @@ package cyder.ui.selection;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.constants.CyderColors;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDraggableComponent;
@@ -133,8 +131,6 @@ public class CyderCheckbox extends JLabel {
 
                     repaint();
                 }
-
-                Logger.log(LogTag.UI_ACTION, e.getComponent());
             }
         });
 
@@ -145,7 +141,6 @@ public class CyderCheckbox extends JLabel {
         repaint();
 
         addMouseMotionListener(new CyderDraggableComponent());
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

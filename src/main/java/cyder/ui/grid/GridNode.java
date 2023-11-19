@@ -2,8 +2,6 @@ package cyder.ui.grid;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import java.awt.*;
 
@@ -52,8 +50,6 @@ public final class GridNode {
         this.color = Preconditions.checkNotNull(color);
         this.x = x;
         this.y = y;
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

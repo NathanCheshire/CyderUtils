@@ -130,7 +130,7 @@ public final class CyderInformNotification extends CyderNotification {
             notificationFrame.getContentPane().add(label);
         }
 
-        String frameTitle = relativeFrame.getTitle() + space + openingParenthesis + NOTIFICATION + closingParenthesis;
+        String frameTitle = relativeFrame.getTitle() + " (" + NOTIFICATION + ")";
         notificationFrame.setTitle(frameTitle);
         notificationFrame.addWindowListener(new WindowAdapter() {
             @Override

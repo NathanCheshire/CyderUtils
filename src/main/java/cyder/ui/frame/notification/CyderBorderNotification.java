@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.Futures;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDragLabel;
 import cyder.ui.frame.CyderFrame;
-import cyder.user.UserDataManager;
 import cyder.utils.ColorUtil;
 
 import java.awt.*;
@@ -208,14 +207,10 @@ public final class CyderBorderNotification extends CyderToastNotification {
             setToMidAnimationPosition();
             repaint();
 
-            /*
-            Note to maintainers: yes, there are two checks here for the user preference of persisting notifications.
-            This is to address the case where the user toggles it while a notification is present.
-             */
-            if (UserDataManager.INSTANCE.shouldPersistNotifications()) return;
+            // todo persistent notifications check return
             if (shouldRemainVisibleUntilDismissed(visibleDuration.toMillis())) return;
             ThreadUtil.sleep(visibleDuration.toMillis());
-            if (UserDataManager.INSTANCE.shouldPersistNotifications()) return;
+            // todo persistent notifications check return
             disappear();
         }, appearAnimationService);
     }

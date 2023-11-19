@@ -2,8 +2,6 @@ package cyder.ui.slider;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSliderUI;
@@ -79,8 +77,6 @@ public class CyderSliderUi extends BasicSliderUI {
     public CyderSliderUi(JSlider slider) {
         super(Preconditions.checkNotNull(slider));
         this.slider = slider;
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

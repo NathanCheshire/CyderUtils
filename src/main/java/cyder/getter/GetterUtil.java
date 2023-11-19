@@ -32,7 +32,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static cyder.strings.CyderStrings.*;
+import static cyder.strings.CyderStrings.LOADING;
+import static cyder.strings.CyderStrings.NULL;
 
 /**
  * A getter utility for getting strings, confirmations, files, etc. from the user.
@@ -153,7 +154,7 @@ public final class GetterUtil {
 
         AtomicReference<String> returnString = new AtomicReference<>();
 
-        String threadName = "GetInput waiter thread, title: " + quote + getInputBuilder.getFrameTitle() + quote;
+        String threadName = "GetInput waiter thread, title: " + "\"" + getInputBuilder.getFrameTitle() + "\"";
         CyderThreadRunner.submit(() -> {
             BoundsString boundsString = BoundsUtil.widthHeightCalculation(
                     getInputBuilder.getLabelText(),
@@ -316,12 +317,12 @@ public final class GetterUtil {
     /**
      * The text for the last button.
      */
-    private static final String LAST_BUTTON_TEXT = space + "<" + space;
+    private static final String LAST_BUTTON_TEXT = " < ";
 
     /**
      * The text for the next button.
      */
-    private static final String NEXT_BUTTON_TEXT = space + ">" + space;
+    private static final String NEXT_BUTTON_TEXT = " >"  ;
 
     /**
      * The border for the next and last buttons.
@@ -474,7 +475,7 @@ public final class GetterUtil {
             }
         });
 
-        String threadName = "GetFile thread, title: " + quote + getFileBuilder.getFrameTitle() + quote;
+        String threadName = "GetFile thread, title: " + "\"" + getFileBuilder.getFrameTitle() + "\"";
         CyderThreadRunner.submit(() -> {
             try {
                 resetFileHistory();
@@ -664,8 +665,8 @@ public final class GetterUtil {
                 Runnable singleClickAction = () -> {
                     if (shouldUpdateSubmitButtonText.get()) {
                         String suffix = file.isDirectory()
-                                ? space + openingParenthesis + DIRECTORY + closingParenthesis : "";
-                        submitFileButton.setText(SUBMIT + colon + space + fileName + suffix);
+                                ? " (" + DIRECTORY + ")" : "";
+                        submitFileButton.setText(SUBMIT + ": " + fileName + suffix);
                     }
                 };
 
@@ -810,7 +811,7 @@ public final class GetterUtil {
         AtomicReference<CyderFrame> frameReference = new AtomicReference<>();
 
         String threadName = "getConfirmation waiter thread, title: "
-                + quote + getConfirmationBuilder.getFrameTitle() + quote;
+                + "\"" + getConfirmationBuilder.getFrameTitle() + "\"";
         CyderThreadRunner.submit(() -> {
             try {
                 CyderLabel textLabel = new CyderLabel();

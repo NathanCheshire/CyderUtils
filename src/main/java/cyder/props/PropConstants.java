@@ -48,7 +48,7 @@ final class PropConstants {
     /**
      * Lines which start with this are marked as a comment and not parsed as props.
      */
-    static final String commentPrefix = CyderStrings.hash;
+    static final String commentPrefix = "#";
 
     /**
      * The local propositional argument directory.
@@ -68,12 +68,12 @@ final class PropConstants {
     /**
      * The separator for prop keys and values.
      */
-    static final String keyValueSeparator = CyderStrings.colon;
+    static final String keyValueSeparator = ":";
 
     /**
-     * The escape character for comma.
+     * The escape character for a comma.
      */
-    static final String escapeSequence = CyderStrings.backSlash;
+    static final String escapeSequence = "\\";
 
     /**
      * The string to split a prop file contents at to separate the raw file master string into separate lines.
@@ -84,7 +84,7 @@ final class PropConstants {
     /**
      * The token to split a string into a list of strings at.
      */
-    static final String splitListsAtChar = CyderStrings.comma;
+    static final String splitListsAtChar = ",";
 
     /**
      * Suppress default constructor.

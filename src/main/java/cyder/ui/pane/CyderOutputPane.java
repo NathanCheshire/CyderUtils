@@ -2,13 +2,12 @@ package cyder.ui.pane;
 
 import com.google.common.base.Preconditions;
 import cyder.constants.CyderColors;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
+import cyder.exceptions.FatalException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.util.concurrent.Semaphore;
 
@@ -85,8 +84,6 @@ public class CyderOutputPane {
 
         stringUtil = new StringUtil(this);
         semaphore = new Semaphore(1);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -118,7 +115,7 @@ public class CyderOutputPane {
             semaphore.acquire();
             return true;
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -132,10 +129,16 @@ public class CyderOutputPane {
 
     /**
      * Prints a menu separator to the {@link JTextPane} followed by a newline.
+     *
+     * @throws FatalException if the internal document cannot be appended to
      */
     public void printlnMenuSeparator() {
-        stringUtil.printlnComponent(generateMenuSeparator());
-        stringUtil.newline();
+        try {
+            stringUtil.printlnComponent(generateMenuSeparator());
+            stringUtil.newline();
+        } catch (BadLocationException ble) {
+            throw new FatalException(ble);
+        }
     }
 
     /**

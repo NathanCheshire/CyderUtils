@@ -1,8 +1,6 @@
 package cyder.ui.selection;
 
 import com.google.common.base.Preconditions;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.StringUtil;
 
 import java.util.ArrayList;
@@ -24,9 +22,7 @@ public class CyderCheckboxGroup {
     /**
      * Constructs a new CyderCheckboxGroup object.
      */
-    public CyderCheckboxGroup() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public CyderCheckboxGroup() {}
 
     /**
      * Clears all checked checkboxes in this group.

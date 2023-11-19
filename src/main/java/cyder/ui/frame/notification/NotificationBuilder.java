@@ -3,14 +3,10 @@ package cyder.ui.frame.notification;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.time.TimeUtil;
 
 import javax.swing.*;
 import java.time.Duration;
-
-import static cyder.strings.CyderStrings.quote;
 
 /**
  * A builder for a {@link CyderNotification}.
@@ -74,8 +70,6 @@ public final class NotificationBuilder {
         this.htmlText = htmlText;
 
         constructionTime = TimeUtil.notificationTime();
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -256,13 +250,13 @@ public final class NotificationBuilder {
     @Override
     public String toString() {
         return "NotificationBuilder{"
-                + "htmlText=" + quote + htmlText + quote
+                + "htmlText=\"" + htmlText + "\""
                 + ", viewDuration=" + viewDuration
                 + ", onKillAction=" + onKillAction
                 + ", notificationDirection=" + notificationDirection
                 + ", container=" + container
                 + ", calculateViewDuration=" + shouldCalculateViewDuration
-                + ", notifyTime=" + quote + constructionTime + quote
+                + ", notifyTime=\"" + constructionTime + "\""
                 + "}";
     }
 }

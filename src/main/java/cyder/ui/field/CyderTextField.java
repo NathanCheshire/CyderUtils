@@ -6,8 +6,6 @@ import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.constants.CyderRegexPatterns;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -164,8 +162,6 @@ public class CyderTextField extends JTextField {
         setCaret(new CyderCaret(CyderColors.navy));
         setBorder(border);
         setOpaque(true);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**

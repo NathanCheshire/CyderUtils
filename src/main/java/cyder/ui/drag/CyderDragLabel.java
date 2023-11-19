@@ -2,10 +2,7 @@ package cyder.ui.drag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.console.Console;
 import cyder.constants.CyderColors;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.props.Props;
 import cyder.strings.ToStringUtil;
 import cyder.ui.drag.button.CloseButton;
@@ -124,8 +121,6 @@ public class CyderDragLabel extends JLabel {
         addListeners();
 
         invokeSpecialActionsBasedOnType();
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -365,33 +360,13 @@ public class CyderDragLabel extends JLabel {
         MinimizeButton minimizeButton = new MinimizeButton(effectFrame);
         ret.add(minimizeButton);
 
-        pinButton = new PinButton(effectFrame, getInitialPinButtonState());
+        // todo need to allow config of this
+        pinButton = new PinButton(effectFrame, PinButton.PinState.DEFAULT);
         ret.add(pinButton);
 
         CloseButton closeButton = new CloseButton();
         closeButton.setClickAction(effectFrame::dispose);
         ret.add(closeButton);
-
-        return ret;
-    }
-
-    /**
-     * Returns the initial state of the pin button.
-     *
-     * @return the initial state of the pin button
-     */
-    private PinButton.PinState getInitialPinButtonState() {
-        PinButton.PinState ret = PinButton.PinState.DEFAULT;
-
-        CyderFrame consoleFrame = Console.INSTANCE.getConsoleCyderFrame();
-        if (consoleFrame != null) {
-            boolean consolePinned = consoleFrame.getTopDragLabel()
-                    .getPinButton().getCurrentState() == PinButton.PinState.CONSOLE_PINNED;
-            boolean thisIsConsole = consoleFrame.equals(effectFrame);
-            if (consolePinned && !thisIsConsole) {
-                ret = PinButton.PinState.FRAME_PINNED;
-            }
-        }
 
         return ret;
     }

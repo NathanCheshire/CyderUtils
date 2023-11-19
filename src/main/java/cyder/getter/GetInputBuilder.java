@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderColors;
 import cyder.font.CyderFonts;
-import cyder.strings.CyderStrings;
 import cyder.ui.frame.CyderFrame;
 
 import java.awt.*;
@@ -480,37 +479,37 @@ public final class GetInputBuilder implements GetBuilder {
     public String toString() {
         return "GetInputBuilder{"
                 + "frameTitle="
-                + CyderStrings.quote
+                + "\""
                 + frameTitle
-                + CyderStrings.quote
+                + "\""
                 + ", labelText="
-                + CyderStrings.quote
+                + "\""
                 + labelText
-                + CyderStrings.quote
+                + "\""
                 + ", labelFont="
                 + labelFont
                 + ", labelColor="
                 + labelColor
                 + ", submitButtonText="
-                + CyderStrings.quote
+                + "\""
                 + submitButtonText
-                + CyderStrings.quote
+                + "\""
                 + ", submitButtonFont="
                 + submitButtonFont
                 + ", submitButtonColor="
                 + submitButtonColor
                 + ", initialFieldText="
-                + CyderStrings.quote
+                + "\""
                 + initialFieldText
-                + CyderStrings.quote
+                + "\""
                 + ", fieldHintText="
-                + CyderStrings.quote
+                + "\""
                 + fieldHintText
-                + CyderStrings.quote
+                + "\""
                 + ", fieldRegex="
-                + CyderStrings.quote
+                + "\""
                 + fieldRegex
-                + CyderStrings.quote
+                + "\""
                 + ", fieldFont="
                 + fieldFont
                 + ", fieldForeground="

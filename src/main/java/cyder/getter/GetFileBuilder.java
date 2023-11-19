@@ -434,15 +434,15 @@ public final class GetFileBuilder implements GetBuilder {
     public String toString() {
         return "GetFileBuilder{"
                 + "frameTitle="
-                + CyderStrings.quote
+                + "\""
                 + frameTitle
-                + CyderStrings.quote
+                + "\""
                 + ", initialDirectory="
                 + initialDirectory
                 + ", initialFieldText="
-                + CyderStrings.quote
+                + "\""
                 + initialFieldText
-                + CyderStrings.quote
+                + "\""
                 + ", fieldForeground="
                 + fieldForeground
                 + ", fieldFont="
@@ -452,9 +452,9 @@ public final class GetFileBuilder implements GetBuilder {
                 + ", allowFolderSubmission="
                 + allowFolderSubmission
                 + ", submitButtonText="
-                + CyderStrings.quote
+                + "\""
                 + submitButtonText
-                + CyderStrings.quote
+                + "\""
                 + ", submitButtonFont="
                 + submitButtonFont
                 + ", submitButtonColor="

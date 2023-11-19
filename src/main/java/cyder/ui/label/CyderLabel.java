@@ -6,11 +6,8 @@ import cyder.bounds.HtmlString;
 import cyder.bounds.PlainString;
 import cyder.bounds.StringContainer;
 import cyder.constants.CyderColors;
-import cyder.font.CyderFonts;
 import cyder.constants.HtmlTags;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
+import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.strings.ToStringUtil;
 import cyder.threads.CyderThreadRunner;
@@ -81,8 +78,6 @@ public class CyderLabel extends JLabel {
         setVerticalAlignment(JLabel.CENTER);
 
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
@@ -291,7 +286,7 @@ public class CyderLabel extends JLabel {
                 setText(originalText);
                 setForeground(restoreColor);
             } catch (Exception e) {
-                ExceptionHandler.handle(e);
+                e.printStackTrace();
             }
         }, threadName);
     }

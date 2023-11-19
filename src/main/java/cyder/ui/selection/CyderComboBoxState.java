@@ -2,8 +2,6 @@ package cyder.ui.selection;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * A combo box state with the option to show a value different than the one set to when toggled.
@@ -38,8 +36,6 @@ public final class CyderComboBoxState {
     public CyderComboBoxState(String displayValue, String mappedValue) {
         this.displayValue = Preconditions.checkNotNull(displayValue);
         this.mappedValue = Preconditions.checkNotNull(mappedValue);
-
-        Logger.log(LogTag.OBJECT_CREATION, this);
     }
 
     /**
