@@ -8,7 +8,6 @@ import cyder.enumerations.Extension;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.network.IpDataManager;
 import cyder.network.NetworkUtil;
 import cyder.parsers.ip.IpData;
@@ -122,7 +121,7 @@ public final class StatUtil {
      * @return a debug object containing the found user flag and some common debug details
      */
     public static Future<DebugStats> getDebugProps() {
-        Preconditions.checkArgument(!NetworkUtil.isHighLatency());
+        // todo Preconditions.checkArgument(!NetworkUtil.isHighLatency());
 
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(DEBUG_PROPS_EXECUTOR_THREAD_NAME)).submit(() -> {
@@ -148,10 +147,10 @@ public final class StatUtil {
                             "City: " + data.getCity(),
                             "State: " + data.getRegion(),
                             "Country: " + data.getCountry_name()
-                                    + " (" + data.getCountry_code() + CyderStrings.closingParenthesis,
+                                    + " (" + data.getCountry_code() + ")",
                             "Latitude: " + data.getLatitude() + " Degrees N",
                             "Longitude: " + data.getLongitude() + " Degrees W",
-                            "latency: " + LatencyManager.INSTANCE.getLatency(10000) + " ms",
+                            //todo "latency: " + LatencyManager.INSTANCE.getLatency(10000) + " ms",
                             "Google Reachable: " + NetworkUtil.urlReachable(CyderUrls.GOOGLE),
                             "YouTube Reachable: " + NetworkUtil.urlReachable(CyderUrls.YOUTUBE),
                             "Apple Reachable: " + NetworkUtil.urlReachable(CyderUrls.APPLE),
@@ -188,8 +187,8 @@ public final class StatUtil {
 
         FileUtil.getFiles(startDir, true, Extension.JAVA.getExtension()).forEach(javaFile ->
                 ret.append(javaFile.getName().replace(Extension.JAVA.getExtension(), ""))
-                        .append(": ").append(totalLines(javaFile)).append(CyderStrings.comma)
-                        .append(totalComments(javaFile)).append(CyderStrings.comma)
+                        .append(": ").append(totalLines(javaFile)).append(",")
+                        .append(totalComments(javaFile)).append(",")
                         .append(totalBlankLines(javaFile)).append(CyderStrings.newline));
 
         return ret.toString();
@@ -228,7 +227,7 @@ public final class StatUtil {
 
                 return localRet;
             } catch (Exception ex) {
-                ExceptionHandler.handle(ex);
+                ex.printStackTrace();
             }
         }
 
@@ -278,7 +277,7 @@ public final class StatUtil {
 
                 return localRet;
             } catch (Exception ex) {
-                ExceptionHandler.handle(ex);
+                ex.printStackTrace();
             }
         }
 
@@ -335,7 +334,7 @@ public final class StatUtil {
 
                 return localRet;
             } catch (Exception ex) {
-                ExceptionHandler.handle(ex);
+                ex.printStackTrace();
             }
         }
 
@@ -386,28 +385,11 @@ public final class StatUtil {
 
                 return localRet;
             } catch (Exception ex) {
-                ExceptionHandler.handle(ex);
+                ex.printStackTrace();
             }
         }
 
         return ret;
-    }
-
-    /**
-     * Returns an immutable list detailing all the files found
-     * within the root level directory and their sizes.
-     *
-     * @return an immutable list detailing all the files found
-     * within the root level directory and their sizes
-     */
-    public static ImmutableList<FileSize> fileSizes() {
-        if (ProgramModeManager.INSTANCE.getProgramMode() == ProgramMode.NORMAL) {
-            throw new IllegalMethodException("Method not allowed when in Jar mode");
-        }
-
-        ArrayList<FileSize> prints = innerFileSizes(new File("src"));
-        prints.sort(new FileComparator());
-        return ImmutableList.copyOf(prints);
     }
 
     private static ArrayList<FileSize> innerFileSizes(File startDir) {

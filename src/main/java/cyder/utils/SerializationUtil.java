@@ -1,18 +1,12 @@
 package cyder.utils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-import cyder.props.Props;
 import cyder.strings.CyderStrings;
-import cyder.strings.StringUtil;
-import cyder.user.data.MappedExecutable;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -22,27 +16,11 @@ import java.lang.reflect.Type;
  */
 public final class SerializationUtil {
     /**
-     * A deserializer class for deserializing lists into ImmutableLists.
-     */
-    private static final class JsonDeserializer implements com.google.gson.JsonDeserializer<ImmutableList<?>> {
-        @Override
-        public ImmutableList<?> deserialize(final JsonElement json, final Type type,
-                                            final JsonDeserializationContext context) throws JsonParseException {
-            JsonArray array = json.getAsJsonArray();
-            ImmutableList.Builder<MappedExecutable> executableBuilder = new ImmutableList.Builder<>();
-            array.forEach(jsonElement -> executableBuilder.add(
-                    SerializationUtil.fromJson(jsonElement.toString(), MappedExecutable.class)));
-            return ImmutableList.copyOf(array);
-        }
-    }
-
-    /**
      * The master Gson object used for all of Cyder.
      */
     private static final Gson gson = new GsonBuilder()
             .setLenient()
             .setPrettyPrinting()
-            .registerTypeAdapter(ImmutableList.class, new JsonDeserializer())
             .create();
 
     /**
@@ -52,6 +30,8 @@ public final class SerializationUtil {
 
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private SerializationUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -71,7 +51,6 @@ public final class SerializationUtil {
         Preconditions.checkNotNull(clazz);
 
         T ret = gson.fromJson(json, clazz);
-        log(LogTag.OBJECT_DESERIALIZATION, clazz, json);
         return ret;
     }
 
@@ -89,11 +68,9 @@ public final class SerializationUtil {
         Preconditions.checkNotNull(clazz);
 
         try (Reader reader = new BufferedReader(new FileReader(file))) {
-            T ret = gson.fromJson(reader, clazz);
-            log(LogTag.OBJECT_DESERIALIZATION, clazz, gson.toJson(ret));
-            return ret;
+            return gson.fromJson(reader, clazz);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         throw new FatalException("Could not serialize contents of file: " + file.getAbsolutePath());
@@ -111,9 +88,7 @@ public final class SerializationUtil {
         Preconditions.checkNotNull(reader);
         Preconditions.checkNotNull(clazz);
 
-        T ret = gson.fromJson(reader, clazz);
-        log(LogTag.OBJECT_DESERIALIZATION, clazz, gson.toJson(ret));
-        return ret;
+        return gson.fromJson(reader, clazz);
     }
 
     /**
@@ -129,9 +104,7 @@ public final class SerializationUtil {
         Preconditions.checkArgument(!json.isEmpty());
         Preconditions.checkNotNull(type);
 
-        T ret = gson.fromJson(json, type);
-        log(LogTag.OBJECT_DESERIALIZATION, type, json);
-        return ret;
+        return gson.fromJson(json, type);
     }
 
     /**
@@ -145,7 +118,6 @@ public final class SerializationUtil {
         Preconditions.checkNotNull(writer);
 
         gson.toJson(object, writer);
-        log(LogTag.OBJECT_SERIALIZATION, object.getClass(), gson.toJson(object));
     }
 
     /**
@@ -157,9 +129,7 @@ public final class SerializationUtil {
     public static String toJson(Object object) {
         Preconditions.checkNotNull(object);
 
-        String ret = gson.toJson(object);
-        log(LogTag.OBJECT_SERIALIZATION, object.getClass(), ret);
-        return ret;
+        return gson.toJson(object);
     }
 
     /**
@@ -180,65 +150,10 @@ public final class SerializationUtil {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
             toJson(object, writer);
         } catch (IOException e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
             ret = false;
         }
 
         return ret;
-    }
-
-    /**
-     * Logs a serialization or deserialization action.
-     *
-     * @param tag                 the primary log tag to use
-     * @param classOrType         the class or type serialized/deserialized
-     * @param serializationString the string which was deserialized or the result of a serialization
-     * @param <T>                 the type of the class or Type
-     */
-    private static <T> void log(LogTag tag, T classOrType, String serializationString) {
-        if (shouldIgnoreObjectSerializationOrDeserialization(classOrType)) return;
-
-        String classOrTypeTag;
-        if (classOrType instanceof Class<?> clazz) {
-            classOrTypeTag = ReflectionUtil.getBottomLevelClass(clazz);
-        } else if (classOrType instanceof Type type) {
-            classOrTypeTag = type.getTypeName();
-        } else {
-            throw new FatalException("Failed to get name for: " + classOrType);
-        }
-
-        ImmutableList<String> tags = ImmutableList.of(
-                tag.getLogName(), classOrTypeTag
-        );
-
-        String logStatement = serializationString;
-        int length = serializationString.length();
-        if (length > charsToLog) {
-            String firstPart = logStatement.substring(0, charsToLog / 2);
-            String secondPart = logStatement.substring(length - charsToLog / 2 - 1, length);
-            logStatement = CyderStrings.quote + firstPart + CyderStrings.quote
-                    + CyderStrings.ellipseDots + CyderStrings.quote + secondPart + CyderStrings.quote;
-        }
-        Logger.log(tags, logStatement);
-    }
-
-    /**
-     * Returns whether the provided object or type should not be logged when serialized/deserialized.
-     *
-     * @param classOrType the class or type
-     * @param <T>         the type, one of Class or type
-     * @return whether the provided object or type should not be logged
-     */
-    private static <T> boolean shouldIgnoreObjectSerializationOrDeserialization(T classOrType) {
-        ImmutableList<String> ignoreClasses = Props.ignoreSerializationData.getValue().getPropValues();
-        if (ignoreClasses.contains("all")) return true;
-
-        if (classOrType instanceof Class<?> clazz) {
-            return StringUtil.in(ReflectionUtil.getBottomLevelClass(clazz), true, ignoreClasses);
-        } else if (classOrType instanceof Type type) {
-            return StringUtil.in(type.getTypeName(), true, ignoreClasses);
-        }
-
-        return true;
     }
 }

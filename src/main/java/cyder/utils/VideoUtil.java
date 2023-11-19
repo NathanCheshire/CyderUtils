@@ -18,6 +18,8 @@ import java.io.File;
 public final class VideoUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private VideoUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);

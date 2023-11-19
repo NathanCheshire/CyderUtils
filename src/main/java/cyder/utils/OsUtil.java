@@ -40,18 +40,6 @@ public final class OsUtil {
     public static final String OPERATING_SYSTEM_NAME = SystemPropertyKey.OS_NAME.getProperty();
 
     /**
-     * Invokes a controlled program exit that eventually invokes {@link System#exit(int)}
-     * which will in turn invoke the shutdown hooks.
-     *
-     * @param exitCondition the exiting code to describe why the program exited
-     */
-    public static void exit(ExitCondition exitCondition) {
-        Preconditions.checkNotNull(exitCondition);
-        // todo runnables before hand maybe? exit if?
-        System.exit(exitCondition.getCode());
-    }
-
-    /**
      * The standard operating system enum.
      */
     public static final OperatingSystem OPERATING_SYSTEM;
@@ -59,10 +47,10 @@ public final class OsUtil {
     static {
         if (isWindows()) {
             OPERATING_SYSTEM = OperatingSystem.WINDOWS;
-        } else if (OperatingSystem.OSX.isCurrentOperatingSystem()) {
-            OPERATING_SYSTEM = OperatingSystem.OSX;
-        } else if (OperatingSystem.UNIX.isCurrentOperatingSystem()) {
-            OPERATING_SYSTEM = OperatingSystem.UNIX;
+        } else if (OperatingSystem.MAC.isCurrentOperatingSystem()) {
+            OPERATING_SYSTEM = OperatingSystem.MAC;
+        } else if (OperatingSystem.GNU_LINUX.isCurrentOperatingSystem()) {
+            OPERATING_SYSTEM = OperatingSystem.GNU_LINUX;
         } else {
             OPERATING_SYSTEM = OperatingSystem.UNKNOWN;
         }
@@ -142,7 +130,7 @@ public final class OsUtil {
         String[] commandPartsArr = new String[commandParts.size() + commandPrefixLength];
 
         switch (OPERATING_SYSTEM) {
-            case OSX, UNIX, SOLARIS -> {
+            case GNU_LINUX, MAC -> {
                 commandPartsArr[0] = SH;
                 commandPartsArr[1] = DASH_C;
             }
@@ -186,7 +174,7 @@ public final class OsUtil {
     public static void openShell() {
         try {
             switch (OPERATING_SYSTEM) {
-                case OSX, UNIX, SOLARIS -> throw new IllegalStateException("Operating system not yet supported: "
+                case GNU_LINUX, MAC -> throw new IllegalStateException("Operating system not yet supported: "
                         + OPERATING_SYSTEM);
                 case WINDOWS -> executeShellCommand(START);
                 case UNKNOWN -> throw new IllegalStateException("Unsupported operating system: " + OPERATING_SYSTEM);
@@ -203,9 +191,9 @@ public final class OsUtil {
      */
     public static String getShellName() {
         return switch (OPERATING_SYSTEM) {
-            case OSX -> "Terminal (Bash)";
+            case MAC -> "Terminal (Bash)";
             case WINDOWS -> "Command prompt";
-            case UNIX, SOLARIS -> "Bash";
+            case GNU_LINUX -> "Bash";
             case UNKNOWN -> "Unknown Shell";
         };
     }
@@ -498,7 +486,7 @@ public final class OsUtil {
     public static String formatBytes(float bytes) {
         boolean negative = bytes < 0.0f;
         if (negative) bytes *= -1.0f;
-        String sign = negative ? CyderStrings.dash : "";
+        String sign = negative ? "-" : "";
 
         if (bytes >= coalesceSpace) {
             float kilo = bytes / coalesceSpace;
@@ -519,7 +507,7 @@ public final class OsUtil {
             } else
                 return sign + (BYTE_FORMATTER.format(kilo) + KILOBYTE_PREFIX);
         } else {
-            return sign + bytes + CyderStrings.space + BYTES;
+            return sign + bytes + " " + BYTES;
         }
     }
 }

@@ -3,10 +3,8 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.strings.CyderStrings;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -101,7 +99,7 @@ public final class SecurityUtil {
             MessageDigest md = MessageDigest.getInstance(HashingAlgorithm.SHA256.getName());
             return md.digest(toBytes(input));
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+            ex.printStackTrace();
         }
 
         throw new FatalException("Unable to compute SHA256 of input");
@@ -121,7 +119,7 @@ public final class SecurityUtil {
             MessageDigest md = MessageDigest.getInstance(HashingAlgorithm.SHA1.getName());
             return md.digest(toBytes(input));
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+            ex.printStackTrace();
         }
 
         throw new FatalException("Unable to compute SHA1 of input");
@@ -141,7 +139,7 @@ public final class SecurityUtil {
             MessageDigest md = MessageDigest.getInstance(HashingAlgorithm.MD5.getName());
             return md.digest(toBytes(input));
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+            ex.printStackTrace();
         }
 
         throw new FatalException("Unable to compute MD5 of input");
@@ -161,7 +159,7 @@ public final class SecurityUtil {
             MessageDigest md = MessageDigest.getInstance(HashingAlgorithm.SHA256.getName());
             return md.digest(input);
         } catch (Exception ex) {
-            ExceptionHandler.handle(ex);
+            ex.printStackTrace();
         }
 
         throw new FatalException("Unable to compute SHA256 of input");
@@ -199,29 +197,10 @@ public final class SecurityUtil {
             salt.update(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
             return UUID.nameUUIDFromBytes(salt.digest()).toString();
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         throw new FatalException("Unable to compute SHA256 of input");
-    }
-
-    /**
-     * Returns a unique uuid that does not exist for all current Cyder users.
-     * Note it's insanely unlikely that a hash would be generated for a user which
-     * already exists but, nevertheless this method exists.
-     *
-     * @return a unique uuid that does not exist for all current Cyder users
-     */
-    public static String generateUuidForUser() {
-        String uuid = generateUuid();
-        File userFolder = Dynamic.buildDynamic(Dynamic.USERS.getFileName(), uuid);
-
-        while (userFolder.exists()) {
-            uuid = generateUuid();
-            userFolder = Dynamic.buildDynamic(Dynamic.USERS.getFileName(), uuid);
-        }
-
-        return uuid;
     }
 
     /**

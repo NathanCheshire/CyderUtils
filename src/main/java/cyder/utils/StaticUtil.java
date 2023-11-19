@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 
 import javax.swing.*;
@@ -44,10 +42,10 @@ public final class StaticUtil {
      */
     public static void loadStaticResources() {
         staticFiles = getStaticFiles();
-        Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFiles.size() + " static files");
-
+        // Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFiles.size() + " static files");
+        // todo hooks and this whole system needs to be rethinked from an API POV
         staticFolders = getStaticFolders();
-        Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFolders.size() + " static folders");
+        // Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFolders.size() + " static folders");
     }
 
     /**

@@ -4,18 +4,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.ClassPath;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.input.BaseInputHandler;
-import cyder.handlers.input.InputHandler;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.strings.StringUtil;
 import cyder.ui.frame.CyderFrame;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import static cyder.strings.CyderStrings.*;
+import static cyder.strings.CyderStrings.ATTEMPTED_INSTANTIATION;
 
 /**
  * Utilities for Jvm reflection.
@@ -23,6 +18,8 @@ import static cyder.strings.CyderStrings.*;
 public final class ReflectionUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private ReflectionUtil() {
         throw new IllegalMethodException(ATTEMPTED_INSTANTIATION);
@@ -50,19 +47,19 @@ public final class ReflectionUtil {
 
         StringBuilder ret = new StringBuilder();
 
-        ret.append(clazz).append(colon).append(space);
+        ret.append(clazz).append(":").append(" ");
         ret.append(getBottomLevelClass(object.getClass()));
-        ret.append(comma).append(space);
+        ret.append(",").append(" ");
 
         for (Method m : object.getClass().getMethods()) {
             if (m.getName().startsWith(GET) && m.getParameterTypes().length == 0) {
                 try {
                     ret.append(m.getName());
-                    ret.append(colon).append(space);
+                    ret.append(":").append(" ");
                     ret.append(m.invoke(object));
-                    ret.append(comma).append(space);
+                    ret.append(",").append(" ");
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -89,7 +86,7 @@ public final class ReflectionUtil {
                 try {
                     ret.add(m.invoke(clazz).toString());
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -119,7 +116,7 @@ public final class ReflectionUtil {
                 try {
                     ret.add(m.invoke(clazz).toString());
                 } catch (Exception e) {
-                    ExceptionHandler.handle(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -152,7 +149,7 @@ public final class ReflectionUtil {
 
         String ret = superName;
         if (innerClass) {
-            ret += space + openingParenthesis + "inner class" + closingParenthesis;
+            ret += " (" + "inner class" + ")";
         }
 
         return ret.trim();
@@ -184,90 +181,12 @@ public final class ReflectionUtil {
         try {
             cyderClassPath = ClassPath.from(currentThreadClassLoader);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         cyderClasses = cyderClassPath == null
                 ? ImmutableList.of()
                 : ImmutableList.copyOf(cyderClassPath.getTopLevelClassesRecursive(TOP_LEVEL_PACKAGE_NAME));
-    }
-
-    /**
-     * Returns whether the provided class contains more than one {@link Handle} annotation.
-     *
-     * @param clazz the class
-     * @return whether the class contains more than one handle annotation
-     */
-    public static boolean clazzContainsMoreThanOneHandle(Class<?> clazz) {
-        Preconditions.checkNotNull(clazz);
-
-        return getHandleMethods(clazz).size() > 1;
-    }
-
-    /**
-     * Returns whether the provided class extends the {@link InputHandler}.
-     *
-     * @param clazz the class
-     * @return whether the provided class extends the input handler
-     */
-    public static boolean extendsInputHandler(Class<?> clazz) {
-        Preconditions.checkNotNull(clazz);
-
-        return InputHandler.class.isAssignableFrom(clazz);
-    }
-
-    /**
-     * Returns the methods annotated with {@link Handle} in the provided class.
-     *
-     * @param clazz the class
-     * @return the handle methods found
-     */
-    public static ImmutableList<Method> getHandleMethods(Class<?> clazz) {
-        Preconditions.checkNotNull(clazz);
-
-        ArrayList<Method> ret = new ArrayList<>();
-        Arrays.stream(clazz.getMethods()).filter(method -> method.isAnnotationPresent(Handle.class)).forEach(ret::add);
-
-        return ImmutableList.copyOf(ret);
-    }
-
-    /**
-     * Returns whether the provided class is contained in {@link BaseInputHandler}s final handlers list.
-     *
-     * @param clazz the class
-     * @return whether the provided class is contained in the final handlers list
-     */
-    public static boolean isFinalHandler(Class<?> clazz) {
-        Preconditions.checkNotNull(clazz);
-
-        return BaseInputHandler.finalHandlers.contains(clazz);
-    }
-
-    /**
-     * Returns whether the provided class is contained in {@link BaseInputHandler}s primary handles list.
-     *
-     * @param clazz the class
-     * @return whether the provided class is contained in the primary handles list
-     */
-    public static boolean isPrimaryHandler(Class<?> clazz) {
-        Preconditions.checkNotNull(clazz);
-
-        return BaseInputHandler.primaryHandlers.contains(clazz);
-    }
-
-    /**
-     * Returns the triggers of the handle annotation on the provided method.
-     *
-     * @param method the method
-     * @return the handle triggers
-     */
-    public static ImmutableList<String> getHandleTriggers(Method method) {
-        Preconditions.checkNotNull(method);
-
-        String[] triggers = method.getAnnotation(Handle.class).value();
-        ArrayList<String> ret = new ArrayList<>();
-        Arrays.stream(triggers).filter(trigger -> !StringUtil.isNullOrEmpty(trigger)).forEach(ret::add);
-        return ImmutableList.copyOf(ret);
     }
 
     /**
