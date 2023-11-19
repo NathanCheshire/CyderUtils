@@ -2,12 +2,15 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    useJUnitPlatform()
 }
 
 group 'cyder-utils'
@@ -65,17 +68,7 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
     implementation 'net.lingala.zip4j:zip4j:' + zip4jVersion
     implementation 'com.github.nathancheshire:gravatarjavaclient:' + gravatarClientHash
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "16"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "16"
-    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
 }
 
 build.dependsOn(compileJava, compileTestJava)
