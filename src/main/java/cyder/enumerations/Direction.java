@@ -12,6 +12,24 @@ public enum Direction {
     BOTTOM;
 
     /**
+     * Returns whether this direction runs along the horizontal axis.
+     *
+     * @return whether this direction runs along the horizontal axis
+     */
+    public boolean isHorizontal() {
+        return isHorizontal(this);
+    }
+
+    /**
+     * Returns whether this direction runs along the vertical axis.
+     *
+     * @return whether this direction runs along the vertical axis
+     */
+    public boolean isVertical() {
+        return isVertical(this);
+    }
+
+    /**
      * Returns whether the direction points horizontally.
      *
      * @param direction the direction

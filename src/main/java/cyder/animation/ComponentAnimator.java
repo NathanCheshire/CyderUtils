@@ -80,7 +80,10 @@ public final class ComponentAnimator {
                              int animationStart, int animationEnd) {
         Preconditions.checkNotNull(animationDirection);
         Preconditions.checkNotNull(animationComponent);
-        Preconditions.checkArgument(animationStart < animationEnd);
+        if (animationDirection == Direction.BOTTOM) Preconditions.checkArgument(animationStart < animationEnd);
+        if (animationDirection == Direction.LEFT) Preconditions.checkArgument(animationStart > animationEnd);
+        if (animationDirection == Direction.TOP) Preconditions.checkArgument(animationStart > animationEnd);
+        if (animationDirection == Direction.RIGHT) Preconditions.checkArgument(animationStart < animationEnd);
 
         this.animationDirection = animationDirection;
         this.animationComponent = animationComponent;
