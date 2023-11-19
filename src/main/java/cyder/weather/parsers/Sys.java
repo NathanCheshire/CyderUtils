@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The "sys" object for {@link WeatherData} objects.
  * Sys is a bad name for this class.
@@ -36,9 +33,7 @@ public class Sys {
     /**
      * Constructs a new sys object.
      */
-    public Sys() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Sys() {}
 
     /**
      * Sets the type field.

@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The clouds object for {@link WeatherData} objects.
  */
@@ -15,9 +12,7 @@ public class Clouds {
     /**
      * Constructs a new clouds object.
      */
-    public Clouds() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Clouds() {}
 
     /**
      * Returns the all attribute.

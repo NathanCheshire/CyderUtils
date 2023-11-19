@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The coords object for {@link WeatherData} objects.
  */
@@ -20,9 +17,7 @@ public class Coord {
     /**
      * Constructs a new coord object.
      */
-    public Coord() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Coord() {}
 
     /**
      * Returns the longitude attribute.

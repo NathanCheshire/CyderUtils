@@ -1,8 +1,6 @@
 package cyder.youtube.parsers;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * Holds the thumbnails linking to a YouTube video.
@@ -28,9 +26,7 @@ public class Thumbnails {
     /**
      * Constructs a new thumbnails object.
      */
-    public Thumbnails() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Thumbnails() {}
 
     /**
      * Returns the default resolution thumbnail object.

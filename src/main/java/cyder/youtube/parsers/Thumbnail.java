@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The thumbnail object for a {@link Thumbnails} object.
  */
@@ -25,9 +22,7 @@ public class Thumbnail {
     /**
      * Constructs a new thumbnail.
      */
-    public Thumbnail() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Thumbnail() {}
 
     /**
      * Returns the url of the image.

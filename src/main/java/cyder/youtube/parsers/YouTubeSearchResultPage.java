@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 import java.util.ArrayList;
 
 /**
@@ -43,9 +40,7 @@ public class YouTubeSearchResultPage {
     /**
      * Constructs a new YouTube search results page.
      */
-    public YouTubeSearchResultPage() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public YouTubeSearchResultPage() {}
 
     /**
      * Returns the kind. Typically "youtube#searchListResponse"

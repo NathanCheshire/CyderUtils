@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * An ID object of a {@link YouTubeVideo}.
  */
@@ -20,9 +17,7 @@ public class Id {
     /**
      * Constructs a new YouTube ID.
      */
-    public Id() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Id() {}
 
     /**
      * Returns the kind.

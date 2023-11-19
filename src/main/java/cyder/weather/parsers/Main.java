@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The "main" object for {@link WeatherData} objects.
  * I have no idea why this is called main; LocalAttributes would be a much better name.
@@ -51,9 +48,7 @@ public class Main {
     /**
      * Constructs a new main object.
      */
-    Main() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    Main() {}
 
     /**
      * Returns the local temperature.

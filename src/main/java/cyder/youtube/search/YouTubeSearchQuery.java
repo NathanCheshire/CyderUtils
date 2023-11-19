@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderRegexPatterns;
-import cyder.handlers.internal.ExceptionHandler;
 import cyder.utils.SerializationUtil;
 import cyder.youtube.parsers.YouTubeSearchResultPage;
 
@@ -100,7 +99,7 @@ public final class YouTubeSearchQuery {
                 new InputStreamReader(new URL(url).openStream()))) {
             return Optional.of(SerializationUtil.fromJson(reader, YouTubeSearchResultPage.class));
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return Optional.empty();

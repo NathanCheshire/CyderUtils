@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The wind weather object.
  */
@@ -25,9 +22,7 @@ public class Wind {
     /**
      * Constructs a new wind object.
      */
-    public Wind() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Wind() {}
 
     /**
      * Returns the wind speed.

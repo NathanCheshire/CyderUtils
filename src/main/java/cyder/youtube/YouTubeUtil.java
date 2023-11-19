@@ -25,7 +25,6 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.stream.IntStream;
 
-import static cyder.strings.CyderStrings.forwardSlash;
 import static cyder.youtube.YouTubeConstants.*;
 
 /**
@@ -209,7 +208,7 @@ public final class YouTubeUtil {
         Preconditions.checkNotNull(uuid);
         Preconditions.checkArgument(YouTubeConstants.UUID_PATTERN.matcher(uuid).matches());
 
-        return YOUTUBE_THUMBNAIL_BASE + uuid + forwardSlash + MAX_RES_DEFAULT;
+        return YOUTUBE_THUMBNAIL_BASE + uuid + "/" + MAX_RES_DEFAULT;
     }
 
     /**
@@ -222,7 +221,7 @@ public final class YouTubeUtil {
         Preconditions.checkNotNull(uuid);
         Preconditions.checkArgument(YouTubeConstants.UUID_PATTERN.matcher(uuid).matches());
 
-        return YOUTUBE_THUMBNAIL_BASE + uuid + CyderStrings.forwardSlash + SD_DEFAULT;
+        return YOUTUBE_THUMBNAIL_BASE + uuid + "/" + SD_DEFAULT;
     }
 
     /**

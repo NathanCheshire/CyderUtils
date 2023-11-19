@@ -85,10 +85,11 @@ public final class CyderWatchdog {
                     ThreadUtil.sleep(INITIALIZE_TIMEOUT_MS);
 
                     for (Thread thread : ThreadUtil.getCurrentThreads()) {
-                        if (thread.getName().equals(IgnoreThread.AwtEventQueue0.getName())) {
-                            startWatchDog(thread);
-                            return;
-                        }
+                        // todo
+//                        if (thread.getName().equals(IgnoreThread.AwtEventQueue0.getName())) {
+//                            startWatchDog(thread);
+//                            return;
+//                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -116,10 +117,10 @@ public final class CyderWatchdog {
      * Starts the watchdog checker after the AWT-EventQueue-0 thread has been started.
      *
      * @param awtEventQueueThread the AWT-EventQueue-0 thread
-     * @throws IllegalArgumentException if the provided thread is not the {@link IgnoreThread#AwtEventQueue0} thread
      */
     private static void startWatchDog(Thread awtEventQueueThread) {
-        Preconditions.checkArgument(awtEventQueueThread.getName().equals(IgnoreThread.AwtEventQueue0.getName()));
+        // todo remove need for param?
+        // Preconditions.checkArgument(awtEventQueueThread.getName().equals(IgnoreThread.AwtEventQueue0.getName()));
 
         AtomicInteger maxSessionFreezeLength = new AtomicInteger();
 
@@ -133,22 +134,19 @@ public final class CyderWatchdog {
 
                 currentAwtEventQueueThreadState = awtEventQueueThread.getState();
 
-                ProgramState currentCyderState = ProgramStateManager.INSTANCE.getCurrentProgramState();
-
-                if (currentCyderState.isShouldIncrementWatchdog()) {
+                // todo if should inc watchdog
+                if (false) {
                     if (shouldIncrementWatchdogForThreadState(currentAwtEventQueueThreadState)) {
                         watchdogCounter.getAndAdd((int) POLL_TIMEOUT.toMillis());
                     }
                 } else {
-                    Logger.log(LogTag.WATCHDOG, "Watchdog not incremented as"
-                            + " Cyder program state is: " + currentCyderState);
+                    // todo on not incremented hook
                 }
 
                 int currentFreezeLength = watchdogCounter.get();
 
                 if (currentFreezeLength > maxSessionFreezeLength.get()) {
-                    Logger.log(LogTag.WATCHDOG, "New max freeze detected by watchdog: "
-                            + currentFreezeLength + TimeUtil.MILLISECOND_ABBREVIATION);
+                    // todo on new max freeze
                     maxSessionFreezeLength.set(currentFreezeLength);
                 }
 
@@ -157,15 +155,14 @@ public final class CyderWatchdog {
                     break;
                 }
             }
-        }, IgnoreThread.CyderWatchdog.getName());
+        }, "todo name me, customizable with builder"); // todo
     }
 
     /**
      * The actions to invoke when a UI halt is detected by the watchdog.
      */
     private static void onUiHaltDetected() {
-        Logger.log(LogTag.WATCHDOG, "UI halt detected by watchdog; checking if bootstrap is possible");
-        BoostrapUtil.invokeBoostrapIfConditionsMet();
+        // todo hook
     }
 
     /**

@@ -5,22 +5,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
-import cyder.console.Console;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
 import cyder.enumerations.Extension;
-import cyder.ui.exceptions.DeviceNotFoundException;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 import cyder.strings.CyderStrings;
 import cyder.time.TimeUtil;
 import cyder.ui.drag.DragLabelButtonSize;
+import cyder.ui.exceptions.DeviceNotFoundException;
 import cyder.ui.frame.CyderFrame;
-import cyder.user.UserUtil;
 import cyder.utils.ImageUtil;
 import cyder.utils.OsUtil;
 
@@ -149,18 +144,14 @@ public final class UiUtil {
         String saveName = cyderFrame.getTitle()
                 .substring(0, Math.min(MAX_FRAME_TITLE_FILE_LENGTH, cyderFrame.getTitle().length())).trim();
         String timestampSuffix = TimeUtil.screenshotTime();
-        String filename = saveName + CyderStrings.underscore + timestampSuffix + Extension.PNG.getExtension();
+        String filename = saveName + "_" + timestampSuffix + Extension.PNG.getExtension();
 
-        if (Console.INSTANCE.getUuid() != null) {
-            return UserUtil.createFileInUserSpace(filename);
-        } else {
-            File saveDir = Dynamic.buildDynamic(Dynamic.TEMP.getFileName());
-            File createFile = new File(saveDir, filename);
-            if (!OsUtil.createFile(createFile, true)) {
-                throw new FatalException("Failed to create file: " + createFile);
-            }
-            return createFile;
+        File saveDir = new File("."); // todo pass in
+        File createFile = new File(saveDir, filename);
+        if (!OsUtil.createFile(createFile, true)) {
+            throw new FatalException("Failed to create file: " + createFile);
         }
+        return createFile;
     }
 
     /**
@@ -179,7 +170,7 @@ public final class UiUtil {
             ret = ImageIO.write(ImageUtil.screenshotComponent(frame),
                     Extension.PNG.getExtensionWithoutPeriod(), saveFile);
         } catch (Exception e) {
-            ExceptionHandler.handle(e);
+            e.printStackTrace();
         }
 
         return ret;
@@ -431,7 +422,7 @@ public final class UiUtil {
         return new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Logger.log(LogTag.UI_ACTION, e.getComponent());
+                // todo used to be logging here, need some hook
             }
         };
     }
@@ -587,8 +578,8 @@ public final class UiUtil {
         ret.append(HtmlTags.openingHtml);
 
         IntStream.range(0, numLines).forEach(index
-                -> ret.append(CyderStrings.space).append(HtmlTags.breakTag));
-        ret.append(CyderStrings.space).append(HtmlTags.closingHtml);
+                -> ret.append(" ").append(HtmlTags.breakTag));
+        ret.append(" ").append(HtmlTags.closingHtml);
         return ret.toString();
     }
 

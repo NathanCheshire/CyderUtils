@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * The page information object of a {@link YouTubeSearchResultPage}.
  */
@@ -20,9 +17,7 @@ public class PageInfo {
     /**
      * Constructs a new PageInfo object.
      */
-    public PageInfo() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public PageInfo() {}
 
     /**
      * Returns the total results of this query.

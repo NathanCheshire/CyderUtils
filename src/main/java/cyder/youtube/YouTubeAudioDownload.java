@@ -1,22 +1,15 @@
 package cyder.youtube;
 
 import com.google.common.base.Preconditions;
-import cyder.audio.AudioUtil;
-import cyder.audio.player.AudioPlayer;
-import cyder.console.Console;
 import cyder.constants.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
-import cyder.handlers.input.BaseInputHandler;
-import cyder.handlers.internal.ExceptionHandler;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
+import cyder.font.CyderFonts;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
-import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.ui.UiUtil;
@@ -24,7 +17,6 @@ import cyder.ui.button.CyderButton;
 import cyder.ui.progress.AnimationDirection;
 import cyder.ui.progress.CyderProgressBar;
 import cyder.ui.progress.CyderProgressUI;
-import cyder.user.UserFile;
 import cyder.utils.ArrayUtil;
 import cyder.utils.ImageUtil;
 import cyder.utils.OsUtil;
@@ -69,11 +61,6 @@ public class YouTubeAudioDownload {
      * The name to save the thumbnail download as.
      */
     private String thumbnailDownloadName;
-
-    /**
-     * The handler to use for printing updates and ui elements.
-     */
-    private BaseInputHandler printOutputHandler;
 
     /**
      * The width to crop the thumbnail to.
@@ -179,9 +166,7 @@ public class YouTubeAudioDownload {
     /**
      * Constructs a new YoutubeDownload object.
      */
-    public YouTubeAudioDownload() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public YouTubeAudioDownload() {}
 
     /**
      * Sets the download type of this download to a video link.
@@ -284,31 +269,6 @@ public class YouTubeAudioDownload {
     }
 
     /**
-     * Sets the handler to use for printing updates and ui elements to the Console's.
-     */
-    public void setPrintOutputToConsole() {
-        setPrintOutputHandler(Console.INSTANCE.getInputHandler());
-    }
-
-    /**
-     * Sets the handler to use for printing updates and ui elements.
-     *
-     * @param inputHandler the handler to use for printing updates and ui elements
-     */
-    public void setPrintOutputHandler(BaseInputHandler inputHandler) {
-        Preconditions.checkNotNull(inputHandler);
-
-        this.printOutputHandler = inputHandler;
-    }
-
-    /**
-     * Removes the handler to use for printing updates and ui elements.
-     */
-    public void removePrintOutputHandler() {
-        this.printOutputHandler = null;
-    }
-
-    /**
      * Sets the request width to download the thumbnail.
      *
      * @param requestedThumbnailWidth the request width to download the thumbnail
@@ -386,10 +346,8 @@ public class YouTubeAudioDownload {
             initializeAudioDownloadNames();
         }
 
-        File userMusicDir = Dynamic.buildDynamic(
-                Dynamic.USERS.getFileName(),
-                Console.INSTANCE.getUuid(),
-                UserFile.MUSIC.getName());
+        // todo download to directory setter
+        File userMusicDir = new File("/");
 
         String ffmpegAudioOutputFormat = Props.ffmpegAudioOutputFormat.getValue();
         String outputExtension = "." + ffmpegAudioOutputFormat;
@@ -402,7 +360,7 @@ public class YouTubeAudioDownload {
                 + ".%(ext)s";
 
         String[] command = {
-                AudioUtil.getYoutubeDlCommand(), providedDownloadString,
+                "youtube-dl", providedDownloadString,
                 YouTubeDlFlag.EXTRACT_AUDIO.getFlag(),
                 YouTubeDlFlag.AUDIO_FORMAT.getFlag(), ffmpegAudioOutputFormat,
                 YouTubeDlFlag.OUTPUT.getFlag(), youTubeDlOutputName
@@ -412,21 +370,13 @@ public class YouTubeAudioDownload {
 
         downloadableName = downloadSaveName;
 
-        String threadName = "YouTube"
-                + CyderStrings.space + "Downloader, saveName"
-                + CyderStrings.colon + CyderStrings.space + downloadSaveName
-                + CyderStrings.comma + CyderStrings.space + "uuid"
-                + CyderStrings.colon + CyderStrings.space + YouTubeUtil.extractUuid(providedDownloadString);
+        String threadName = "YouTube Downloader, "
+                + "saveName=\"" + downloadSaveName + "\""
+                + ", uuid=\"" + YouTubeUtil.extractUuid(providedDownloadString) + "\"";
 
         CyderThreadRunner.submit(() -> {
             try {
-                if (shouldPrintUiElements()) {
-                    String audioName = downloadableName + outputExtension;
-                    printOutputHandler.println("Downloading audio as"
-                            + CyderStrings.colon + CyderStrings.space + audioName);
-
-                    createAndPrintUiElements();
-                }
+                String audioName = downloadableName + outputExtension;
 
                 isDownloading = true;
 
@@ -457,10 +407,6 @@ public class YouTubeAudioDownload {
 
                 isDone = true;
                 isDownloading = false;
-
-                if (shouldPrintUiElements()) {
-                    cleanUpPrintedUiElements();
-                }
             }
         }, threadName);
     }
@@ -627,8 +573,9 @@ public class YouTubeAudioDownload {
             thumbnailImage = ImageUtil.cropImage(thumbnailImage, xOffset, yOffset, w, h);
         }
 
-        File saveFile = Dynamic.buildDynamic(Dynamic.USERS.getFileName(), Console.INSTANCE.getUuid(),
-                UserFile.MUSIC.getName(), UserFile.ALBUM_ART, thumbnailDownloadName + Extension.PNG.getExtension());
+        // todo location needed here too
+        String saveName = thumbnailDownloadName + Extension.PNG.getExtension();
+        File saveFile = new File(saveName);
 
         downloadedThumbnailImage = thumbnailImage;
 
@@ -665,14 +612,6 @@ public class YouTubeAudioDownload {
         thumbnailDownloadName = YouTubeUtil.getDownloadSaveName(providedDownloadString);
     }
 
-    /**
-     * Returns whether ui elements should be printed for this Youtube video download.
-     *
-     * @return whether ui elements should be printed for this Youtube video download
-     */
-    private boolean shouldPrintUiElements() {
-        return printOutputHandler != null;
-    }
 
     /**
      * The actions to invoke when an exception is thrown inside of the download thread.
@@ -680,12 +619,10 @@ public class YouTubeAudioDownload {
      * @param e the thrown exception
      */
     private void onDownloadProcessException(Exception e) {
-        ExceptionHandler.handle(e);
-
-        if (shouldPrintUiElements()) {
-            printOutputHandler.println("An exception occurred while attempting to download, url: "
-                    + providedDownloadString);
-        }
+        e.printStackTrace();
+        // todo hook
+        //            printOutputHandler.println("An exception occurred while attempting to download, url: "
+        //                    + providedDownloadString);
     }
 
     /**
@@ -700,16 +637,10 @@ public class YouTubeAudioDownload {
         } else if (!isCanceled()) {
             isDownloaded = true;
 
-            AudioPlayer.playAudioNext(audioDownloadFile);
+            // todo hook for on finished
 
             if (onDownloadedCallback != null) {
                 onDownloadedCallback.run();
-            }
-
-            if (shouldPrintUiElements()) {
-                printOutputHandler.println("Download complete: saved as"
-                        + CyderStrings.space + downloadableName + CyderStrings.space
-                        + "and added to audio queue");
             }
         }
     }
@@ -739,7 +670,7 @@ public class YouTubeAudioDownload {
             downloadableRate = updateMatcher.group(rateIndex);
             downloadableEta = updateMatcher.group(etaIndex);
 
-            if (shouldPrintUiElements() && downloadProgressBar != null) {
+            if (downloadProgressBar != null) {
                 int value = (int) ((progress / 100.0f) * downloadProgressBar.getMaximum());
                 downloadProgressBar.setValue(value);
                 updateProgressLabelText();
@@ -751,21 +682,20 @@ public class YouTubeAudioDownload {
      * The actions to invoke when the download process ends without a successful exit code.
      */
     private void onDownloadFailed() {
-        if (shouldPrintUiElements()) {
-            if (isCanceled()) {
-                printOutputHandler.println("Canceled download due to user request");
-            } else {
-                printOutputHandler.println("Failed to download audio");
-            }
-        }
+        // todo hooks, maybe event based system for youtube download is the way to go
+        //        if (shouldPrintUiElements()) {
+        //            if (isCanceled()) {
+        //                printOutputHandler.println("Canceled download due to user request");
+        //            } else {
+        //                printOutputHandler.println("Failed to download audio");
+        //            }
+        //        }
     }
 
     /**
      * Creates and prints the progress bar, label, and cancel button to the linked input handler.
      */
     private void createAndPrintUiElements() {
-        Preconditions.checkState(printOutputHandler != null);
-
         downloadProgressBar = new CyderProgressBar(
                 CyderProgressBar.HORIZONTAL,
                 downloadProgressMin,
@@ -786,19 +716,20 @@ public class YouTubeAudioDownload {
         downloadProgressBar.setFocusable(false);
         downloadProgressBar.repaint();
 
-        downloadProgressLabel = new JLabel(CyderStrings.quote + downloadableName + CyderStrings.quote);
-        downloadProgressLabel.setFont(Console.INSTANCE.generateUserFont());
+        downloadProgressLabel = new JLabel("\"" + downloadableName + "\"");
+        downloadProgressLabel.setFont(CyderFonts.SEGOE_20);
         downloadProgressLabel.setHorizontalAlignment(JLabel.LEFT);
-        downloadProgressLabel.setForeground(Console.INSTANCE.getInputField().getForeground());
+        downloadProgressLabel.setForeground(CyderColors.vanilla);
 
-        printOutputHandler.println(downloadProgressBar);
-        printOutputHandler.println(downloadProgressLabel);
-        if (downloadedThumbnailImage != null) {
-            printDownloadedThumbnail();
-        }
-        printOutputHandler.println(createCancelDownloadButton());
-
-        printOutputHandler.addPrintedLabel(downloadProgressLabel);
+        // todo
+        //        printOutputHandler.println(downloadProgressBar);
+        //        printOutputHandler.println(downloadProgressLabel);
+        //        if (downloadedThumbnailImage != null) {
+        //            printDownloadedThumbnail();
+        //        }
+        //        printOutputHandler.println(createCancelDownloadButton());
+        //
+        //        printOutputHandler.addPrintedLabel(downloadProgressLabel);
     }
 
     private void printDownloadedThumbnail() {
@@ -828,7 +759,7 @@ public class YouTubeAudioDownload {
                 downloadedThumbnailImage.getWidth(), downloadedThumbnailImage.getHeight());
         parent.add(imageLabel);
 
-        printOutputHandler.println(parent);
+        // todo print parent
     }
 
     /**
@@ -841,7 +772,6 @@ public class YouTubeAudioDownload {
         cancelButton.setLeftTextPadding(StringUtil.generateSpaces(5));
         cancelButton.setRightTextPadding(StringUtil.generateSpaces(4));
         cancelButton.setText(CANCEL);
-        cancelButton.setFont(Console.INSTANCE.getInputField().getFont());
         cancelButton.addActionListener(e -> onCancelButtonPressed());
 
         return cancelButton;
@@ -854,8 +784,6 @@ public class YouTubeAudioDownload {
         if (!isCanceled() && isDownloading()) {
             cancel();
             cancelButton.setText(CANCELED);
-        } else if (isDownloaded) {
-            AudioPlayer.showGui(getAudioDownloadFile());
         }
     }
 
@@ -909,9 +837,7 @@ public class YouTubeAudioDownload {
             if (!FileUtil.getFilename(child).startsWith(nameWithoutExtension)) continue;
 
             if (!OsUtil.deleteFile(child)) {
-                Logger.log(LogTag.SYSTEM_IO, "Could not delete file resulting from YouTube "
-                        + "download operation canceled, location=" + parentDirectory.getAbsolutePath()
-                        + ", name=" + nameWithoutExtension);
+                // todo on delete failure
             }
         }
     }

@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * A YouTube video class containing information related to a YouTube video.
  * This is contained in the {@link YouTubeSearchResultPage} list.
@@ -31,9 +28,7 @@ public class YouTubeVideo {
     /**
      * Constructs a new YouTubeVideo.
      */
-    public YouTubeVideo() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public YouTubeVideo() {}
 
     /**
      * Returns the kind. Typically "kind": "youtube#searchResult".

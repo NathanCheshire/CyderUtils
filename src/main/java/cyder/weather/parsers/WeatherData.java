@@ -1,8 +1,5 @@
 package cyder.weather.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 import java.util.ArrayList;
 
 /**
@@ -77,9 +74,7 @@ public class WeatherData {
     /**
      * Constructs a new weather data object.
      */
-    public WeatherData() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public WeatherData() {}
 
     /**
      * Returns the coords object.

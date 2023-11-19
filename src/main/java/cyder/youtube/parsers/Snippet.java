@@ -1,8 +1,5 @@
 package cyder.youtube.parsers;
 
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
-
 /**
  * A snippet for a {@link YouTubeVideo} object.
  */
@@ -50,9 +47,7 @@ public class Snippet {
     /**
      * Constructs a new Snippet.
      */
-    public Snippet() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Snippet() {}
 
     /**
      * Returns the formatted time string the YouTube video was published at.

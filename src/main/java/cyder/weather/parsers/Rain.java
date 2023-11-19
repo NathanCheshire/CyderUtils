@@ -1,8 +1,6 @@
 package cyder.weather.parsers;
 
 import com.google.gson.annotations.SerializedName;
-import cyder.logging.LogTag;
-import cyder.logging.Logger;
 
 /**
  * The rain object for {@link WeatherData} objects.
@@ -17,9 +15,7 @@ public class Rain {
     /**
      * Constructs a new rain object.
      */
-    public Rain() {
-        Logger.log(LogTag.OBJECT_CREATION, this);
-    }
+    public Rain() {}
 
     /**
      * Returns the one hour field.
