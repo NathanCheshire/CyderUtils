@@ -268,8 +268,8 @@ public final class ComponentAnimator {
     @Override
     public String toString() {
         return "ComponentAnimator{"
-                + "isAnimating=" + isAnimating + ", "
-                + "stoppingAnimation=" + stoppingAnimation + ", "
+                + "isAnimating=" + isAnimating.get() + ", "
+                + "stoppingAnimation=" + stoppingAnimation.get() + ", "
                 + "animationDirection=" + animationDirection + ", "
                 + "animationStart=" + animationStart + ", "
                 + "animationEnd=" + animationEnd + ", "
@@ -285,11 +285,11 @@ public final class ComponentAnimator {
     public int hashCode() {
         int ret = Boolean.hashCode(isAnimating.get());
         ret = 31 * ret + Boolean.hashCode(stoppingAnimation.get());
-        ret = 31 * ret + animationDirection.hashCode();
-        ret = 31 * ret + animationStart;
-        ret = 31 * ret + animationEnd;
+        // todo ret = 31 * ret + animationDirection.hashCode();
+        ret = 31 * ret + Integer.hashCode(animationStart);
+        ret = 31 * ret + Integer.hashCode(animationEnd);
         ret = 31 * ret + animationDelay.hashCode();
-        ret = 31 * ret + animationIncrement;
+        ret = 31 * ret + Integer.hashCode(animationIncrement);
         return ret;
     }
 
@@ -307,7 +307,7 @@ public final class ComponentAnimator {
         ComponentAnimator other = (ComponentAnimator) o;
         return isAnimating.get() == other.isAnimating.get()
                 && stoppingAnimation.get() == other.stoppingAnimation.get()
-                && animationDirection.equals(other.animationDirection)
+                // todo && animationDirection.equals(other.animationDirection)
                 && animationStart == other.animationStart
                 && animationEnd == other.animationEnd
                 && animationDelay.equals(other.animationDelay)

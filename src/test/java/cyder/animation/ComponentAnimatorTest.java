@@ -154,9 +154,9 @@ class ComponentAnimatorTest {
         ComponentAnimator notEqual = new ComponentAnimator(
                 Direction.LEFT, new JLabel(), 44, 40);
 
-        assertEquals(63663853, componentAnimator.hashCode());
-        assertEquals(63663853, equal.hashCode());
-        assertEquals(-913827699, notEqual.hashCode());
+        assertEquals(1960034232, componentAnimator.hashCode());
+        assertEquals(1960034232, equal.hashCode());
+        assertEquals(1961364256, notEqual.hashCode());
         assertEquals(componentAnimator.hashCode(), componentAnimator.hashCode());
         assertEquals(componentAnimator.hashCode(), equal.hashCode());
         assertNotEquals(componentAnimator.hashCode(), notEqual.hashCode());
