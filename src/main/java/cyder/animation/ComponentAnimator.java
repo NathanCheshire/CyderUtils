@@ -74,7 +74,7 @@ public final class ComponentAnimator {
      * @param animationStart     the starting value of the animation
      * @param animationEnd       the ending value of the animation
      * @throws NullPointerException     if the provided direction or component are null
-     * @throws IllegalArgumentException if the start is less than or equal to the end
+     * @throws IllegalArgumentException if the animation start value is invalid compared to the animation end value
      */
     public ComponentAnimator(Direction animationDirection, Component animationComponent,
                              int animationStart, int animationEnd) {
@@ -253,7 +253,7 @@ public final class ComponentAnimator {
     /**
      * Requests that the animation be stopped if presently animating.
      *
-     * @return whether the animation was requested to stop
+     * @return whether the animation was running before the stop request was sent
      */
     @CanIgnoreReturnValue
     public boolean stopAnimation() {
@@ -271,7 +271,6 @@ public final class ComponentAnimator {
                 + "isAnimating=" + isAnimating + ", "
                 + "stoppingAnimation=" + stoppingAnimation + ", "
                 + "animationDirection=" + animationDirection + ", "
-                + "animationComponent=" + animationComponent + ", "
                 + "animationStart=" + animationStart + ", "
                 + "animationEnd=" + animationEnd + ", "
                 + "animationDelay=" + animationDelay + ", "
@@ -284,10 +283,9 @@ public final class ComponentAnimator {
      */
     @Override
     public int hashCode() {
-        int ret = isAnimating.hashCode();
-        ret = 31 * ret + stoppingAnimation.hashCode();
+        int ret = Boolean.hashCode(isAnimating.get());
+        ret = 31 * ret + Boolean.hashCode(stoppingAnimation.get());
         ret = 31 * ret + animationDirection.hashCode();
-        ret = 31 * ret + animationComponent.hashCode();
         ret = 31 * ret + animationStart;
         ret = 31 * ret + animationEnd;
         ret = 31 * ret + animationDelay.hashCode();
@@ -307,10 +305,9 @@ public final class ComponentAnimator {
         }
 
         ComponentAnimator other = (ComponentAnimator) o;
-        return isAnimating.equals(other.isAnimating)
-                && stoppingAnimation.equals(other.stoppingAnimation)
+        return isAnimating.get() == other.isAnimating.get()
+                && stoppingAnimation.get() == other.stoppingAnimation.get()
                 && animationDirection.equals(other.animationDirection)
-                && animationComponent.equals(other.animationComponent)
                 && animationStart == other.animationStart
                 && animationEnd == other.animationEnd
                 && animationDelay.equals(other.animationDelay)
