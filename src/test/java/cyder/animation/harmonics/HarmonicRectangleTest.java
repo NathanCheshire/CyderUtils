@@ -1,6 +1,7 @@
 package cyder.animation.harmonics;
 
 import cyder.constants.CyderColors;
+import cyder.threads.ThreadUtil;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -41,6 +42,10 @@ public class HarmonicRectangleTest {
 
         assertDoesNotThrow(() -> new HarmonicRectangle(0, 0, 1, 1));
         assertDoesNotThrow(() -> new HarmonicRectangle(0, 0, 10, 10));
+
+        // Other constructor
+        assertThrows(NullPointerException.class, () -> new HarmonicRectangle(null, null));
+        assertThrows(NullPointerException.class, () -> new HarmonicRectangle(new Dimension(1,1), null));
     }
 
     /**
@@ -61,7 +66,7 @@ public class HarmonicRectangleTest {
     void testGetAndSetBackgroundColor() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
         assertEquals(CyderColors.vanilla, rect.getBackgroundColor());
-        Color color = new Color(0,51,50);
+        Color color = new Color(0, 51, 50);
         rect.setBackgroundColor(color);
         assertEquals(color, rect.getBackgroundColor());
     }
@@ -88,12 +93,43 @@ public class HarmonicRectangleTest {
         assertEquals(22, rect.getAnimationIncrement());
     }
 
+    @Test
+    void bullshit() {
+        for (int i = 0 ; i < 100 ; i++) {
+            testAnimationCycle();
+        }
+    }
+
     /**
      * Tests for the animation cycle such as starting, running, and stopping.
      */
     @Test
     void testAnimationCycle() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 20, 100, 20);
+        rect.setAnimationIncrement(5);
+        rect.setHarmonicDirection(HarmonicDirection.HORIZONTAL);
 
+        int stepTime = 50;
+
+        rect.setAnimationDelay(Duration.ofMillis(stepTime));
+        assertEquals(0, rect.getWidth());
+        assertEquals(20, rect.getHeight());
+
+        rect.animate();
+        assertTrue(rect.isAnimating());
+        ThreadUtil.sleep(stepTime * 5); // five steps should put width around 25
+        rect.stopAnimation();
+        ThreadUtil.sleep(100); // wait for animation to stop
+        assertFalse(rect.isAnimating());
+        assertEquals(25, rect.getWidth());
+
+        rect.animate();
+        assertTrue(rect.isAnimating());
+        ThreadUtil.sleep(stepTime * 7); // five steps should put width around 60
+        rect.stopAnimation();
+        ThreadUtil.sleep(100); // wait for animation to stop
+        assertFalse(rect.isAnimating());
+        assertEquals(60, rect.getWidth());
     }
 
     /**
