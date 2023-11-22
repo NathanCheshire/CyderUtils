@@ -257,57 +257,76 @@ public final class HarmonicRectangle extends JLabel {
      * Performs a singular animation frame step.
      */
     private void innerAnimationStep() {
-        int width = getWidth();
-        int height = getHeight();
-
         switch (harmonicDirection) {
-            case HORIZONTAL -> {
-                switch (scalingDirection) {
-                    case INCREASING -> {
-                        if (width + animationIncrement < maxWidth) {
-                            setSize(width + animationIncrement, height);
-                        } else {
-                            setSize(maxWidth, height);
-                            scalingDirection = ScalingDirection.DECREASING;
-                        }
-                    }
-                    case DECREASING -> {
-                        if (width - animationIncrement > minWidth) {
-                            setSize(width - animationIncrement, height);
-                        } else {
-                            setSize(minWidth, height);
-                            scalingDirection = ScalingDirection.INCREASING;
-                        }
-                    }
-                    default -> throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
-                }
-            }
-            case VERTICAL -> {
-                switch (scalingDirection) {
-                    case INCREASING -> {
-                        if (height + animationIncrement < maxHeight) {
-                            setSize(width, height + animationIncrement);
-                        } else {
-                            setSize(width, maxHeight);
-                            scalingDirection = ScalingDirection.DECREASING;
-                        }
-                    }
-                    case DECREASING -> {
-                        if (height - animationIncrement > minHeight) {
-                            setSize(width, height - animationIncrement);
-                        } else {
-                            setSize(width, minHeight);
-                            scalingDirection = ScalingDirection.INCREASING;
-                        }
-                    }
-                    default -> throw new IllegalStateException("Invalid delta direction: " + scalingDirection);
-                }
-            }
+            case HORIZONTAL -> innerHorizontalAnimationStep();
+            case VERTICAL -> innerVerticalAnimationStep();
             default -> throw new IllegalStateException("Invalid harmonic direction: " + harmonicDirection);
         }
 
         revalidate();
         repaint();
+    }
+
+    /**
+     * Takes an animation step in the horizontal direction.
+     */
+    @ForReadability
+    private void innerHorizontalAnimationStep() {
+        int width = getWidth();
+        int height = getHeight();
+        int increasedWidth = width + animationIncrement;
+        int decreasedWidth = width - animationIncrement;
+
+        switch (scalingDirection) {
+            case INCREASING -> {
+                if (increasedWidth < maxWidth) {
+                    setSize(increasedWidth, height);
+                } else {
+                    setSize(maxWidth, height);
+                    scalingDirection = ScalingDirection.DECREASING;
+                }
+            }
+            case DECREASING -> {
+                if (decreasedWidth > minWidth) {
+                    setSize(decreasedWidth, height);
+                } else {
+                    setSize(minWidth, height);
+                    scalingDirection = ScalingDirection.INCREASING;
+                }
+            }
+            default -> throw new IllegalStateException("Invalid scaling direction: " + scalingDirection);
+        }
+    }
+
+    /**
+     * Takes an animation step in the vertical direction.
+     */
+    @ForReadability
+    private void innerVerticalAnimationStep() {
+        int width = getWidth();
+        int height = getHeight();
+        int increasedHeight = height + animationIncrement;
+        int decreasedHeight = height - animationIncrement;
+
+        switch (scalingDirection) {
+            case INCREASING -> {
+                if (increasedHeight < maxHeight) {
+                    setSize(width, increasedHeight);
+                } else {
+                    setSize(width, maxHeight);
+                    scalingDirection = ScalingDirection.DECREASING;
+                }
+            }
+            case DECREASING -> {
+                if (decreasedHeight > minHeight) {
+                    setSize(width, decreasedHeight);
+                } else {
+                    setSize(width, minHeight);
+                    scalingDirection = ScalingDirection.INCREASING;
+                }
+            }
+            default -> throw new IllegalStateException("Invalid scaling direction: " + scalingDirection);
+        }
     }
 
     /**

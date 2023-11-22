@@ -101,7 +101,17 @@ public class HarmonicRectangleTest {
      */
     @Test
     void testManualAnimationStep() {
-
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 1);
+        rect.setHarmonicDirection(HarmonicDirection.HORIZONTAL);
+        rect.setAnimationIncrement(5);
+        assertFalse(rect.isAnimating());
+        rect.takeAnimationStep();
+        assertFalse(rect.isAnimating());
+        assertEquals(5, rect.getWidth());
+        rect.takeAnimationStep();
+        assertEquals(10, rect.getWidth());
+        rect.takeAnimationStep();
+        assertEquals(5, rect.getWidth());
     }
 
     /**
