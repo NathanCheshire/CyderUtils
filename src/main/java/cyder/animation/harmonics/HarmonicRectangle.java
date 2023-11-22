@@ -353,7 +353,7 @@ public final class HarmonicRectangle extends JLabel {
         ret = 31 * ret + Integer.hashCode(getHeight());
         ret = 31 * ret + Integer.hashCode(maxWidth);
         ret = 31 * ret + Integer.hashCode(maxHeight);
-        ret = 31 * ret + isAnimating.hashCode();
+        ret = 31 * ret + Boolean.hashCode(isAnimating.get());
         return ret;
     }
 

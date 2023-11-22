@@ -1,7 +1,10 @@
 package cyder.animation.harmonics;
 
-import org.junit.jupiter.api.Assertions;
+import cyder.constants.CyderColors;
 import org.junit.jupiter.api.Test;
+
+import java.awt.*;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,67 +44,48 @@ public class HarmonicRectangleTest {
     }
 
     /**
-     * Tests for teh get animation delay method.
+     * Tests for the get and set animation delay method.
      */
     @Test
-    void testGetAnimationDelay() {
-
+    void testGetAndSetAnimationDelay() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        assertEquals(Duration.ofMillis(50), rect.getAnimationDelay());
+        rect.setAnimationDelay(Duration.ofMillis(500));
+        assertEquals(Duration.ofMillis(500), rect.getAnimationDelay());
     }
 
     /**
-     * Tests for the set animation delay method.
+     * Tests for the get and set background color method.
      */
     @Test
-    void testSetAnimationDelay() {
-
+    void testGetAndSetBackgroundColor() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        assertEquals(CyderColors.vanilla, rect.getBackgroundColor());
+        Color color = new Color(0,51,50);
+        rect.setBackgroundColor(color);
+        assertEquals(color, rect.getBackgroundColor());
     }
 
     /**
-     * Tests for the get background color method.
+     * Tests for the get and set harmonic direction method.
      */
     @Test
-    void testGetBackgroundColor() {
-
+    void testGetAndSetHarmonicDirection() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        assertEquals(HarmonicDirection.VERTICAL, rect.getHarmonicDirection());
+        rect.setHarmonicDirection(HarmonicDirection.HORIZONTAL);
+        assertEquals(HarmonicDirection.HORIZONTAL, rect.getHarmonicDirection());
     }
 
     /**
-     * Tests for the set background color method.
+     * Tests for the get and set animation increment method.
      */
     @Test
-    void testSetBackgroundColor() {
-
-    }
-
-    /**
-     * Tests for the get harmonic direction method.
-     */
-    @Test
-    void testGetHarmonicDirection() {
-
-    }
-
-    /**
-     * Tests for the set harmonic direction method.
-     */
-    @Test
-    void testSetHarmonicDirection() {
-
-    }
-
-    /**
-     * Tests for the get animation increment method.
-     */
-    @Test
-    void testGetAnimationIncrement() {
-
-    }
-
-    /**
-     * Tests for the set animation increment method.
-     */
-    @Test
-    void testSetAnimationIncrement() {
-
+    void testGetAndSetAnimationIncrement() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        assertEquals(1, rect.getAnimationIncrement());
+        rect.setAnimationIncrement(22);
+        assertEquals(22, rect.getAnimationIncrement());
     }
 
     /**
@@ -125,7 +109,20 @@ public class HarmonicRectangleTest {
      */
     @Test
     void testToString() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        HarmonicRectangle otherRect = new HarmonicRectangle(5, 5, 15, 15);
+        HarmonicRectangle maxedOutRect = new HarmonicRectangle(5, 5, 15, 15);
+        maxedOutRect.setAnimationIncrement(22);
+        maxedOutRect.setBackgroundColor(CyderColors.navy);
+        maxedOutRect.setHarmonicDirection(HarmonicDirection.HORIZONTAL);
+        maxedOutRect.setAnimationDelay(Duration.ofSeconds(1));
 
+        assertEquals("HarmonicRectangle{minimumWidth=0, minimumHeight=0, currentWidth=0,"
+                + " currentHeight=0, maximumWidth=10, maximumHeight=10, isAnimating=false}", rect.toString());
+        assertEquals("HarmonicRectangle{minimumWidth=5, minimumHeight=5, currentWidth=5,"
+                + " currentHeight=5, maximumWidth=15, maximumHeight=15, isAnimating=false}", otherRect.toString());
+        assertEquals("HarmonicRectangle{minimumWidth=5, minimumHeight=5, currentWidth=5,"
+                + " currentHeight=5, maximumWidth=15, maximumHeight=15, isAnimating=false}", maxedOutRect.toString());
     }
 
     /**
@@ -133,7 +130,14 @@ public class HarmonicRectangleTest {
      */
     @Test
     void testHashCode() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        HarmonicRectangle equalRect = new HarmonicRectangle(0, 0, 10, 10);
+        HarmonicRectangle notEqualRect = new HarmonicRectangle(0, 0, 15, 15);
 
+        assertEquals(rect, rect);
+        assertEquals(rect, equalRect);
+        assertNotEquals(rect, notEqualRect);
+        assertNotEquals(rect, new Object());
     }
 
     /**
@@ -141,6 +145,15 @@ public class HarmonicRectangleTest {
      */
     @Test
     void testEquals() {
+        HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
+        HarmonicRectangle equalRect = new HarmonicRectangle(0, 0, 10, 10);
+        HarmonicRectangle notEqualRect = new HarmonicRectangle(0, 0, 15, 15);
 
+        assertEquals(11157, rect.hashCode());
+        assertEquals(11157, equalRect.hashCode());
+        assertEquals(16117, notEqualRect.hashCode());
+        assertEquals(rect.hashCode(), equalRect.hashCode());
+        assertNotEquals(rect.hashCode(), notEqualRect.hashCode());
+        assertNotEquals(rect.hashCode(), new Object().hashCode());
     }
 }
