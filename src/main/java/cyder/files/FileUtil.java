@@ -224,6 +224,22 @@ public final class FileUtil {
     }
 
     /**
+     * Creates a new {@link BufferedInputStream} from the provided file.
+     *
+     * @param file the file
+     * @return the buffered input stream
+     * @throws FileNotFoundException if the FileInputStream fails to find the provided file
+     * @throws NullPointerException if the provided file is null
+     * @throws IllegalArgumentException if the provided file does not exist
+     */
+    public static BufferedInputStream bisFromFile(File file) throws FileNotFoundException {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.exists());
+
+        return new BufferedInputStream(new FileInputStream(file));
+    }
+
+    /**
      * Returns the first n number of bytes from the provided file.
      *
      * @param file     the file to return n bytes from

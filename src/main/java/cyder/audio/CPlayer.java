@@ -2,6 +2,7 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.annotations.ForReadability;
 import cyder.files.FileUtil;
 import cyder.threads.CyderThreadRunner;
 import javazoom.jl.decoder.JavaLayerException;
@@ -10,9 +11,10 @@ import javazoom.jl.player.Player;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * An encapsulated JLayer{@link Player} for playing singular audio files and stopping.
+ * An encapsulated JLayer {@link Player} for playing singular audio files.
  */
 public final class CPlayer {
     /**
@@ -38,17 +40,17 @@ public final class CPlayer {
     /**
      * The runnables to invoke upon a completion event.
      */
-    private final ArrayList<Runnable> onCompletionCallback;
+    private final ArrayList<Runnable> onCompletionCallbacks;
 
     /**
      * Whether this player has been canceled.
      */
-    private boolean canceled;
+    private final AtomicBoolean canceled = new AtomicBoolean();
 
     /**
      * Whether this player is currently playing audio.
      */
-    private boolean playing;
+    private final AtomicBoolean playing = new AtomicBoolean();
 
     /**
      * Constructs a new CPlayer object.
@@ -65,7 +67,7 @@ public final class CPlayer {
         Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
 
         this.audioFile = audioFile;
-        this.onCompletionCallback = new ArrayList<>();
+        this.onCompletionCallbacks = new ArrayList<>();
     }
 
     /**
@@ -73,32 +75,40 @@ public final class CPlayer {
      * The audio is played in a new thread.
      */
     public void play() {
-        Preconditions.checkArgument(!playing);
+        Preconditions.checkArgument(!playing.get());
 
-        playing = true;
-        canceled = false;
+        playing.set(true);
+        canceled.set(false);
 
         CyderThreadRunner.submit(() -> {
-            try {
-                fis = new FileInputStream(audioFile);
-                bis = new BufferedInputStream(fis);
+            try (BufferedInputStream bis = FileUtil.bisFromFile(audioFile)) {
                 player = new Player(bis);
                 player.play();
-                if (!canceled) onCompletionCallback.forEach(Runnable::run);
-            } catch (FileNotFoundException | JavaLayerException e) {
+                if (!canceled.get()) onCompletionCallbacks.forEach(Runnable::run);
+            } catch (JavaLayerException | IOException e) {
                throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
             } finally {
                 closeResources();
-                playing = false;
+                playing.set(false);
             }
-        }, audioFile.getAbsolutePath());
+        }, getPlayThreadName());
+    }
+
+    /**
+     * Returns the thread name for the audio playing thread spawned by {@link #play()}.
+     *
+     * @return the thread name for the audio playing thread spawned by {@link #play()}
+     */
+    @ForReadability
+    private String getPlayThreadName() {
+        return "CPlayer{audioFile=\"" + audioFile.getAbsolutePath() + "\"}";
     }
 
     /**
      * Cancels this player, the on completion callbacks will not be invoked if present.
      */
     public void cancelPlaying() {
-        canceled = true;
+        canceled.set(true);
         closeResources();
     }
 
@@ -130,11 +140,12 @@ public final class CPlayer {
      *
      * @param callback the callback to invoke upon a completion event
      * @return this player
+     * @throws NullPointerException if the provide callback is null
      */
     @CanIgnoreReturnValue
     public CPlayer addOnCompletionCallback(Runnable callback) {
         Preconditions.checkNotNull(callback);
-        onCompletionCallback.add(callback);
+        onCompletionCallbacks.add(callback);
         return this;
     }
 
@@ -144,7 +155,7 @@ public final class CPlayer {
      * @return whether this player is currently playing audio
      */
     public boolean isPlaying() {
-        return playing;
+        return playing.get();
     }
 
     /**
@@ -161,8 +172,11 @@ public final class CPlayer {
      *
      * @param audioFile the audio file
      * @return whether the provided audio file is equal to the encapsulated audio file
+     * @throws NullPointerException if the provided file is null
      */
-    public boolean isUsing(File audioFile) {
+    public boolean isUsingAudioFile(File audioFile) {
+        Preconditions.checkNotNull(audioFile);
+
         return this.audioFile.equals(audioFile);
     }
 
@@ -179,7 +193,7 @@ public final class CPlayer {
 
         CPlayer other = (CPlayer) o;
         return audioFile == other.audioFile
-                && Objects.equals(other.onCompletionCallback, onCompletionCallback)
+                && Objects.equals(other.onCompletionCallbacks, onCompletionCallbacks)
                 && playing == other.playing
                 && canceled == other.canceled;
     }
@@ -190,9 +204,9 @@ public final class CPlayer {
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();
-        ret = 31 * ret + Objects.hashCode(onCompletionCallback);
-        ret = 31 * ret + Boolean.hashCode(playing);
-        ret = 31 * ret + Boolean.hashCode(canceled);
+        ret = 31 * ret + Objects.hashCode(onCompletionCallbacks);
+        ret = 31 * ret + Boolean.hashCode(playing.get());
+        ret = 31 * ret + Boolean.hashCode(canceled.get());
         return ret;
     }
 
@@ -201,11 +215,10 @@ public final class CPlayer {
      */
     @Override
     public String toString() {
-        return "AudioPlayer{" + "audioFile=" + audioFile
-                + ", fis=" + fis
-                + ", bis=" + bis
+        return "AudioPlayer{"
+                + "audioFile=" + audioFile
                 + ", player=" + player
-                + ", onCompletionCallback=" + onCompletionCallback
+                + ", onCompletionCallback=" + onCompletionCallbacks
                 + ", canceled=" + canceled
                 + ", playing=" + playing
                 + "}";

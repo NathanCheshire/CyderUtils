@@ -5,10 +5,15 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.files.FileUtil;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utilities related to playing general and system audio.
+ * General audio is defined as the primary audio and only one stream of
+ * primary audio may be playing at any particular instance. System audio
+ * is defined as more general sound such as effects, or system sounds.
+ * Multiple system audio files may be playing at any particular instant.
  */
 public enum GeneralAudioPlayer {
     /**
@@ -24,7 +29,7 @@ public enum GeneralAudioPlayer {
     /**
      * The list of system players which are currently playing audio.
      */
-    private final LinkedList<CPlayer> systemPlayers = new LinkedList<>();
+    private final List<CPlayer> systemPlayers = new ArrayList<>();
 
     /**
      * Plays the provided audio file as a general audio file.
@@ -50,10 +55,10 @@ public enum GeneralAudioPlayer {
      * Plays the provided audio file as a system audio file.
      *
      * @param audioFile the audio file to play
+     * @return the constructed system audio player which is now playing the requested audio
      * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist,
      *                                  is not a file, or is not a supported audio extension
-     * @return the constructed system audio player which is now playing the requested audio
      */
     @CanIgnoreReturnValue
     public CPlayer playSystemAudio(File audioFile) {
@@ -106,7 +111,7 @@ public enum GeneralAudioPlayer {
      */
     public boolean isSystemAudioPlaying(File audioFile) {
         Preconditions.checkNotNull(audioFile);
-        return systemPlayers.stream().anyMatch(player -> player.isUsing(audioFile) && player.isPlaying());
+        return systemPlayers.stream().anyMatch(player -> player.isUsingAudioFile(audioFile) && player.isPlaying());
     }
 
     /**
@@ -127,7 +132,7 @@ public enum GeneralAudioPlayer {
      */
     public boolean isGeneralAudioPlaying(File audioFile) {
         Preconditions.checkNotNull(audioFile);
-        return generalPlayer.isUsing(audioFile) && isGeneralAudioPlaying();
+        return generalPlayer.isUsingAudioFile(audioFile) && isGeneralAudioPlaying();
     }
 
     /**
