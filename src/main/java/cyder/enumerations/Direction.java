@@ -6,10 +6,25 @@ import com.google.common.base.Preconditions;
  * A cardinal direction.
  */
 public enum Direction {
-    LEFT,
-    RIGHT,
-    TOP,
-    BOTTOM;
+    LEFT("left"),
+    RIGHT("right"),
+    TOP("top"),
+    BOTTOM("bottom");
+
+    private final String name;
+
+    Direction(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the name of this direction.
+     *
+     * @return the name of this direction
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * Returns whether this direction runs along the horizontal axis.

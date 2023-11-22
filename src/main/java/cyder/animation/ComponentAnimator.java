@@ -285,7 +285,7 @@ public final class ComponentAnimator {
     public int hashCode() {
         int ret = Boolean.hashCode(isAnimating.get());
         ret = 31 * ret + Boolean.hashCode(stoppingAnimation.get());
-        // todo ret = 31 * ret + animationDirection.hashCode();
+        ret = 31 * ret + animationDirection.getName().hashCode();
         ret = 31 * ret + Integer.hashCode(animationStart);
         ret = 31 * ret + Integer.hashCode(animationEnd);
         ret = 31 * ret + animationDelay.hashCode();
@@ -307,7 +307,7 @@ public final class ComponentAnimator {
         ComponentAnimator other = (ComponentAnimator) o;
         return isAnimating.get() == other.isAnimating.get()
                 && stoppingAnimation.get() == other.stoppingAnimation.get()
-                // todo && animationDirection.equals(other.animationDirection)
+                && animationDirection.equals(other.animationDirection)
                 && animationStart == other.animationStart
                 && animationEnd == other.animationEnd
                 && animationDelay.equals(other.animationDelay)
