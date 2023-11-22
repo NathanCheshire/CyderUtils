@@ -1,6 +1,9 @@
 package cyder.animation.harmonics;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for a {@link HarmonicRectangle}.
@@ -16,7 +19,25 @@ public class HarmonicRectangleTest {
      */
     @Test
     void testConstruction() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(0, 0, 0, 0));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(0, 0, 1, 0));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(0, 0, 0, 10));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(0, 0, 10, 0));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(-1, 0, 10, 10));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(0, -1, 10, 10));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(10, 10, 10, 10));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HarmonicRectangle(10, 10, 9, 9));
 
+        assertDoesNotThrow(() -> new HarmonicRectangle(0, 0, 1, 1));
+        assertDoesNotThrow(() -> new HarmonicRectangle(0, 0, 10, 10));
     }
 
     /**
