@@ -1,9 +1,8 @@
 package cyder.animation.harmonics;
 
 import com.google.common.base.Preconditions;
+import cyder.annotations.ForReadability;
 import cyder.constants.CyderColors;
-import cyder.exceptions.IllegalMethodException;
-import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 
@@ -72,15 +71,6 @@ public final class HarmonicRectangle extends JLabel {
     private ScalingDirection scalingDirection = ScalingDirection.INCREASING;
 
     /**
-     * Suppress default constructor.
-     *
-     * @throws IllegalMethodException if invoked
-     */
-    private HarmonicRectangle() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
-    }
-
-    /**
      * Constructs a new instance of a HarmonicRectangle from the provided initial dimensions.
      * Minimum size will be set during construction.
      *
@@ -136,6 +126,8 @@ public final class HarmonicRectangle extends JLabel {
      * Sets the delay between animation frame updates.
      *
      * @param animationDelay the delay between animation frame updates
+     * @throws NullPointerException     if the provided animation delay is null
+     * @throws IllegalArgumentException if the provided duration is negative
      */
     public void setAnimationDelay(Duration animationDelay) {
         Preconditions.checkNotNull(animationDelay);
@@ -156,6 +148,7 @@ public final class HarmonicRectangle extends JLabel {
      * Sets the background color.
      *
      * @param backgroundColor the background color
+     * @throws NullPointerException if the provided color is null
      */
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = Preconditions.checkNotNull(backgroundColor);
@@ -174,6 +167,7 @@ public final class HarmonicRectangle extends JLabel {
      * Sets the direction to oscillate in.
      *
      * @param harmonicDirection the direction to oscillate in
+     * @throws NullPointerException if the provided direction is null
      */
     public void setHarmonicDirection(HarmonicDirection harmonicDirection) {
         this.harmonicDirection = Preconditions.checkNotNull(harmonicDirection);
@@ -192,6 +186,7 @@ public final class HarmonicRectangle extends JLabel {
      * Sets the increment to increase/decrease the animation side by.
      *
      * @param animationIncrement the increment to increase/decrease the animation side by
+     * @throws NullPointerException if the provided increment value is less than or equal to zero
      */
     public void setAnimationIncrement(int animationIncrement) {
         Preconditions.checkArgument(animationIncrement > 0);
@@ -220,7 +215,7 @@ public final class HarmonicRectangle extends JLabel {
 
         CyderThreadRunner.submit(() -> {
             while (isAnimating.get() && !stoppingAnimation.get()) {
-                performAnimationStep();
+                innerAnimationStep();
                 ThreadUtil.sleep(animationDelay);
             }
 
@@ -234,8 +229,10 @@ public final class HarmonicRectangle extends JLabel {
      *
      * @return the name of the thread to animate this harmonic rectangle
      */
+    @ForReadability
     private String getAnimationThreadName() {
-        return "HarmonicRectangleAnimatorThread{harmonicDirection=" + harmonicDirection
+        return "HarmonicRectangleAnimatorThread{"
+                + "harmonicDirection=" + harmonicDirection
                 + ", minWidth=" + minWidth
                 + ", minHeight=" + minHeight
                 + ", maxWidth=" + maxWidth
@@ -244,27 +241,41 @@ public final class HarmonicRectangle extends JLabel {
     }
 
     /**
+     * Takes an animation step manually provided the animation is not
+     * presently running and has not been requested to stop.
+     *
+     * @throws IllegalStateException if the animation is currently running or has been requested to stop
+     */
+    public void takeAnimationStep() {
+        Preconditions.checkState(!isAnimating.get());
+        Preconditions.checkState(!stoppingAnimation.get());
+
+        innerAnimationStep();
+    }
+
+    /**
      * Performs a singular animation frame step.
      */
-    public void performAnimationStep() {
-        // todo don't want to be able to do this manually if it's during animation.
+    private void innerAnimationStep() {
+        int width = getWidth();
+        int height = getHeight();
 
         switch (harmonicDirection) {
             case HORIZONTAL -> {
                 switch (scalingDirection) {
                     case INCREASING -> {
-                        if (getWidth() + animationIncrement < maxWidth) {
-                            setSize(getWidth() + animationIncrement, getHeight());
+                        if (width + animationIncrement < maxWidth) {
+                            setSize(width + animationIncrement, height);
                         } else {
-                            setSize(maxWidth, getHeight());
+                            setSize(maxWidth, height);
                             scalingDirection = ScalingDirection.DECREASING;
                         }
                     }
                     case DECREASING -> {
-                        if (getWidth() - animationIncrement > minWidth) {
-                            setSize(getWidth() - animationIncrement, getHeight());
+                        if (width - animationIncrement > minWidth) {
+                            setSize(width - animationIncrement, height);
                         } else {
-                            setSize(minWidth, getHeight());
+                            setSize(minWidth, height);
                             scalingDirection = ScalingDirection.INCREASING;
                         }
                     }
@@ -274,18 +285,18 @@ public final class HarmonicRectangle extends JLabel {
             case VERTICAL -> {
                 switch (scalingDirection) {
                     case INCREASING -> {
-                        if (getHeight() + animationIncrement < maxHeight) {
-                            setSize(getWidth(), getHeight() + animationIncrement);
+                        if (height + animationIncrement < maxHeight) {
+                            setSize(width, height + animationIncrement);
                         } else {
-                            setSize(getWidth(), maxHeight);
+                            setSize(width, maxHeight);
                             scalingDirection = ScalingDirection.DECREASING;
                         }
                     }
                     case DECREASING -> {
-                        if (getHeight() - animationIncrement > minHeight) {
-                            setSize(getWidth(), getHeight() - animationIncrement);
+                        if (height - animationIncrement > minHeight) {
+                            setSize(width, height - animationIncrement);
                         } else {
-                            setSize(getWidth(), minHeight);
+                            setSize(width, minHeight);
                             scalingDirection = ScalingDirection.INCREASING;
                         }
                     }
@@ -295,7 +306,6 @@ public final class HarmonicRectangle extends JLabel {
             default -> throw new IllegalStateException("Invalid harmonic direction: " + harmonicDirection);
         }
 
-        setSize(getWidth(), getHeight());
         revalidate();
         repaint();
     }
