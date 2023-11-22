@@ -93,13 +93,6 @@ public class HarmonicRectangleTest {
         assertEquals(22, rect.getAnimationIncrement());
     }
 
-    @Test
-    void bullshit() {
-        for (int i = 0 ; i < 100 ; i++) {
-            testAnimationCycle();
-        }
-    }
-
     /**
      * Tests for the animation cycle such as starting, running, and stopping.
      */
