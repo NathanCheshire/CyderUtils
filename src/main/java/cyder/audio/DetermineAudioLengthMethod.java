@@ -1,12 +1,8 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
-import cyder.audio.ffmpeg.FfmpegArgument;
-import cyder.audio.ffmpeg.FfmpegLogLevel;
-import cyder.audio.ffmpeg.FfmpegPrintFormat;
-import cyder.audio.ffmpeg.FfmpegStreamEntry;
+import cyder.audio.ffmpeg.*;
 import cyder.audio.parsers.ShowStreamOutput;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.constants.CyderRegexPatterns;
@@ -81,17 +77,17 @@ public enum DetermineAudioLengthMethod {
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.FFMPEG, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
             String absolutePath = audioFile.getAbsolutePath();
-            // todo ffmpeg command builder class?
-            ImmutableList<String> command = ImmutableList.of(
-                    FfmpegArgument.FFMPEG.getArgumentName(),
-                    FfmpegArgument.LOG_LEVEL.getArgument(), FfmpegLogLevel.QUIET.getLogLevelName(),
-                    FfmpegArgument.PRINT_FORMAT.getArgument(), FfmpegPrintFormat.JSON.getFormatName(),
-                    FfmpegArgument.SHOW_STREAMS.getArgument(),
-                    FfmpegArgument.SHOW_ENTRIES.getArgument(), FfmpegStreamEntry.DURATION.getStreamCommand(),
-                    StringUtil.surroundWithQuotes(absolutePath)
-            );
-            String joinedCommand = StringUtil.joinParts(command, " ");
-            Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(joinedCommand);
+
+            String command = new FfmpegCommandBuilder()
+                    .addArgument(FfmpegArgument.LOG_LEVEL.getArgument(), FfmpegLogLevel.QUIET.getLogLevelName())
+                    .addArgument(FfmpegArgument.PRINT_FORMAT.getArgument(), FfmpegPrintFormat.JSON.getFormatName())
+                    .addArgument(FfmpegArgument.SHOW_STREAMS.getArgument())
+                    .addArgument(FfmpegArgument.SHOW_ENTRIES.getArgument(),
+                            FfmpegStreamEntry.DURATION.getStreamCommand())
+                    .addArgument(StringUtil.surroundWithQuotes(absolutePath))
+                    .build();
+
+            Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(command);
             while (!futureResult.isDone()) Thread.onSpinWait();
 
             ProcessResult result = futureResult.get();

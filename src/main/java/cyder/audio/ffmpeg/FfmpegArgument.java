@@ -1,5 +1,8 @@
 package cyder.audio.ffmpeg;
 
+/**
+ * The FFmpeg command and arguments supported by Cyder.
+ */
 public enum FfmpegArgument {
     FFMPEG("ffmpeg"),
     LOG_LEVEL("v"),
@@ -13,10 +16,20 @@ public enum FfmpegArgument {
         this.argumentName = argumentName;
     }
 
+    /**
+     * Returns the name for this argument.
+     *
+     * @return the name for this argument
+     */
     public String getArgumentName() {
         return argumentName;
     }
 
+    /**
+     * Returns the argument prefixed with a dash.
+     *
+     * @return the argument prefixed with a dash
+     */
     public String getArgument() {
         return "-" + argumentName;
     }
