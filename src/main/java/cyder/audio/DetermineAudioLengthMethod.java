@@ -1,6 +1,7 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import cyder.annotations.ForReadability;
 import cyder.threads.CyderThreadFactory;
 
 import java.io.File;
@@ -47,21 +48,67 @@ public enum DetermineAudioLengthMethod {
         return audioLengthComputationFunction.apply(audioFile);
     }
 
+    /**
+     * Computes the length of the provided audio file using ffprobe.
+     *
+     * @param audioFile the audio file
+     * @return the length of the audio file
+     * @throws NullPointerException     if the provided audio file is null
+     * @throws IllegalArgumentException if the provided audio file is not a file,
+     *                                  does not exist, or is not a supported audio type
+     */
     private static Future<Duration> getLengthViaFfprobe(File audioFile) {
-        CyderThreadFactory threadFactory = new CyderThreadFactory("name");
-         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
+        Preconditions.checkNotNull(audioFile);
+        Preconditions.checkArgument(audioFile.isFile());
+        Preconditions.checkArgument(audioFile.exists());
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
-
-            return Duration.ofSeconds(0);
-         });
-    }
-
-    private static Future<Duration> getLengthViaMutagen(File audioFile) {
-        CyderThreadFactory threadFactory = new CyderThreadFactory("name");
+        CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.FFPROBE, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
 
 
             return Duration.ofSeconds(0);
         });
+    }
+
+    /**
+     * Computes the length of the provided audio file using Mutagen.
+     *
+     * @param audioFile the audio file
+     * @return the length of the audio file
+     * @throws NullPointerException     if the provided audio file is null
+     * @throws IllegalArgumentException if the provided audio file is not a file,
+     *                                  does not exist, or is not a supported audio type
+     */
+    private static Future<Duration> getLengthViaMutagen(File audioFile) {
+        Preconditions.checkNotNull(audioFile);
+        Preconditions.checkArgument(audioFile.isFile());
+        Preconditions.checkArgument(audioFile.exists());
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
+
+        CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
+        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
+
+
+            return Duration.ofSeconds(0);
+        });
+    }
+
+    /**
+     * Returns a new {@link CyderThreadFactory} for the {@link java.util.concurrent.ExecutorService}
+     * used to determine the audio length using a particular method.
+     *
+     * @param method    the method
+     * @param audioFile the audio file
+     * @return a new CyderThreadFactory
+     */
+    @ForReadability
+    private static CyderThreadFactory getThreadFactory(DetermineAudioLengthMethod method, File audioFile) {
+        String absolutePath = audioFile.getAbsolutePath();
+        String name = "DetermineAudioLengthMethodThread{"
+                + "method=" + method.toString()
+                + ", audioFile=\"" + absolutePath + "\""
+                + "}";
+        return new CyderThreadFactory(name);
     }
 }
