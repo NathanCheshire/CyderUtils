@@ -70,7 +70,6 @@ public enum GeneralAudioPlayer {
 
         CPlayer newSystemPlayer = new CPlayer(audioFile);
         systemPlayers.add(newSystemPlayer);
-        // todo is this safe? is there potential to remove this? from users pov that is
         newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
         newSystemPlayer.play();
         return newSystemPlayer;

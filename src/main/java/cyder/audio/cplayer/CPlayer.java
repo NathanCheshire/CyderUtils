@@ -23,16 +23,6 @@ public final class CPlayer {
     private final File audioFile;
 
     /**
-     * The file input stream for the audio file.
-     */
-    private FileInputStream fis;
-
-    /**
-     * The buffered input stream for the FileInputStream.
-     */
-    private BufferedInputStream bis;
-
-    /**
      * The JLayer player object.
      */
     private Player player;
@@ -101,7 +91,9 @@ public final class CPlayer {
      */
     @ForReadability
     private String getPlayThreadName() {
-        return "CPlayer{audioFile=\"" + audioFile.getAbsolutePath() + "\"}";
+        return "CPlayer{"
+                + "audioFile=\"" + audioFile.getAbsolutePath() + "\""
+                + "}";
     }
 
     /**
@@ -123,16 +115,8 @@ public final class CPlayer {
      * Closes all resources open by this player.
      */
     private void closeResources() {
-        try {
-            if (player != null) player.close();
-            player = null;
-            if (bis != null) bis.close();
-            bis = null;
-            if (fis != null) fis.close();
-            fis = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if (player != null) player.close();
+        player = null;
     }
 
     /**

@@ -2,6 +2,7 @@ package cyder.video;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.validation.SupportedAudioFileType;
+import cyder.ui.frame.CyderFrame;
 
 import java.io.File;
 
@@ -42,6 +43,35 @@ public final class CyderVideoFile {
      */
     public File extractAudio(SupportedAudioFileType fileType) {
         Preconditions.checkNotNull(fileType);
+
+        switch (fileType) {
+            case MP3 -> {
+                String command = "ffmpeg -i input.mp4 -q:a 0 -map a output.mp3";
+            }
+            case WAVE -> {
+                String command = "ffmpeg -i input.mp4 -map a output.wav";
+            }
+            case OGG -> {
+                String command = "ffmpeg -i input.mp4 -c:a libvorbis -q:a 4 -map a output.ogg";
+            }
+            case M4A -> {
+                String command = "ffmpeg -i input.mp4 -c:a aac -q:a 100 -map a output.m4a";
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * Shows the video player for the encapsulated video using a {@link CyderFrame}.
+     */
+    public void showVideoPlayer() {
+        // extract frames of video, partitioned or bulk, figure that out
+        // ffmpeg -i BadApple.mp4 "%04d.png"
+        // extract audio to mp3
+        // compute milliseconds per frame needed to make the video last as long as the audio does
+        // have audio playing and start moving through frames
+        // need to keep track of how far ahead/behind the audio is so that we can sleep for more/less
+        // to catch up
     }
 }
