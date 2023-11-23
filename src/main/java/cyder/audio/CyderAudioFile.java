@@ -3,6 +3,7 @@ package cyder.audio;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.audio.validation.SupportedAudioFileType;
 import cyder.files.FileUtil;
 
 import java.io.File;

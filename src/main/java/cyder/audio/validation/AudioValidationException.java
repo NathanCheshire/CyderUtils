@@ -1,5 +1,6 @@
-package cyder.audio;
+package cyder.audio.validation;
 
+import cyder.audio.AudioValidationUtil;
 import cyder.audio.wav.WaveFile;
 
 /**

@@ -1,7 +1,8 @@
-package cyder.audio;
+package cyder.audio.validation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import cyder.audio.AudioValidationUtil;
 import cyder.files.FileUtil;
 
 import java.io.File;

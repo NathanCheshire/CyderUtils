@@ -1129,4 +1129,9 @@ public final class StringUtil {
 
         return ret;
     }
+
+    public static String surroundWithQuotes(String string) {
+        Preconditions.checkNotNull(string);
+        return "\"" + string + "\"";
+    }
 }
