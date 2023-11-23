@@ -1,33 +1,18 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import cyder.audio.parsers.ShowStreamOutput;
-import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
-import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.process.ProcessResult;
-import cyder.process.ProcessUtil;
-import cyder.strings.CyderStrings;
-import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
-import cyder.time.TimeUtil;
 import cyder.utils.OsUtil;
-import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import static cyder.strings.CyderStrings.*;
 
 /**
  * Utilities related to supported audio files.
@@ -68,18 +53,6 @@ public final class AudioUtil {
      */
     private static final String HIGHPASS_LOWPASS_ARGS = "\"" + "highpass=f="
             + HIGHPASS + ", " + "lowpass=f=" + LOW_PASS + "\"";
-
-    /**
-     * A cache of previously computed millisecond times from audio files.
-     */
-    private static final ConcurrentHashMap<File, Integer> milliTimes = new ConcurrentHashMap<>();
-
-    /**
-     * Suppress default constructor.
-     */
-    private AudioUtil() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
-    }
 
     /**
      * Converts the mp3 file to a wav file and returns the file object.
@@ -218,45 +191,6 @@ public final class AudioUtil {
 
             return Optional.of(outputFile);
         });
-    }
-
-    /**
-     * Returns the milliseconds of the provided audio file using ffprobe's -show_format command.
-     * Note, this method is blocking. Callers should surround invocation of this method in a separate thread.
-     *
-     * @param audioFile the audio file
-     * @return the milliseconds of the provided file
-     * @throws ExecutionException   if the future task does not complete properly
-     * @throws FatalException       if the process result contains errors
-     * @throws InterruptedException if the thread was interrupted while waiting
-     */
-    public static Duration getLengthViaFfprobe(File audioFile) throws ExecutionException, InterruptedException {
-        Preconditions.checkNotNull(audioFile);
-        Preconditions.checkArgument(audioFile.exists());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
-
-        if (milliTimes.containsKey(audioFile)) return Duration.ofMillis(milliTimes.get(audioFile));
-
-        ImmutableList<String> command = ImmutableList.of(
-                "ffmpeg",
-                "-v", "quiet",
-                "-print_format", "json",
-                "-show_streams",
-                "-show_entries", "stream=duration",
-                "\"" + audioFile.getAbsolutePath() + "\""
-        );
-        Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(StringUtil.joinParts(command, " "));
-        while (!futureResult.isDone()) Thread.onSpinWait();
-        ProcessResult result = futureResult.get();
-        if (result.hasErrors()) throw new FatalException("Process result contains errors");
-        String joinedOutput = StringUtil.joinParts(result.getStandardOutput(), "");
-        String trimmedOutput = joinedOutput.replaceAll(CyderRegexPatterns.multipleWhiteSpaceRegex, "");
-        ShowStreamOutput output = SerializationUtil.fromJson(trimmedOutput, ShowStreamOutput.class);
-        String millisPropertyString = output.getStreams().get(0).getDuration();
-        double seconds = Double.parseDouble(millisPropertyString);
-        int millis = (int) (seconds * TimeUtil.millisInSecond);
-        milliTimes.put(audioFile, millis);
-        return Duration.ofMillis(millis);
     }
 
     /**

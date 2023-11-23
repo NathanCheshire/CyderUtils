@@ -1,8 +1,17 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
+import cyder.audio.parsers.ShowStreamOutput;
+import cyder.constants.CyderRegexPatterns;
+import cyder.exceptions.FatalException;
+import cyder.process.ProcessResult;
+import cyder.process.ProcessUtil;
+import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
+import cyder.time.TimeUtil;
+import cyder.utils.SerializationUtil;
 
 import java.io.File;
 import java.time.Duration;
@@ -15,9 +24,9 @@ import java.util.function.Function;
  */
 public enum DetermineAudioLengthMethod {
     /**
-     * Determine an audio file's length using ffprobe.
+     * Determine an audio file's length using ffmpeg.
      */
-    FFPROBE(DetermineAudioLengthMethod::getLengthViaFfprobe),
+    FFMPEG(DetermineAudioLengthMethod::getLengthViaFfmpeg),
 
     /**
      * Determine an audio file's length using the Python package Mutagen.
@@ -49,25 +58,49 @@ public enum DetermineAudioLengthMethod {
     }
 
     /**
-     * Computes the length of the provided audio file using ffprobe.
+     * Computes the length of the provided audio file using ffmpeg.
      *
      * @param audioFile the audio file
      * @return the length of the audio file
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
+     * @throws FatalException           if the process fails to determine the audio length
      */
-    private static Future<Duration> getLengthViaFfprobe(File audioFile) {
+    private static Future<Duration> getLengthViaFfmpeg(File audioFile) {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.isFile());
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
-        CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.FFPROBE, audioFile);
+        CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.FFMPEG, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
+            String absolutePath = audioFile.getAbsolutePath();
+            // todo could use an enum for ffmpeg args or something
+            ImmutableList<String> command = ImmutableList.of(
+                    "ffmpeg",
+                    "-v", "quiet", // log level quiet
+                    "-print_format", "json",
+                    "-show_streams",
+                    "-show_entries", "stream=duration",
+                    "\"" + absolutePath + "\""
+            );
+            String joinedCommand = StringUtil.joinParts(command, " ");
+            Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(joinedCommand);
+            while (!futureResult.isDone()) Thread.onSpinWait();
 
+            ProcessResult result = futureResult.get();
+            if (result.hasErrors()) throw new FatalException("Process result contains errors");
 
-            return Duration.ofSeconds(0);
+            String joinedOutput = StringUtil.joinParts(result.getStandardOutput(), "");
+            String trimmedOutput = joinedOutput.replaceAll(CyderRegexPatterns.multipleWhiteSpaceRegex, "");
+            ShowStreamOutput output = SerializationUtil.fromJson(trimmedOutput, ShowStreamOutput.class);
+
+            String millisPropertyString = output.getStreams().get(0).getDuration();
+            double seconds = Double.parseDouble(millisPropertyString);
+            int millis = (int) (seconds * TimeUtil.millisInSecond);
+
+            return Duration.ofMillis(millis);
         });
     }
 
@@ -88,7 +121,8 @@ public enum DetermineAudioLengthMethod {
 
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-
+            // construct python command using wrappers
+            // parse response
 
             return Duration.ofSeconds(0);
         });
