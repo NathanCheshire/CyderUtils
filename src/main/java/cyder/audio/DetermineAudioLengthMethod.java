@@ -122,9 +122,8 @@ public enum DetermineAudioLengthMethod {
 
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            // construct python command using wrappers
+            // todo construct python command using wrappers
             // parse response
-
             return Duration.ofSeconds(0);
         });
     }
