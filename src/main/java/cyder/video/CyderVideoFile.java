@@ -1,10 +1,16 @@
 package cyder.video;
 
 import com.google.common.base.Preconditions;
+import cyder.audio.ffmpeg.FfmpegArgument;
+import cyder.audio.ffmpeg.FfmpegCommandBuilder;
 import cyder.audio.validation.SupportedAudioFileType;
+import cyder.files.FileUtil;
+import cyder.strings.StringUtil;
 import cyder.ui.frame.CyderFrame;
+import cyder.utils.OsUtil;
 
 import java.io.File;
+import java.util.concurrent.Future;
 
 /**
  * An encapsulated supported video file for performing operations on.
@@ -41,23 +47,34 @@ public final class CyderVideoFile {
      * @return the file the video's audio was extracted to
      * @throws NullPointerException if the provided file type is null
      */
-    public File extractAudio(SupportedAudioFileType fileType) {
+    public Future<File> extractAudio(SupportedAudioFileType fileType) {
         Preconditions.checkNotNull(fileType);
 
+        String absolutePath = StringUtil.surroundWithQuotes(videoFile.getAbsolutePath());
+        FfmpegCommandBuilder builder = new FfmpegCommandBuilder()
+                .addArgument(FfmpegArgument.INPUT.getArgument(), absolutePath);
+
         switch (fileType) {
-            case MP3 -> {
-                String command = "ffmpeg -i input.mp4 -q:a 0 -map a output.mp3";
-            }
-            case WAVE -> {
-                String command = "ffmpeg -i input.mp4 -map a output.wav";
-            }
-            case OGG -> {
-                String command = "ffmpeg -i input.mp4 -c:a libvorbis -q:a 4 -map a output.ogg";
-            }
-            case M4A -> {
-                String command = "ffmpeg -i input.mp4 -c:a aac -q:a 100 -map a output.m4a";
-            }
+            case MP3 -> builder.addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "0")
+                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
+            case WAVE -> builder.addArgument(FfmpegArgument.MAP.getArgument(), "a");
+            case OGG -> builder.addArgument(FfmpegArgument.AUDIO_CODE_C.getArgument(), "libvorbis")
+                    .addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "4")
+                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
+            case M4A -> builder.addArgument(FfmpegArgument.AUDIO_CODE_C.getArgument(), "acc")
+                    .addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "100")
+                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
+            default -> throw new IllegalStateException("Invalid file type: " + fileType);
         }
+
+        String suffix = "_audio";
+        String outputFileName = FileUtil.getFilename(videoFile) + suffix + fileType.getExtension();
+        String uniqueName = FileUtil.constructUniqueName(new File(outputFileName), videoFile.getParentFile());
+        String absoluteUniqueName = OsUtil.buildFile(videoFile.getParentFile().getAbsolutePath(), uniqueName).getAbsolutePath();
+        builder.addArgument(absoluteUniqueName);
+
+        String conversionCommand = builder.build();
+        // todo process invoke and wait for, then find file with the name and wait return after future is complete
 
         return null;
     }
