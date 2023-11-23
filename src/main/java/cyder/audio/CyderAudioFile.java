@@ -80,14 +80,13 @@ public final class CyderAudioFile {
      * @param method the audio length computation method
      * @return the length of the audio file
      */
-    public Duration getAudioLength(DetermineAudioLengthMethod method) {
+    public Future<Duration> getAudioLength(DetermineAudioLengthMethod method) {
         Preconditions.checkNotNull(method);
-
-        return null;
+        return method.determineAudioLength(audioFile);
     }
 
     public File dreamify() {
-        return null; // todo
+        return null; // todo, should have a dreamifier util that this can invoke?
     }
 
     /**
