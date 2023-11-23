@@ -1,4 +1,4 @@
-package cyder.audio;
+package cyder.audio.cplayer;
 
 /**
  * An exception for {@link CPlayer}s.

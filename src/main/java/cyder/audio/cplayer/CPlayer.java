@@ -1,4 +1,4 @@
-package cyder.audio;
+package cyder.audio.cplayer;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;

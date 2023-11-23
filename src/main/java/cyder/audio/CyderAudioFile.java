@@ -74,13 +74,18 @@ public final class CyderAudioFile {
         return null;
     }
 
+    /**
+     * Returns the length of the encapsulated audio file using the provided method.
+     *
+     * @param method the audio length computation method
+     * @return the length of the audio file
+     */
     public Duration getAudioLength(DetermineAudioLengthMethod method) {
         Preconditions.checkNotNull(method);
 
         return null;
     }
 
-    // todo get length via some method (enum for method)
     public File dreamify() {
         return null; // todo
     }
@@ -88,7 +93,7 @@ public final class CyderAudioFile {
     /**
      * Dreamifies the encapsulated file and returns a reference to the new dreamified audio file.
      *
-     * @return
+     * @return returns the dreamified audio file
      */
     public Future<File> dreamify(File saveToFile) {
         return Futures.immediateFuture(null);

@@ -2,6 +2,7 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.audio.cplayer.CPlayer;
 import cyder.files.FileUtil;
 
 import java.io.File;
@@ -69,6 +70,7 @@ public enum GeneralAudioPlayer {
 
         CPlayer newSystemPlayer = new CPlayer(audioFile);
         systemPlayers.add(newSystemPlayer);
+        // todo is this safe? is there potential to remove this? from users pov that is
         newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
         newSystemPlayer.play();
         return newSystemPlayer;
