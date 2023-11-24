@@ -69,9 +69,8 @@ public final class CyderVideoFile {
 
         String suffix = "_audio";
         String outputFileName = FileUtil.getFilename(videoFile) + suffix + fileType.getExtension();
-        String uniqueName = FileUtil.constructUniqueName(new File(outputFileName), videoFile.getParentFile());
-        String absoluteUniqueName = OsUtil.buildFile(videoFile.getParentFile().getAbsolutePath(), uniqueName).getAbsolutePath();
-        builder.addArgument(absoluteUniqueName);
+        File uniqueFile = FileUtil.constructUniqueName(outputFileName, videoFile.getParentFile());
+        builder.addArgument(uniqueFile.getAbsolutePath());
 
         String conversionCommand = builder.build();
         // todo process invoke and wait for, then find file with the name and wait return after future is complete

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -228,8 +229,8 @@ public final class FileUtil {
      *
      * @param file the file
      * @return the buffered input stream
-     * @throws FileNotFoundException if the FileInputStream fails to find the provided file
-     * @throws NullPointerException if the provided file is null
+     * @throws FileNotFoundException    if the FileInputStream fails to find the provided file
+     * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist
      */
     public static BufferedInputStream bisFromFile(File file) throws FileNotFoundException {
@@ -495,6 +496,11 @@ public final class FileUtil {
         return null; // todo fix me, will probably need to use a directory watcher?
     }
 
+    // todo could be some kind of a chained op like
+    // ClosableUtil.closeIfOpen(myClosable)
+    // .elseIfAlreadyClosed(() -> {})
+    // .onError((error) -> {});
+
     /**
      * Closes the provided object which implements {@link Closeable}.
      *
@@ -508,43 +514,53 @@ public final class FileUtil {
     }
 
     /**
-     * Determines a unique name for the provided file so that it may be placed
-     * in the provided directory without collisions.
-     * Note that this returns the complete filename and not a {@link File} object.
+     * Constructs a unique file with which the caller can create, and write to, safely.
+     * The provided filenameAndExtension may be void of an extension if desired.
      *
-     * @param file      the file to ensure a unique name for
-     * @param directory the directory the file will be placed in
-     * @return a unique name for the file. Note this may or may not equal
-     * the original file name
-     * @throws NullPointerException     if either the provided file or directory are null
-     * @throws IllegalArgumentException if the directory does not exist or the file is a directory
+     * @param filenameAndExtension the proposed original filename and extension
+     *                             (if applicable) such as "file.txt" or "file"
+     * @param directory            the directory the file will be created in
+     * @return a File object representing a unique File object which can be safely
+     * created and written to in the provided directory
      */
-    public static String constructUniqueName(File file, File directory) {
-        Preconditions.checkNotNull(file);
+    public static File constructUniqueName(String filenameAndExtension, File directory) {
+        Preconditions.checkNotNull(filenameAndExtension);
+        Preconditions.checkArgument(!filenameAndExtension.trim().isEmpty());
         Preconditions.checkNotNull(directory);
         Preconditions.checkArgument(directory.exists());
         Preconditions.checkArgument(directory.isDirectory());
 
         File[] files = directory.listFiles();
-        if (files == null || ArrayUtil.isEmpty(files)) return file.getName();
+        if (ArrayUtil.nullOrEmpty(files)) {
+            return OsUtil.buildFile(directory.getAbsolutePath(), filenameAndExtension);
+        }
 
-        ArrayList<String> filenames = new ArrayList<>(files.length);
-        Arrays.stream(files).forEach(neighboringFile -> filenames.add(neighboringFile.getName()));
+        ImmutableList<String> filenames = ImmutableList.copyOf(
+                Arrays.stream(files).map(File::getName).collect(Collectors.toList()));
 
-        String filenameAndExtension = file.getName();
-        String[] filenameAndExtensionArr = filenameAndExtension.split("\\.");
-        String name = filenameAndExtensionArr[0];
-        String extension = filenameAndExtensionArr[1];
+        int lastPeriodIndex = filenameAndExtension.lastIndexOf("\\.");
+        if (lastPeriodIndex == -1) {
+            String ret = filenameAndExtension;
+            int number = 1;
+            while (StringUtil.in(ret, true, filenames)) {
+                ret = filenameAndExtension + "_" + number;
+                number++;
+            }
+
+            return OsUtil.buildFile(directory.getAbsolutePath(), ret);
+        }
+
+        String name = filenameAndExtension.substring(0, lastPeriodIndex);
+        String extension = filenameAndExtension.substring(lastPeriodIndex);
 
         String ret = filenameAndExtension;
-
         int number = 1;
         while (StringUtil.in(ret, true, filenames)) {
             ret = name + "_" + number + "." + extension;
             number++;
         }
 
-        return ret;
+        return OsUtil.buildFile(directory.getAbsolutePath(), ret);
     }
 
     /**
