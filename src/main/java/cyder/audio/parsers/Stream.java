@@ -558,22 +558,22 @@ public class Stream {
 
         Stream other = (Stream) o;
         return index == other.index
-                && Objects.equals(codecName, other.codecName)
-                && Objects.equals(codecLongName, other.codecLongName)
-                && Objects.equals(codecType, other.codecType)
-                && Objects.equals(codecTagString, other.codecTagString)
-                && Objects.equals(codecTag, other.codecTag)
-                && Objects.equals(sampleRate, other.sampleRate)
+                && codecName.equals(other.codecName)
+                && codecLongName.equals(other.codecLongName)
+                && codecType.equals(other.codecType)
+                && codecTagString.equals(other.codecTagString)
+                && codecTag.equals(other.codecTag)
+                && sampleRate.equals(other.sampleRate)
+                && channelLayout.equals(other.channelLayout)
+                && rFrameRate.equals(other.rFrameRate)
+                && avgFrameRate.equals(other.avgFrameRate)
+                && timeBase.equals(other.timeBase)
+                && startTime.equals(other.startTime)
+                && duration.equals(other.duration)
                 && channels == other.channels
-                && Objects.equals(channelLayout, other.channelLayout)
                 && bitsPerSample == other.bitsPerSample
-                && Objects.equals(rFrameRate, other.rFrameRate)
-                && Objects.equals(avgFrameRate, other.avgFrameRate)
-                && Objects.equals(timeBase, other.timeBase)
                 && startPts == other.startPts
-                && Objects.equals(startTime, other.startTime)
                 && durationTs == other.durationTs
-                && Objects.equals(duration, other.duration)
                 && bitRate == other.bitRate
                 && disposition == other.disposition
                 && tags == other.tags;

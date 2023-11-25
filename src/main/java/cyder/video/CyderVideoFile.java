@@ -107,7 +107,7 @@ public final class CyderVideoFile {
      * @return the thread name to use for an audio extraction process
      */
     @ForReadability
-    public String getAudioExtractionThreadName(SupportedAudioFileType fileType) {
+    private String getAudioExtractionThreadName(SupportedAudioFileType fileType) {
         return "CyderVideoFile audio extraction thread"
                 + ", file=\"" + videoFile.getAbsolutePath() + "\""
                 + ", fileType=" + fileType.name()
@@ -117,7 +117,9 @@ public final class CyderVideoFile {
     /**
      * Shows the video player for the encapsulated video using a {@link CyderFrame}.
      */
-    public void showVideoPlayer() {
+    private void showVideoPlayer() {
+        // todo logic at some point
+
         // extract frames of video, partitioned or bulk, figure that out
         // ffmpeg -i BadApple.mp4 "%04d.png"
         // extract audio to mp3

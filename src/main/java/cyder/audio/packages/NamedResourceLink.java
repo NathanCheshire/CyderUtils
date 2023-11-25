@@ -71,9 +71,9 @@ public final class NamedResourceLink {
     @Override
     public String toString() {
         return "NamedLink{"
-                + "name=\"" + filename
-                + "\", link=\"" + link
-                + "\"}";
+                + "name=\"" + filename + "\""
+                + ", link=\"" + link + "\""
+                + "}";
     }
 
     /**

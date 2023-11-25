@@ -10,7 +10,7 @@ public class Disposition {
      * The default prop value.
      */
     @SerializedName("default")
-    private int defaultProp;
+    private int defaultValue;
 
     /**
      * The dub value.
@@ -78,21 +78,21 @@ public class Disposition {
     public Disposition() {}
 
     /**
-     * Returns the default prop.
+     * Returns the default value.
      *
-     * @return the default prop
+     * @return the default value
      */
-    public int getDefaultProp() {
-        return defaultProp;
+    public int getDefault() {
+        return defaultValue;
     }
 
     /**
      * Sets the default prop.
      *
-     * @param defaultProp the default prop
+     * @param defaultValue the default value
      */
-    public void setDefaultProp(int defaultProp) {
-        this.defaultProp = defaultProp;
+    public void setDefaultValue(int defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     /**
@@ -299,7 +299,7 @@ public class Disposition {
     @Override
     public String toString() {
         return "Disposition{"
-                + "defaultProp=" + defaultProp
+                + "defaultProp=" + defaultValue
                 + ", dub=" + dub
                 + ", ordinal=" + ordinal
                 + ", comment=" + comment
@@ -319,7 +319,7 @@ public class Disposition {
      */
     @Override
     public int hashCode() {
-        int ret = Integer.hashCode(defaultProp);
+        int ret = Integer.hashCode(defaultValue);
         ret = 31 * ret + Integer.hashCode(dub);
         ret = 31 * ret + Integer.hashCode(ordinal);
         ret = 31 * ret + Integer.hashCode(comment);
@@ -346,7 +346,7 @@ public class Disposition {
         }
 
         Disposition other = (Disposition) o;
-        return defaultProp == other.defaultProp
+        return defaultValue == other.defaultValue
                 && dub == other.dub
                 && ordinal == other.ordinal
                 && comment == other.comment

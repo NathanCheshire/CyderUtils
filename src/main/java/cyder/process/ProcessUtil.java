@@ -1,13 +1,12 @@
 package cyder.process;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
-import cyder.threads.CyderThreadRunner;
 import cyder.utils.ArrayUtil;
 
 import java.io.BufferedReader;
@@ -17,9 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities related to processes and the Java {@link Process} API.
@@ -44,9 +40,9 @@ public final class ProcessUtil {
      */
     @CanIgnoreReturnValue
     public static Future<ProcessResult> getProcessOutput(String[] command) {
-        checkNotNull(command);
-        checkArgument(!ArrayUtil.isEmpty(command));
-        checkArgument(ImmutableList.copyOf(command).stream().noneMatch((cmd) -> cmd == null));
+        Preconditions.checkNotNull(command);
+        Preconditions.checkArgument(!ArrayUtil.isEmpty(command));
+        if (ImmutableList.copyOf(command).stream().anyMatch((cmd) -> cmd == null)) throw new IllegalArgumentException();
 
         return getProcessOutput(ArrayUtil.toList(command));
     }
@@ -61,9 +57,9 @@ public final class ProcessUtil {
      */
     @CanIgnoreReturnValue
     public static Future<ProcessResult> getProcessOutput(List<String> command) {
-        checkNotNull(command);
-        checkArgument(!command.isEmpty());
-        checkArgument(command.stream().noneMatch((cmd) -> cmd == null));
+        Preconditions.checkNotNull(command);
+        Preconditions.checkArgument(!command.isEmpty());
+        if (command.stream().anyMatch((cmd) -> cmd == null)) throw new IllegalArgumentException();
 
         return getProcessOutput(StringUtil.joinParts(command, " "));
     }
@@ -79,10 +75,10 @@ public final class ProcessUtil {
      */
     @CanIgnoreReturnValue
     public static Future<ProcessResult> getProcessOutput(String command) throws CyderProcessException {
-        checkNotNull(command);
-        checkArgument(!command.trim().isEmpty());
+        Preconditions.checkNotNull(command);
+        Preconditions.checkArgument(!command.trim().isEmpty());
 
-        String threadName = "getProcessOutput, command: " + "\"" + command + "\"";
+        String threadName = "getProcessOutput, command: " + StringUtil.surroundWithQuotes(command);
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             ArrayList<String> standardOutput = new ArrayList<>();
             ArrayList<String> errorOutput = new ArrayList<>();
@@ -93,18 +89,12 @@ public final class ProcessUtil {
 
                 String outputLine;
                 BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                while ((outputLine = outReader.readLine()) != null) {
-                    System.out.println(outputLine);
-                    standardOutput.add(outputLine);
-                }
+                while ((outputLine = outReader.readLine()) != null) standardOutput.add(outputLine);
                 outReader.close();
 
                 String errorLine;
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while ((errorLine = errorReader.readLine()) != null) {
-                    System.out.println(errorLine);
-                    errorOutput.add(errorLine);
-                }
+                while ((errorLine = errorReader.readLine()) != null) errorOutput.add(errorLine);
                 errorReader.close();
             } catch (IOException e) {
                 throw new CyderProcessException(e);
@@ -126,8 +116,8 @@ public final class ProcessUtil {
      * @throws CyderProcessException    if an {@link IOException} occurs when reading from the process's stream(s)
      */
     public static ImmutableList<String> runProcess(ProcessBuilder builder) {
-        checkNotNull(builder);
-        checkArgument(!builder.command().isEmpty());
+        Preconditions.checkNotNull(builder);
+        Preconditions.checkArgument(!builder.command().isEmpty());
 
         ArrayList<String> ret = new ArrayList<>();
 
@@ -138,9 +128,7 @@ public final class ProcessUtil {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
-            while ((line = reader.readLine()) != null) {
-                ret.add(line);
-            }
+            while ((line = reader.readLine()) != null) ret.add(line);
         } catch (IOException e) {
             throw new CyderProcessException(e);
         }
@@ -157,9 +145,9 @@ public final class ProcessUtil {
      * @throws IllegalArgumentException if the provided builders list is empty
      */
     public static ImmutableList<String> runProcesses(ImmutableList<ProcessBuilder> builders) {
-        checkNotNull(builders);
-        checkArgument(builders.stream().noneMatch((builder) -> builder == null));
-        checkArgument(!builders.isEmpty());
+        Preconditions.checkNotNull(builders);
+        Preconditions.checkArgument(builders.stream().noneMatch((builder) -> builder == null));
+        Preconditions.checkArgument(!builders.isEmpty());
 
         ArrayList<String> ret = new ArrayList<>();
         builders.forEach((processBuilder -> ret.addAll(runProcess(processBuilder))));
@@ -180,13 +168,13 @@ public final class ProcessUtil {
      *                                  from the provide command
      */
     public static void runAndWaitForProcess(String command) {
-        checkNotNull(command);
-        checkArgument(!command.trim().isEmpty());
+        Preconditions.checkNotNull(command);
+        Preconditions.checkArgument(!command.trim().isEmpty());
 
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-        } catch (InterruptedException ignored) {} catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new CyderProcessException(e);
         }
     }

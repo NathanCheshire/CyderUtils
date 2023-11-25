@@ -71,7 +71,7 @@ public final class CPlayer {
         canceled.set(false);
 
         CyderThreadRunner.submit(() -> {
-            try (BufferedInputStream bis = FileUtil.bisFromFile(audioFile)) {
+            try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
                 player.play();
                 if (!canceled.get()) onCompletionCallbacks.forEach(Runnable::run);

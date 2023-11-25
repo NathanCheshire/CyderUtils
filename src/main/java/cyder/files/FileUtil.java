@@ -224,8 +224,9 @@ public final class FileUtil {
         return true;
     }
 
+    // todo FileReadingUtils
     /**
-     * Creates a new {@link BufferedInputStream} from the provided file.
+     * Creates a new {@link BufferedInputStream} for the provided file to be read from.
      *
      * @param file the file
      * @return the buffered input stream
@@ -233,7 +234,7 @@ public final class FileUtil {
      * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist
      */
-    public static BufferedInputStream bisFromFile(File file) throws FileNotFoundException {
+    public static BufferedInputStream bisForFile(File file) throws FileNotFoundException {
         Preconditions.checkNotNull(file);
         Preconditions.checkArgument(file.exists());
 
