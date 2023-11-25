@@ -89,6 +89,15 @@ public final class FfmpegCommandBuilder {
     }
 
     /**
+     * Returns the list of command parts.
+     *
+     * @return the list of command parts
+     */
+    public ImmutableList<String> list() {
+        return ImmutableList.copyOf(commandParts);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
+import cyder.threads.CyderThreadFactory;
 import cyder.threads.CyderThreadRunner;
 import cyder.utils.ArrayUtil;
 
@@ -14,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -82,9 +83,7 @@ public final class ProcessUtil {
         checkArgument(!command.trim().isEmpty());
 
         String threadName = "getProcessOutput, command: " + "\"" + command + "\"";
-        AtomicReference<ProcessResult> ret = new AtomicReference<>(null);
-
-        CyderThreadRunner.submit(() -> {
+        return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             ArrayList<String> standardOutput = new ArrayList<>();
             ArrayList<String> errorOutput = new ArrayList<>();
 
@@ -94,23 +93,25 @@ public final class ProcessUtil {
 
                 String outputLine;
                 BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                while ((outputLine = outReader.readLine()) != null) standardOutput.add(outputLine);
+                while ((outputLine = outReader.readLine()) != null) {
+                    System.out.println(outputLine);
+                    standardOutput.add(outputLine);
+                }
                 outReader.close();
 
                 String errorLine;
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while ((errorLine = errorReader.readLine()) != null) errorOutput.add(errorLine);
+                while ((errorLine = errorReader.readLine()) != null) {
+                    System.out.println(errorLine);
+                    errorOutput.add(errorLine);
+                }
                 errorReader.close();
             } catch (IOException e) {
                 throw new CyderProcessException(e);
             }
 
-            ret.set(new ProcessResult(standardOutput, errorOutput));
-        }, threadName);
-
-        while (ret.get() == null) Thread.onSpinWait();
-
-        return Futures.immediateFuture(ret.get());
+            return new ProcessResult(standardOutput, errorOutput);
+        });
     }
 
     /**
@@ -173,10 +174,10 @@ public final class ProcessUtil {
      * that is thrown from the {@link Process#wait()} invocation.
      *
      * @param command the command to run
-     * @throws NullPointerException if the provided command is null
+     * @throws NullPointerException     if the provided command is null
      * @throws IllegalArgumentException if the provided command is empty or contains only whitespace
-     * @throws CyderProcessException if an {@link IOException} occurs when running the process created
-     * from the provide command
+     * @throws CyderProcessException    if an {@link IOException} occurs when running the process created
+     *                                  from the provide command
      */
     public static void runAndWaitForProcess(String command) {
         checkNotNull(command);

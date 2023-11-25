@@ -3,13 +3,20 @@ package cyder.video;
 import com.google.common.base.Preconditions;
 import cyder.audio.ffmpeg.FfmpegArgument;
 import cyder.audio.ffmpeg.FfmpegCommandBuilder;
+import cyder.audio.ffmpeg.FfmpegLogLevel;
 import cyder.audio.validation.SupportedAudioFileType;
+import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
+import cyder.process.ProcessResult;
+import cyder.process.ProcessUtil;
 import cyder.strings.StringUtil;
+import cyder.threads.CyderThreadFactory;
+import cyder.threads.ThreadUtil;
 import cyder.ui.frame.CyderFrame;
-import cyder.utils.OsUtil;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -38,6 +45,16 @@ public final class CyderVideoFile {
         this.videoFile = videoFile;
     }
 
+    public static void main(String[] args) {
+        File file = new File("/Users/nathancheshire/downloads/test.mp4");
+        CyderVideoFile videoFile = new CyderVideoFile(file);
+        Future<File> futureFile = videoFile.extractAudio(SupportedAudioFileType.MP3);
+        while (!futureFile.isDone()) Thread.onSpinWait();
+        System.out.println("done");
+        ThreadUtil.getCurrentThreads().forEach(System.out::println);
+        System.exit(0);
+    }
+
     /**
      * Extracts the encapsulated video file's audio to a new file which will neighbor
      * the encapsulated video file. The file will be suffixed with "_audio" and be of the
@@ -50,8 +67,9 @@ public final class CyderVideoFile {
     public Future<File> extractAudio(SupportedAudioFileType fileType) {
         Preconditions.checkNotNull(fileType);
 
-        String absolutePath = StringUtil.surroundWithQuotes(videoFile.getAbsolutePath());
+        String absolutePath = videoFile.getAbsolutePath();
         FfmpegCommandBuilder builder = new FfmpegCommandBuilder()
+                .addArgument(FfmpegArgument.LOG_LEVEL.getArgument(), FfmpegLogLevel.QUIET.getLogLevelName())
                 .addArgument(FfmpegArgument.INPUT.getArgument(), absolutePath);
 
         switch (fileType) {
@@ -72,10 +90,33 @@ public final class CyderVideoFile {
         File uniqueFile = FileUtil.constructUniqueName(outputFileName, videoFile.getParentFile());
         builder.addArgument(uniqueFile.getAbsolutePath());
 
-        String conversionCommand = builder.build();
-        // todo process invoke and wait for, then find file with the name and wait return after future is complete
+        // todo /Users/nathancheshire/downloads/test_audio.mp3_1: Invalid argument
 
-        return null;
+        CyderThreadFactory ctf = new CyderThreadFactory("todo");
+        return Executors.newSingleThreadExecutor(ctf).submit(() -> {
+            Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(builder.list());
+            while (!futureResult.isDone()) Thread.onSpinWait();
+            try {
+                ProcessResult result = futureResult.get();
+                if (result.hasErrors()) {
+                    throw new FatalException("Failed to extract audio from "
+                            + "\"" + videoFile.getAbsolutePath() + "\""
+                            + " to \"" + uniqueFile.getAbsolutePath() + "\"");
+                }
+
+                if (uniqueFile.exists()) {
+                    return uniqueFile;
+                } else {
+                    throw new FatalException("");
+                }
+            } catch (InterruptedException | ExecutionException ignored) {
+
+            }
+
+            throw new FatalException("Failed to extract audio from "
+                    + "\"" + videoFile.getAbsolutePath() + "\""
+                    + " to \"" + uniqueFile.getAbsolutePath() + "\"");
+        });
     }
 
     /**
