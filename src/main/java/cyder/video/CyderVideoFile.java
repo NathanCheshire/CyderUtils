@@ -1,6 +1,7 @@
 package cyder.video;
 
 import com.google.common.base.Preconditions;
+import cyder.annotations.ForReadability;
 import cyder.audio.ffmpeg.FfmpegArgument;
 import cyder.audio.ffmpeg.FfmpegCommandBuilder;
 import cyder.audio.ffmpeg.FfmpegLogLevel;
@@ -84,31 +85,33 @@ public final class CyderVideoFile {
         File uniqueFile = FileUtil.constructUniqueName(outputFileName, videoFile.getParentFile());
         builder.addArgument(uniqueFile.getAbsolutePath());
 
-        CyderThreadFactory ctf = new CyderThreadFactory("todo");
-        return Executors.newSingleThreadExecutor(ctf).submit(() -> {
+        CyderThreadFactory threadFactory = new CyderThreadFactory(getAudioExtractionThreadName(fileType));
+        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(builder.list());
             while (!futureResult.isDone()) Thread.onSpinWait();
             try {
                 ProcessResult result = futureResult.get();
-                if (result.hasErrors()) {
-                    throw new FatalException("Failed to extract audio from "
-                            + "\"" + videoFile.getAbsolutePath() + "\""
-                            + " to \"" + uniqueFile.getAbsolutePath() + "\"");
-                }
-
-                if (uniqueFile.exists()) {
-                    return uniqueFile;
-                } else {
-                    throw new FatalException("");
-                }
-            } catch (InterruptedException | ExecutionException ignored) {
-
+                if (result.hasErrors()) throw new FatalException("");
+                if (!uniqueFile.exists()) throw new FatalException("");
+                return uniqueFile;
+            } catch (InterruptedException | ExecutionException e) {
+                throw new FatalException(e);
             }
-
-            throw new FatalException("Failed to extract audio from "
-                    + "\"" + videoFile.getAbsolutePath() + "\""
-                    + " to \"" + uniqueFile.getAbsolutePath() + "\"");
         });
+    }
+
+    /**
+     * Returns the thread name to use for an audio extraction process.
+     *
+     * @param fileType the audio file type the audio is being extracted to
+     * @return the thread name to use for an audio extraction process
+     */
+    @ForReadability
+    public String getAudioExtractionThreadName(SupportedAudioFileType fileType) {
+        return "CyderVideoFile audio extraction thread"
+                + ", file=\"" + videoFile.getAbsolutePath() + "\""
+                + ", fileType=" + fileType.name()
+                + ", startTime=" + System.currentTimeMillis();
     }
 
     /**
