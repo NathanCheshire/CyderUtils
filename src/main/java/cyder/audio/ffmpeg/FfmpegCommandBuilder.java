@@ -80,6 +80,22 @@ public final class FfmpegCommandBuilder {
     }
 
     /**
+     * Adds all the provided arguments to the encapsulated list.
+     *
+     * @param arguments the list of arguments
+     * @return the arguments to add to the encapsulated list
+     * @throws NullPointerException if the provided list is null
+     * @throws IllegalArgumentException if the provided list is empty
+     */
+    public FfmpegCommandBuilder addAllArguments(List<String> arguments) {
+        Preconditions.checkNotNull(arguments);
+        Preconditions.checkArgument(!arguments.isEmpty());
+
+        commandParts.addAll(arguments);
+        return this;
+    }
+
+    /**
      * Joins all the command parts and returns the constructed command.
      *
      * @return the built command

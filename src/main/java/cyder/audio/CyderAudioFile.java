@@ -49,7 +49,7 @@ public final class CyderAudioFile {
     @CanIgnoreReturnValue
     public File convertTo(SupportedAudioFileType audioFileType) {
         Preconditions.checkNotNull(audioFileType);
-        Preconditions.checkArgument(!audioFileType.isAudioTypeofFile(audioFile));
+        Preconditions.checkArgument(!audioFileType.isAudioTypeOfFile(audioFile));
 
         return convertTo(audioFileType, FileUtil.getFilename(audioFile));
     }

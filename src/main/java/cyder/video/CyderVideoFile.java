@@ -10,7 +10,6 @@ import cyder.files.FileUtil;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
 import cyder.threads.CyderThreadFactory;
-import cyder.threads.ThreadUtil;
 import cyder.ui.frame.CyderFrame;
 
 import java.io.File;
@@ -78,20 +77,8 @@ public final class CyderVideoFile {
         String absolutePath = videoFile.getAbsolutePath();
         FfmpegCommandBuilder builder = new FfmpegCommandBuilder()
                 .addArgument(FfmpegArgument.LOG_LEVEL.getArgument(), FfmpegLogLevel.QUIET.getLogLevelName())
-                .addArgument(FfmpegArgument.INPUT.getArgument(), absolutePath);
-
-        switch (fileType) {
-            case MP3 -> builder.addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "0")
-                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
-            case WAVE -> builder.addArgument(FfmpegArgument.MAP.getArgument(), "a");
-            case OGG -> builder.addArgument(FfmpegArgument.AUDIO_CODE_C.getArgument(), "libvorbis")
-                    .addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "4")
-                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
-            case M4A -> builder.addArgument(FfmpegArgument.AUDIO_CODE_C.getArgument(), "acc")
-                    .addArgument(FfmpegArgument.AUDIO_QUALITY.getArgument(), "100")
-                    .addArgument(FfmpegArgument.MAP.getArgument(), "a");
-            default -> throw new IllegalStateException("Invalid file type: " + fileType);
-        }
+                .addArgument(FfmpegArgument.INPUT.getArgument(), absolutePath)
+                .addAllArguments(fileType.getConversionArguments());
 
         String outputFileName = FileUtil.getFilename(videoFile) + audioExtractionSuffix + fileType.getExtension();
         File uniqueFile = FileUtil.constructUniqueName(outputFileName, videoFile.getParentFile());
