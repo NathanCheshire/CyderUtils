@@ -538,7 +538,7 @@ public final class FileUtil {
         ImmutableList<String> filenames = ImmutableList.copyOf(
                 Arrays.stream(files).map(File::getName).collect(Collectors.toList()));
 
-        int lastPeriodIndex = filenameAndExtension.lastIndexOf("\\.");
+        int lastPeriodIndex = filenameAndExtension.lastIndexOf(".");
         if (lastPeriodIndex == -1) {
             String ret = filenameAndExtension;
             int number = 1;
@@ -556,7 +556,7 @@ public final class FileUtil {
         String ret = filenameAndExtension;
         int number = 1;
         while (StringUtil.in(ret, true, filenames)) {
-            ret = name + "_" + number + "." + extension;
+            ret = name + "_" + number + extension;
             number++;
         }
 

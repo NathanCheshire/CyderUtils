@@ -9,7 +9,6 @@ import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
-import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;
 import cyder.ui.frame.CyderFrame;
@@ -30,6 +29,12 @@ public final class CyderVideoFile {
     private final File videoFile;
 
     /**
+     * The suffix to be appended to the filename if the audio is
+     * extracted from this video file via {@link #extractAudio(SupportedAudioFileType)}.
+     */
+    private String audioExtractionSuffix = "_audio";
+
+    /**
      * Constructs a new CyderVideoFileObject.
      *
      * @param videoFile the video file
@@ -45,14 +50,17 @@ public final class CyderVideoFile {
         this.videoFile = videoFile;
     }
 
-    public static void main(String[] args) {
-        File file = new File("/Users/nathancheshire/downloads/test.mp4");
-        CyderVideoFile videoFile = new CyderVideoFile(file);
-        Future<File> futureFile = videoFile.extractAudio(SupportedAudioFileType.MP3);
-        while (!futureFile.isDone()) Thread.onSpinWait();
-        System.out.println("done");
-        ThreadUtil.getCurrentThreads().forEach(System.out::println);
-        System.exit(0);
+    /**
+     * Sets the audio extraction suffix for this CyderVideoFile.
+     *
+     * @param suffix the audio extraction suffix to use
+     */
+    public CyderVideoFile setAudioExtractionSuffix(String suffix) {
+        Preconditions.checkNotNull(suffix);
+        Preconditions.checkArgument(!suffix.trim().isEmpty());
+
+        this.audioExtractionSuffix = suffix;
+        return this;
     }
 
     /**
@@ -85,12 +93,9 @@ public final class CyderVideoFile {
             default -> throw new IllegalStateException("Invalid file type: " + fileType);
         }
 
-        String suffix = "_audio";
-        String outputFileName = FileUtil.getFilename(videoFile) + suffix + fileType.getExtension();
+        String outputFileName = FileUtil.getFilename(videoFile) + audioExtractionSuffix + fileType.getExtension();
         File uniqueFile = FileUtil.constructUniqueName(outputFileName, videoFile.getParentFile());
         builder.addArgument(uniqueFile.getAbsolutePath());
-
-        // todo /Users/nathancheshire/downloads/test_audio.mp3_1: Invalid argument
 
         CyderThreadFactory ctf = new CyderThreadFactory("todo");
         return Executors.newSingleThreadExecutor(ctf).submit(() -> {
