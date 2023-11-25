@@ -8,6 +8,7 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
@@ -237,33 +238,18 @@ public final class NetworkUtil {
      * surrounding thread as to not block the primary thread.
      *
      * @param urlResource   the link to download the file from
-     * @param referenceFile the file to save the resource to
+     * @param downloadTo the file to save the resource to
      * @return whether the downloading concluded without errors
      */
-    public static boolean downloadResource(String urlResource, File referenceFile) throws IOException {
+    public static boolean downloadResource(String urlResource, File downloadTo) throws IOException {
         Preconditions.checkNotNull(urlResource);
         Preconditions.checkArgument(!urlResource.isEmpty());
         Preconditions.checkArgument(isValidUrl(urlResource));
-        Preconditions.checkNotNull(referenceFile);
-        Preconditions.checkArgument(!referenceFile.exists());
+        Preconditions.checkNotNull(downloadTo);
+        Preconditions.checkArgument(!downloadTo.exists());
 
-        boolean created = false;
-
-        if (!referenceFile.exists()) {
-            try {
-                created = referenceFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        if (!created) {
-            throw new IOException("Could not create reference file: " + referenceFile);
-        }
-
-        try (BufferedInputStream in = new BufferedInputStream(new URL(urlResource).openStream()) ;
-             FileOutputStream fileOutputStream = new FileOutputStream(referenceFile)) {
+        try (BufferedInputStream in = FileUtil.bisForUrl(new URL(urlResource)) ;
+             FileOutputStream fileOutputStream = new FileOutputStream(downloadTo)) {
 
             byte[] dataBuffer = new byte[DOWNLOAD_RESOURCE_BUFFER_SIZE];
             int bytesRead;

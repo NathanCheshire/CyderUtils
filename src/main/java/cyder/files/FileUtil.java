@@ -17,6 +17,7 @@ import net.lingala.zip4j.ZipFile;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -225,6 +226,7 @@ public final class FileUtil {
     }
 
     // todo FileReadingUtils
+
     /**
      * Creates a new {@link BufferedInputStream} for the provided file to be read from.
      *
@@ -239,6 +241,21 @@ public final class FileUtil {
         Preconditions.checkArgument(file.exists());
 
         return new BufferedInputStream(new FileInputStream(file));
+    }
+
+    // todo method for url from string would be nice for this too, bis generator util? idk
+    /**
+     * Creates a new {@link BufferedInputStream} for reading from the provided url.
+     *
+     * @param url the url to read from
+     * @return the buffered input stream
+     * @throws NullPointerException if the provided url is null
+     * @throws IOException          if an IOException occurs while opening the URLs stream
+     */
+    public static BufferedInputStream bisForUrl(URL url) throws IOException {
+        Preconditions.checkNotNull(url);
+
+        return new BufferedInputStream(url.openStream());
     }
 
     /**
@@ -256,7 +273,7 @@ public final class FileUtil {
 
         ArrayList<Integer> ret = new ArrayList<>(numBytes);
 
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream bis = bisForFile(file)) {
             for (int i = 0 ; i < numBytes ; i++) {
                 int b = bis.read();
                 ret.add(b);

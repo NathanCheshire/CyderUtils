@@ -4,11 +4,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.files.FileUtil;
+import cyder.network.NetworkUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.OperatingSystem;
 import cyder.utils.OsUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -91,19 +95,18 @@ public final class ResourceDownloadLink {
                 + ", resource: " + resourceLink;
         CyderThreadFactory threadFactory = new CyderThreadFactory(threadFactoryName);
 
-        return Futures.immediateFuture(null);
-        // todo
-        //        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-        //            try {
-        //                boolean noErrors = NetworkUtil.downloadResource(resourceLink, compressedBinary);
-        //                while (!compressedBinary.exists()) Thread.onSpinWait();
-        //                // todo these two return booleans we need to check and we also need to return the final file still
-        //                FileUtil.unzip(compressedBinary, directoryToDownloadTo);
-        //                OsUtil.deleteFile(compressedBinary);
-        //            } catch (IOException e) {
-        //                return null;
-        //            }
-        //        });
+        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
+            try {
+                boolean noErrors = NetworkUtil.downloadResource(resourceLink, compressedBinary);
+                while (!compressedBinary.exists()) Thread.onSpinWait();
+                // todo these two return booleans we need to check and we also need to return the final file still
+                FileUtil.unzip(compressedBinary, directoryToDownloadTo);
+                OsUtil.deleteFile(compressedBinary);
+                return null;
+            } catch (IOException e) {
+                return null;
+            }
+        });
     }
 
     /**
