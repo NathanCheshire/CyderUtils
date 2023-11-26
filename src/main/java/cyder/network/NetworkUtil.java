@@ -10,6 +10,7 @@ import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;
+import cyder.threads.CyderThreadFactory;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.time.TimeUtil;
@@ -20,7 +21,6 @@ import java.io.*;
 import java.net.*;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -237,8 +237,8 @@ public final class NetworkUtil {
      * Note this method is blocking, invocation of it should be in a
      * surrounding thread as to not block the primary thread.
      *
-     * @param urlResource   the link to download the file from
-     * @param downloadTo the file to save the resource to
+     * @param urlResource the link to download the file from
+     * @param downloadTo  the file to save the resource to
      * @return whether the downloading concluded without errors
      */
     public static boolean downloadResource(String urlResource, File downloadTo) throws IOException {
@@ -248,13 +248,13 @@ public final class NetworkUtil {
         Preconditions.checkNotNull(downloadTo);
         Preconditions.checkArgument(!downloadTo.exists());
 
-        try (BufferedInputStream in = FileUtil.bisForUrl(new URL(urlResource)) ;
+        try (BufferedInputStream bis = FileUtil.bisForUrl(urlResource) ;
              FileOutputStream fileOutputStream = new FileOutputStream(downloadTo)) {
 
             byte[] dataBuffer = new byte[DOWNLOAD_RESOURCE_BUFFER_SIZE];
             int bytesRead;
 
-            while ((bytesRead = in.read(dataBuffer, 0, DOWNLOAD_RESOURCE_BUFFER_SIZE)) != -1) {
+            while ((bytesRead = bis.read(dataBuffer, 0, DOWNLOAD_RESOURCE_BUFFER_SIZE)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
         } catch (IOException e) {
@@ -301,7 +301,9 @@ public final class NetworkUtil {
         Preconditions.checkArgument(Port.portRange.contains(port));
         Preconditions.checkArgument(timeout > 0);
 
-        Callable<Long> task = () -> {
+        CyderThreadFactory threadFactory = new CyderThreadFactory(
+                "Latency finder, ip: " + ip + ", port: " + port + ", timeout: " + timeout);
+        return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
             try (Socket socket = new Socket()) {
                 SocketAddress address = new InetSocketAddress(ip, port);
                 Stopwatch stopwatch = Stopwatch.createStarted();
@@ -309,11 +311,10 @@ public final class NetworkUtil {
                 stopwatch.stop();
                 return stopwatch.elapsed().toMillis();
             }
-        };
-
-        return Executors.newSingleThreadExecutor().submit(task);
+        });
     }
 
+    // todo this should be configurable or at least encapsulated in the Port class we wrote
     /**
      * Returns whether the local port is available for binding.
      * Note this method blocks for approximately {@link #LOCAL_PORT_AVAILABLE_TIMEOUT}ms.

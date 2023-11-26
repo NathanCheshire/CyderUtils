@@ -7,6 +7,7 @@ import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.network.NetworkUtil;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
@@ -243,7 +244,23 @@ public final class FileUtil {
         return new BufferedInputStream(new FileInputStream(file));
     }
 
-    // todo method for url from string would be nice for this too, bis generator util? idk
+    /**
+     * Returns a new {@link BufferedInputStream} for reading from the provided url.
+     *
+     * @param urlString the url string
+     * @return the buffered input stream
+     * @throws NullPointerException     if the provided urlString is null
+     * @throws IllegalArgumentException if the provided urlString is empty or not a valid URL
+     * @throws IOException              if an IOException occurs while opening the URLs stream
+     */
+    public static BufferedInputStream bisForUrl(String urlString) throws IOException {
+        Preconditions.checkNotNull(urlString);
+        Preconditions.checkArgument(!urlString.isEmpty());
+        Preconditions.checkArgument(NetworkUtil.isValidUrl(urlString));
+
+        return bisForUrl(new URL(urlString));
+    }
+
     /**
      * Creates a new {@link BufferedInputStream} for reading from the provided url.
      *
@@ -260,6 +277,7 @@ public final class FileUtil {
 
     /**
      * Returns the first n number of bytes from the provided file.
+     * If the file is less than numBytes, this method will break early and return
      *
      * @param file     the file to return n bytes from
      * @param numBytes the number of bytes to return
@@ -271,18 +289,20 @@ public final class FileUtil {
         Preconditions.checkArgument(!file.isDirectory());
         Preconditions.checkArgument(numBytes > 0);
 
-        ArrayList<Integer> ret = new ArrayList<>(numBytes);
+        ArrayList<Integer> bytes = new ArrayList<>(numBytes);
 
         try (BufferedInputStream bis = bisForFile(file)) {
             for (int i = 0 ; i < numBytes ; i++) {
                 int b = bis.read();
-                ret.add(b);
+                if (b == -1) break;
+                bytes.add(b);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return ImmutableList.copyOf(ret);
+            while (bytes.size() < numBytes) bytes.add(0x00);
+            return ImmutableList.copyOf(bytes);
+        } catch (IOException e) {
+            throw new FatalException(e.getMessage());
+        }
     }
 
     /**
