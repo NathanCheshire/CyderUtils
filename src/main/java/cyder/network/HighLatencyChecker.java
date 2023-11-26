@@ -94,7 +94,7 @@ public final class HighLatencyChecker {
      * Starts this latency checker if not running.
      *
      * @throws IllegalStateException if this checker is already running
-     * or has not yet stopped after a {@link #stop()} invocation
+     *                               or has not yet stopped after a {@link #stop()} invocation
      */
     public void start() {
         Preconditions.checkState(!refreshLatencyThreadRunning.get());
@@ -274,7 +274,7 @@ public final class HighLatencyChecker {
             Preconditions.checkArgument(!checkerThreadName.trim().isEmpty());
 
             this.ipAddress = DEFAULT_IP_ADDRESS;
-            this.port = CommonServicePort.HTTP.constructPort();
+            this.port = Port.from(CommonServicePort.HTTP);
             this.latencyCategorizer = DEFAULT_LATENCY_CATEGORIZER;
             this.remoteName = DEFAULT_REMOTE_NAME;
             this.pingDelay = DEFAULT_PING_DELAY;
@@ -334,7 +334,7 @@ public final class HighLatencyChecker {
          */
         public Builder setPort(CommonServicePort commonServicePort) {
             Preconditions.checkNotNull(commonServicePort);
-            this.port = commonServicePort.constructPort();
+            this.port = Port.from(commonServicePort);
             return this;
         }
 

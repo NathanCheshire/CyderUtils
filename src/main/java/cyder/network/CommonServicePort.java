@@ -52,13 +52,4 @@ public enum CommonServicePort {
     public String getDescription() {
         return description;
     }
-
-    /**
-     * Constructs and returns a new {@link Port} object using this port.
-     *
-     * @return a new {@link Port} object using this port.
-     */
-    public Port constructPort() {
-        return new Port(this);
-    }
 }

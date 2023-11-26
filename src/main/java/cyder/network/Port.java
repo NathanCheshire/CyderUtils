@@ -3,6 +3,7 @@ package cyder.network;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.threads.CyderThreadFactory;
 
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An encapsulator class for operations on ports, specifically within the range
@@ -21,7 +21,7 @@ public class Port {
     /**
      * The range a general computer port must fall into.
      */
-    public static final Range<Integer> portRange = Range.closed(1024, 65535);
+    public static final Range<Integer> portRange = Range.closed(0, 65535);
 
     /**
      * The default port available timeout.
@@ -52,7 +52,7 @@ public class Port {
     public static Port from(CommonServicePort commonServicePort) {
         Preconditions.checkNotNull(commonServicePort);
 
-        return commonServicePort.constructPort();
+        return new Port(commonServicePort.getPort());
     }
 
     /**
@@ -84,7 +84,7 @@ public class Port {
      * @param portAvailableTimeout the time to wait for this local port to bind to determine whether it is available
      * @return this Port object
      */
-
+    @CanIgnoreReturnValue
     public Port setPortAvailableTimeout(Duration portAvailableTimeout) {
         Preconditions.checkNotNull(portAvailableTimeout);
         Preconditions.checkArgument(!portAvailableTimeout.isNegative());
@@ -102,17 +102,14 @@ public class Port {
         return portAvailableTimeout;
     }
 
-    private final AtomicBoolean isAvailableRunning = new AtomicBoolean();
-
     /**
      * Returns whether this port is locally available and able to be bound to.
+     * Note this method is blocking and will hold the current thread until this
+     * port is found to be either bound or not bound.
      *
      * @return whether this port is locally available and able to be bound to
      */
     public synchronized boolean isAvailable() {
-        Preconditions.checkState(!isAvailableRunning.get());
-        isAvailableRunning.set(true);
-
         Future<Boolean> futureIsAvailable = portAvailableFinderService.submit(
                 () -> {
                     try (ServerSocket socket = new ServerSocket(port)) {
@@ -127,12 +124,10 @@ public class Port {
         futureIsAvailable.cancel(true);
         if (futureIsAvailable.isDone()) {
             try {
-                isAvailableRunning.set(false);
                 return futureIsAvailable.get();
             } catch (Exception ignored) {}
         }
 
-        isAvailableRunning.set(false);
         return false;
     }
 
