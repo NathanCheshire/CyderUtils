@@ -28,5 +28,6 @@ class WhatsMyIpScraperTest {
         assertFalse(details.country().isEmpty());
 
         assertTrue(CyderRegexPatterns.ipv4Pattern.matcher(details.ip()).matches());
+        System.out.println("WhatsMyIpScraperTest.testGetIspAndNetworkDetails: " + details);
     }
 }
