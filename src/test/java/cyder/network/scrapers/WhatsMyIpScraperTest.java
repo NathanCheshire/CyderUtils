@@ -21,13 +21,14 @@ class WhatsMyIpScraperTest {
     void testGetIspAndNetworkDetails() {
         assertDoesNotThrow(WhatsMyIpScraper::getIspAndNetworkDetails);
         WhatsMyIpScraperResult details = WhatsMyIpScraper.getIspAndNetworkDetails();
-        assertFalse(details.isp().isEmpty());
-        assertFalse(details.hostname().isEmpty());
-        assertFalse(details.city().isEmpty());
-        assertFalse(details.state().isEmpty());
-        assertFalse(details.country().isEmpty());
+        assertFalse(details.getIsp().isEmpty());
+        assertFalse(details.getHostname().isEmpty());
+        assertFalse(details.getCity().isEmpty());
+        assertFalse(details.getState().isEmpty());
+        assertFalse(details.getCountry().isEmpty());
 
-        assertTrue(CyderRegexPatterns.ipv4Pattern.matcher(details.ip()).matches());
+        assertTrue(CyderRegexPatterns.ipv4Pattern.matcher(details.getIp()).matches());
+        assertEquals("https://www.whatismyisp.com/ip/" + details.getIp(), details.getSharableReport());
         System.out.println("WhatsMyIpScraperTest.testGetIspAndNetworkDetails: " + details);
     }
 }
