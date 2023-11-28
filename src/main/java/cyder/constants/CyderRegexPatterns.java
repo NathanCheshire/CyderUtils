@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 /**
  * Pre-compiled regex patterns for use throughout Cyder.
  */
+// todo this should be an enum really
 public final class CyderRegexPatterns {
     /**
      * Pattern used to validate an ipv4 address.

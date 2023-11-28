@@ -1,87 +1,81 @@
 package cyder.network;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderUrls;
-import cyder.exceptions.FatalException;
+import cyder.files.FileUtil;
 import cyder.parsers.ip.IpData;
-import cyder.props.Props;
 import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A manager for this session's IP data.
+ * A manager for
  */
-public enum IpDataManager {
+public final class IpDataManager {
     /**
-     * The IpDataManager instance.
+     * The IP data base url.
      */
-    INSTANCE;
+    private static final String ipDataBaseUrl = "https://api.ipdata.co/?api-key=";
 
-    IpDataManager() {}
+    /**
+     * The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid.
+     */
+    private static final int INVALID_KEY = -1;
+
+    /**
+     * The IP data key this manager uses to query ipdata.co.
+     */
+    private final String ipDataKey;
 
     /**
      * The most recent IpData object.
      */
-    private final AtomicReference<IpData> ipData = new AtomicReference<>();
+    private IpData ipData;
 
     /**
-     * Updates the ip data object encapsulated and returns it.
+     * Constructs a new IpDataManager which uses the provided key.
      *
-     * @return the encapsulated ip data object
-     * @throws IOException if an exception occurs reading from the query url
+     * @param ipDataKey the ip data key
+     * @throws NullPointerException     if the provided ipDataKey is null
+     * @throws IllegalArgumentException if the provided ipDataKey is empty or not a valid key
      */
+    public IpDataManager(String ipDataKey) {
+        Preconditions.checkNotNull(ipDataKey);
+        Preconditions.checkArgument(!ipDataKey.trim().isEmpty());
+        Preconditions.checkArgument(isValidIpDataKey(ipDataKey));
+
+        this.ipDataKey = ipDataKey;
+    }
+
+
     public IpData getIpData() throws IOException {
-        IpData ret = ipData.get();
-        if (ret != null) return ret;
+        if (ipData == null) refreshIpData();
+        return ipData;
+    }
 
-        Optional<IpData> pulledData = pullIpData();
-        if (pulledData.isPresent()) {
-            ret = pulledData.get();
-            ipData.set(ret);
-            return ret;
+    public void refreshIpData() throws IOException {
+        String queryUrl = ipDataBaseUrl + ipDataKey;
+        try (BufferedReader reader = FileUtil.bufferedReaderForUrl(queryUrl)) {
+            ipData = SerializationUtil.fromJson(reader, IpData.class);
         }
-
-        throw new FatalException("Failed to fetch IP data");
     }
 
     /**
-     * Pulls and serializes the ip data into an ip data object and
-     * returns that object if successful. Empty optional else.
+     * Returns whether the provided IP data key is valid.
      *
-     * @return the ip data object
-     * @throws IOException if an exception occurs reading from the query url
+     * @param ipDataKey the IP data key to validate
+     * @return whether the provided IP data key is valid
      */
-    private Optional<IpData> pullIpData() throws IOException {
-        Preconditions.checkState(Props.ipKey.valuePresent());
+    private static boolean isValidIpDataKey(String ipDataKey) {
+        Preconditions.checkNotNull(ipDataKey);
+        Preconditions.checkArgument(!ipDataKey.isEmpty());
 
-        return pullIpData(Props.ipKey.getValue());
-    }
-
-    /**
-     * Pulls and serializes the ip data into an ip data object
-     * and returns that object if successful. Empty optional else.
-     *
-     * @param key the key to use for the ip data query
-     * @return the ip data object
-     * @throws NullPointerException     if the provided key is null
-     * @throws IllegalArgumentException if the provided key is empty
-     * @throws IOException              if an exception occurs reading from the query url
-     */
-    public Optional<IpData> pullIpData(String key) throws IOException {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkArgument(!key.isEmpty());
-
-        String queryUrl = CyderUrls.IPDATA_BASE + key;
-        URL url = new URL(queryUrl);
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
-            return Optional.of(SerializationUtil.fromJson(reader, IpData.class));
+        String remote = ipDataBaseUrl + ipDataKey;
+        try (BufferedReader reader = FileUtil.bufferedReaderForUrl(remote)) {
+            int result = reader.read();
+            return result != INVALID_KEY;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 }

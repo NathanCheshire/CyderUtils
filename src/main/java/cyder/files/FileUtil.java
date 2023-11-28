@@ -229,6 +229,23 @@ public final class FileUtil {
     // todo FileReadingUtils
 
     /**
+     * Returns a new {@link BufferedReader} for reading from the provided url.
+     *
+     * @param url the url to read from
+     * @return a BufferedReader for reading from the provided url
+     * @throws IOException              if an IOException occurs when opening the URLs stream
+     * @throws NullPointerException     if the provided url is null
+     * @throws IllegalArgumentException if the provided url is empty or invalid
+     */
+    public static BufferedReader bufferedReaderForUrl(String url) throws IOException {
+        Preconditions.checkNotNull(url);
+        Preconditions.checkArgument(!url.trim().isEmpty());
+        Preconditions.checkArgument(CyderRegexPatterns.urlFormationPattern.matcher(url).matches());
+
+        return new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+    }
+
+    /**
      * Creates a new {@link BufferedInputStream} for the provided file to be read from.
      *
      * @param file the file

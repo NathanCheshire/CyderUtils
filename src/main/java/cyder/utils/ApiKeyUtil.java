@@ -79,26 +79,6 @@ public final class ApiKeyUtil {
     }
 
     /**
-     * Validates the ip key.
-     *
-     * @param ipDataKey the ip data key
-     * @return whether the ip key was valid
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored") /* Validation */
-    private static boolean validateIpKey(String ipDataKey) {
-        Preconditions.checkNotNull(ipDataKey);
-        Preconditions.checkArgument(!ipDataKey.isEmpty());
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new URL(CyderUrls.IPDATA_BASE + ipDataKey).openStream()))) {
-            reader.read();
-            return true;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
-
-    /**
      * validates the map quest api key.
      *
      * @param mapApikey the map quest api key
