@@ -128,7 +128,7 @@ public final class StatUtil {
             InetAddress address = InetAddress.getLocalHost();
             NetworkInterface netIn = NetworkInterface.getByInetAddress(address);
 
-            IpData data = IpDataManager.INSTANCE.getIpData();
+            IpData data = null; // todo
 
             BufferedImage flag = ImageUtil.read(data.getFlag());
 
@@ -151,10 +151,10 @@ public final class StatUtil {
                             "Latitude: " + data.getLatitude() + " Degrees N",
                             "Longitude: " + data.getLongitude() + " Degrees W",
                             //todo "latency: " + LatencyManager.INSTANCE.getLatency(10000) + " ms",
-                            "Google Reachable: " + NetworkUtil.urlReachable(CyderUrls.GOOGLE),
-                            "YouTube Reachable: " + NetworkUtil.urlReachable(CyderUrls.YOUTUBE),
-                            "Apple Reachable: " + NetworkUtil.urlReachable(CyderUrls.APPLE),
-                            "Microsoft Reachable: " + NetworkUtil.urlReachable(CyderUrls.MICROSOFT),
+                            "Google Reachable: " + NetworkUtil.urlReachable("https://www.google.com"),
+                            "YouTube Reachable: " + NetworkUtil.urlReachable("https://www.youtube.com"),
+                            "Apple Reachable: " + NetworkUtil.urlReachable("https://www.apple.com"),
+                            "Microsoft Reachable: " + NetworkUtil.urlReachable("https://www.microsoft.com"),
                             "User Name: " + OsUtil.getOsUsername(),
                             "Computer Name: " + OsUtil.getComputerName(),
                             "Available Cores: " + Runtime.getRuntime().availableProcessors(),
