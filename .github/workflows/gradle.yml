@@ -41,3 +41,10 @@ jobs:
           file: ./build/reports/jacoco/test/xml/index.xml
         env:
             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload Test Report
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: build/reports/tests/test/
