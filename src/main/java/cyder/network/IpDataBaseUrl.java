@@ -1,5 +1,7 @@
 package cyder.network;
 
+import cyder.network.ipdataco.IpDataManager;
+
 /**
  * The supported base URls for querying IpData objects via a {@link IpDataManager}.
  */

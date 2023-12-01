@@ -8,7 +8,7 @@ import cyder.enumerations.Extension;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.network.IpDataManager;
+import cyder.network.ipdataco.IpDataManager;
 import cyder.network.NetworkUtil;
 import cyder.parsers.ip.IpData;
 import cyder.strings.CyderStrings;

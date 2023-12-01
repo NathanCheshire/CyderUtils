@@ -1,7 +1,8 @@
-package cyder.network;
+package cyder.network.ipdataco;
 
 import com.google.common.base.Preconditions;
 import cyder.files.FileUtil;
+import cyder.network.IpDataBaseUrl;
 import cyder.parsers.ip.IpData;
 import cyder.utils.SerializationUtil;
 
@@ -14,7 +15,6 @@ import java.io.IOException;
  * for creating an ipdata account and acquiring a key.
  */
 public final class IpDataManager {
-
     /**
      * The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid.
      */
@@ -34,6 +34,23 @@ public final class IpDataManager {
      * The most recent IpData object.
      */
     private IpData ipData;
+
+    /**
+     * Constructs a new IpDataManager which uses the provided key.
+     * A base URL of {@link IpDataBaseUrl#STANDARD} is used.
+     *
+     * @param ipDataKey the ip data key
+     * @throws NullPointerException     if the provided ipDataKey is null
+     * @throws IllegalArgumentException if the provided ipDataKey is empty or not a valid key
+     */
+    public IpDataManager(String ipDataKey) {
+        Preconditions.checkNotNull(ipDataKey);
+        Preconditions.checkArgument(!ipDataKey.trim().isEmpty());
+        Preconditions.checkArgument(isValidIpDataKey(ipDataKey, IpDataBaseUrl.STANDARD.getBaseUrl()));
+
+        this.ipDataKey = ipDataKey;
+        this.baseUrl = IpDataBaseUrl.STANDARD;
+    }
 
     /**
      * Constructs a new IpDataManager which uses the provided key.

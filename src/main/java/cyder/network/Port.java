@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  * An encapsulator class for operations on ports, specifically within the range
  * supported by Cyder, that of {@link #portRange}.
  */
-public class Port {
+public final class Port {
     /**
      * The range a general computer port must fall into.
      */
