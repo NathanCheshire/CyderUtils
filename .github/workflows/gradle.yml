@@ -29,3 +29,15 @@ jobs:
         run: ./gradlew build
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
+
+      - name: Generate code coverage with JaCoCo
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: jacocoTestReport
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./build/reports/jacoco/test/xml/index.xml
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
