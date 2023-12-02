@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * An IP address ipdataco considers a threat.
  */
 @Immutable
-public class Threat {
+public final class Threat {
     /**
      * Whether the ip address is associated with a Tor network node.
      */

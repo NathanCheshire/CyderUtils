@@ -5,9 +5,15 @@ import com.google.errorprone.annotations.Immutable;
 
 /**
  * A blocked IP address entry.
+ * Currently, ipdataco is partnered with three professional commercial blocklist providers:
+ * <ul>
+ *     <li>Honeydb</li>
+ *     <li>Bambenek Consulting</li>
+ *     <li>Cleantalk</li>
+ * </ul>
  */
 @Immutable
-public class BlockListEntry {
+public final class BlockListEntry {
     /**
      * The name of the blocked entry.
      */

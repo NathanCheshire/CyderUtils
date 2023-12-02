@@ -7,7 +7,7 @@ import com.google.errorprone.annotations.Immutable;
  * An object representing an autonomous system number and related data from ipdata.co.
  */
 @Immutable
-public class Asn {
+public final class Asn {
     /**
      * The autonomous system number.
      */
