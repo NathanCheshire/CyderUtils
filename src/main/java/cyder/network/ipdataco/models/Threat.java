@@ -1,4 +1,4 @@
-package cyder.network.ipdataco;
+package cyder.network.ipdataco.models;
 
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
@@ -67,7 +67,7 @@ public final class Threat {
      * The list of blocked IP addresses.
      */
     @SerializedName("blocklists")
-    private final ImmutableList<String> blocklist;
+    private final ImmutableList<BlockListEntry> blocklist;
 
     /**
      * Constructs a new Threat instance.
@@ -93,7 +93,7 @@ public final class Threat {
                   boolean isKnownAbuser,
                   boolean isThreat,
                   boolean isBogon,
-                  ImmutableList<String> blocklist) {
+                  ImmutableList<BlockListEntry> blocklist) {
         this.isTor = isTor;
         this.isIcloudRelay = isIcloudRelay;
         this.isProxy = isProxy;
@@ -192,7 +192,7 @@ public final class Threat {
      *
      * @return the list of blocked IP addresses
      */
-    public ImmutableList<String> getBlocklist() {
+    public ImmutableList<BlockListEntry> getBlocklist() {
         return blocklist;
     }
 

@@ -1,4 +1,4 @@
-package cyder.network.ipdataco;
+package cyder.network.ipdataco.models;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;

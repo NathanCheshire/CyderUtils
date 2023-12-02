@@ -1,4 +1,4 @@
-package cyder.parsers.elevation;
+package cyder.elevation.models;
 
 import com.google.gson.annotations.SerializedName;
 

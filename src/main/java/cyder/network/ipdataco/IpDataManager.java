@@ -3,7 +3,7 @@ package cyder.network.ipdataco;
 import com.google.common.base.Preconditions;
 import cyder.files.FileUtil;
 import cyder.network.IpDataBaseUrl;
-import cyder.parsers.ip.IpData;
+import cyder.network.ipdataco.models.IpData;
 import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;

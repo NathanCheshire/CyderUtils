@@ -3,14 +3,12 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.constants.CyderRegexPatterns;
-import cyder.constants.CyderUrls;
 import cyder.enumerations.Extension;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.network.ipdataco.IpDataManager;
 import cyder.network.NetworkUtil;
-import cyder.parsers.ip.IpData;
+import cyder.network.ipdataco.models.IpData;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
 import cyder.time.TimeUtil;
@@ -146,8 +144,8 @@ public final class StatUtil {
                             "Postal Code: " + data.getPostal(),
                             "City: " + data.getCity(),
                             "State: " + data.getRegion(),
-                            "Country: " + data.getCountry_name()
-                                    + " (" + data.getCountry_code() + ")",
+                            "Country: " + data.getCountryName()
+                                    + " (" + data.getContinentCode() + ")",
                             "Latitude: " + data.getLatitude() + " Degrees N",
                             "Longitude: " + data.getLongitude() + " Degrees W",
                             //todo "latency: " + LatencyManager.INSTANCE.getLatency(10000) + " ms",

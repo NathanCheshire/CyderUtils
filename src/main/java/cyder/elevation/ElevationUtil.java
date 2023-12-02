@@ -1,9 +1,10 @@
-package cyder.utils;
+package cyder.elevation;
 
 import com.google.common.base.Preconditions;
+import cyder.elevation.models.ElevationData;
 import cyder.exceptions.IllegalMethodException;
-import cyder.parsers.elevation.ElevationData;
 import cyder.strings.CyderStrings;
+import cyder.utils.SerializationUtil;
 
 import java.awt.*;
 import java.io.BufferedReader;
