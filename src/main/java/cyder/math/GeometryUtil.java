@@ -29,7 +29,7 @@ public final class GeometryUtil {
     public static Point rotatePoint(Point point, double deg) {
         Preconditions.checkNotNull(point);
 
-        deg = AngleUtil.normalizeAngle360(deg);
+        deg = Angle.normalize360(deg);
         double rad = Math.toRadians(deg);
 
         double sinRad = Math.sin(rad);

@@ -45,6 +45,30 @@ public enum Angle {
     }
 
     /**
+     * Normalizes the provided angle to be within the range of [0, 180).
+     *
+     * @param angle the angle to normalize
+     * @return the normalized angle
+     */
+    public static double normalize180(double angle) {
+        angle = normalize360(angle);
+        if (angle > Angle.ONE_EIGHTY.getDegrees()) angle -= Angle.THREE_SIXTY.getDegrees();
+        return angle;
+    }
+
+    /**
+     * Normalizes the provided angle to be within the range of [0, 360).
+     *
+     * @param angle the angle to normalize
+     * @return the normalized angle
+     */
+    public static double normalize360(double angle) {
+        angle = angle % Angle.THREE_SIXTY.getDegrees();
+        if (angle < Angle.ZERO.getDegrees()) angle += Angle.THREE_SIXTY.getDegrees();
+        return angle;
+    }
+
+    /**
      * Returns the degrees measurement for this angle.
      *
      * @return the degrees measurement for this angle
@@ -115,6 +139,26 @@ public enum Angle {
         if (this.degrees > Angle.ONE_EIGHTY.getDegrees() && this.degrees < Angle.TWO_SEVENTY.getDegrees()) return 3;
         if (this.degrees > Angle.TWO_SEVENTY.getDegrees() && this.degrees < Angle.THREE_SIXTY.getDegrees()) return 4;
         return 0;
+    }
+
+    /**
+     * Returns whether this angle is in the northern hemisphere meaning
+     * greater than an angle of {@link #ZERO} and less than an angle of {@link #ONE_EIGHTY}.
+     *
+     * @return whether this angle is in the northern hemisphere
+     */
+    public boolean isInNorthernHemisphere() {
+        return degrees > Angle.ZERO.getDegrees() && degrees < Angle.ONE_EIGHTY.getDegrees();
+    }
+
+    /**
+     * Returns whether this angle is in the southern hemisphere meaning
+     * greater than an angle of {@link #ONE_EIGHTY} and less than an angle of {@link #THREE_SIXTY}.
+     *
+     * @return whether this angle is in the southern hemisphere
+     */
+    public boolean isInSouthernHemisphere() {
+        return degrees > Angle.ONE_EIGHTY.getDegrees() && degrees < Angle.THREE_SIXTY.getDegrees();
     }
 
     /**

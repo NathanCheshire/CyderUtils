@@ -5,7 +5,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.enumerations.Direction;
 import cyder.exceptions.IllegalMethodException;
 import cyder.math.Angle;
-import cyder.math.AngleUtil;
 import cyder.network.NetworkUtil;
 import cyder.process.Program;
 import cyder.strings.CyderStrings;
@@ -345,7 +344,7 @@ public final class ImageUtil {
     public static BufferedImage rotateImage(BufferedImage img, double degrees) {
         Preconditions.checkNotNull(img);
 
-        degrees = AngleUtil.normalizeAngle360(degrees);
+        degrees = Angle.normalize360(degrees);
 
         double rads = Math.toRadians(degrees);
 
@@ -381,7 +380,7 @@ public final class ImageUtil {
     public static ImageIcon rotateImage(ImageIcon imageIcon, double degrees) {
         BufferedImage img = toBufferedImage(imageIcon);
 
-        degrees = AngleUtil.normalizeAngle360(degrees);
+        degrees = Angle.normalize360(degrees);
 
         double rads = Math.toRadians(degrees);
 
