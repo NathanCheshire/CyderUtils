@@ -148,6 +148,8 @@ public final class NumberUtil {
         return ImmutableList.copyOf(ret);
     }
 
+    // todo discrete utils for catalan, fib, and the other ones?
+
     /**
      * Computes the nth number of the Fibonacci sequence.
      *

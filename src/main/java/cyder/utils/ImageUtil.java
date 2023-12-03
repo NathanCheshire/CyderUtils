@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.enumerations.Direction;
 import cyder.exceptions.IllegalMethodException;
+import cyder.math.Angle;
 import cyder.math.AngleUtil;
 import cyder.network.NetworkUtil;
 import cyder.process.Program;
@@ -327,10 +328,10 @@ public final class ImageUtil {
         }
 
         return switch (direction) {
-            case TOP -> rotateImage(bufferedImage, AngleUtil.ZERO_DEGREES);
-            case RIGHT -> rotateImage(bufferedImage, AngleUtil.NINETY_DEGREES);
-            case BOTTOM -> rotateImage(bufferedImage, AngleUtil.ONE_EIGHTY_DEGREES);
-            case LEFT -> rotateImage(bufferedImage, AngleUtil.TWO_SEVENTY_DEGREES);
+            case TOP -> rotateImage(bufferedImage, Angle.ZERO.getDegrees());
+            case RIGHT -> rotateImage(bufferedImage, Angle.NINETY.getDegrees());
+            case BOTTOM -> rotateImage(bufferedImage, Angle.ONE_EIGHTY.getDegrees());
+            case LEFT -> rotateImage(bufferedImage, Angle.TWO_SEVENTY.getDegrees());
         };
     }
 

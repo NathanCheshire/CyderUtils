@@ -10,34 +10,9 @@ import cyder.strings.CyderStrings;
 @SuppressWarnings("unused") /* Ranges not currently used */
 public final class AngleUtil {
     /**
-     * Three hundred sixty degrees.
-     */
-    public static final double THREE_SIXTY_DEGREES = 360.0;
-
-    /**
-     * Two hundred seventy degrees.
-     */
-    public static final double TWO_SEVENTY_DEGREES = 270.0;
-
-    /**
-     * One hundred eighty degrees.
-     */
-    public static final double ONE_EIGHTY_DEGREES = 180.0;
-
-    /**
-     * Ninety degrees.
-     */
-    public static final double NINETY_DEGREES = 90.0;
-
-    /**
-     * Zero degrees.
-     */
-    public static final double ZERO_DEGREES = 0.0;
-
-    /**
      * The standard range of angle measurements in degree form.
      */
-    public static final Range<Double> DEGREE_RANGE = Range.closedOpen(0d, THREE_SIXTY_DEGREES);
+    public static final Range<Double> DEGREE_RANGE = Range.closedOpen(0d, Angle.THREESI);
 
     /**
      * The range for angles in degree format in the range [0, 180).

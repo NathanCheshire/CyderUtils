@@ -31,7 +31,10 @@ public enum Angle {
     TWO_SEVENTY(270, 3 * Math.PI / 2),
     THREE_HUNDRED(300, 5 * Math.PI / 3),
     THREE_FIFTEEN(315, 7 * Math.PI / 4),
-    THREE_THIRTY(330, 11 * Math.PI / 6);
+    THREE_THIRTY(330, 11 * Math.PI / 6),
+    THREE_SIXTY(360, 2 * Math.PI);
+
+    private static final double GET_BY_DEGREES_TOLERANCE = 0.0001;
 
     private final int degrees;
     private final double radians;
@@ -65,7 +68,7 @@ public enum Angle {
      * @return the angle opposite to this one
      */
     public Angle opposite() {
-        int oppositeDegrees = (this.degrees + 180) % 360;
+        int oppositeDegrees = (this.degrees + Angle.ONE_EIGHTY.getDegrees()) % Angle.THREE_SIXTY.getDegrees();
         return getByDegrees(oppositeDegrees);
     }
 
@@ -75,7 +78,7 @@ public enum Angle {
      * @return the complementary angle to this one
      */
     public Angle complementary() {
-        int complementaryDegrees = 90 - this.degrees;
+        int complementaryDegrees = Angle.NINETY.getDegrees() - this.degrees;
         return getByDegrees(complementaryDegrees);
     }
 
@@ -85,7 +88,7 @@ public enum Angle {
      * @return the supplementary angle to this angle
      */
     public Angle supplementary() {
-        int supplementaryDegrees = 180 - this.degrees;
+        int supplementaryDegrees = Angle.ONE_EIGHTY.getDegrees() - this.degrees;
         return getByDegrees(supplementaryDegrees);
     }
 
@@ -107,10 +110,10 @@ public enum Angle {
      * @return the cartesian quadrant this angle falls in
      */
     public int quadrant() {
-        if (this.degrees > 0 && this.degrees < 90) return 1;
-        if (this.degrees > 90 && this.degrees < 180) return 2;
-        if (this.degrees > 180 && this.degrees < 270) return 3;
-        if (this.degrees > 270 && this.degrees < 360) return 4;
+        if (this.degrees > Angle.ZERO.getDegrees() && this.degrees < Angle.NINETY.getDegrees()) return 1;
+        if (this.degrees > Angle.NINETY.getDegrees() && this.degrees < Angle.ONE_EIGHTY.getDegrees()) return 2;
+        if (this.degrees > Angle.ONE_EIGHTY.getDegrees() && this.degrees < Angle.TWO_SEVENTY.getDegrees()) return 3;
+        if (this.degrees > Angle.TWO_SEVENTY.getDegrees() && this.degrees < Angle.THREE_SIXTY.getDegrees()) return 4;
         return 0;
     }
 
@@ -121,10 +124,8 @@ public enum Angle {
      * @return the angle object which corresponds to the provided degrees
      */
     private Angle getByDegrees(double degrees) {
-        final double TOLERANCE = 0.0001;
-
         return Arrays.stream(Angle.values())
-                .filter(angle -> Math.abs(angle.degrees - degrees) < TOLERANCE)
+                .filter(angle -> Math.abs(angle.degrees - degrees) < GET_BY_DEGREES_TOLERANCE)
                 .findFirst()
                 .orElse(null);
     }
