@@ -8,6 +8,8 @@ import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * A manager for storing and refreshing {@link IpData} objects queried from ipdata.co.
@@ -34,6 +36,11 @@ public final class IpDataManager {
      * The most recent IpData object.
      */
     private IpData ipData;
+
+    /**
+     * The last time {@link #ipData} was refreshed at.
+     */
+    private Instant lastRefreshTime;
 
     /**
      * Constructs a new IpDataManager which uses the provided key.
@@ -88,7 +95,7 @@ public final class IpDataManager {
      * @throws IOException if the refresh fails
      */
     public IpData getIpData() throws IOException {
-        if (ipData == null) refreshIpData();
+        if (!ipDataAvailable()) refreshIpData();
         return ipData;
     }
 
@@ -101,7 +108,43 @@ public final class IpDataManager {
         String queryUrl = baseUrl.getBaseUrl() + ipDataKey;
         try (BufferedReader reader = FileUtil.bufferedReaderForUrl(queryUrl)) {
             ipData = SerializationUtil.fromJson(reader, IpData.class);
+            lastRefreshTime = Instant.now();
         }
+    }
+
+    /**
+     * Refreshes the internal {@link IpData} object if it has been longer
+     * than the provided duration since refreshed.
+     *
+     * @param duration the duration
+     * @throws NullPointerException if the provided duration object is null
+     * @throws IOException if a refresh call is invoked and fails
+     */
+    public void refreshIfLongerThan(Duration duration) throws IOException {
+        Preconditions.checkNotNull(duration);
+
+        long now = Instant.now().toEpochMilli();
+        long lastRefresh = lastRefreshTime.toEpochMilli();
+        long difference = now - lastRefresh;
+        if (difference > duration.toMillis()) refreshIpData();
+    }
+
+    /**
+     * Returns whether the IP data is presently available.
+     *
+     * @return whether the IP data is presently available
+     */
+    public boolean ipDataAvailable() {
+        return ipData != null;
+    }
+
+    /**
+     * Returns the last time the internal {@link IpData} object was refreshed at.
+     *
+     * @return the last time the internal {@link IpData} object was refreshed at
+     */
+    public Instant getLastRefreshTime() {
+        return lastRefreshTime;
     }
 
     /**
