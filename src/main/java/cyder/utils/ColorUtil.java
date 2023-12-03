@@ -153,6 +153,8 @@ public final class ColorUtil {
                 + "," + Integer.valueOf(hex.substring(4, 6), HEX_BASE);
     }
 
+    // todo CyderColor and .from methods?
+
     /**
      * Converts the provided color into an RGB hex representation.
      *
