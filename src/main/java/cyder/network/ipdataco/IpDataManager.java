@@ -1,15 +1,19 @@
 package cyder.network.ipdataco;
 
 import com.google.common.base.Preconditions;
+import cyder.annotations.ForReadability;
 import cyder.files.FileUtil;
 import cyder.network.IpDataBaseUrl;
 import cyder.network.ipdataco.models.IpData;
+import cyder.threads.CyderThreadRunner;
+import cyder.threads.ThreadUtil;
 import cyder.utils.SerializationUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A manager for storing and refreshing {@link IpData} objects queried from ipdata.co.
@@ -21,6 +25,22 @@ public final class IpDataManager {
      * The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid.
      */
     private static final int INVALID_KEY = -1;
+
+    /**
+     * The default timeout between state refreshes.
+     */
+    private static final Duration DEFAULT_REFRESH_DURATION = Duration.ofMinutes(15);
+
+    /**
+     * The frequency at which to check {@link #lastRefreshTime} against {@link Instant#now()}
+     * to determine whether {@link #refreshIpData()} should be invoked.
+     */
+    private static final Duration REFRESH_FREQUENCY_UPDATED_CHECK_FREQUENCY = Duration.ofMillis(500);
+
+    /**
+     * Whether the refresher task is running.
+     */
+    private final AtomicBoolean refresherRunning = new AtomicBoolean();
 
     /**
      * The IP data key this manager uses to query ipdata.co.
@@ -43,6 +63,11 @@ public final class IpDataManager {
     private Instant lastRefreshTime;
 
     /**
+     * The refresh frequency for re-pulling IP data.
+     */
+    private Duration refreshFrequency = DEFAULT_REFRESH_DURATION;
+
+    /**
      * Constructs a new IpDataManager which uses the provided key.
      * A base URL of {@link IpDataBaseUrl#STANDARD} is used.
      *
@@ -57,6 +82,8 @@ public final class IpDataManager {
 
         this.ipDataKey = ipDataKey;
         this.baseUrl = IpDataBaseUrl.STANDARD;
+
+        startRefresher();
     }
 
     /**
@@ -74,6 +101,22 @@ public final class IpDataManager {
 
         this.ipDataKey = ipDataKey;
         this.baseUrl = baseUrl;
+
+        startRefresher();
+    }
+
+    /**
+     * Sets the refresh frequency of this ip data manager.
+     *
+     * @param refreshFrequency the refresh frequency of this ip data manager
+     * @throws NullPointerException     if the provided duration is null
+     * @throws IllegalArgumentException if the provided duration is negative
+     */
+    public void setRefreshFrequency(Duration refreshFrequency) {
+        Preconditions.checkNotNull(refreshFrequency);
+        Preconditions.checkArgument(!refreshFrequency.isNegative());
+
+        this.refreshFrequency = refreshFrequency;
     }
 
     /**
@@ -104,7 +147,7 @@ public final class IpDataManager {
      *
      * @throws IOException if a BufferedReader cannot be created for reading from ipdata.co
      */
-    public void refreshIpData() throws IOException {
+    public synchronized void refreshIpData() throws IOException {
         String queryUrl = baseUrl.getBaseUrl() + ipDataKey;
         try (BufferedReader reader = FileUtil.bufferedReaderForUrl(queryUrl)) {
             ipData = SerializationUtil.fromJson(reader, IpData.class);
@@ -118,7 +161,7 @@ public final class IpDataManager {
      *
      * @param duration the duration
      * @throws NullPointerException if the provided duration object is null
-     * @throws IOException if a refresh call is invoked and fails
+     * @throws IOException          if a refresh call is invoked and fails
      */
     public void refreshIfLongerThan(Duration duration) throws IOException {
         Preconditions.checkNotNull(duration);
@@ -150,7 +193,7 @@ public final class IpDataManager {
     /**
      * Returns whether the provided IP data key is valid.
      *
-     * @param ipDataKey the IP data key to validate
+     * @param ipDataKey     the IP data key to validate
      * @param ipDataBaseUrl the base url to use for validation
      * @return whether the provided IP data key is valid
      */
@@ -165,5 +208,32 @@ public final class IpDataManager {
         } catch (Exception ignored) {
             return false;
         }
+    }
+
+    /**
+     * Starts the refresher task which will re-pull the ip data stats whenever
+     * now minus {@link #lastRefreshTime} exceeds that of {@link #refreshFrequency}.
+     * Changing {@link #refreshFrequency} will either prolong the refresh, or result in it being performed immediately.
+     *
+     * @throws IllegalStateException if this method is already running, this should not ever
+     *                               be invoked aside from in the constructor, but reflection is still a
+     *                               thing. Thus, we guard against it to prevent a malicious attack from
+     *                               draining a key's uses
+     */
+    @ForReadability
+    private synchronized void startRefresher() {
+        Preconditions.checkState(!refresherRunning.get());
+
+        refresherRunning.set(true);
+
+        String threadName = "IpDataManager refresh task, object created: " + Instant.now().toEpochMilli();
+        CyderThreadRunner.submit(() -> {
+            while (refresherRunning.get()) {
+                try {
+                    refreshIfLongerThan(refreshFrequency);
+                } catch (IOException ignored) {}
+                ThreadUtil.sleep(REFRESH_FREQUENCY_UPDATED_CHECK_FREQUENCY);
+            }
+        }, threadName);
     }
 }
