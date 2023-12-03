@@ -2,7 +2,6 @@ package cyder.network.ipdataco;
 
 import com.google.common.base.Preconditions;
 import cyder.files.FileUtil;
-import cyder.network.IpDataBaseUrl;
 import cyder.network.ipdataco.models.IpData;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;

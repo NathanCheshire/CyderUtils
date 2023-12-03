@@ -3,7 +3,8 @@ package cyder.exceptions;
 /**
  * An exception fatal to the operation of Cyder such that Cyder should likely exit.
  */
-public class FatalException extends RuntimeException {
+@Deprecated
+public class FatalException extends RuntimeException implements CyderExceptionMixin {
     /**
      * Constructs a new Fatal exception using the provided error message.
      */
@@ -16,6 +17,11 @@ public class FatalException extends RuntimeException {
      */
     public FatalException(Exception e) {
         super(e);
+    }
+
+    @Override
+    public void throwFromMessage(String errorMessage) {
+        throw new FatalException(errorMessage);
     }
 }
 

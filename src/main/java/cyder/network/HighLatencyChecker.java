@@ -13,7 +13,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * An object which pings a provided ip:port and determines a status based on a provided tolerance.
+ * A latency checker which pings a provided ip:port and determines
+ * a status based on a provided map of latency values to categories.
  */
 public final class HighLatencyChecker {
     /**
@@ -76,6 +77,11 @@ public final class HighLatencyChecker {
      */
     private long currentLatency;
 
+    /**
+     * Constructs a new HighLatencyChecker from the provided builder.
+     *
+     * @param builder the builder
+     */
     private HighLatencyChecker(Builder builder) {
         this.ipAddress = builder.ipAddress;
         this.port = builder.port;
@@ -222,17 +228,17 @@ public final class HighLatencyChecker {
      */
     public String toString() {
         return "LatencyChecker{"
-                + "ipAddress=\"" + ipAddress + "\", "
-                + "port=" + port + ", "
-                + "remoteName=\"" + remoteName + "\", "
-                + "latencyCategorizer=" + latencyCategorizer + ", "
-                + "pingDelay=" + pingDelay + ", "
-                + "exitGetLatencySpinWaitCheckFrequency=" + exitGetLatencySpinWaitCheckFrequency + ", "
-                + "exitRefreshLatencySleepCheckFrequency=" + exitRefreshLatencySleepCheckFrequency + ", "
-                + "checkerThreadName=\"" + checkerThreadName + "\", "
-                + "refreshLatencyThreadRunning=" + refreshLatencyThreadRunning + ", "
-                + "currentLatency=" + currentLatency + ", "
-                + "currentStatus=\"" + currentStatus + "\""
+                + "ipAddress=\"" + ipAddress + "\""
+                + ", port=" + port + ", "
+                + ", remoteName=\"" + remoteName + "\""
+                + ", latencyCategorizer=" + latencyCategorizer
+                + ", pingDelay=" + pingDelay
+                + ", exitGetLatencySpinWaitCheckFrequency=" + exitGetLatencySpinWaitCheckFrequency
+                + ", exitRefreshLatencySleepCheckFrequency=" + exitRefreshLatencySleepCheckFrequency
+                + ", checkerThreadName=\"" + checkerThreadName + "\""
+                + ", refreshLatencyThreadRunning=" + refreshLatencyThreadRunning
+                + ", currentLatency=" + currentLatency
+                + ", currentStatus=\"" + currentStatus + "\""
                 + "}";
     }
 
@@ -411,6 +417,15 @@ public final class HighLatencyChecker {
 
             this.exitGetLatencySpinWaitCheckFrequency = exitGetLatencySpinWaitCheckFrequency;
             return this;
+        }
+
+        /**
+         * Builds and returns a new HighLatencyChecker from this builder's state.
+         *
+         * @return a new HighLatencyChecker from this builder's state
+         */
+        public HighLatencyChecker build() {
+            return new HighLatencyChecker(this);
         }
     }
 }

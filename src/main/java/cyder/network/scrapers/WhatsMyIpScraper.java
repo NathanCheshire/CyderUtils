@@ -114,12 +114,13 @@ public final class WhatsMyIpScraper {
                 new WhatsMyIpScraperException("Jsoup failed to get document from " + ispQueryUrl + ", error: "));
 
         String isp = getIsp(locationDocument);
+        String hostname = getHostname(locationDocument);
+        String ip = getIp(locationDocument);
+
         Triple<String, String, String> cityStateCountry = getCityStateCountry(locationDocument);
         String city = cityStateCountry.getLeft();
         String state = cityStateCountry.getMiddle();
         String country = cityStateCountry.getRight();
-        String hostname = getHostname(locationDocument);
-        String ip = getIp(locationDocument);
 
         return new WhatsMyIpScraperResult(isp, hostname, ip, city, state, country);
     }

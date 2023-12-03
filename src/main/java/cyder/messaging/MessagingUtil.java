@@ -2,10 +2,10 @@ package cyder.messaging;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.AudioUtil;
+import cyder.audio.CyderAudioFile;
 import cyder.audio.wav.WaveFile;
 import cyder.constants.CyderColors;
 import cyder.enumerations.Extension;
-import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
 import cyder.strings.CyderStrings;
@@ -201,7 +201,7 @@ public final class MessagingUtil {
             }
 
             if (FileUtil.validateExtension(wavOrMp3FileReference.get(), Extension.MP3.getExtension())) {
-                throw new FatalException("Failed to convert mp3 to wav");
+                throw new RuntimeException("Failed to convert mp3 to wav");
             }
 
             BufferedImage ret =
@@ -212,7 +212,7 @@ public final class MessagingUtil {
             try {
                 wav = new WaveFile(wavOrMp3FileReference.get());
             } catch (Exception e) {
-                throw new FatalException(e.getMessage());
+                throw new RuntimeException(e.getMessage());
             }
 
             int numFrames = (int) wav.getNumFrames();
@@ -372,7 +372,7 @@ public final class MessagingUtil {
         try {
             readImage = ImageUtil.read(imageFile);
         } catch (Exception e) {
-            throw new FatalException("Failed to read image: " + imageFile.getAbsolutePath());
+            throw new RuntimeException("Failed to read image: " + imageFile.getAbsolutePath());
         }
 
         ImageIcon resized = ImageUtil.resizeImage(ImageUtil.toImageIcon(readImage),

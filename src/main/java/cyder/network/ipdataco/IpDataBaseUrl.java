@@ -1,4 +1,4 @@
-package cyder.network;
+package cyder.network.ipdataco;
 
 import cyder.network.ipdataco.IpDataManager;
 
