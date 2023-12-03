@@ -1,7 +1,6 @@
 package cyder.network.ipdataco;
 
 import com.google.common.base.Preconditions;
-import cyder.annotations.ForReadability;
 import cyder.files.FileUtil;
 import cyder.network.IpDataBaseUrl;
 import cyder.network.ipdataco.models.IpData;
@@ -24,7 +23,7 @@ public final class IpDataManager {
     /**
      * The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid.
      */
-    private static final int INVALID_KEY = -1;
+    private static final int INVALID_KEY_RESPONSE_READ = -1;
 
     /**
      * The default timeout between state refreshes.
@@ -204,7 +203,7 @@ public final class IpDataManager {
         String remote = ipDataBaseUrl + ipDataKey;
         try (BufferedReader reader = FileUtil.bufferedReaderForUrl(remote)) {
             int result = reader.read();
-            return result != INVALID_KEY;
+            return result != INVALID_KEY_RESPONSE_READ;
         } catch (Exception ignored) {
             return false;
         }
@@ -215,12 +214,8 @@ public final class IpDataManager {
      * now minus {@link #lastRefreshTime} exceeds that of {@link #refreshFrequency}.
      * Changing {@link #refreshFrequency} will either prolong the refresh, or result in it being performed immediately.
      *
-     * @throws IllegalStateException if this method is already running, this should not ever
-     *                               be invoked aside from in the constructor, but reflection is still a
-     *                               thing. Thus, we guard against it to prevent a malicious attack from
-     *                               draining a key's uses
+     * @throws IllegalStateException if this method is already running
      */
-    @ForReadability
     private synchronized void startRefresher() {
         Preconditions.checkState(!refresherRunning.get());
 
