@@ -1,5 +1,6 @@
 package cyder.constants;
 
+import cyder.color.CyderColors;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.ui.UiUtil;

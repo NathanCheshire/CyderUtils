@@ -6,7 +6,7 @@ import cyder.enumerations.Direction;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;
-import cyder.utils.ColorUtil;
+import cyder.color.ColorUtil;
 
 import javax.swing.*;
 import java.awt.*;

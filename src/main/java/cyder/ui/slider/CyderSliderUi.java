@@ -1,7 +1,7 @@
 package cyder.ui.slider;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSliderUI;

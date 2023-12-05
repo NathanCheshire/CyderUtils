@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import cyder.annotations.CyderAuthor;
 import cyder.annotations.ForReadability;
 import cyder.annotations.Vanilla;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderModernButton;

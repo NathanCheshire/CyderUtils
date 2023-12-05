@@ -1,6 +1,6 @@
 package cyder.ui.drag.button;
 
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.ui.drag.DragLabelButtonSize;
 
 import java.awt.*;

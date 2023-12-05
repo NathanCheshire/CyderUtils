@@ -3,14 +3,14 @@ package cyder.ui.field;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.constants.CyderRegexPatterns;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.UiUtil;
-import cyder.utils.ColorUtil;
+import cyder.color.ColorUtil;
 import cyder.utils.ImageUtil;
 
 import javax.swing.*;

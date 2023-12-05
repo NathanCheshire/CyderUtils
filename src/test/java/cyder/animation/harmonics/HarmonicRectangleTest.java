@@ -1,6 +1,6 @@
 package cyder.animation.harmonics;
 
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.threads.ThreadUtil;
 import org.junit.jupiter.api.Test;
 

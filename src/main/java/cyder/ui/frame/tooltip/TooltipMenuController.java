@@ -3,7 +3,7 @@ package cyder.ui.frame.tooltip;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
@@ -23,7 +23,7 @@ import cyder.ui.frame.notification.NotificationBuilder;
 import cyder.ui.frame.notification.NotificationDirection;
 import cyder.ui.pane.CyderOutputPane;
 import cyder.ui.pane.CyderScrollPane;
-import cyder.utils.ColorUtil;
+import cyder.color.ColorUtil;
 import cyder.utils.SecurityUtil;
 
 import javax.swing.*;

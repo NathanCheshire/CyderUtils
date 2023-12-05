@@ -2,7 +2,7 @@ package cyder.ui.drag.button;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.ui.drag.DragLabelButtonSize;
 import cyder.ui.frame.CyderFrame;
 

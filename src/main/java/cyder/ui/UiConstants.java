@@ -1,6 +1,6 @@
 package cyder.ui;
 
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.exceptions.IllegalMethodException;
 import cyder.font.FontBuilder;

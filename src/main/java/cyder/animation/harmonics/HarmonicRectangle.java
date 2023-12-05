@@ -2,7 +2,7 @@ package cyder.animation.harmonics;
 
 import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 

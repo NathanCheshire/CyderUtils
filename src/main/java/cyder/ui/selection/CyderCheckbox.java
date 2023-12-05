@@ -2,11 +2,11 @@ package cyder.ui.selection;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDraggableComponent;
-import cyder.utils.ColorUtil;
+import cyder.color.ColorUtil;
 
 import javax.swing.*;
 import java.awt.*;

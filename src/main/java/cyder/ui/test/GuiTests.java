@@ -1,6 +1,6 @@
 package cyder.ui.test;
 
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.constants.CyderIcons;
 import cyder.exceptions.IllegalMethodException;

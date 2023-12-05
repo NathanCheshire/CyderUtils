@@ -2,7 +2,7 @@ package cyder.ui.pane;
 
 import com.google.common.base.Preconditions;
 import cyder.annotations.ForReadability;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.strings.ToStringUtil;
 import cyder.threads.CyderThreadRunner;

@@ -1,7 +1,7 @@
 package cyder.youtube;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
 import cyder.enumerations.Extension;

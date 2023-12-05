@@ -2,7 +2,7 @@ package cyder.ui.drag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.props.Props;
 import cyder.strings.ToStringUtil;
 import cyder.ui.drag.button.CloseButton;

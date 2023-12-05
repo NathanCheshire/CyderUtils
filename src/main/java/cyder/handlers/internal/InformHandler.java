@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;

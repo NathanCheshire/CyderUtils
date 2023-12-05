@@ -1,7 +1,7 @@
 package cyder.ui.progress;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.math.InterpolationUtil;
 
 import javax.swing.*;

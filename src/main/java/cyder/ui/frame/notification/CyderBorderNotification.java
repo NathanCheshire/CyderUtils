@@ -5,7 +5,7 @@ import com.google.common.util.concurrent.Futures;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDragLabel;
 import cyder.ui.frame.CyderFrame;
-import cyder.utils.ColorUtil;
+import cyder.color.ColorUtil;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;

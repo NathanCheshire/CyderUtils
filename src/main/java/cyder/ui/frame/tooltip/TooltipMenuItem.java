@@ -2,7 +2,7 @@ package cyder.ui.frame.tooltip;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.ui.frame.CyderFrame;
 

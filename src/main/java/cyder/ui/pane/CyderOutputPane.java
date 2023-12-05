@@ -1,7 +1,7 @@
 package cyder.ui.pane;
 
 import com.google.common.base.Preconditions;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.exceptions.FatalException;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;

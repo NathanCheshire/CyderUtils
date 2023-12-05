@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import cyder.bounds.HtmlString;
 import cyder.bounds.PlainString;
 import cyder.bounds.StringContainer;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.constants.HtmlTags;
 import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;

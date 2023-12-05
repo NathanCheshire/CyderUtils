@@ -5,7 +5,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;

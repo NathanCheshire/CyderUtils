@@ -2,7 +2,7 @@ package cyder.ui.field;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import cyder.ui.UiUtil;

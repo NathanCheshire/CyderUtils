@@ -3,7 +3,7 @@ package cyder.getter;
 import com.google.common.collect.ImmutableList;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;

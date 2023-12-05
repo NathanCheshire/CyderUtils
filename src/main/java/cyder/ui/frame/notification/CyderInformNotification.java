@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.DoNotCall;
 import cyder.bounds.BoundsString;
 import cyder.bounds.BoundsUtil;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.ui.drag.CyderDragLabel;
@@ -16,8 +16,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static cyder.strings.CyderStrings.*;
 
 /**
  * A notification expressed through a secondary pane if the content of

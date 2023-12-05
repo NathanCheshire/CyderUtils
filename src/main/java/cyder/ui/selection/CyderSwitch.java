@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import cyder.animation.ComponentAnimator;
 import cyder.annotations.ForReadability;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.font.CyderFonts;
 import cyder.enumerations.Direction;
 import cyder.ui.UiUtil;

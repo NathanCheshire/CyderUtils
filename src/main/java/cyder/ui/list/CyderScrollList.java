@@ -2,10 +2,9 @@ package cyder.ui.list;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.exceptions.FatalException;
 import cyder.font.CyderFonts;
-import cyder.strings.CyderStrings;
 import cyder.strings.ToStringUtil;
 import cyder.ui.UiUtil;
 import cyder.ui.frame.CyderFrame;
@@ -22,7 +21,6 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 

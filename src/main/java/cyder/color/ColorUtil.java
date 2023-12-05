@@ -1,4 +1,4 @@
-package cyder.utils;
+package cyder.color;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -6,6 +6,7 @@ import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
 import cyder.math.NumberUtil;
 import cyder.strings.CyderStrings;
+import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;

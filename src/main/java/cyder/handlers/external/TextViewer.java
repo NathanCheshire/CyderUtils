@@ -2,7 +2,7 @@ package cyder.handlers.external;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.constants.CyderColors;
+import cyder.color.CyderColors;
 import cyder.enumerations.Extension;
 import cyder.files.FileUtil;
 import cyder.layouts.CyderPartitionedLayout;

@@ -2,6 +2,7 @@ package cyder.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.color.ColorUtil;
 import cyder.enumerations.Direction;
 import cyder.exceptions.IllegalMethodException;
 import cyder.math.Angle;

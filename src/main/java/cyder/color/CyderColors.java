@@ -1,4 +1,4 @@
-package cyder.constants;
+package cyder.color;
 
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.IllegalMethodException;
