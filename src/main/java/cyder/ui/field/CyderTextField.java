@@ -3,14 +3,14 @@ package cyder.ui.field;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
+import cyder.color.CyderColor;
 import cyder.color.CyderColors;
-import cyder.font.CyderFonts;
 import cyder.constants.CyderRegexPatterns;
+import cyder.font.CyderFonts;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.UiUtil;
-import cyder.color.ColorUtil;
 import cyder.utils.ImageUtil;
 
 import javax.swing.*;
@@ -366,7 +366,8 @@ public class CyderTextField extends JTextField {
         fieldFlashing.set(true);
 
         Color startingColor = getForeground();
-        ImmutableList<Color> flashColors = ColorUtil.getFlashColors(flashColor, startingColor);
+        ImmutableList<CyderColor> flashColors = new CyderColor(flashColor)
+                .getTransitionColors(startingColor, 15);
         int timeout = flashDurationMs / flashColors.size();
 
         CyderThreadRunner.submit(() -> {

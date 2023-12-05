@@ -2,11 +2,11 @@ package cyder.ui.selection;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import cyder.color.CyderColor;
 import cyder.color.CyderColors;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDraggableComponent;
-import cyder.color.ColorUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -306,8 +306,8 @@ public class CyderCheckbox extends JLabel {
             });
 
             Color originalCheckColor = checkColor;
-            ImmutableList<Color> colors = ColorUtil.getFlashColors(background, originalCheckColor);
-
+            ImmutableList<CyderColor> colors = new CyderColor(background)
+                    .getTransitionColors(originalCheckColor, 15);
             colors.forEach(color -> {
                 setCheckColor(color);
                 repaint();

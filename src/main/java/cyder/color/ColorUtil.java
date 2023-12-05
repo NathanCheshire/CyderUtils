@@ -1,6 +1,5 @@
 package cyder.color;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
@@ -21,29 +20,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ColorUtil {
     /**
-     * The base for hexadecimal numbers.
-     */
-    public static final int HEX_BASE = 16;
-
-    /**
      * The length of shorthand hex color strings.
      */
     private static final int shorthandHexLength = 3;
-
-    /**
-     * The regular length of hex color strings.
-     */
-    private static final int hexLength = 6;
-
-    /**
-     * The valid lengths a hex color must be.
-     */
-    private static final ImmutableList<Integer> validHexLengths = ImmutableList.of(shorthandHexLength, hexLength);
-
-    /**
-     * The string formatter used to convert a {@link Color} to a hex string.
-     */
-    private static final String RGB_TO_HEX_FORMAT = "%02X%02X%02X";
 
     /**
      * The maximum length the hashmap for the get dominant color method can grow.
@@ -76,79 +55,6 @@ public final class ColorUtil {
     }
 
     /**
-     * Converts the provided hex string to a {@link Color} object.
-     * Shorthand hex notation may be used. For example, passing "#345", "345", "334455",
-     * or "#334455" will all return the same result.
-     *
-     * @param hex the hex string to convert to an object
-     * @return the hex string converted to an object
-     * @throws IllegalArgumentException if the provided string is null, empty, or not of length three or six
-     */
-    public static Color hexStringToColor(String hex) {
-        checkNotNull(hex);
-        checkArgument(!hex.isEmpty());
-
-        hex = hex.replace("#", "");
-        Preconditions.checkArgument(validHexLengths.contains(hex.length()));
-
-        if (hex.length() == shorthandHexLength) {
-            hex = expandShorthandHexColor(hex);
-        }
-
-        int r = Integer.valueOf(hex.substring(0, 2), HEX_BASE);
-        int g = Integer.valueOf(hex.substring(2, 4), HEX_BASE);
-        int b = Integer.valueOf(hex.substring(4, 6), HEX_BASE);
-        return new Color(r, g, b);
-    }
-
-    /**
-     * Converts a three digit shorthand hex color code into a full six digit hex color code.
-     *
-     * @param shorthandHex the shorthand hex
-     * @return the full six digit hex code
-     */
-    public static String expandShorthandHexColor(String shorthandHex) {
-        checkNotNull(shorthandHex);
-        checkArgument(shorthandHex.length() == shorthandHexLength);
-
-        StringBuilder newHex = new StringBuilder();
-        shorthandHex.chars().mapToObj(i -> (char) i)
-                .forEach(character -> newHex.append(character).append(character));
-        return newHex.toString();
-    }
-
-    /**
-     * Converts the provided hex string representing a color to rgb form.
-     *
-     * @param hex the hex string to convert to rgb form
-     * @return the rgb form of the provided hex color string
-     */
-    public String hexToRgbString(String hex) {
-        checkNotNull(hex);
-
-        hex = hex.replace("#", "");
-        if (hex.length() == shorthandHexLength) hex = expandShorthandHexColor(hex);
-
-        return Integer.valueOf(hex.substring(0, 2), HEX_BASE)
-                + "," + Integer.valueOf(hex.substring(2, 4), HEX_BASE)
-                + "," + Integer.valueOf(hex.substring(4, 6), HEX_BASE);
-    }
-
-    // todo CyderColor and .from methods?
-
-    /**
-     * Converts the provided color into an RGB hex representation.
-     *
-     * @param color the color to convert to hex representation
-     * @return the hex representation of the provided color
-     */
-    public static String toRgbHexString(Color color) {
-        checkNotNull(color);
-
-        return String.format(RGB_TO_HEX_FORMAT, color.getRed(), color.getGreen(), color.getBlue());
-    }
-
-    /**
      * Returns the dominant color of the provided BufferedImage.
      *
      * @param image the image to find the dominant color of
@@ -168,30 +74,6 @@ public final class ColorUtil {
         }
 
         return getDominantColor(colorCounter);
-    }
-
-    /**
-     * Determines the dominant color of the provided ImageIcon.
-     *
-     * @param imageIcon the image to find the dominant color of
-     * @return the dominant color of the provided image
-     */
-    public static Color getDominantColor(ImageIcon imageIcon) {
-        checkNotNull(imageIcon);
-
-        return getDominantColor(ImageUtil.toBufferedImage(imageIcon));
-    }
-
-    /**
-     * Calculates the opposite dominant color of the provided image.
-     *
-     * @param image the provided image to calculate the dominant color inverse of
-     * @return the opposite of the dominant color of the provided image
-     */
-    public static Color getDominantColorInverse(BufferedImage image) {
-        checkNotNull(image);
-
-        return new CyderColor(getDominantColor(image)).getInverseColor();
     }
 
     /**
@@ -235,24 +117,6 @@ public final class ColorUtil {
     }
 
     /**
-     * Returns the middle point of the two colors.
-     *
-     * @param color1 the first color
-     * @param color2 the second color
-     * @return the middle point of the two colors
-     */
-    public static Color getMiddleColor(Color color1, Color color2) {
-        checkNotNull(color1);
-        checkNotNull(color2);
-
-        int r = color1.getRed() + color2.getRed();
-        int g = color1.getGreen() + color2.getGreen();
-        int b = color1.getBlue() + color2.getBlue();
-
-        return new Color(r / 2, g / 2, b / 2);
-    }
-
-    /**
      * Finds the dominant color of the provided color counter.
      * Used for calculating the dominant color of an image.
      *
@@ -269,31 +133,5 @@ public final class ColorUtil {
                 .getKey();
 
         return new Color(dominantRGB);
-    }
-
-    /**
-     * Generates a list of eight colors for a transition from the flash color to the provided default color.
-     *
-     * @param flashColor   the flash color to start with
-     * @param defaultColor the default color to fade to
-     * @return the list of flash colors fading from flash color to default color
-     */
-    public static ImmutableList<Color> getFlashColors(Color flashColor, Color defaultColor) {
-        checkNotNull(flashColor);
-        checkNotNull(defaultColor);
-        checkArgument(!flashColor.equals(defaultColor));
-
-        Color middle = getMiddleColor(flashColor, defaultColor);
-        Color lessFlash = getMiddleColor(middle, flashColor);
-        Color lessDefault = getMiddleColor(middle, defaultColor);
-
-        Color beforeLessFlash = getMiddleColor(lessFlash, flashColor);
-        Color afterLessFlash = getMiddleColor(lessFlash, middle);
-
-        Color beforeLessDefault = getMiddleColor(lessDefault, middle);
-        Color afterLessDefault = getMiddleColor(lessDefault, defaultColor);
-
-        return ImmutableList.of(flashColor, beforeLessFlash, lessFlash, afterLessFlash,
-                middle, beforeLessDefault, lessDefault, afterLessDefault, defaultColor);
     }
 }

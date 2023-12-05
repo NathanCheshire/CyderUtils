@@ -1,9 +1,11 @@
 package cyder.color;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import java.awt.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * An abstraction class on top of {@link Color} to add utility and mutation methods.
@@ -97,6 +99,58 @@ public final class CyderColor extends Color {
         int b = color.getBlue() + getBlue();
 
         return new CyderColor(r / 2, g / 2, b / 2);
+    }
+
+    /**
+     * Returns n number of colors to transition between this color and the provided color.
+     *
+     * @param transitionToColor   the color to transition to
+     * @param numTransitionColors the number of transition colors to return
+     * @return a list representing transition colors for animating a transition from this color to the provided color
+     * @throws NullPointerException     if the provided transitionToColor is null
+     * @throws IllegalArgumentException if the provided transition colors number is less than zero
+     *                                  or greater than any color component's distance to the provided
+     *                                  transition color respective color component.
+     *                                  Or if the transitionToColor is equal to this color
+     */
+    public ImmutableList<CyderColor> getTransitionColors(Color transitionToColor, int numTransitionColors) {
+        Preconditions.checkNotNull(transitionToColor);
+        Preconditions.checkArgument(numTransitionColors > 0);
+        Preconditions.checkArgument(!equals(transitionToColor));
+
+        int maxRedSteps = Math.abs(getRed() - transitionToColor.getRed());
+        int maxGreenSteps = Math.abs(getGreen() - transitionToColor.getGreen());
+        int maxBlueSteps = Math.abs(getBlue() - transitionToColor.getBlue());
+        int maxPossibleDiscreteSteps = Math.min(maxRedSteps, maxGreenSteps);
+        maxPossibleDiscreteSteps = Math.min(maxPossibleDiscreteSteps, maxBlueSteps);
+        Preconditions.checkArgument(numTransitionColors <= maxPossibleDiscreteSteps);
+
+        ArrayList<CyderColor> ret = new ArrayList<>();
+
+        int ourRed = getRed();
+        int ourGreen = getGreen();
+        int ourBlue = getBlue();
+        int otherRed = transitionToColor.getRed();
+        int otherGreen = transitionToColor.getGreen();
+        int otherBlue = transitionToColor.getBlue();
+
+        float redStep = (otherRed - ourRed) / (float) numTransitionColors;
+        float greenStep = (otherGreen - ourGreen) / (float) numTransitionColors;
+        float blueStep = (otherBlue - ourBlue) / (float) numTransitionColors;
+
+        for (int i = 0; i < numTransitionColors; i++) {
+            int transitionRed = ourRed + (int) (redStep * i);
+            int transitionGreen = ourGreen + (int) (greenStep * i);
+            int transitionBlue = ourBlue + (int) (blueStep * i);
+            // Cap range
+            transitionRed = Math.min(Math.max(transitionRed, minColor), maxColor);
+            transitionGreen = Math.min(Math.max(transitionGreen, minColor), maxColor);
+            transitionBlue = Math.min(Math.max(transitionBlue, minColor), maxColor);
+
+            ret.add(new CyderColor(transitionRed, transitionGreen, transitionBlue));
+        }
+
+        return ImmutableList.copyOf(ret);
     }
 
     /**
