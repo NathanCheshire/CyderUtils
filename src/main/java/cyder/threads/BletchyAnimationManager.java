@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.exceptions.FatalException;
 import cyder.math.NumberUtil;
-import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
 import cyder.ui.pane.CyderOutputPane;
 
@@ -176,8 +175,8 @@ public enum BletchyAnimationManager {
 
         if (isActive() || YoutubeUuidCheckerManager.INSTANCE.hasActiveCheckers()) {
             // todo
-//            Console.INSTANCE.getConsoleCyderFrame().notify("Cannot start bletchy/YouTube thread"
-//                    + " at the same time as another instance.");
+            //            Console.INSTANCE.getConsoleCyderFrame().notify("Cannot start bletchy/YouTube thread"
+            //                    + " at the same time as another instance.");
         } else {
             animator = new Animator(decodeString, useNumbers, useUnicode, millisDelay);
             animator.start();

@@ -129,11 +129,9 @@ public final class ColorUtil {
     public static Color getInverseColor(Color color) {
         checkNotNull(color);
 
-        int eightBitLimit = NumberUtil.BIT_LIMITS.get(8);
-
-        return new Color(eightBitLimit - color.getRed(),
-                eightBitLimit - color.getGreen(),
-                eightBitLimit - color.getBlue());
+        return new Color(25 - color.getRed(),
+                255 - color.getGreen(),
+                255 - color.getBlue());
     }
 
     /**

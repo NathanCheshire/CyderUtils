@@ -2,7 +2,6 @@ package cyder.math;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.math.BigIntegerMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.exceptions.IllegalMethodException;
@@ -10,9 +9,7 @@ import cyder.strings.CyderStrings;
 import cyder.utils.ArrayUtil;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,15 +18,6 @@ import java.util.stream.IntStream;
  * A util for working with numbers and not necessarily math.
  */
 public final class NumberUtil {
-    /**
-     * The map of the base 10 limits of one, two, and three bytes.
-     */
-    public static final ImmutableMap<Integer, Integer> BIT_LIMITS = ImmutableMap.of(
-            8, 255,
-            16, 65535,
-            24, 16777215
-    );
-
     /**
      * Suppress default constructor.
      */
@@ -207,39 +195,32 @@ public final class NumberUtil {
      * @param max             the maximum random number possible
      * @param numInts         the number of random elements desired
      * @param allowDuplicates allow duplicate random values for a pure random experience vs unique random elements
-     * @return an array of ints of the desired size of random elements from min to max
+     * @return a list of integers of the desired size of random elements from min to max
      */
-    public static ImmutableList<Integer> generateRandomInts(int min, int max,
-                                                            int numInts, boolean allowDuplicates) {
+    public static ImmutableList<Integer> generateRandomInts(int min,
+                                                            int max,
+                                                            int numInts,
+                                                            boolean allowDuplicates) {
         Preconditions.checkArgument(min < max);
         Preconditions.checkArgument(numInts > 0);
 
-        if (!allowDuplicates) {
-            Preconditions.checkArgument(max - min + 1 >= numInts);
+        if (allowDuplicates)
+            return IntStream.range(0, numInts)
+                    .map(i -> generateRandomInt(min, max))
+                    .boxed()
+                    .collect(ImmutableList.toImmutableList());
+
+        Preconditions.checkArgument(max - min + 1 >= numInts);
+
+        Set<Integer> set = new HashSet<>();
+        while (set.size() < numInts) {
+            int rand = generateRandomInt(min, max);
+            set.add(rand);
         }
 
-        if (!allowDuplicates) {
-            ArrayList<Integer> uniqueInts = new ArrayList<>(numInts);
-
-            while (uniqueInts.size() < numInts) {
-                int rand = generateRandomInt(min, max);
-
-                if (!uniqueInts.contains(rand)) {
-                    uniqueInts.add(rand);
-                }
-            }
-
-            Collections.sort(uniqueInts);
-            return ImmutableList.copyOf(uniqueInts);
-        }
-
-        ArrayList<Integer> ret = new ArrayList<>();
-        for (int i = 0 ; i < numInts ; i++) {
-            ret.add(generateRandomInt(min, max));
-        }
-
-        Collections.sort(ret);
-        return ImmutableList.copyOf(ret);
+        ImmutableList<Integer> sortedList = ImmutableList.copyOf(set);
+        Collections.sort(sortedList);
+        return sortedList;
     }
 
     /**
@@ -251,10 +232,7 @@ public final class NumberUtil {
      */
     public static double calculateMagnitude(double first, double... others) {
         double summedSquares = Math.pow(first, 2);
-        for (double other : others) {
-            summedSquares += Math.pow(other, 2);
-        }
-
+        for (double other : others) summedSquares += Math.pow(other, 2);
         return Math.sqrt(summedSquares);
     }
 
@@ -269,9 +247,7 @@ public final class NumberUtil {
         int min = firstInt;
 
         for (int i : ints) {
-            if (i < min) {
-                min = i;
-            }
+            if (i < min) min = i;
         }
 
         return min;
