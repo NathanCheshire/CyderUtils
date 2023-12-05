@@ -200,6 +200,27 @@ public final class CyderPoint extends Point {
     }
 
     /**
+     * Computes and returns the magnitude of this point.
+     *
+     * @return the magnitude of this point
+     */
+    public double magnitude() {
+        return Math.sqrt(Math.pow(x, 2) +  Math.pow(y, 2));
+    }
+
+    /**
+     * Returns the angle of this point with the positive X axis.
+     *
+     * @return the angle of this point in the range [0, 360)
+     */
+    public double getAngle() {
+        double angleRadians = Math.atan2(y, x);
+        double angleDegrees = Math.toDegrees(angleRadians);
+        if (angleDegrees < 0) angleDegrees += 360;
+        return angleDegrees;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
