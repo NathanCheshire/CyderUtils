@@ -3,6 +3,7 @@ package cyder.ui.frame.tooltip;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import cyder.color.CyderColor;
 import cyder.color.CyderColors;
 import cyder.constants.HtmlTags;
 import cyder.exceptions.FatalException;
@@ -405,10 +406,16 @@ public final class TooltipMenuController {
                     int w = calculateWidth();
                     int h = calculateHeight();
 
-                    g.setColor(ColorUtil.setColorOpacity(borderColor, opacity.get()));
+                    CyderColor cyderBorderColor = new CyderColor(borderColor);
+                    cyderBorderColor.setOpacity(opacity.get());
+                    g.setColor(cyderBorderColor);
                     g.fillRect(0, 0, w, h);
-                    g.setColor(ColorUtil.setColorOpacity(CyderColors.getGuiThemeColor(), opacity.get()));
+
+                    CyderColor innerColor = new CyderColor(CyderColors.getGuiThemeColor());
+                    innerColor.setOpacity(opacity.get());
+                    g.setColor(innerColor);
                     g.fillRect(borderLength, borderLength, w - 2 * borderLength, h - 2 * borderLength);
+
                     super.paint(g);
                 }
             };

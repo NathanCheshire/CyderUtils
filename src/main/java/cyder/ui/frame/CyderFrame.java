@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
+import cyder.color.CyderColor;
 import cyder.color.CyderColors;
 import cyder.constants.*;
 import cyder.font.CyderFonts;
@@ -2725,7 +2726,7 @@ public class CyderFrame extends JFrame {
 
         if (draw) {
             Color lineColor = background == null
-                    ? ColorUtil.getInverseColor(backgroundColor)
+                    ? new CyderColor(backgroundColor).getInverseColor()
                     : ColorUtil.getDominantColorInverse(background);
 
             int centerX = getWidth() / 2 - debugLineLength / 2;

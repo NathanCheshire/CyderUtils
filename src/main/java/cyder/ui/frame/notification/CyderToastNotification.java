@@ -2,6 +2,7 @@ package cyder.ui.frame.notification;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
+import cyder.color.CyderColor;
 import cyder.enumerations.Direction;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
@@ -212,7 +213,9 @@ public class CyderToastNotification extends CyderNotification {
         int componentHeight = container.getHeight();
         Color borderColor = notificationBorderColor;
         if (isHovered.get()) borderColor = borderColor.darker();
-        g2d.setPaint(ColorUtil.setColorOpacity(borderColor, opacity.get()));
+        CyderColor cyderBorderColor = new CyderColor(borderColor);
+        cyderBorderColor.setOpacity(opacity.get());
+        g2d.setPaint(cyderBorderColor);
 
         GeneralPath outlinePath = new GeneralPath();
 
@@ -276,7 +279,9 @@ public class CyderToastNotification extends CyderNotification {
         int componentHeight = container.getHeight();
         Color fillColor = notificationBackgroundColor;
         if (isHovered.get()) fillColor = fillColor.darker();
-        g2d.setPaint(ColorUtil.setColorOpacity(fillColor, opacity.get()));
+        CyderColor cyderFillColor = new CyderColor(fillColor);
+        cyderFillColor.setOpacity(opacity.get());
+        g2d.setPaint(cyderFillColor);
 
         GeneralPath fillPath = new GeneralPath();
 

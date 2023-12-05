@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
-import cyder.math.NumberUtil;
 import cyder.strings.CyderStrings;
 import cyder.utils.ImageUtil;
 
@@ -119,23 +118,6 @@ public final class ColorUtil {
     }
 
     /**
-     * Computes and returns the inverse of the provided color.
-     * This is done by subtracting the provided red, green, and blue colors
-     * from 255 and using the resulting numbers to form the new color.
-     *
-     * @param color the color to calculate the inverse of
-     * @return the inverse of the provided color
-     */
-    @SuppressWarnings("ConstantConditions") /* Unboxing is safe in this context */
-    public static Color getInverseColor(Color color) {
-        checkNotNull(color);
-
-        return new Color(25 - color.getRed(),
-                255 - color.getGreen(),
-                255 - color.getBlue());
-    }
-
-    /**
      * Converts the provided hex string representing a color to rgb form.
      *
      * @param hex the hex string to convert to rgb form
@@ -209,7 +191,7 @@ public final class ColorUtil {
     public static Color getDominantColorInverse(BufferedImage image) {
         checkNotNull(image);
 
-        return getInverseColor(getDominantColor(image));
+        return new CyderColor(getDominantColor(image)).getInverseColor();
     }
 
     /**
@@ -221,7 +203,7 @@ public final class ColorUtil {
     public static Color getDominantColorInverse(ImageIcon image) {
         checkNotNull(image);
 
-        return getInverseColor(getDominantColor(ImageUtil.toBufferedImage(image)));
+        return new CyderColor(getDominantColor(ImageUtil.toBufferedImage(image))).getInverseColor();
     }
 
     /**
@@ -234,7 +216,8 @@ public final class ColorUtil {
     public static Color getSuitableOverlayTextColor(BufferedImage bi) {
         checkNotNull(bi);
 
-        return getInverseColor(getDominantGrayscaleColor(bi));
+        // todo return getInverseColor(getDominantGrayscaleColor(bi));
+        return null;
     }
 
     /**
@@ -312,20 +295,5 @@ public final class ColorUtil {
 
         return ImmutableList.of(flashColor, beforeLessFlash, lessFlash, afterLessFlash,
                 middle, beforeLessDefault, lessDefault, afterLessDefault, defaultColor);
-    }
-
-    /**
-     * Sets the opacity of the provided color to the provided opacity and returns a new color object.
-     *
-     * @param color   the color
-     * @param opacity the opacity of the color
-     * @return the color with the requested opacity.
-     */
-    public static Color setColorOpacity(Color color, int opacity) {
-        Preconditions.checkNotNull(color);
-        if (opacity > maxOpacity) opacity = maxOpacity;
-        if (opacity < minOpacity) opacity = minOpacity;
-
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
     }
 }

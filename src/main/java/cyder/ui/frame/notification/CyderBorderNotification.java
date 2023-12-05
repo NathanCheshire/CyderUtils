@@ -2,10 +2,10 @@ package cyder.ui.frame.notification;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
+import cyder.color.CyderColor;
 import cyder.threads.ThreadUtil;
 import cyder.ui.drag.CyderDragLabel;
 import cyder.ui.frame.CyderFrame;
-import cyder.color.ColorUtil;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -59,7 +59,9 @@ public final class CyderBorderNotification extends CyderToastNotification {
      * @param g2d the 2D graphics object to paint with
      */
     private void paintArrowBorder(Graphics2D g2d) {
-        g2d.setColor(ColorUtil.setColorOpacity(notificationBorderColor, opacity.get()));
+        CyderColor notificationCyderColor = new CyderColor(notificationBorderColor);
+        notificationCyderColor.setOpacity(opacity.get());
+        g2d.setColor(notificationCyderColor);
 
         // Artificially inflate length to draw arrow
         int componentWidth = container.getWidth() + 2 * borderLength;
@@ -107,7 +109,9 @@ public final class CyderBorderNotification extends CyderToastNotification {
      * @param g2d the 2D graphics object to paint with
      */
     private void paintArrowFill(Graphics2D g2d) {
-        g2d.setColor(ColorUtil.setColorOpacity(notificationBackgroundColor, opacity.get()));
+        CyderColor cyderColorNotificationBackground = new CyderColor(notificationBackgroundColor);
+        cyderColorNotificationBackground.setOpacity(opacity.get());
+        g2d.setColor(cyderColorNotificationBackground);
 
         GeneralPath fillPath = new GeneralPath();
 
