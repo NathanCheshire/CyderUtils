@@ -8,6 +8,7 @@ import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.font.CyderFonts;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
 import cyder.strings.StringUtil;

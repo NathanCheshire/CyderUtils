@@ -96,11 +96,37 @@ public final class CyderImage {
     }
 
     /**
+     * Constructs and returns a new CyderImage from the provided image.
+     *
+     * @param image the buffered image to copy for this image
+     * @return a new CyderImage from the provided image
+     * @throws NullPointerException if the provided image is null
+     */
+    public static CyderImage fromImage(BufferedImage image) {
+        Preconditions.checkNotNull(image);
+
+        return new CyderImage(copy(image));
+    }
+
+    /**
      * Returns a new BufferedImage, copied from the internal image.
      *
      * @return a new BufferedImage, copied from the internal image
      */
     public BufferedImage getBufferedImage() {
+        return copy(image);
+    }
+
+    /**
+     * Copies the provided buffered image and returns a new image.
+     *
+     * @param image the image to copy
+     * @return a new copied buffered image
+     * @throws NullPointerException if the provided image is null
+     */
+    public static BufferedImage copy(BufferedImage image) {
+        Preconditions.checkNotNull(image);
+
         BufferedImage copy = new BufferedImage(image.getWidth(),
                 image.getHeight(),
                 image.getType());
@@ -281,5 +307,40 @@ public final class CyderImage {
      */
     public boolean isSquare() {
         return image.getWidth() == image.getHeight();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof CyderImage)) {
+            return false;
+        }
+
+        CyderImage other = (CyderImage) o;
+        return other.image.equals(image); // todo need actual pixel comparison
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return image.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "CyderImage{"
+                + "image=" + image
+                + ", width=" + image.getWidth()
+                + ", height=" + image.getHeight()
+                + "}";
     }
 }
