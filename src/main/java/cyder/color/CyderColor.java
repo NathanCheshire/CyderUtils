@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 /**
  * An abstraction class on top of {@link Color} to add utility and mutation methods.
@@ -138,20 +139,22 @@ public final class CyderColor extends Color {
         float greenStep = (otherGreen - ourGreen) / (float) numTransitionColors;
         float blueStep = (otherBlue - ourBlue) / (float) numTransitionColors;
 
-        for (int i = 0; i < numTransitionColors; i++) {
+        IntStream.range(0, numTransitionColors).forEach(i -> {
             int transitionRed = ourRed + (int) (redStep * i);
             int transitionGreen = ourGreen + (int) (greenStep * i);
             int transitionBlue = ourBlue + (int) (blueStep * i);
-            // Cap range
+            // Cap range, todo method for this maybe?
             transitionRed = Math.min(Math.max(transitionRed, minColor), maxColor);
             transitionGreen = Math.min(Math.max(transitionGreen, minColor), maxColor);
             transitionBlue = Math.min(Math.max(transitionBlue, minColor), maxColor);
 
             ret.add(new CyderColor(transitionRed, transitionGreen, transitionBlue));
-        }
+        });
 
         return ImmutableList.copyOf(ret);
     }
+
+
 
     /**
      * Returns whether the provided color value is within the range [0, 255].

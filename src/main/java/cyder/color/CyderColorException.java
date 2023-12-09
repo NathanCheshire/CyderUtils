@@ -5,7 +5,7 @@ import cyder.exceptions.CyderExceptionMixin;
 /**
  * An exception thrown by {@link CyderColor} instances.
  */
-public class CyderColorException extends RuntimeException implements CyderExceptionMixin {
+public final class CyderColorException extends RuntimeException implements CyderExceptionMixin {
     /**
      * Constructs a new CyderColorException exception using the provided error message.
      */

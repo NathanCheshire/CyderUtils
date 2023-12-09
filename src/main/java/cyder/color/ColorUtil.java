@@ -1,6 +1,5 @@
 package cyder.color;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
@@ -12,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -20,30 +18,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ColorUtil {
     /**
-     * The length of shorthand hex color strings.
-     */
-    private static final int shorthandHexLength = 3;
-
-    /**
      * The maximum length the hashmap for the get dominant color method can grow.
      * This ensures we are only checking the top 100 colors of an image when determining the dominant color.
      */
     private static final int maxDominantColorCounterHashMapLength = 100;
 
     /**
-     * The minimum opacity.
-     */
-    private static final int minOpacity = 0;
-
-    /**
-     * The maximum opacity.
-     */
-    private static final int maxOpacity = 255;
-
-    /**
      * The range for opacity values for Java's {@link Color} objects.
      */
-    public static final Range<Integer> opacityRange = Range.closed(minOpacity, maxOpacity);
+    public static final Range<Integer> opacityRange = Range.closed(0, 255);
 
     /**
      * Suppress default constructor.

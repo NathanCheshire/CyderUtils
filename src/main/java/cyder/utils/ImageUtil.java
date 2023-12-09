@@ -156,28 +156,6 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a buffered image of the specified color.
-     *
-     * @param color  the color of the requested image
-     * @param width  the width of the requested image
-     * @param height the height of the requested image
-     * @return the buffered image of the provided color and dimensions
-     */
-    public static BufferedImage bufferedImageFromColor(Color color, int width, int height) {
-        Preconditions.checkNotNull(color);
-        Preconditions.checkArgument(width > 0);
-        Preconditions.checkArgument(height > 0);
-
-        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = bi.createGraphics();
-
-        graphics.setPaint(color);
-        graphics.fillRect(0, 0, width, height);
-
-        return bi;
-    }
-
-    /**
      * Returns an ImageIcon of the requested color.
      *
      * @param color  the color of the requested image
@@ -195,16 +173,6 @@ public final class ImageUtil {
         g.setPaint(color);
         g.fillRect(0, 0, width, height);
         return new ImageIcon(im);
-    }
-
-    /**
-     * Returns an ImageIcon of the requested color of the size 1x1.
-     *
-     * @param color the color of the requested image
-     * @return the image of the requested color and dimensions
-     */
-    public static ImageIcon imageIconFromColor(Color color) {
-        return imageIconFromColor(color, 1, 1);
     }
 
     /**
@@ -1094,33 +1062,6 @@ public final class ImageUtil {
         ColorModel colorModel = image.getColorModel();
         boolean isAlphaPreMultiplied = colorModel.isAlphaPremultiplied();
         return new BufferedImage(colorModel, image.copyData(null), isAlphaPreMultiplied, null);
-    }
-
-    /**
-     * Returns an image icon no bigger than originalIcon x originalIcon.
-     *
-     * @param originalIcon the icon to resize if needed
-     * @param length       the side length of the image
-     * @return a new icon that is guaranteed to be at most originalIcon x originalIcon
-     */
-    public static ImageIcon resizeIfLengthExceeded(ImageIcon originalIcon, int length) {
-        Preconditions.checkNotNull(originalIcon);
-        Preconditions.checkArgument(length > 0);
-
-        BufferedImage bi = toBufferedImage(originalIcon);
-
-        int width = originalIcon.getIconWidth();
-        int height = originalIcon.getIconHeight();
-
-        if (width > height) {
-            int scaledHeight = length * height / width;
-            return new ImageIcon(bi.getScaledInstance(length, scaledHeight, Image.SCALE_SMOOTH));
-        } else if (height > width) {
-            int scaledWidth = length * width / height;
-            return new ImageIcon(bi.getScaledInstance(scaledWidth, length, Image.SCALE_SMOOTH));
-        } else {
-            return new ImageIcon(bi.getScaledInstance(length, length, Image.SCALE_SMOOTH));
-        }
     }
 
     /**
