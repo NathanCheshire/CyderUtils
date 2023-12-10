@@ -11,6 +11,7 @@ import cyder.constants.HtmlTags;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.strings.CyderStrings;
 import cyder.time.TimeUtil;
 import cyder.ui.drag.DragLabelButtonSize;
@@ -167,8 +168,8 @@ public final class UiUtil {
         boolean ret = false;
 
         try {
-            ret = ImageIO.write(ImageUtil.screenshotComponent(frame),
-                    Extension.PNG.getExtensionWithoutPeriod(), saveFile);
+            CyderImage image = CyderImage.fromComponent(frame);
+            ret = ImageIO.write(image.getBufferedImage(), Extension.PNG.getExtensionWithoutPeriod(), saveFile);
         } catch (Exception e) {
             e.printStackTrace();
         }

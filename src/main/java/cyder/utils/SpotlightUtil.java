@@ -3,6 +3,7 @@ package cyder.utils;
 import com.google.common.base.Preconditions;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.strings.CyderStrings;
 
 import javax.swing.*;
@@ -144,7 +145,7 @@ public final class SpotlightUtil {
             for (File spotlight : files) {
                 ImageIcon icon = new ImageIcon(spotlight.getAbsolutePath());
 
-                if (ImageUtil.isPortraitIcon(icon)) continue;
+                if (CyderImage.fromImageIcon(icon).isPortrait()) continue;
                 if (icon.getIconWidth() < minimumSpotlightImageLength) continue;
                 if (icon.getIconHeight() < minimumSpotlightImageLength) continue;
 

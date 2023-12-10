@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public final class CyderImage {
     /**
-     * The default color counter hashmap max length.
+     * The default color counter the dominant color contained in this imagehashmap max length.
      */
     private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
 
@@ -108,16 +108,52 @@ public final class CyderImage {
     }
 
     /**
-     * Constructs and returns a new CyderImage from the provided image.
+     * Constructs and returns a new CyderImage from the provided BufferedImage.
      *
-     * @param image the buffered image to copy for this image
-     * @return a new CyderImage from the provided image
-     * @throws NullPointerException if the provided image is null
+     * @param image the BufferedImage to copy for this CyderImage
+     * @return a new CyderImage from the provided BufferedImage
+     * @throws NullPointerException if the provided BufferedImage is null
      */
-    public static CyderImage fromImage(BufferedImage image) {
+    public static CyderImage fromBufferedImage(BufferedImage image) {
         Preconditions.checkNotNull(image);
 
         return new CyderImage(copy(image));
+    }
+
+    /**
+     * Constructs and returns a new CyderImage from the provided ImageIcon.
+     *
+     * @param icon the ImageIcon to copy for this CyderImage
+     * @return a new CyderImage from the provided ImageIcon
+     * @throws NullPointerException if the provided ImageIcon is null
+     */
+    public static CyderImage fromImageIcon(ImageIcon icon) {
+        Preconditions.checkNotNull(icon);
+
+        BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.createGraphics();
+        icon.paintIcon(null, g, 0, 0);
+        g.dispose();
+
+        return new CyderImage(image);
+    }
+
+    /**
+     * Constructs and returns a new CyderImage from the provided Component
+     * via invoking {@link BufferedImage#getGraphics()} and painting the component onto the new image.
+     *
+     * @param component the component to capture
+     * @return a new CyderImage from the provided component
+     * @throws NullPointerException if the provided component is null
+     */
+    public static CyderImage fromComponent(Component component) {
+        Preconditions.checkNotNull(component);
+
+        BufferedImage image = new BufferedImage(
+                component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
+        component.paint(image.getGraphics());
+
+        return new CyderImage(image);
     }
 
     /**

@@ -6,6 +6,7 @@ import cyder.constants.CyderRegexPatterns;
 import cyder.constants.CyderUrls;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
@@ -336,13 +337,10 @@ public final class YouTubeUtil {
      */
     public static Optional<BufferedImage> getMaxResolutionSquareThumbnail(String uuid) {
         Optional<BufferedImage> optionalBi = YouTubeUtil.getMaxResolutionThumbnail(uuid);
-
-        BufferedImage bi = optionalBi.orElse(null);
-
-        if (bi == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(ImageUtil.cropToMaximumSizeSquare(bi));
+        BufferedImage bufferedImage = optionalBi.orElse(null);
+        if (bufferedImage == null) return Optional.empty();
+        CyderImage image = CyderImage.fromBufferedImage(bufferedImage);
+        image.cropToMaximumSquare();
+        return Optional.of(image.getBufferedImage());
     }
 }

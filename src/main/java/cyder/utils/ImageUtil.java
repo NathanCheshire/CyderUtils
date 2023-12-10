@@ -125,37 +125,6 @@ public final class ImageUtil {
     }
 
     /**
-     * Crops the specified ImageIcon to the new bounds and returns a new ImageIcon.
-     *
-     * @param image  the ImageIcon image to crop
-     * @param x      the starting x pixel within the image
-     * @param y      the starting y pixel within the image
-     * @param width  the width of the new image
-     * @param height the height of the new image
-     * @return the requested cropped image
-     */
-    public static ImageIcon cropImage(ImageIcon image,
-                                      int x, int y, int width, int height) {
-        Preconditions.checkNotNull(image);
-        Preconditions.checkArgument(x >= 0);
-        Preconditions.checkArgument(y >= 0);
-        Preconditions.checkArgument(width <= image.getIconWidth());
-        Preconditions.checkArgument(height <= image.getIconHeight());
-
-        if (x + width > image.getIconWidth()) {
-            x = 0;
-            width = image.getIconWidth();
-        }
-
-        if (y + height > image.getIconHeight()) {
-            y = 0;
-            height = image.getIconHeight();
-        }
-
-        return toImageIcon(toBufferedImage(image).getSubimage(x, y, width, height));
-    }
-
-    /**
      * Returns an ImageIcon of the requested color.
      *
      * @param color  the color of the requested image
@@ -173,71 +142,6 @@ public final class ImageUtil {
         g.setPaint(color);
         g.fillRect(0, 0, width, height);
         return new ImageIcon(im);
-    }
-
-    /**
-     * Resizes the provided ImageIcon to the requested dimensions.
-     *
-     * @param width  the width of the requested image
-     * @param height the height of the requested image
-     * @param icon   the ImageIcon to resize
-     * @return the resized image
-     */
-    public static BufferedImage resizeImage(int width, int height, ImageIcon icon) {
-        Preconditions.checkArgument(width > 0);
-        Preconditions.checkArgument(height > 0);
-        Preconditions.checkNotNull(icon);
-
-        BufferedImage ret = null;
-
-        try {
-            Image image = icon.getImage();
-            Image transferImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ret = new BufferedImage(transferImage.getWidth(null),
-                    transferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-            // todo this can be done with a helper method im sure
-            Graphics2D graphics = ret.createGraphics();
-            graphics.drawImage(transferImage, 0, 0, null);
-            graphics.dispose();
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns the image at the provided location resized.
-     *
-     * @param width     the width to resize to
-     * @param height    the height to resize to
-     * @param imageFile the File representing an image
-     * @return the resized image
-     */
-    public static BufferedImage resizeImage(int width, int height, File imageFile) {
-        Preconditions.checkArgument(width > 0);
-        Preconditions.checkArgument(height > 0);
-        Preconditions.checkNotNull(imageFile);
-
-        BufferedImage ret = null;
-
-        try {
-            Image image = read(imageFile);
-            Image transferImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ret = new BufferedImage(transferImage.getWidth(null),
-                    transferImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D graphics = ret.createGraphics();
-            graphics.drawImage(transferImage, 0, 0, null);
-            graphics.dispose();
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return ret;
     }
 
     /**
@@ -840,83 +744,6 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns a buffered image for the provided component.
-     *
-     * @param component the component to take a picture of
-     * @return the buffered image representing the provided component
-     */
-    public static BufferedImage screenshotComponent(Component component) {
-        Preconditions.checkNotNull(component);
-
-        BufferedImage image = new BufferedImage(
-                component.getWidth(),
-                component.getHeight(),
-                BufferedImage.TYPE_INT_RGB
-        );
-
-        component.paint(image.getGraphics());
-
-        return image;
-    }
-
-    /**
-     * Returns whether the two images from the provided files are equal in content.
-     *
-     * @param file1 the first file
-     * @param file2 the second file
-     * @return whether the two images from the provided files are equal in content
-     */
-    public static boolean compareImage(File file1, File file2) {
-        Preconditions.checkNotNull(file1);
-        Preconditions.checkNotNull(file2);
-        Preconditions.checkArgument(file1.exists());
-        Preconditions.checkArgument(file2.exists());
-
-        try {
-            BufferedImage bi1 = read(file1);
-            DataBuffer db1 = bi1.getData().getDataBuffer();
-            int size = db1.getSize();
-
-            BufferedImage bi2 = read(file2);
-            DataBuffer db2 = bi2.getData().getDataBuffer();
-            int size2 = db2.getSize();
-
-            if (size == size2) {
-                for (int i = 0 ; i < size ; i++) {
-                    if (db1.getElem(i) != db2.getElem(i)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        } catch (Exception ignored) {
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns whether the provided file is a valid image file meaning it can be read by {@link ImageIO}.
-     *
-     * @param file the file to check for image validity
-     * @return whether the provided file is a valid image file
-     */
-    public static boolean isValidImage(File file) {
-        Preconditions.checkNotNull(file);
-        Preconditions.checkArgument(file.exists());
-        Preconditions.checkArgument(!file.isDirectory());
-
-        try {
-            read(file);
-            return true;
-        } catch (Exception ignored) {}
-
-        return false;
-    }
-
-    /**
      * Returns the provided image file after applying a gaussian blur to it.
      *
      * @param imageFile the image file to blur and output a blurred copy in the same directory
@@ -935,32 +762,6 @@ public final class ImageUtil {
             // todo need to do this logic on our own now
             return Optional.empty();
         });
-    }
-
-    /**
-     * Sets the alpha value of all pixels within the buffered image to the provided value.
-     *
-     * @param bi    the buffered image to alter
-     * @param alpha the alpha value to set all the pixels to
-     * @return the altered buffered image
-     */
-    public static BufferedImage setAlphaOfPixels(BufferedImage bi, int alpha) {
-        Preconditions.checkNotNull(bi);
-        Preconditions.checkArgument(ColorUtil.opacityRange.contains(alpha));
-
-        BufferedImage ret = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        for (int x = 0 ; x < bi.getWidth() ; x++) {
-            for (int y = 0 ; y < bi.getHeight() ; y++) {
-                int rgb = bi.getRGB(x, y);
-                int mc = (alpha << 24) | 0x00ffffff;
-                byte colorByte = (byte) (rgb & mc);
-
-                ret.setRGB(x, y, colorByte);
-            }
-        }
-
-        return ret;
     }
 
     /**
@@ -990,19 +791,6 @@ public final class ImageUtil {
         Preconditions.checkArgument(file.exists());
 
         return ImageIO.read(file);
-    }
-
-    /**
-     * Returns the buffered image read from the provided input stream.
-     *
-     * @param inputStream the input stream
-     * @return the buffered image read from the provided input stream
-     * @throws IOException if the image cannot be read
-     */
-    public static BufferedImage read(InputStream inputStream) throws IOException {
-        Preconditions.checkNotNull(inputStream);
-
-        return ImageIO.read(inputStream);
     }
 
     /**
@@ -1062,42 +850,5 @@ public final class ImageUtil {
         ColorModel colorModel = image.getColorModel();
         boolean isAlphaPreMultiplied = colorModel.isAlphaPremultiplied();
         return new BufferedImage(colorModel, image.copyData(null), isAlphaPreMultiplied, null);
-    }
-
-    /**
-     * Returns whether the provided icon is a portrait icon meaning its height is greater than its width.
-     *
-     * @param icon the icon to test
-     * @return whether the provided icon is a portrait photo
-     */
-    public static boolean isPortraitIcon(ImageIcon icon) {
-        Preconditions.checkNotNull(icon);
-
-        return icon.getIconWidth() < icon.getIconHeight();
-    }
-
-    /**
-     * Returns a copy of the provided buffered image cropped to the maximum possible square.
-     *
-     * @param image the image to crop
-     * @return the square image
-     */
-    @SuppressWarnings("SuspiciousNameCombination") /* Cropping logic */
-    public static BufferedImage cropToMaximumSizeSquare(BufferedImage image) {
-        Preconditions.checkNotNull(image);
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        if (width < height) {
-            image = ImageUtil.cropImage(image, 0, (height - width) / 2, width, width);
-        } else if (height < width) {
-            image = ImageUtil.cropImage(image, (width - height) / 2, 0, height, height);
-        } else {
-            image = ImageUtil.cropImage(image, 0, 0, width, height);
-        }
-
-        int sideLength = Math.min(width, height);
-        return ImageUtil.resizeImage(image, image.getType(), sideLength, sideLength);
     }
 }

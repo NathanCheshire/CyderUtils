@@ -5,6 +5,7 @@ import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
@@ -201,7 +202,9 @@ public final class MapUtil {
         ImageIcon ret = returnedInitialImage;
 
         if (builder.isFilterWaterMark()) {
-            ret = ImageUtil.cropImage(ret, 0, 0, builder.getWidth(), builder.getHeight());
+            CyderImage image = CyderImage.fromImageIcon(ret);
+            image.crop(0, 0, builder.getWidth(), builder.getHeight());
+            ret = image.getImageIcon();
         }
 
         return ret;

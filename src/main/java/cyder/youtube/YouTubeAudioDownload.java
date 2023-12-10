@@ -556,7 +556,9 @@ public class YouTubeAudioDownload {
 
         if (requestedThumbnailWidth == DIMENSION_TO_BE_DETERMINED
                 && requestedThumbnailHeight == DIMENSION_TO_BE_DETERMINED) {
-            thumbnailImage = ImageUtil.cropToMaximumSizeSquare(thumbnailImage);
+            CyderImage image = CyderImage.fromBufferedImage(thumbnailImage);
+            image.cropToMaximumSquare();
+            thumbnailImage = image.getBufferedImage();
         } else {
             int w = Math.min(thumbnailImage.getWidth(), requestedThumbnailWidth);
             int h = Math.min(thumbnailImage.getHeight(), requestedThumbnailHeight);
