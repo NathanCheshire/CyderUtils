@@ -13,15 +13,27 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An image abstraction for usage throughout Cyder.
  */
 public final class CyderImage {
     /**
+     * The default color counter hashmap max length.
+     */
+    private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
+
+    /**
      * The encapsulated image.
      */
     private BufferedImage image;
+
+    /**
+     * The color counter hashmap's max length.
+     */
+    private int colorCounterMaxLength = DEFAULT_COLOR_COUNTER_MAX_LENGTH;
 
     /**
      * Constructs a new CyderImage from the provided BufferedImage.
@@ -183,7 +195,7 @@ public final class CyderImage {
     /**
      * Crops the image to the provided width and height from an (x, y) of (0, 0).
      *
-     * @param width the width of the image
+     * @param width  the width of the image
      * @param height the height of the image
      * @throws IllegalArgumentException if the provided width or height is less than zero
      */
@@ -191,7 +203,7 @@ public final class CyderImage {
         Preconditions.checkArgument(width >= 0);
         Preconditions.checkArgument(height >= 0);
 
-        crop(0,0, width, height);
+        crop(0, 0, width, height);
     }
 
     /**
@@ -310,6 +322,43 @@ public final class CyderImage {
     }
 
     /**
+     * Sets the color counter max length.
+     *
+     * @param colorCounterMaxLength the color counter max length value
+     * @throws IllegalArgumentException if the provided value is less than {@link #DEFAULT_COLOR_COUNTER_MAX_LENGTH}
+     */
+    public void setColorCounterMaxLength(int colorCounterMaxLength) {
+        Preconditions.checkArgument(colorCounterMaxLength >= DEFAULT_COLOR_COUNTER_MAX_LENGTH);
+        this.colorCounterMaxLength = colorCounterMaxLength;
+    }
+
+    /**
+     * Returns the dominant color contained in this image.
+     *
+     * @return the dominant color contained in this image
+     */
+    public Color getDominantColor() {
+        Map<Integer, Integer> colorCounter = new HashMap<>(colorCounterMaxLength);
+
+        for (int x = 0 ; x < image.getWidth() ; x++) {
+            for (int y = 0 ; y < image.getHeight() ; y++) {
+                int currentRGB = image.getRGB(x, y);
+                int count = colorCounter.getOrDefault(currentRGB, 0);
+                colorCounter.put(currentRGB, count + 1);
+            }
+        }
+
+        int dominantRgb = colorCounter
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .orElseThrow(() -> new CyderImageException("Failed to compute dominant color"))
+                .getKey();
+
+        return new Color(dominantRgb);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -321,7 +370,8 @@ public final class CyderImage {
         }
 
         CyderImage other = (CyderImage) o;
-        return other.image.equals(image); // todo need actual pixel comparison
+        return other.image.equals(image) // todo need actual pixel comparison
+                && other.colorCounterMaxLength == colorCounterMaxLength;
     }
 
     /**
@@ -329,7 +379,9 @@ public final class CyderImage {
      */
     @Override
     public int hashCode() {
-        return image.hashCode();
+        int ret = image.hashCode();
+        ret = 31 * ret + Integer.hashCode(colorCounterMaxLength);
+        return ret;
     }
 
     /**
@@ -341,6 +393,7 @@ public final class CyderImage {
                 + "image=" + image
                 + ", width=" + image.getWidth()
                 + ", height=" + image.getHeight()
+                + ", colorCounterMaxLength=" + colorCounterMaxLength
                 + "}";
     }
 }
