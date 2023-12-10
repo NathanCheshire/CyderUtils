@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.color.CyderColors;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.strings.CyderStrings;
 import cyder.ui.UiUtil;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -233,7 +233,9 @@ public class CyderPasswordField extends JPasswordField {
 
         int len = getHeight() - 2 * iconLabelPadding;
         if (leftIcon.getIconWidth() > len || leftIcon.getIconHeight() > len) {
-            leftIcon = ImageUtil.ensureFitsInBounds(leftIcon, new Dimension(len, len));
+            CyderImage cyderImage = CyderImage.fromImageIcon(leftIcon);
+            cyderImage.ensureFitsInBounds(new Dimension(len, len));
+            leftIcon = cyderImage.getImageIcon();
         }
 
         setBorder(border);

@@ -1,29 +1,20 @@
 package cyder.utils;
 
 import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cyder.color.ColorUtil;
 import cyder.enumerations.Direction;
-import cyder.exceptions.IllegalMethodException;
-import cyder.math.Angle;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
 import cyder.process.Program;
-import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
-import cyder.ui.drag.CyderDragLabel;
-import cyder.ui.frame.CyderFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -48,81 +39,6 @@ public final class ImageUtil {
      * The title of the draw image icon frame.
      */
     private static final String defaultDrawImageIconTitle = "ImageIcon";
-
-    /**
-     * Suppress default constructor.
-     */
-    private ImageUtil() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
-    }
-
-    /**
-     * Pixelates the provided bufferedImage.
-     *
-     * @param imageToPixelate the image to pixelate
-     * @param pixelSize       the number of old pixels to represent a single new "pixel"
-     * @return a buffered image in the same size as the original with new, bigger pixel blocks
-     */
-    public static BufferedImage pixelateImage(BufferedImage imageToPixelate, int pixelSize) {
-        Preconditions.checkNotNull(imageToPixelate);
-        Preconditions.checkArgument(pixelSize > 1);
-
-        BufferedImage pixelateImage = new BufferedImage(
-                imageToPixelate.getWidth(),
-                imageToPixelate.getHeight(),
-                imageToPixelate.getType());
-
-        for (int y = 0 ; y < imageToPixelate.getHeight() ; y += pixelSize) {
-            for (int x = 0 ; x < imageToPixelate.getWidth() ; x += pixelSize) {
-                BufferedImage croppedImage = cropImage(imageToPixelate, x, y, pixelSize, pixelSize);
-                Color dominantColor = ColorUtil.getDominantColor(croppedImage);
-
-                for (int yd = y ; (yd < y + pixelSize) && (yd < pixelateImage.getHeight()) ; yd++) {
-                    for (int xd = x ; (xd < x + pixelSize) && (xd < pixelateImage.getWidth()) ; xd++) {
-                        pixelateImage.setRGB(xd, yd, dominantColor.getRGB());
-                    }
-                }
-
-            }
-        }
-
-        return pixelateImage;
-    }
-
-    /**
-     * Crops the specified bufferedImage to the new bounds and returns a new buffered image.
-     *
-     * @param image  the buffered image to crop
-     * @param x      the starting x pixel within the image
-     * @param y      the starting y pixel within the image
-     * @param width  the width of the new image
-     * @param height the height of the new image
-     * @return the requested cropped image
-     */
-    public static BufferedImage cropImage(BufferedImage image,
-                                          int x, int y, int width, int height) {
-        Preconditions.checkNotNull(image);
-        Preconditions.checkArgument(x >= 0);
-        Preconditions.checkArgument(y >= 0);
-        Preconditions.checkArgument(width <= image.getWidth());
-        Preconditions.checkArgument(height <= image.getHeight());
-
-        if (x == 0 && y == 0 && width == image.getWidth() && height == image.getHeight()) {
-            return image;
-        }
-
-        if (x + width > image.getWidth()) {
-            x = 0;
-            width = image.getWidth();
-        }
-
-        if (y + height > image.getHeight()) {
-            y = 0;
-            height = image.getHeight();
-        }
-
-        return image.getSubimage(x, y, width, height);
-    }
 
     /**
      * Returns an ImageIcon of the requested color.
@@ -170,187 +86,6 @@ public final class ImageUtil {
         icon.paintIcon(null, g, 0, 0);
         g.dispose();
         return bi;
-    }
-
-    /**
-     * Returns the rotated background file.
-     *
-     * @param filepath  the path to the file
-     * @param direction the direction of rotation
-     * @return the rotated image
-     * @throws IllegalArgumentException if the buffered image cannot be loaded from the provided path
-     */
-    public static BufferedImage getRotatedImage(String filepath, Direction direction) {
-        Preconditions.checkNotNull(filepath);
-        Preconditions.checkArgument(!filepath.isEmpty());
-        Preconditions.checkNotNull(direction);
-
-        BufferedImage bufferedImage = null;
-
-        try {
-            bufferedImage = read(new File(filepath));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (bufferedImage == null) {
-            // todo this pattern is used a lot we should do a CyderConditions.checkState
-            //  and some stuff like that
-            throw new IllegalArgumentException("Could not get buffered image from path: " + filepath);
-        }
-
-        return switch (direction) {
-            case TOP -> rotateImage(bufferedImage, Angle.ZERO.getDegrees());
-            case RIGHT -> rotateImage(bufferedImage, Angle.NINETY.getDegrees());
-            case BOTTOM -> rotateImage(bufferedImage, Angle.ONE_EIGHTY.getDegrees());
-            case LEFT -> rotateImage(bufferedImage, Angle.TWO_SEVENTY.getDegrees());
-        };
-    }
-
-    /**
-     * Rotates the provided buffered image by the requested angle in degrees.
-     *
-     * @param img     the buffered image to rotate
-     * @param degrees the angle to rotate by in degrees
-     * @return the rotated image
-     */
-    public static BufferedImage rotateImage(BufferedImage img, double degrees) {
-        Preconditions.checkNotNull(img);
-
-        degrees = Angle.normalize360(degrees);
-
-        double rads = Math.toRadians(degrees);
-
-        double sin = Math.abs(Math.sin(rads));
-        double cos = Math.abs(Math.cos(rads));
-
-        int w = img.getWidth();
-        int h = img.getHeight();
-
-        int newWidth = (int) Math.floor(w * cos + h * sin);
-        int newHeight = (int) Math.floor(h * cos + w * sin);
-
-        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = rotated.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.translate((newWidth - w) / 2.0, (newHeight - h) / 2.0);
-
-        at.rotate(rads, w / 2.0, h / 2.0);
-        g2d.setTransform(at);
-        g2d.drawImage(img, 0, 0, null);
-        g2d.dispose();
-
-        return rotated;
-    }
-
-    /**
-     * Rotates the provided ImageIcon by the requested angle in degrees
-     *
-     * @param imageIcon the image icon to rotate
-     * @param degrees   the angle to rotate by in degrees
-     * @return the rotated image
-     */
-    public static ImageIcon rotateImage(ImageIcon imageIcon, double degrees) {
-        BufferedImage img = toBufferedImage(imageIcon);
-
-        degrees = Angle.normalize360(degrees);
-
-        double rads = Math.toRadians(degrees);
-
-        double sin = Math.abs(Math.sin(rads));
-        double cos = Math.abs(Math.cos(rads));
-
-        int w = img.getWidth();
-        int h = img.getHeight();
-
-        int newWidth = (int) Math.floor(w * cos + h * sin);
-        int newHeight = (int) Math.floor(h * cos + w * sin);
-
-        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = rotated.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.translate((newWidth - w) / 2.0, (newHeight - h) / 2.0);
-
-        at.rotate(rads, w / 2.0, h / 2.0);
-        g2d.setTransform(at);
-        g2d.drawImage(img, 0, 0, null);
-        g2d.dispose();
-
-        return new ImageIcon(rotated);
-    }
-
-    /**
-     * Draws the provided buffered image to a CyderFrame and displays it.
-     *
-     * @param bi the buffered image to display
-     * @return the frame reference
-     */
-    @CanIgnoreReturnValue
-    public static CyderFrame drawImage(BufferedImage bi) {
-        Preconditions.checkNotNull(bi);
-
-        return drawImage(new ImageIcon(bi), defaultDrawBufferedImageTitle);
-    }
-
-    /**
-     * Draws the provided buffered image to a CyderFrame and displays it.
-     *
-     * @param bi         the buffered image to display
-     * @param frameTitle the title of the frame
-     * @return the frame reference
-     */
-    @CanIgnoreReturnValue
-    public static CyderFrame drawImage(BufferedImage bi, String frameTitle) {
-        Preconditions.checkNotNull(bi);
-        Preconditions.checkNotNull(frameTitle);
-        Preconditions.checkArgument(!frameTitle.isEmpty());
-
-        return drawImage(new ImageIcon(bi), frameTitle);
-    }
-
-    /**
-     * Draws the provided image icon to a CyderFrame and displays it.
-     *
-     * @param icon the icon to display
-     * @return the frame reference
-     */
-    @CanIgnoreReturnValue
-    public static CyderFrame drawImage(ImageIcon icon) {
-        Preconditions.checkNotNull(icon);
-
-        return drawImage(icon, defaultDrawImageIconTitle);
-    }
-
-    /**
-     * Draws the provided image icon to a CyderFrame and displays it.
-     *
-     * @param icon       the icon to display
-     * @param frameTitle the title of the frame
-     * @return the frame reference
-     */
-    @CanIgnoreReturnValue
-    public static CyderFrame drawImage(ImageIcon icon, String frameTitle) {
-        Preconditions.checkNotNull(icon);
-        Preconditions.checkNotNull(frameTitle);
-        Preconditions.checkArgument(!frameTitle.isEmpty());
-
-        int iconWidth = icon.getIconWidth();
-        int iconHeight = icon.getIconHeight();
-
-        CyderFrame frame = new CyderFrame.Builder()
-                .setWidth(iconWidth + 2 * CyderFrame.BORDER_LEN)
-                .setHeight(icon.getIconHeight() + CyderFrame.BORDER_LEN + CyderDragLabel.DEFAULT_HEIGHT)
-                .setTitle("[" + icon.getIconWidth() +"x" + icon.getIconHeight()
-                        + "]" + " " + frameTitle)
-                .build();
-
-        JLabel label = new JLabel(icon);
-        label.setBounds(CyderFrame.BORDER_LEN, CyderDragLabel.DEFAULT_HEIGHT, iconWidth, iconHeight);
-        frame.getContentPane().add(label);
-
-        frame.finalizeAndShow();
-
-        return frame;
     }
 
     /**
@@ -711,39 +446,6 @@ public final class ImageUtil {
     }
 
     /**
-     * Returns whether the provided image is a horizontal image.
-     *
-     * @param image the image
-     * @return whether the provided image is a horizontal image
-     */
-    public static boolean isHorizontalImage(BufferedImage image) {
-        Preconditions.checkNotNull(image);
-        return image.getWidth() > image.getHeight();
-    }
-
-    /**
-     * Returns whether the provided image is a vertical image.
-     *
-     * @param image the image
-     * @return whether the provided image is a vertical image
-     */
-    public static boolean isVerticalImage(BufferedImage image) {
-        Preconditions.checkNotNull(image);
-        return image.getWidth() < image.getHeight();
-    }
-
-    /**
-     * Returns whether the provided image is a square image.
-     *
-     * @param image the image
-     * @return whether the provided image is a square image
-     */
-    public static boolean isSquareImage(BufferedImage image) {
-        Preconditions.checkNotNull(image);
-        return image.getWidth() == image.getHeight();
-    }
-
-    /**
      * Returns the provided image file after applying a gaussian blur to it.
      *
      * @param imageFile the image file to blur and output a blurred copy in the same directory
@@ -791,64 +493,5 @@ public final class ImageUtil {
         Preconditions.checkArgument(file.exists());
 
         return ImageIO.read(file);
-    }
-
-    /**
-     * Returns a new buffered image resized to fit within the provided dimension.
-     *
-     * @param image     the image to ensure fits in the provided dimension
-     * @param dimension the width and height the image must fit in
-     * @return a new buffered image resized to fit within the provided dimension
-     */
-    public static BufferedImage ensureFitsInBounds(BufferedImage image, Dimension dimension) {
-        Preconditions.checkNotNull(image);
-        Preconditions.checkNotNull(dimension);
-
-        BufferedImage ret = copy(image);
-
-        if (isHorizontalImage(image) && image.getWidth() > dimension.getWidth()) {
-            float ratio = image.getHeight() / (float) image.getWidth();
-            int width = (int) dimension.getWidth();
-            int height = (int) (dimension.getHeight() * ratio);
-            ret = resizeImage(ret, ret.getType(), width, height);
-        } else if (isVerticalImage(image) && image.getHeight() > dimension.getHeight()) {
-            float ratio = image.getWidth() / (float) image.getHeight();
-            int width = (int) (dimension.getWidth() * ratio);
-            int height = (int) dimension.getHeight();
-            ret = resizeImage(ret, ret.getType(), width, height);
-        } else if (isSquareImage(image) && image.getWidth() > dimension.getWidth()) {
-            int len = (int) dimension.getWidth();
-            ret = resizeImage(ret, ret.getType(), len, len);
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns a new ImageIcon resized to fit within the provided dimension.
-     *
-     * @param icon      the image to ensure fits in the provided dimension
-     * @param dimension the width and height the image must fit in
-     * @return a new image resized to fit within the provided dimension
-     */
-    public static ImageIcon ensureFitsInBounds(ImageIcon icon, Dimension dimension) {
-        Preconditions.checkNotNull(icon);
-        Preconditions.checkNotNull(dimension);
-
-        return toImageIcon(ensureFitsInBounds(toBufferedImage(icon), dimension));
-    }
-
-    /**
-     * Returns a copy of the provided image, leaving the reference untouched.
-     *
-     * @param image the image to copy
-     * @return the copied image
-     */
-    public static BufferedImage copy(BufferedImage image) {
-        Preconditions.checkNotNull(image);
-
-        ColorModel colorModel = image.getColorModel();
-        boolean isAlphaPreMultiplied = colorModel.isAlphaPremultiplied();
-        return new BufferedImage(colorModel, image.copyData(null), isAlphaPreMultiplied, null);
     }
 }

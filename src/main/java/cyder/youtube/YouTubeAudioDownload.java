@@ -573,7 +573,9 @@ public class YouTubeAudioDownload {
                 yOffset = (requestedThumbnailHeight - h) / 2;
             }
 
-            thumbnailImage = ImageUtil.cropImage(thumbnailImage, xOffset, yOffset, w, h);
+            CyderImage image = CyderImage.fromBufferedImage(thumbnailImage);
+            image.crop(xOffset, yOffset, w, h);
+            thumbnailImage = image.getBufferedImage();
         }
 
         // todo location needed here too
@@ -739,8 +741,11 @@ public class YouTubeAudioDownload {
         int downloadedThumbnailImagePrintLength = 150;
         int thumbnailPadding = 5;
 
-        downloadedThumbnailImage = ImageUtil.ensureFitsInBounds(downloadedThumbnailImage,
-                new Dimension(downloadedThumbnailImagePrintLength, downloadedThumbnailImagePrintLength));
+        Dimension maximumDimension = new Dimension(
+                downloadedThumbnailImagePrintLength, downloadedThumbnailImagePrintLength);
+        CyderImage image = CyderImage.fromBufferedImage(downloadedThumbnailImage);
+        image.ensureFitsInBounds(maximumDimension);
+        downloadedThumbnailImage = image.getBufferedImage();
 
         int parentWidth = downloadedThumbnailImage.getWidth() + 2 * thumbnailPadding;
         int parentHeight = downloadedThumbnailImage.getHeight() + 2 * thumbnailPadding;

@@ -7,11 +7,11 @@ import cyder.color.CyderColor;
 import cyder.color.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.font.CyderFonts;
+import cyder.image.CyderImage;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadRunner;
 import cyder.threads.ThreadUtil;
 import cyder.ui.UiUtil;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -562,7 +562,9 @@ public class CyderTextField extends JTextField {
 
         int len = getHeight() - 2 * iconLabelPadding;
         if (leftIcon.getIconWidth() > len || leftIcon.getIconHeight() > len) {
-            leftIcon = ImageUtil.ensureFitsInBounds(leftIcon, new Dimension(len, len));
+            CyderImage cyderImage = CyderImage.fromImageIcon(leftIcon);
+            cyderImage.ensureFitsInBounds(new Dimension(len, len));
+            leftIcon = cyderImage.getImageIcon();
         }
 
         setBorder(border);
@@ -609,7 +611,9 @@ public class CyderTextField extends JTextField {
 
         int len = getHeight() - 2 * iconLabelPadding;
         if (rightIcon.getIconWidth() > len || rightIcon.getIconHeight() > len) {
-            rightIcon = ImageUtil.ensureFitsInBounds(rightIcon, new Dimension(len, len));
+            CyderImage cyderImage = CyderImage.fromImageIcon(rightIcon);
+            cyderImage.ensureFitsInBounds(new Dimension(len, len));
+            rightIcon = cyderImage.getImageIcon();
         }
 
         setBorder(border);

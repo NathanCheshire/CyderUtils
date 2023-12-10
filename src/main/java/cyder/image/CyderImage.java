@@ -1,6 +1,7 @@
 package cyder.image;
 
 import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Direction;
 import cyder.math.Angle;
@@ -392,6 +393,73 @@ public final class CyderImage {
                 .getKey();
 
         return new Color(dominantRgb);
+    }
+
+    /**
+     * Pixelates this internal image.
+     *
+     * @param pixelSize the number of old pixels to represent a single new pixel
+     * @throws IllegalArgumentException if the provided pixel size is less than one
+     *                                  or greater than the minimum image dimension
+     */
+    public void pixelateImage(int pixelSize) {
+        Preconditions.checkArgument(pixelSize > 1);
+        Preconditions.checkArgument(pixelSize <= image.getWidth());
+        Preconditions.checkArgument(pixelSize <= image.getHeight());
+
+        BufferedImage pixelateImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+
+        for (int y = 0 ; y < image.getHeight() ; y += pixelSize) {
+            for (int x = 0 ; x < image.getWidth() ; x += pixelSize) {
+                CyderImage cyderImage = fromBufferedImage(image);
+                cyderImage.crop(x, y, pixelSize, pixelSize);
+                Color dominantColor = cyderImage.getDominantColor();
+
+                for (int yd = y ; (yd < y + pixelSize) && (yd < pixelateImage.getHeight()) ; yd++) {
+                    for (int xd = x ; (xd < x + pixelSize) && (xd < pixelateImage.getWidth()) ; xd++) {
+                        pixelateImage.setRGB(xd, yd, dominantColor.getRGB());
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Ensures the internal image fits within the provided bounds.
+     *
+     * @param dimension the dimension bounds the internal image should fit within
+     * @return whether the image was resized if it did not fit in bounds
+     * @throws NullPointerException     if the provided dimension is null
+     * @throws IllegalArgumentException if the provided dimension has a length less than 0
+     */
+    @CanIgnoreReturnValue
+    public boolean ensureFitsInBounds(Dimension dimension) { // todo need a width, height method to use or a len
+        Preconditions.checkNotNull(dimension);
+        Preconditions.checkArgument(dimension.getWidth() >= 0);
+        Preconditions.checkArgument(dimension.getHeight() >= 0);
+
+        int width = (int) dimension.getWidth();
+        int height = (int) dimension.getHeight();
+
+        boolean resized = false;
+        if (isLandscape() && image.getWidth() > dimension.getWidth()) {
+            float aspectRatio = image.getHeight() / (float) image.getWidth();
+            height = (int) (dimension.getHeight() * aspectRatio);
+            resizeImage(width, height);
+            resized = true;
+        } else if (isPortrait() && image.getHeight() > dimension.getHeight()) {
+            float aspectRatio = image.getWidth() / (float) image.getHeight();
+            width = (int) (dimension.getWidth() * aspectRatio);
+            resizeImage(width, height);
+            resized = true;
+        } else if (isSquare() && image.getWidth() > dimension.getWidth()) {
+            int len = (int) dimension.getWidth();
+            resizeImage(len, len);
+            resized = true;
+        }
+
+        return resized;
     }
 
     /**

@@ -7,6 +7,7 @@ import cyder.files.WatchDirectoryEvent;
 import cyder.files.WatchDirectorySubscriber;
 import cyder.getter.GetInputBuilder;
 import cyder.getter.GetterUtil;
+import cyder.image.CyderImage;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.CyderThreadRunner;
 import cyder.ui.drag.button.LeftButton;
@@ -263,9 +264,9 @@ public class ImageViewer {
         Preconditions.checkArgument(imageFile.isFile());
 
         try {
-            BufferedImage bufferedImage = ImageUtil.read(imageFile);
-            bufferedImage = ImageUtil.ensureFitsInBounds(bufferedImage, maxFrameSize);
-            return ImageUtil.toImageIcon(bufferedImage);
+            CyderImage cyderImage = CyderImage.fromFile(imageFile);
+            cyderImage.ensureFitsInBounds(maxFrameSize);
+            return cyderImage.getImageIcon();
         } catch (Exception e) {
             throw new IllegalStateException("Could not generate ImageIcon for file" + ":"
                     + " " + imageFile.getAbsolutePath() + ", error: " + e.getMessage());

@@ -12,6 +12,7 @@ import cyder.font.CyderFonts;
 import cyder.getter.GetConfirmationBuilder;
 import cyder.getter.GetterUtil;
 import cyder.handlers.internal.InformHandler;
+import cyder.image.CyderImage;
 import cyder.layouts.CyderLayout;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
@@ -1734,10 +1735,10 @@ public class CyderFrame extends JFrame {
      * @param degrees the degrees to be rotated by (360deg <==> 0deg)
      */
     public void rotateBackground(int degrees) {
-        ImageIcon masterIcon = unalteredBackgroundIcon;
-        BufferedImage master = ImageUtil.toBufferedImage(masterIcon);
-        BufferedImage rotated = ImageUtil.rotateImage(master, degrees);
-        ((JLabel) getContentPane()).setIcon(new ImageIcon(rotated));
+        CyderImage cyderImage = CyderImage.fromImageIcon(unalteredBackgroundIcon);
+        cyderImage.rotate(degrees);
+        JLabel contentPane = (JLabel) getContentPane();
+        contentPane.setIcon(cyderImage.getImageIcon());
     }
 
     /**
