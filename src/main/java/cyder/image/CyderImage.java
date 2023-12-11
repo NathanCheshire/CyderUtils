@@ -486,6 +486,33 @@ public final class CyderImage {
     }
 
     /**
+     * Ensures the internal image fits within the provided length x length.
+     *
+     * @param length the length each dimension of this image should fit within
+     * @return whether the image was resized if it did not fit within length x length
+     * @throws IllegalArgumentException if the provided length is less than or equal to zero
+     */
+    @CanIgnoreReturnValue
+    public boolean ensureFitsInBounds(int length) {
+        Preconditions.checkArgument(length > 0);
+        return ensureFitsInBounds(length, length);
+    }
+
+    /**
+     * Ensures the internal image fits within the provided width x height.
+     *
+     * @param width the width the image should fit within
+     * @param height the height the image should fit within
+     * @return whether the image was resized if it did not fit within width x height
+     * @throws IllegalArgumentException if the provided width or height is less than or equal to zero
+     */
+    public boolean ensureFitsInBounds(int width, int height) {
+        Preconditions.checkArgument(width > 0);
+        Preconditions.checkArgument(height > 0);
+        return ensureFitsInBounds(new Dimension(width, height));
+    }
+
+    /**
      * Ensures the internal image fits within the provided bounds.
      *
      * @param dimension the dimension bounds the internal image should fit within
@@ -494,7 +521,7 @@ public final class CyderImage {
      * @throws IllegalArgumentException if the provided dimension has a length less than 0
      */
     @CanIgnoreReturnValue
-    public boolean ensureFitsInBounds(Dimension dimension) { // todo need a width, height method to use or a len
+    public boolean ensureFitsInBounds(Dimension dimension) {
         Preconditions.checkNotNull(dimension);
         Preconditions.checkArgument(dimension.getWidth() >= 0);
         Preconditions.checkArgument(dimension.getHeight() >= 0);
@@ -753,7 +780,11 @@ public final class CyderImage {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns whether the provided object equals this CyderImage instance.
+     * Note this method also compares the direct pixels for an exact match.
+     *
+     * @param o the object to compare against this CyderImage instance
+     * @return whether the provided object equals this CyderImage instance
      */
     @Override
     public boolean equals(Object o) {
@@ -764,12 +795,15 @@ public final class CyderImage {
         }
 
         CyderImage other = (CyderImage) o;
-        return other.image.equals(image) // todo need actual pixel comparison
+        return other.image.equals(image)
+                && pixelsEqual(other)
                 && other.colorCounterMaxLength == colorCounterMaxLength;
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a hashcode representation of this CyderImage.
+     *
+     * @return a hashcode representation of this CyderImage
      */
     @Override
     public int hashCode() {
@@ -779,7 +813,9 @@ public final class CyderImage {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a string representation of this CyderImage.
+     *
+     * @return a string representation of this CyderImage
      */
     @Override
     public String toString() {
