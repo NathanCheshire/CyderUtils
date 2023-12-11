@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +27,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class CyderImage {
     /**
-     * The default color counter the dominant color contained in this imagehashmap max length.
+     * A bitmask for a bit.
+     */
+    private static final int EIGHT_BIT_MASK = 0xff;
+
+    /**
+     * The amount to shift a number by to obtain the alpha.
+     */
+    private static final int ALPHA_SHIFT = 24;
+
+    /**
+     * The amount to shift a number by to obtain the red.
+     */
+    private static final int RED_SHIFT = 16;
+
+    /**
+     * The amount to shift a number by to obtain the green.
+     */
+    private static final int GREEN_SHIFT = 8;
+
+    /**
+     * The default color counter the dominant color contained in this image hashmap max length.
      */
     private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
 
@@ -465,11 +487,6 @@ public final class CyderImage {
         return resized;
     }
 
-    private static final int EIGHT_BIT_MASK = 0xff;
-    private static final int ALPHA_SHIFT = 24;
-    private static final int RED_SHIFT = 16;
-    private static final int GREEN_SHIFT = 8;
-
     /**
      * Converts this image converted to grayscale.
      */
@@ -499,6 +516,11 @@ public final class CyderImage {
         image = ret;
     }
 
+    /**
+     * Returns whether this image is grayscale.
+     *
+     * @return whether this image is grayscale
+     */
     public boolean isGrayscale() {
         Image icon = getImageIcon().getImage();
 
@@ -528,15 +550,32 @@ public final class CyderImage {
         return allGrayscale.get();
     }
 
+    /**
+     * Returns the width of this image.
+     *
+     * @return the width of this image
+     */
     public int getWidth() {
         return image.getWidth();
     }
 
+    /**
+     * Returns the height of this image.
+     *
+     * @return the height of this image
+     */
     public int getHeight() {
         return image.getHeight();
     }
 
-    public boolean pixelsEqual(BufferedImage compareImage) {
+    /**
+     * Returns whether the pixels of the provided image and this image are equal.
+     *
+     * @param compareImage the image to compare to this image
+     * @return whether the pixels of the provided image and this image are equal
+     * @throws NullPointerException if the provided image is null
+     */
+    public boolean pixelsEqual(CyderImage compareImage) {
         Preconditions.checkNotNull(compareImage);
 
         int width = getWidth();
@@ -557,7 +596,7 @@ public final class CyderImage {
         } catch (InterruptedException ignored) {}
 
         PixelGrabber otherPixelGrabber = new PixelGrabber(
-                compareImage, 0, 0, otherWidth, height, otherPixels, 0, otherWidth);
+                compareImage.getBufferedImage(), 0, 0, otherWidth, height, otherPixels, 0, otherWidth);
         try {
             otherPixelGrabber.grabPixels();
         } catch (InterruptedException ignored) {}
@@ -579,8 +618,8 @@ public final class CyderImage {
      * <p>
      * The two images must be of the same size in order to merge them into one image.
      *
-     * @param placementImage  the new image, image to be placed to the direction of the internal image
-     * @param direction the direction to place the newImage relative to the oldImage
+     * @param placementImage the new image, image to be placed to the direction of the internal image
+     * @param direction      the direction to place the newImage relative to the oldImage
      */
     public void combineImage(CyderImage placementImage, Direction direction) {
         Preconditions.checkNotNull(placementImage);
@@ -640,6 +679,42 @@ public final class CyderImage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Blurs the internal image.
+     *
+     * @param radius the radius of the Gaussian blur to perform, this must be an odd number greater than 1
+     */
+    public void blur(int radius) {
+        Preconditions.checkArgument(radius > 2);
+        Preconditions.checkArgument(radius % 2 != 0);
+
+        int size = radius * radius;
+        float[] data = new float[size];
+
+        float sigma = radius / 3.0f;
+        float twoSigmaSquare = 2.0f * sigma * sigma;
+        float sigmaRoot = (float) Math.sqrt(twoSigmaSquare * Math.PI);
+        float total = 0.0f;
+
+        int index = 0;
+        for (int i = -radius / 2; i <= radius / 2; i++) {
+            for (int j = -radius / 2; j <= radius / 2; j++) {
+                float distance = i * i + j * j;
+                data[index] = (float) Math.exp(-distance / twoSigmaSquare) / sigmaRoot;
+                total += data[index];
+                index++;
+            }
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            data[i] /= total;
+        }
+
+        Kernel kernel = new Kernel(radius, radius, data);
+        ConvolveOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+        image = op.filter(image, null);
     }
 
     /**
