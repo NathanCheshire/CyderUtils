@@ -2,6 +2,7 @@ package cyder.image;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.color.CyderColor;
 import cyder.constants.CyderRegexPatterns;
 import cyder.enumerations.Direction;
 import cyder.math.Angle;
@@ -136,13 +137,13 @@ public final class CyderImage {
     /**
      * Constructs and returns a new CyderImage from the provided colors for a gradient base image.
      *
-     * @param shadeColor the shade color
+     * @param shadeColor   the shade color
      * @param primaryRight the primary right color
-     * @param primaryLeft the primary left color
-     * @param width the width for the image
-     * @param height the height for the image
+     * @param primaryLeft  the primary left color
+     * @param width        the width for the image
+     * @param height       the height for the image
      * @return a new CyderImage
-     * @throws NullPointerException if any color is null
+     * @throws NullPointerException     if any color is null
      * @throws IllegalArgumentException if any dimension is less than or equal to zero
      */
     public static CyderImage fromGradient(Color shadeColor, Color primaryRight, Color primaryLeft,
@@ -434,7 +435,7 @@ public final class CyderImage {
      *
      * @return the dominant color contained in this image
      */
-    public Color getDominantColor() {
+    public CyderColor getDominantColor() { // todo return CyderColor
         Map<Integer, Integer> colorCounter = new HashMap<>(colorCounterMaxLength);
 
         for (int x = 0 ; x < image.getWidth() ; x++) {
@@ -452,7 +453,26 @@ public final class CyderImage {
                 .orElseThrow(() -> new CyderImageException("Failed to compute dominant color"))
                 .getKey();
 
-        return new Color(dominantRgb);
+        return new CyderColor(new Color(dominantRgb));
+    }
+
+    /**
+     * Returns the grayscale text color which should be used when overlaying
+     * text on this image
+     *
+     * @return the grayscale text color to use
+     */
+    public CyderColor getSuitableOverlayTextColor() {
+        return getDominantColorInverse().getGrayscale();
+    }
+
+    /**
+     * Returns the inverse of the dominant color of this image.
+     *
+     * @return the inverse of the dominant color of this image
+     */
+    public CyderColor getDominantColorInverse() {
+        return getDominantColor().getInverseColor();
     }
 
     /**
@@ -501,7 +521,7 @@ public final class CyderImage {
     /**
      * Ensures the internal image fits within the provided width x height.
      *
-     * @param width the width the image should fit within
+     * @param width  the width the image should fit within
      * @param height the height the image should fit within
      * @return whether the image was resized if it did not fit within width x height
      * @throws IllegalArgumentException if the provided width or height is less than or equal to zero
@@ -761,8 +781,8 @@ public final class CyderImage {
         float total = 0.0f;
 
         int index = 0;
-        for (int x = -radius / 2; x <= radius / 2; x++) {
-            for (int y = -radius / 2; y <= radius / 2; y++) {
+        for (int x = -radius / 2 ; x <= radius / 2 ; x++) {
+            for (int y = -radius / 2 ; y <= radius / 2 ; y++) {
                 float distance = x * x + y * y;
                 data[index] = (float) Math.exp(-distance / twoSigmaSquare) / sigmaRoot;
                 total += data[index];
@@ -770,7 +790,7 @@ public final class CyderImage {
             }
         }
 
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0 ; i < data.length ; i++) {
             data[i] /= total;
         }
 

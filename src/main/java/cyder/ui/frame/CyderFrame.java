@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
-import cyder.color.ColorUtil;
 import cyder.color.CyderColor;
 import cyder.color.CyderColors;
 import cyder.constants.CyderIcons;
@@ -2732,7 +2731,7 @@ public class CyderFrame extends JFrame {
         if (draw) {
             Color lineColor = background == null
                     ? new CyderColor(backgroundColor).getInverseColor()
-                    : ColorUtil.getDominantColorInverse(background);
+                    : CyderImage.fromImageIcon(background).getDominantColorInverse();
 
             int centerX = getWidth() / 2 - debugLineLength / 2;
             int centerY = (getHeight() - BORDER_LEN - CyderDragLabel.DEFAULT_HEIGHT) / 2

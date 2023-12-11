@@ -19,6 +19,16 @@ public final class CyderColor extends Color {
     private static final int maxColor = 255;
 
     /**
+     * Constructs a new CyderColor from the provided value for red, green, and blue.
+     *
+     * @param redGreenAndBlue the integer value to use for red, green, and blue
+     * @throws IllegalArgumentException if the provided value is not in the range [0, 255]
+     */
+    public CyderColor(int redGreenAndBlue) {
+        super(checkColorRange(redGreenAndBlue), checkColorRange(redGreenAndBlue), checkColorRange(redGreenAndBlue));
+    }
+
+    /**
      * Constructs a new CyderColor from the provided red, green, and blue values.
      *
      * @param red   the color's red value
@@ -83,6 +93,19 @@ public final class CyderColor extends Color {
      */
     public CyderColor getInverseColor() {
         return new CyderColor(maxColor - getRed(), maxColor - getGreen(), maxColor - getBlue());
+    }
+
+    /**
+     * Returns a new CyderColor object representing the grayscale color.
+     *
+     * @return a new CyderColor object representing the grayscale color
+     */
+    public CyderColor getGrayscale() {
+        int red = getRed();
+        int green = getGreen();
+        int blue = getBlue();
+        int luminance = (int)(0.2126 * red + 0.7152 * green + 0.0722 * blue);
+        return new CyderColor(luminance);
     }
 
     /**

@@ -7,7 +7,6 @@ import cyder.enumerations.Direction;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.threads.ThreadUtil;
-import cyder.color.ColorUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -85,7 +84,7 @@ public class CyderToastNotification extends CyderNotification {
     /**
      * The opacity this notification should be painted as.
      */
-    protected final AtomicInteger opacity = new AtomicInteger(ColorUtil.opacityRange.upperEndpoint());
+    protected final AtomicInteger opacity = new AtomicInteger(255);
 
     /**
      * Whether the mouse is currently hovered over this notification.
@@ -347,15 +346,14 @@ public class CyderToastNotification extends CyderNotification {
 
         Futures.submit(() -> {
             setToStartAndEndingPosition();
-            opacity.set(ColorUtil.opacityRange.lowerEndpoint());
+            opacity.set(0);
             container.setVisible(false);
             setVisible(true);
 
-            for (int i = ColorUtil.opacityRange.lowerEndpoint()
-                 ; i < ColorUtil.opacityRange.upperEndpoint() ; i += opacityStep) {
+            for (int i = 0 ; i < 255 ; i += opacityStep) {
                 if (shouldStopAnimation()) break;
                 opacity.set(i);
-                if (i > ColorUtil.opacityRange.upperEndpoint() / 2) {
+                if (i > 255 / 2) {
                     container.setVisible(true);
                     container.repaint();
                 }
@@ -365,7 +363,7 @@ public class CyderToastNotification extends CyderNotification {
             }
 
             animating.set(false);
-            opacity.set(ColorUtil.opacityRange.upperEndpoint());
+            opacity.set(255);
             repaint();
 
             /*
@@ -393,13 +391,12 @@ public class CyderToastNotification extends CyderNotification {
 
         Futures.submit(() -> {
             setToStartAndEndingPosition();
-            opacity.set(ColorUtil.opacityRange.upperEndpoint());
+            opacity.set(255);
 
-            for (int i = ColorUtil.opacityRange.upperEndpoint()
-                 ; i >= ColorUtil.opacityRange.lowerEndpoint() ; i -= opacityStep) {
+            for (int i = 255 ; i >= 0 ; i -= opacityStep) {
                 if (shouldStopAnimation()) break;
                 opacity.set(i);
-                if (i < ColorUtil.opacityRange.upperEndpoint() * hideContainerOnOpacityFallsBelowRatio) {
+                if (i < 255 * hideContainerOnOpacityFallsBelowRatio) {
                     container.setVisible(false);
                     container.repaint();
                 }
@@ -408,7 +405,7 @@ public class CyderToastNotification extends CyderNotification {
                 ThreadUtil.sleep(animationDelay);
             }
 
-            opacity.set(ColorUtil.opacityRange.lowerEndpoint());
+            opacity.set(0);
             repaint();
 
             setVisible(false);

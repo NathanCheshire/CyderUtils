@@ -24,7 +24,6 @@ import cyder.ui.frame.notification.NotificationBuilder;
 import cyder.ui.frame.notification.NotificationDirection;
 import cyder.ui.pane.CyderOutputPane;
 import cyder.ui.pane.CyderScrollPane;
-import cyder.color.ColorUtil;
 import cyder.utils.SecurityUtil;
 
 import javax.swing.*;
@@ -144,7 +143,7 @@ public final class TooltipMenuController {
     /**
      * The opacity the menu should be painted with.
      */
-    private final AtomicInteger opacity = new AtomicInteger(ColorUtil.opacityRange.upperEndpoint());
+    private final AtomicInteger opacity = new AtomicInteger(255);
 
     /**
      * The current control key to validate fade-out animation requests.
@@ -225,7 +224,7 @@ public final class TooltipMenuController {
         mouseHasEnteredTooltipMenu.set(false);
 
         revalidateLabelAndScrollSize();
-        opacity.set(ColorUtil.opacityRange.upperEndpoint());
+        opacity.set(255);
         menuScroll.setVisible(true);
         tooltipMenuLabel.repaint();
         tooltipMenuLabel.setLocation(calculatePlacementPoint(triggerPoint, triggerLabel));
@@ -338,18 +337,18 @@ public final class TooltipMenuController {
         if (fadeOutAnimation != null && !fadeOutAnimation.isCancelled()) return;
 
         fadeOutAnimation = Futures.submit(() -> {
-            opacity.set(ColorUtil.opacityRange.upperEndpoint());
+            opacity.set(255);
 
             while (opacity.get() >= opacityAnimationDecrement) {
                 if (!controlKey.equals(currentFadeOutKey.get())) return;
-                if (opacity.get() < ColorUtil.opacityRange.upperEndpoint() / 2) menuScroll.setVisible(false);
+                if (opacity.get() < 255 / 2) menuScroll.setVisible(false);
                 opacity.set(opacity.get() - opacityAnimationDecrement);
                 tooltipMenuLabel.repaint();
                 ThreadUtil.sleep(opacityAnimationTimeout.toMillis());
             }
 
             if (!controlKey.equals(currentFadeOutKey.get())) return;
-            opacity.set(ColorUtil.opacityRange.lowerEndpoint());
+            opacity.set(0);
             tooltipMenuLabel.repaint();
             tooltipMenuLabel.setVisible(false);
         }, Executors.newSingleThreadExecutor(new CyderThreadFactory(animateOutThreadName)));
