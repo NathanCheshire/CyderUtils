@@ -190,7 +190,7 @@ public final class MapUtil {
 
         ImageIcon returnedInitialImage = null;
         try {
-            returnedInitialImage = ImageUtil.toImageIcon(ImageUtil.read(requestUrlBuilder.toString()));
+            returnedInitialImage = CyderImage.fromUrl(requestUrlBuilder.toString()).getImageIcon();
         } catch (Exception e) {
             e.printStackTrace();
         }

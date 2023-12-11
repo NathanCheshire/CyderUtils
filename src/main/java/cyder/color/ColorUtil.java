@@ -2,8 +2,8 @@ package cyder.color;
 
 import com.google.common.collect.Range;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.strings.CyderStrings;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +68,7 @@ public final class ColorUtil {
     public static Color getDominantColorInverse(ImageIcon image) {
         checkNotNull(image);
 
-        return new CyderColor(getDominantColor(ImageUtil.toBufferedImage(image))).getInverseColor();
+        return new CyderColor(CyderImage.fromImageIcon(image).getDominantColor()).getInverseColor();
     }
 
     /**

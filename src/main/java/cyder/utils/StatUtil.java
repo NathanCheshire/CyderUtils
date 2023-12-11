@@ -7,14 +7,15 @@ import cyder.enumerations.Extension;
 import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
+import cyder.network.ipdataco.IpDataManager;
 import cyder.network.ipdataco.models.IpData;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
 import cyder.time.TimeUtil;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -52,7 +53,7 @@ public final class StatUtil {
     private static final String blockCommentEnd = "*/";
 
     /**
-     * A record type to hold the stats returned by {@link StatUtil#getDebugProps()}.
+     * A record type to hold the stats returned by {@link StatUtil#getDebugProps(String)}.
      */
     public record DebugStats(ImmutableList<String> lines, ImageIcon countryFlag) {}
 
@@ -118,7 +119,7 @@ public final class StatUtil {
      *
      * @return a debug object containing the found user flag and some common debug details
      */
-    public static Future<DebugStats> getDebugProps() {
+    public static Future<DebugStats> getDebugProps(String ipDataKey) {
         // todo Preconditions.checkArgument(!NetworkUtil.isHighLatency());
 
         return Executors.newSingleThreadExecutor(
@@ -126,15 +127,12 @@ public final class StatUtil {
             InetAddress address = InetAddress.getLocalHost();
             NetworkInterface netIn = NetworkInterface.getByInetAddress(address);
 
-            IpData data = null; // todo
+            IpDataManager ipDataManager = new IpDataManager(ipDataKey);
+            IpData data = ipDataManager.getIpData();
+            // todo kill manager
 
-            BufferedImage flag = ImageUtil.read(data.getFlag());
-
-            int x = 2 * flag.getWidth();
-            int y = 2 * flag.getHeight();
-            int type = flag.getType();
-
-            ImageIcon resized = new ImageIcon(ImageUtil.resizeImage(flag, type, x, y));
+            CyderImage image = CyderImage.fromUrl(data.getFlag());
+            image.resizeImage(image.getWidth() * 2, image.getHeight() * 2);
 
             return new DebugStats(
                     ImmutableList.of(
@@ -164,7 +162,8 @@ public final class StatUtil {
                             "Network MTU: " + netIn.getMTU(),
                             "Host Address: " + address.getHostAddress(),
                             "Local Host Address: " + InetAddress.getLocalHost(),
-                            "Loopback Address: " + InetAddress.getLoopbackAddress()), resized);
+                            "Loopback Address: " + InetAddress.getLoopbackAddress()),
+                    image.getImageIcon());
         });
     }
 

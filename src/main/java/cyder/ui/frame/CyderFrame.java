@@ -5,9 +5,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.annotations.ForReadability;
+import cyder.color.ColorUtil;
 import cyder.color.CyderColor;
 import cyder.color.CyderColors;
-import cyder.constants.*;
+import cyder.constants.CyderIcons;
+import cyder.constants.CyderNumbers;
+import cyder.constants.CyderRegexPatterns;
 import cyder.font.CyderFonts;
 import cyder.getter.GetConfirmationBuilder;
 import cyder.getter.GetterUtil;
@@ -37,8 +40,6 @@ import cyder.ui.pane.CyderOutputPane;
 import cyder.ui.pane.CyderPanel;
 import cyder.ui.pane.CyderScrollPane;
 import cyder.ui.resizing.CyderComponentResizer;
-import cyder.color.ColorUtil;
-import cyder.utils.ImageUtil;
 import cyder.utils.JvmUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A custom frame component.
  */
@@ -543,7 +545,9 @@ public class CyderFrame extends JFrame {
     private void setupFrameBackground(Builder builder) {
         this.background = builder.background;
         if (width != background.getIconWidth() || height != background.getIconHeight()) {
-            this.background = ImageUtil.resizeImage(background, width, height);
+            CyderImage cyderImage = CyderImage.fromImageIcon(background);
+            cyderImage.resizeImage(width, height);
+            this.background = cyderImage.getImageIcon();
         }
         unalteredBackgroundIcon = background;
     }
@@ -753,7 +757,7 @@ public class CyderFrame extends JFrame {
          */
         public Builder setBackgroundIconFromColor(Color color) {
             Preconditions.checkNotNull(color);
-            this.background = ImageUtil.imageIconFromColor(color, width, height);
+            this.background = CyderImage.fromColor(color, width, height).getImageIcon();
             this.backgroundColor = color;
             return this;
         }
@@ -2326,7 +2330,7 @@ public class CyderFrame extends JFrame {
     public void setBackground(BufferedImage image) {
         Preconditions.checkNotNull(image);
 
-        setBackground(ImageUtil.toImageIcon(image));
+        setBackground(CyderImage.fromBufferedImage(image).getImageIcon());
     }
 
     /**
@@ -3341,7 +3345,7 @@ public class CyderFrame extends JFrame {
 
                 menuLabel.setVisible(false);
             } catch (Exception e) {
-            e.printStackTrace();
+                e.printStackTrace();
             }
         }, threadName);
     }

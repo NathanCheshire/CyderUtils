@@ -11,11 +11,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An image abstraction for usage throughout Cyder.
@@ -460,6 +463,183 @@ public final class CyderImage {
         }
 
         return resized;
+    }
+
+    private static final int EIGHT_BIT_MASK = 0xff;
+    private static final int ALPHA_SHIFT = 24;
+    private static final int RED_SHIFT = 16;
+    private static final int GREEN_SHIFT = 8;
+
+    /**
+     * Converts this image converted to grayscale.
+     */
+    public void grayscaleImage() {
+        BufferedImage bi = getBufferedImage();
+        int width = bi.getWidth();
+        int height = bi.getHeight();
+
+        BufferedImage ret = new BufferedImage(width, height, bi.getType());
+
+        for (int i = 0 ; i < width ; i++) {
+            for (int j = 0 ; j < height ; j++) {
+                int pixelData = bi.getRGB(i, j);
+
+                int alpha = (pixelData >> ALPHA_SHIFT) & EIGHT_BIT_MASK;
+                int red = (pixelData >> RED_SHIFT) & EIGHT_BIT_MASK;
+                int green = (pixelData >> GREEN_SHIFT) & EIGHT_BIT_MASK;
+                int blue = pixelData & EIGHT_BIT_MASK;
+                int avg = (red + green + blue) / 3;
+
+                pixelData = (alpha << ALPHA_SHIFT) | (avg << RED_SHIFT) | (avg << GREEN_SHIFT) | avg;
+
+                ret.setRGB(i, j, pixelData);
+            }
+        }
+
+        image = ret;
+    }
+
+    public boolean isGrayscale() {
+        Image icon = getImageIcon().getImage();
+
+        int w = icon.getWidth(null);
+        int h = icon.getHeight(null);
+        int[] pixels = new int[w * h];
+
+        PixelGrabber pg = new PixelGrabber(icon, 0, 0, w, h, pixels, 0, w);
+
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException ignored) {}
+
+        AtomicBoolean allGrayscale = new AtomicBoolean(true);
+
+        Arrays.stream(pixels).forEach(pixel -> {
+            Color color = new Color(pixel);
+            int red = color.getRed();
+            int green = color.getGreen();
+            int blue = color.getBlue();
+
+            if (red != green || red != blue) {
+                allGrayscale.set(false);
+            }
+        });
+
+        return allGrayscale.get();
+    }
+
+    public int getWidth() {
+        return image.getWidth();
+    }
+
+    public int getHeight() {
+        return image.getHeight();
+    }
+
+    public boolean pixelsEqual(BufferedImage compareImage) {
+        Preconditions.checkNotNull(compareImage);
+
+        int width = getWidth();
+        int height = getHeight();
+        int otherWidth = compareImage.getWidth();
+        int otherHeight = compareImage.getHeight();
+
+        if (otherWidth != width || otherHeight != height) return false;
+
+        int[] pixels = new int[width * height];
+        int[] otherPixels = new int[otherWidth * otherHeight];
+
+        PixelGrabber pixelGrabber = new PixelGrabber(
+                image, 0, 0, width, height, pixels, 0, width);
+
+        try {
+            pixelGrabber.grabPixels();
+        } catch (InterruptedException ignored) {}
+
+        PixelGrabber otherPixelGrabber = new PixelGrabber(
+                compareImage, 0, 0, otherWidth, height, otherPixels, 0, otherWidth);
+        try {
+            otherPixelGrabber.grabPixels();
+        } catch (InterruptedException ignored) {}
+
+        if (otherPixels.length != pixels.length) return false;
+
+        for (int i = 1 ; i < otherPixels.length ; i++) {
+            if (otherPixels[i] != pixels[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Combines the provided ImageIcon into this image by placing
+     * it relative to the existing one.
+     * <p>
+     * The two images must be of the same size in order to merge them into one image.
+     *
+     * @param placementImage  the new image, image to be placed to the direction of the internal image
+     * @param direction the direction to place the newImage relative to the oldImage
+     */
+    public void combineImage(CyderImage placementImage, Direction direction) {
+        Preconditions.checkNotNull(placementImage);
+        Preconditions.checkNotNull(direction);
+        Preconditions.checkArgument(getWidth() == placementImage.getWidth());
+        Preconditions.checkArgument(getHeight() == placementImage.getHeight());
+
+        try {
+            int otherWidth = placementImage.getWidth();
+            int otherHeight = placementImage.getHeight();
+            BufferedImage other = placementImage.getBufferedImage();
+
+            int width;
+            int height;
+            BufferedImage combined;
+            Graphics2D g2;
+
+            switch (direction) {
+                case LEFT -> {
+                    width = 2 * otherWidth;
+                    height = otherHeight;
+                    combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    g2 = combined.createGraphics();
+                    g2.drawImage(image, null, width / 2, 0);
+                    g2.drawImage(other, null, 0, 0);
+                    g2.dispose();
+                }
+                case RIGHT -> {
+                    width = 2 * otherWidth;
+                    height = otherHeight;
+                    combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    g2 = combined.createGraphics();
+                    g2.drawImage(image, null, 0, 0);
+                    g2.drawImage(other, null, width / 2, 0);
+                    g2.dispose();
+                }
+                case TOP -> {
+                    width = otherWidth;
+                    height = 2 * otherHeight;
+                    combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    g2 = combined.createGraphics();
+                    g2.drawImage(image, null, 0, height / 2);
+                    g2.drawImage(other, null, 0, 0);
+                    g2.dispose();
+                }
+                case BOTTOM -> {
+                    width = otherWidth;
+                    height = 2 * otherHeight;
+                    combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    g2 = combined.createGraphics();
+                    g2.drawImage(image, null, 0, 0);
+                    g2.drawImage(other, null, 0, height / 2);
+                    g2.dispose();
+                }
+                default -> throw new IllegalArgumentException("Invalid direction: " + direction);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

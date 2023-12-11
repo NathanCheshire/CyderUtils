@@ -7,17 +7,18 @@ import cyder.color.CyderColors;
 import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
+import cyder.image.CyderImage;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
 import cyder.ui.UiUtil;
 import cyder.ui.button.CyderButton;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -324,7 +325,7 @@ public final class MessagingUtil {
             JLabel imageLabel = new JLabel();
             imageLabel.setBounds(AUDIO_PREVIEW_BORDER_LEN, AUDIO_PREVIEW_BORDER_LEN,
                     AUDIO_PREVIEW_CONTAINER_WIDTH - 2 * AUDIO_PREVIEW_BORDER_LEN, DEFAULT_SMALL_WAVEFORM_HEIGHT);
-            imageLabel.setIcon(ImageUtil.toImageIcon(image.get()));
+            imageLabel.setIcon(CyderImage.fromBufferedImage(image.get()).getImageIcon());
 
             JLabel imageContainerLabel = new JLabel();
             imageContainerLabel.setBorder(new LineBorder(CyderColors.navy, AUDIO_PREVIEW_BORDER_LEN));
@@ -360,22 +361,18 @@ public final class MessagingUtil {
      * @param onSaveRunnable the runnable to invoke when the save button is pressed
      * @return the label with an image preview and save button
      */
-    public static JLabel generateImagePreviewLabel(File imageFile, Runnable onSaveRunnable) {
+    public static JLabel generateImagePreviewLabel(File imageFile, Runnable onSaveRunnable) throws IOException {
         Preconditions.checkNotNull(imageFile);
         Preconditions.checkArgument(imageFile.exists());
         Preconditions.checkArgument(imageFile.isFile());
         Preconditions.checkArgument(FileUtil.isSupportedImageExtension(imageFile));
         Preconditions.checkNotNull(onSaveRunnable);
 
-        BufferedImage readImage;
-        try {
-            readImage = ImageUtil.read(imageFile);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to read image: " + imageFile.getAbsolutePath());
-        }
+        BufferedImage readImage = CyderImage.fromFile(imageFile).getBufferedImage();
 
-        ImageIcon resized = ImageUtil.resizeImage(ImageUtil.toImageIcon(readImage),
-                IMAGE_PREVIEW_LEN, IMAGE_PREVIEW_LEN);
+        CyderImage cyderImage = CyderImage.fromBufferedImage(readImage);
+        cyderImage.resizeImage(IMAGE_PREVIEW_LEN, IMAGE_PREVIEW_LEN);
+        ImageIcon resized = cyderImage.getImageIcon();
 
         JLabel imagePreviewLabel = new JLabel();
         imagePreviewLabel.setSize(IMAGE_PREVIEW_LEN, IMAGE_PREVIEW_LEN);

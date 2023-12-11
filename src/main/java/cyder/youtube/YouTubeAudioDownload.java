@@ -762,7 +762,7 @@ public class YouTubeAudioDownload {
         parent.setSize(parentWidth, parentHeight);
 
         JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(ImageUtil.toImageIcon(downloadedThumbnailImage));
+        imageLabel.setIcon(CyderImage.fromBufferedImage(downloadedThumbnailImage).getImageIcon());
         imageLabel.setBounds(thumbnailPadding, thumbnailPadding,
                 downloadedThumbnailImage.getWidth(), downloadedThumbnailImage.getHeight());
         parent.add(imageLabel);

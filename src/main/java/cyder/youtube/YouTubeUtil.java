@@ -14,7 +14,6 @@ import cyder.strings.LevenshteinUtil;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.ArrayUtil;
-import cyder.utils.ImageUtil;
 import cyder.utils.SecurityUtil;
 
 import java.awt.image.BufferedImage;
@@ -286,11 +285,11 @@ public final class YouTubeUtil {
         String thumbnailUrl = buildMaxResolutionThumbnailUrl(uuid);
 
         try {
-            return Optional.of(ImageUtil.read(thumbnailUrl));
+            return Optional.of(CyderImage.fromUrl(thumbnailUrl).getBufferedImage());
         } catch (Exception ignored) {
             try {
                 thumbnailUrl = buildStandardDefinitionThumbnailUrl(uuid);
-                return Optional.of(ImageUtil.read(thumbnailUrl));
+                return Optional.of(CyderImage.fromUrl(thumbnailUrl).getBufferedImage());
             } catch (Exception ignored2) {
                 return Optional.empty();
             }

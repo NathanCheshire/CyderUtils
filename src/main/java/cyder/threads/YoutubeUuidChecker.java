@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.constants.CyderUrls;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
+import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
 import cyder.strings.CyderStrings;
 import cyder.strings.StringUtil;
@@ -14,7 +15,6 @@ import cyder.ui.frame.CyderFrame;
 import cyder.ui.frame.enumerations.TitlePosition;
 import cyder.ui.pane.CyderOutputPane;
 import cyder.utils.ArrayUtil;
-import cyder.utils.ImageUtil;
 import cyder.youtube.YouTubeConstants;
 
 import javax.swing.*;
@@ -195,8 +195,7 @@ public class YoutubeUuidChecker {
                     stringUtil.println("Checked uuid: " + currentUuid);
                     YoutubeUuidCheckerManager.INSTANCE.releaseLock();
 
-                    BufferedImage thumbnail = ImageUtil.read(constructThumbnailUrl(currentUuid));
-
+                    BufferedImage thumbnail = CyderImage.fromUrl(constructThumbnailUrl(currentUuid)).getBufferedImage();
                     YoutubeUuidCheckerManager.INSTANCE.killAll();
 
                     attemptToAcquireLock();

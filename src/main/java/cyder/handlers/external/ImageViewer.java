@@ -15,7 +15,6 @@ import cyder.ui.drag.button.RightButton;
 import cyder.ui.frame.CyderFrame;
 import cyder.ui.frame.enumerations.TitlePosition;
 import cyder.utils.ArrayUtil;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -336,7 +335,7 @@ public class ImageViewer {
         title = title.trim();
 
         try {
-            BufferedImage image = ImageUtil.read(validDirectoryImages.get(currentIndex));
+            BufferedImage image = CyderImage.fromFile(validDirectoryImages.get(currentIndex)).getBufferedImage();
             int width = image.getWidth();
             int height = image.getHeight();
             pictureFrame.setTitle(title + "\"" + "[" + width + "x" + height + "]");

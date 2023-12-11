@@ -72,8 +72,9 @@ public final class IpDataManager {
      * @param ipDataKey the ip data key
      * @throws NullPointerException     if the provided ipDataKey is null
      * @throws IllegalArgumentException if the provided ipDataKey is empty or not a valid key
+     * @throws IOException if an exception occurs pulling the IP data
      */
-    public IpDataManager(String ipDataKey) {
+    public IpDataManager(String ipDataKey) throws IOException {
         Preconditions.checkNotNull(ipDataKey);
         Preconditions.checkArgument(!ipDataKey.trim().isEmpty());
         Preconditions.checkArgument(isValidIpDataKey(ipDataKey, IpDataBaseUrl.STANDARD.getBaseUrl()));
@@ -81,6 +82,7 @@ public final class IpDataManager {
         this.ipDataKey = ipDataKey;
         this.baseUrl = IpDataBaseUrl.STANDARD;
 
+        refreshIpData();
         startRefresher();
     }
 
@@ -90,8 +92,9 @@ public final class IpDataManager {
      * @param ipDataKey the ip data key
      * @throws NullPointerException     if the provided ipDataKey or baseUrl is null
      * @throws IllegalArgumentException if the provided ipDataKey is empty or not a valid key
+     * @throws IOException if an exception occurs pulling the IP data
      */
-    public IpDataManager(String ipDataKey, IpDataBaseUrl baseUrl) {
+    public IpDataManager(String ipDataKey, IpDataBaseUrl baseUrl) throws IOException {
         Preconditions.checkNotNull(ipDataKey);
         Preconditions.checkNotNull(baseUrl);
         Preconditions.checkArgument(!ipDataKey.trim().isEmpty());
@@ -100,6 +103,7 @@ public final class IpDataManager {
         this.ipDataKey = ipDataKey;
         this.baseUrl = baseUrl;
 
+        refreshIpData();
         startRefresher();
     }
 
