@@ -134,6 +134,41 @@ public final class CyderImage {
     }
 
     /**
+     * Constructs and returns a new CyderImage from the provided colors for a gradient base image.
+     *
+     * @param shadeColor the shade color
+     * @param primaryRight the primary right color
+     * @param primaryLeft the primary left color
+     * @param width the width for the image
+     * @param height the height for the image
+     * @return a new CyderImage
+     * @throws NullPointerException if any color is null
+     * @throws IllegalArgumentException if any dimension is less than or equal to zero
+     */
+    public static CyderImage fromGradient(Color shadeColor, Color primaryRight, Color primaryLeft,
+                                          int width, int height) {
+        Preconditions.checkNotNull(shadeColor);
+        Preconditions.checkNotNull(primaryRight);
+        Preconditions.checkNotNull(primaryLeft);
+        Preconditions.checkArgument(width > 0);
+        Preconditions.checkArgument(height > 0);
+
+        BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = ret.createGraphics();
+
+        GradientPaint primary = new GradientPaint(0f, 0f, primaryLeft, height, 0f, primaryRight);
+        GradientPaint shade = new GradientPaint(0f, 0f, new Color(shadeColor.getRed(),
+                shadeColor.getGreen(), shadeColor.getBlue(), 0), 0f, 600, shadeColor);
+        g2.setPaint(primary);
+        g2.fillRect(0, 0, width, height);
+        g2.setPaint(shade);
+        g2.fillRect(0, 0, width, height);
+        g2.dispose();
+
+        return new CyderImage(ret);
+    }
+
+    /**
      * Constructs and returns a new CyderImage from the provided BufferedImage.
      *
      * @param image the BufferedImage to copy for this CyderImage
@@ -699,9 +734,9 @@ public final class CyderImage {
         float total = 0.0f;
 
         int index = 0;
-        for (int i = -radius / 2; i <= radius / 2; i++) {
-            for (int j = -radius / 2; j <= radius / 2; j++) {
-                float distance = i * i + j * j;
+        for (int x = -radius / 2; x <= radius / 2; x++) {
+            for (int y = -radius / 2; y <= radius / 2; y++) {
+                float distance = x * x + y * y;
                 data[index] = (float) Math.exp(-distance / twoSigmaSquare) / sigmaRoot;
                 total += data[index];
                 index++;

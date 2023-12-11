@@ -19,7 +19,6 @@ import cyder.ui.progress.AnimationDirection;
 import cyder.ui.progress.CyderProgressBar;
 import cyder.ui.progress.CyderProgressUI;
 import cyder.utils.ArrayUtil;
-import cyder.utils.ImageUtil;
 import cyder.utils.OsUtil;
 
 import javax.imageio.ImageIO;

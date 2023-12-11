@@ -17,7 +17,6 @@ import cyder.time.TimeUtil;
 import cyder.ui.drag.DragLabelButtonSize;
 import cyder.ui.exceptions.DeviceNotFoundException;
 import cyder.ui.frame.CyderFrame;
-import cyder.utils.ImageUtil;
 import cyder.utils.OsUtil;
 
 import javax.imageio.ImageIO;

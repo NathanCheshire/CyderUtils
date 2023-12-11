@@ -1,10 +1,11 @@
 package cyder.ui.test;
 
 import cyder.color.CyderColors;
-import cyder.font.CyderFonts;
 import cyder.constants.CyderIcons;
 import cyder.exceptions.IllegalMethodException;
+import cyder.font.CyderFonts;
 import cyder.handlers.internal.InformHandler;
+import cyder.image.CyderImage;
 import cyder.layouts.*;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadRunner;
@@ -27,7 +28,6 @@ import cyder.ui.progress.CyderProgressUI;
 import cyder.ui.selection.*;
 import cyder.ui.slider.CyderSliderUi;
 import cyder.ui.slider.ThumbShape;
-import cyder.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -269,8 +269,9 @@ public final class GuiTests {
      * Tests for the sliding icon label.
      */
     public static void iconLabelSlidingTest() {
-        ImageIcon theImage = new ImageIcon(ImageUtil.getImageGradient(600, 1200,
-                CyderColors.regularPink, CyderColors.regularBlue, CyderColors.regularBlue));
+        ImageIcon theImage = CyderImage.fromGradient(
+                CyderColors.regularPink, CyderColors.regularBlue, CyderColors.regularBlue,
+                600, 1200).getImageIcon();
 
         CyderFrame testFrame = new CyderFrame.Builder()
                 .setWidth(600)
