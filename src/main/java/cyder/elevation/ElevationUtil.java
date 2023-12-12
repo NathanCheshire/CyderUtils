@@ -18,6 +18,8 @@ import java.util.Optional;
 public final class ElevationUtil {
     /**
      * Suppress default constructor.
+     *
+     * @throws IllegalMethodException if invoked
      */
     private ElevationUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
@@ -53,48 +55,11 @@ public final class ElevationUtil {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(queryString).openStream()))) {
             ElevationData elevationData = SerializationUtil.fromJson(reader, ElevationData.class);
-            return Optional.of(Double.parseDouble(elevationData.uepqs.elevationQuery.elevation));
+            return Optional.of(Double.parseDouble(elevationData.getUepqs().getElevationData().getElevation()));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * The standard length units.
-     */
-    public enum LengthUnit {
-        /**
-         * The SI unit for length.
-         */
-        METERS("METERS"),
-        /*
-         * The English unit for length.
-         */
-        FEET("FEET");
-
-        /**
-         * The name of the length unit
-         */
-        private final String name;
-
-        /**
-         * Constructs a new length UnitEnum
-         *
-         * @param name the name of the length unit
-         */
-        LengthUnit(String name) {
-            this.name = name;
-        }
-
-        /**
-         * Returns the name of this length unit.
-         *
-         * @return the name of this length unit
-         */
-        public String getName() {
-            return name;
-        }
     }
 }
