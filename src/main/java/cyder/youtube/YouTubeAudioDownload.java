@@ -5,7 +5,6 @@ import cyder.color.CyderColors;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.HtmlTags;
 import cyder.enumerations.Extension;
-import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.font.CyderFonts;
 import cyder.image.CyderImage;
@@ -216,9 +215,9 @@ public class YouTubeAudioDownload {
      * Sets the download type of this download to a query.
      *
      * @param query the video link
-     * @throws YoutubeException if a likely uuid for the provided query cannot be found
+     * @throws YouTubeException if a likely uuid for the provided query cannot be found
      */
-    public void setVideoQuery(String query) throws YoutubeException {
+    public void setVideoQuery(String query) throws YouTubeException {
         Preconditions.checkNotNull(query);
         Preconditions.checkArgument(!query.isEmpty());
 
@@ -228,7 +227,7 @@ public class YouTubeAudioDownload {
         try {
             this.providedDownloadString = YouTubeUtil.buildVideoUrl(futureUuid.get());
         } catch (Exception e) {
-            throw new YoutubeException(e.getMessage());
+            throw new YouTubeException(e.getMessage());
         }
     }
 
@@ -539,9 +538,9 @@ public class YouTubeAudioDownload {
     /**
      * Starts the download of the thumbnail file(s).
      *
-     * @throws YoutubeException if an exception occurs when attempting to download/save the thumbnail image file
+     * @throws YouTubeException if an exception occurs when attempting to download/save the thumbnail image file
      */
-    public void downloadThumbnail() throws YoutubeException {
+    public void downloadThumbnail() throws YouTubeException {
         if (thumbnailDownloadName == null) {
             initializeThumbnailDownloadName();
         }
@@ -550,7 +549,7 @@ public class YouTubeAudioDownload {
 
         Optional<BufferedImage> optionalThumbnail = YouTubeUtil.getMaxResolutionThumbnail(uuid);
         BufferedImage thumbnailImage = optionalThumbnail.orElseThrow(
-                () -> new FatalException("Could not get max resolution or standard resolution"
+                () -> new YouTubeException("Could not get max resolution or standard resolution"
                         + " thumbnail for provided download string: " + providedDownloadString));
 
         if (requestedThumbnailWidth == DIMENSION_TO_BE_DETERMINED
@@ -588,7 +587,7 @@ public class YouTubeAudioDownload {
                 throw new IOException("Failed to write album art to file: " + saveFile);
             }
         } catch (IOException e) {
-            throw new YoutubeException(e.getMessage());
+            throw new YouTubeException(e.getMessage());
         }
     }
 

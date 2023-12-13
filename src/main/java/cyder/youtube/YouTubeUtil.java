@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.constants.CyderRegexPatterns;
 import cyder.constants.CyderUrls;
-import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.image.CyderImage;
 import cyder.network.NetworkUtil;
@@ -124,7 +123,7 @@ public final class YouTubeUtil {
             }
 
             return levenshteinDistanceToUuids.get(levenshteinDistanceToUuids.keySet().stream().mapToInt(i -> i).min()
-                    .orElseThrow(() -> new FatalException("Could not find YouTube uuid for query: " + youTubeQuery)));
+                    .orElseThrow(() -> new YouTubeException("Could not find YouTube uuid for query: " + youTubeQuery)));
         });
     }
 

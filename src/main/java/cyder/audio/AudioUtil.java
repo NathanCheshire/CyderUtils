@@ -1,8 +1,8 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import cyder.audio.exceptions.AudioException;
 import cyder.enumerations.Extension;
-import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.utils.OsUtil;
@@ -80,7 +80,7 @@ public final class AudioUtil {
             File outputFile = new File(builtPath);
             if (outputFile.exists()) {
                 if (!OsUtil.deleteFile(outputFile)) {
-                    throw new FatalException("Output file already exists in temp directory");
+                    throw new AudioException("Output file already exists in temp directory");
                 }
             }
 

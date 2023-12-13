@@ -2,7 +2,7 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import cyder.audio.validation.AudioValidationException;
+import cyder.audio.exceptions.AudioException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.DataUnit;
 import cyder.strings.CyderStrings;
@@ -84,7 +84,7 @@ public final class AudioValidationUtil {
                 if (boxLength == 0) break;
             }
         } catch (IOException e) {
-            throw new AudioValidationException(e);
+            throw new AudioException(e);
         }
 
         return false;

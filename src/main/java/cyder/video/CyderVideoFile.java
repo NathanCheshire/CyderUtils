@@ -6,7 +6,6 @@ import cyder.audio.ffmpeg.FfmpegArgument;
 import cyder.audio.ffmpeg.FfmpegCommandBuilder;
 import cyder.audio.ffmpeg.FfmpegLogLevel;
 import cyder.audio.validation.SupportedAudioFileType;
-import cyder.exceptions.FatalException;
 import cyder.files.FileUtil;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
@@ -91,11 +90,11 @@ public final class CyderVideoFile {
             while (!futureResult.isDone()) Thread.onSpinWait();
             try {
                 ProcessResult result = futureResult.get();
-                if (result.hasErrors()) throw new FatalException("");
-                if (!uniqueFile.exists()) throw new FatalException("");
+                if (result.hasErrors()) throw new CyderVideoException(""); // todo
+                if (!uniqueFile.exists()) throw new CyderVideoException(""); // todo
                 return uniqueFile;
             } catch (InterruptedException | ExecutionException e) {
-                throw new FatalException(e);
+                throw new CyderVideoException(e); // todo
             }
         });
     }
