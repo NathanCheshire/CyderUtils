@@ -1,12 +1,16 @@
 package cyder.audio.visualization;
 
 import com.google.common.base.Preconditions;
+import cyder.audio.CyderAudioFile;
+import cyder.audio.validation.SupportedAudioFileType;
 import cyder.audio.wav.WaveFile;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * A utility class for generating audio waveforms PNGs using {@link WaveformGenerationBuilder}s.
@@ -45,13 +49,13 @@ public final class WaveformGenerator {
         BufferedImage waveformImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = waveformImage.createGraphics();
 
-        WaveFile wav = null;
+        CyderAudioFile audioFile = builder.getAudioFile();
+        // todo what to call? Temp file too so not needed afterwards?
+        File convertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE, "");
+        WaveFile wav = new WaveFile(convertedToWav);
 
         int numFrames = (int) wav.getNumFrames();
-        if (numFrames < width) {
-            width = numFrames;
-        }
-
+        if (numFrames < width) width = numFrames;
         int[] nonNormalizedSamples = new int[width];
 
         int sampleLocationIncrement = (int) Math.ceil(numFrames / (double) width);
@@ -118,7 +122,12 @@ public final class WaveformGenerator {
             g2d.drawLine(i, height / 2 - normalizedSamples[i], i, height / 2);
         }
 
-        wav.stop();
+        try {
+            wav.stop();
+        } catch(IOException ignored) {
+            // todo
+        }
+
         wav = null;
 
         return waveformImage;

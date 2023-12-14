@@ -56,7 +56,8 @@ public final class CyderAudioFile {
 
     /**
      * Converts the internal audio file from the current format to the provided format.
-     * The file wil lbe named to the new name plus the new extension.
+     * The file will be named to the new name plus the new extension and will exist
+     * in the same directory as this file.
      *
      * @param audioFileType the audio file type to convert to
      * @param newName the new filename
@@ -70,6 +71,7 @@ public final class CyderAudioFile {
         Preconditions.checkNotNull(newName);
         Preconditions.checkArgument(FileUtil.isValidFilename(newName));
 
+        // todo this method should block and should be annotated as such with our new annotatio
         // todo using ffmpeg, convert
 
         return null;

@@ -65,6 +65,15 @@ public final class WaveformGenerationBuilder {
     }
 
     /**
+     * Returns the audio file.
+     *
+     * @return the audio file
+     */
+    public CyderAudioFile getAudioFile() {
+        return audioFile;
+    }
+
+    /**
      * Returns the width of this waveform builder.
      *
      * @return the width of this waveform builder
