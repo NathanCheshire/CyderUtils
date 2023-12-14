@@ -1,10 +1,10 @@
-package cyder.messaging;
+package cyder.audio.visualization;
 
 import com.google.common.base.Preconditions;
+import cyder.audio.CyderAudioFile;
 import cyder.color.CyderColors;
 
 import java.awt.*;
-import java.util.Objects;
 
 /**
  * A builder for constructing the parameters of waveform png generation from a {@link cyder.audio.CyderAudioFile}.
@@ -16,6 +16,11 @@ public final class WaveformGenerationBuilder {
     private static final Color DEFAULT_BOTTOM_WAVEFORM_COLOR = CyderColors.navy;
     private static final Color DEFAULT_TOP_WAVEFORM_COLOR = CyderColors.navy;
     private static final Color DEFAULT_CENTER_LINE_COLOR = CyderColors.navy;
+
+    /**
+     * The audio file this builder is returning a representation of.
+     */
+    private final CyderAudioFile audioFile;
 
     /**
      * the width of this waveform builder.
@@ -49,8 +54,15 @@ public final class WaveformGenerationBuilder {
 
     /**
      * Constructs a new WaveformGenerationBuilder object.
+     *
+     * @param audioFile the CyderAudioFile this builder will return a waveform representing
+     * @throws NullPointerException if the provided audio file is null
      */
-    public WaveformGenerationBuilder() {}
+    public WaveformGenerationBuilder(CyderAudioFile audioFile) {
+        Preconditions.checkNotNull(audioFile);
+
+        this.audioFile = audioFile;
+    }
 
     /**
      * Returns the width of this waveform builder.
@@ -196,12 +208,13 @@ public final class WaveformGenerationBuilder {
         }
 
         WaveformGenerationBuilder other = (WaveformGenerationBuilder) o;
-        return width == other.width
+        return audioFile.equals(other.audioFile)
+                && width == other.width
                 && height == other.height
-                && Objects.equals(backgroundColor, other.backgroundColor)
-                && Objects.equals(bottomWaveformColor, other.bottomWaveformColor)
-                && Objects.equals(topWaveformColor, other.topWaveformColor)
-                && Objects.equals(centerLineColor, other.centerLineColor);
+                && backgroundColor.equals(other.backgroundColor)
+                && bottomWaveformColor.equals(other.bottomWaveformColor)
+                && topWaveformColor.equals(other.topWaveformColor)
+                && centerLineColor.equals(other.centerLineColor);
     }
 
     /**
@@ -209,7 +222,8 @@ public final class WaveformGenerationBuilder {
      */
     @Override
     public int hashCode() {
-        int ret = Integer.hashCode(width);
+        int ret = audioFile.hashCode();
+        ret = 31 * ret + Integer.hashCode(width);
         ret = 31 * ret + Integer.hashCode(height);
         ret = 31 * ret + backgroundColor.hashCode();
         ret = 31 * ret + bottomWaveformColor.hashCode();
@@ -224,7 +238,8 @@ public final class WaveformGenerationBuilder {
     @Override
     public String toString() {
         return "WaveformGenerationBuilder{"
-                + "width=" + width
+                + "audioFile=" + audioFile
+                + ", width=" + width
                 + ", height=" + height
                 + ", backgroundColor=" + backgroundColor
                 + ", bottomWaveformColor=" + bottomWaveformColor
