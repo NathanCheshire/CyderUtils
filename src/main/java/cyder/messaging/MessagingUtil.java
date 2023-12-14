@@ -1,7 +1,6 @@
 package cyder.messaging;
 
 import com.google.common.base.Preconditions;
-import cyder.audio.AudioUtil;
 import cyder.audio.wav.WaveFile;
 import cyder.color.CyderColors;
 import cyder.enumerations.Extension;
@@ -19,7 +18,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -161,6 +159,184 @@ public final class MessagingUtil {
         return generateWaveform(wavOrMp3File, width, height, DEFAULT_BACKGROUND_COLOR, DEFAULT_WAVE_COLOR);
     }
 
+    public final class WaveformGenerationBuilder {
+        private static final int DEFAULT_WIDTH = 300;
+        private static final int DEFAULT_HEIGHT = 80;
+        private static final Color DEFAULT_BACKGROUND_COLOR = CyderColors.vanilla;
+        private static final Color DEFAULT_BOTTOM_WAVEFORM_COLOR = CyderColors.navy;
+        private static final Color DEFAULT_TOP_WAVEFORM_COLOR = CyderColors.navy;
+        private static final Color DEFAULT_CENTER_LINE_COLOR = CyderColors.navy;
+
+        /**
+         * the width of this waveform builder.
+         */
+        private int width = DEFAULT_WIDTH;
+
+        /**
+         * the height of this waveform builder.
+         */
+        private int height = DEFAULT_HEIGHT;
+
+        /**
+         * The background color of the waveform png.
+         */
+        private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
+
+        /**
+         * The color of the bottom of the waveform png.
+         */
+        private Color bottomWaveformColor = DEFAULT_BOTTOM_WAVEFORM_COLOR;
+
+        /**
+         * The color of the top of the waveform png.
+         */
+        private Color topWaveformColor = DEFAULT_TOP_WAVEFORM_COLOR;
+
+        /**
+         * The center line color for the waveform png.
+         */
+        private Color centerLineColor = DEFAULT_CENTER_LINE_COLOR;
+
+        /**
+         * Constructs a new WaveformGenerationBuilder object.
+         */
+        public WaveformGenerationBuilder() {}
+
+        /**
+         * Returns the width of this waveform builder.
+         *
+         * @return the width of this waveform builder
+         */
+        public int getWidth() {
+            return width;
+        }
+
+        /**
+         * Sets the width of this waveform builder.
+         *
+         * @param width the width of this waveform builder
+         * @throws IllegalArgumentException if the provided width is less than one
+         */
+        public void setWidth(int width) {
+            Preconditions.checkArgument(width > 0);
+            this.width = width;
+        }
+
+        /**
+         * Returns the height of this waveform builder.
+         *
+         * @return the height of this waveform builder
+         */
+        public int getHeight() {
+            return height;
+        }
+
+        /**
+         * Sets the height of this waveform builder.
+         *
+         * @param height the height of this waveform builder
+         * @throws IllegalArgumentException if the provided height is less than one
+         */
+        public void setHeight(int height) {
+            Preconditions.checkArgument(height > 0);
+            this.height = height;
+        }
+
+        /**
+         * Returns the background color of the waveform png.
+         *
+         * @return the background color of the waveform png
+         */
+        public Color getBackgroundColor() {
+            return backgroundColor;
+        }
+
+        /**
+         * Sets the background color of the waveform png.
+         *
+         * @param backgroundColor the background color of the waveform png
+         * @throws NullPointerException if the provided color is null
+         */
+        public void setBackgroundColor(Color backgroundColor) {
+            Preconditions.checkNotNull(backgroundColor);
+            this.backgroundColor = backgroundColor;
+        }
+
+        /**
+         * Returns the color of the bottom of the waveform png.
+         *
+         * @return the color of the bottom of the waveform png
+         */
+        public Color getBottomWaveformColor() {
+            return bottomWaveformColor;
+        }
+
+        /**
+         * Sets the color of the bottom of the waveform png.
+         *
+         * @param bottomWaveformColor the color of the bottom of the waveform png
+         * @throws NullPointerException if the provided color is null
+         */
+        public void setBottomWaveformColor(Color bottomWaveformColor) {
+            Preconditions.checkNotNull(bottomWaveformColor);
+            this.bottomWaveformColor = bottomWaveformColor;
+        }
+
+        /**
+         * Returns the color of the top of the waveform png.
+         *
+         * @return the color of the top of the waveform png
+         */
+        public Color getTopWaveformColor() {
+            return topWaveformColor;
+        }
+
+        /**
+         * Sets the color of the top of the waveform png.
+         *
+         * @param topWaveformColor the color of the top of the waveform png
+         * @throws NullPointerException if the provided color is null
+         */
+        public void setTopWaveformColor(Color topWaveformColor) {
+            Preconditions.checkNotNull(topWaveformColor);
+            this.topWaveformColor = topWaveformColor;
+        }
+
+        /**
+         * Sets the top and bottom waveform color.
+         *
+         * @param waveformColor the top and bottom waveform color
+         * @throws NullPointerException if the provided color is null
+         */
+        public void setWaveformColor(Color waveformColor) {
+            Preconditions.checkNotNull(waveformColor);
+            this.bottomWaveformColor = waveformColor;
+            this.topWaveformColor = waveformColor;
+        }
+
+        /**
+         * Returns the center line color for the waveform png.
+         *
+         * @return the center line color for the waveform png
+         */
+        public Color getCenterLineColor() {
+            return centerLineColor;
+        }
+
+        /**
+         * Sets the center line color for the waveform png.
+         *
+         * @param centerLineColor the center line color for the waveform png
+         * @throws NullPointerException if the provided color is null
+         */
+        public void setCenterLineColor(Color centerLineColor) {
+            Preconditions.checkNotNull(centerLineColor);
+            this.centerLineColor = centerLineColor;
+        }
+    }
+
+    // todo moved to cyder audio file but should accept a builder to customize all the params?
+
     /**
      * Generates a png depicting the waveform of the provided wav or mp3 file.
      *
@@ -192,17 +368,14 @@ public final class MessagingUtil {
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(waveformGeneratorThreadName)).submit(() -> {
             try {
                 if (FileUtil.validateExtension(wavOrMp3FileReference.get(), Extension.MP3.getExtension())) {
-                    Future<Optional<File>> futureWav = AudioUtil.mp3ToWav(wavOrMp3FileReference.get());
-                    while (!futureWav.isDone()) Thread.onSpinWait();
-                    if (futureWav.get().isPresent()) wavOrMp3FileReference.set(futureWav.get().get());
+                    // todo convert to to a wav file
+                    // wavOrMp3FileReference.set()
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (FileUtil.validateExtension(wavOrMp3FileReference.get(), Extension.MP3.getExtension())) {
-                throw new RuntimeException("Failed to convert mp3 to wav");
-            }
+            // todo validate file was converted
 
             BufferedImage ret =
                     new BufferedImage(widthReference.get(), heightReference.get(), BufferedImage.TYPE_INT_RGB);

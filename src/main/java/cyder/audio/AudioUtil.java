@@ -1,15 +1,11 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
-import cyder.audio.exceptions.AudioException;
 import cyder.enumerations.Extension;
 import cyder.files.FileUtil;
 import cyder.threads.CyderThreadFactory;
-import cyder.utils.OsUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -53,94 +49,6 @@ public final class AudioUtil {
      */
     private static final String HIGHPASS_LOWPASS_ARGS = "\"" + "highpass=f="
             + HIGHPASS + ", " + "lowpass=f=" + LOW_PASS + "\"";
-
-    /**
-     * Converts the mp3 file to a wav file and returns the file object.
-     * Note the file is created in the Cyder temporary directory which is
-     * removed upon proper Cyder shutdown/startup.
-     *
-     * @param mp3File the mp3 file to convert to wav
-     * @return the mp3 file converted to wav
-     */
-    @SuppressWarnings({"ResultOfMethodCallIgnored"})
-    public static Future<Optional<File>> mp3ToWav(File mp3File) {
-        Preconditions.checkNotNull(mp3File);
-        Preconditions.checkArgument(FileUtil.validateExtension(mp3File, Extension.MP3.getExtension()));
-
-        return Executors.newSingleThreadExecutor(
-                new CyderThreadFactory("Mp3 to wav converter")).submit(() -> {
-            File tmpDir = new File(""); // todo
-            if (!tmpDir.exists()) {
-                tmpDir.mkdir();
-            }
-
-            String builtPath = FileUtil.getFilename(mp3File) + Extension.WAV.getExtension();
-            String safePath = "\"" + builtPath + "\"";
-
-            File outputFile = new File(builtPath);
-            if (outputFile.exists()) {
-                if (!OsUtil.deleteFile(outputFile)) {
-                    throw new AudioException("Output file already exists in temp directory");
-                }
-            }
-
-            ProcessBuilder processBuilder = new ProcessBuilder("ffmpeg", INPUT_FLAG,
-                    "\"" + mp3File.getAbsolutePath() + "\"", safePath);
-            processBuilder.redirectErrorStream();
-            Process process = processBuilder.start();
-
-            // another precaution to ensure process is completed before file is returned
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while (reader.readLine() != null) {
-                Thread.onSpinWait();
-            }
-
-            // wait for file to be created by ffmpeg
-            while (!outputFile.exists()) {
-                Thread.onSpinWait();
-            }
-
-            return Optional.of(outputFile);
-        });
-    }
-
-    /**
-     * Converts the wav file to an mp3 file and returns the file object.
-     * Note the file is created in the Cyder temporary directory which is
-     * removed upon proper Cyder shutdown/startup.
-     *
-     * @param wavFile the wav file to convert to mp3
-     * @return the wav file converted to mp3
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static Future<Optional<File>> wavToMp3(File wavFile) {
-        Preconditions.checkNotNull(wavFile);
-        Preconditions.checkArgument(FileUtil.validateExtension(wavFile, Extension.WAV.getExtension()));
-
-        return Executors.newSingleThreadExecutor(
-                new CyderThreadFactory("Wav to mp3 converter")).submit(() -> {
-
-            String builtPath = ""; // todo temp dir
-            String safePath = "\"" + builtPath + "\"";
-
-            File outputFile = new File(builtPath);
-            ProcessBuilder pb = new ProcessBuilder("ffmpeg", INPUT_FLAG,
-                    "\"" + wavFile.getAbsolutePath() + "\"", safePath);
-            pb.redirectErrorStream();
-            Process process = pb.start();
-
-            // another precaution to ensure process is completed before file is returned
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while (reader.readLine() != null) Thread.onSpinWait();
-
-            // wait for file to be created by ffmpeg
-            while (!outputFile.exists()) {
-                Thread.onSpinWait();
-            }
-
-            return Optional.of(outputFile);
-        });
-    }
 
     /**
      * Dreamifies the provided wav or mp3 audio file.
