@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.audio.validation.SupportedAudioFileType;
+import cyder.enumerations.SystemPropertyKey;
 import cyder.files.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.Future;
 
@@ -39,23 +41,6 @@ public final class CyderAudioFile {
 
     /**
      * Converts the internal audio file from the current format to the provided format.
-     * The file will be named the same as the original file but with the new extension.
-     *
-     * @param audioFileType the audio file type to convert to
-     * @return the converted file
-     * @throws NullPointerException if the provided audio file type is null
-     * @throws IllegalArgumentException if the internal audio file is already of the provided type
-     */
-    @CanIgnoreReturnValue
-    public File convertTo(SupportedAudioFileType audioFileType) {
-        Preconditions.checkNotNull(audioFileType);
-        Preconditions.checkArgument(!audioFileType.isAudioTypeOfFile(audioFile));
-
-        return convertTo(audioFileType, FileUtil.getFilename(audioFile));
-    }
-
-    /**
-     * Converts the internal audio file from the current format to the provided format.
      * The file will be named to the new name plus the new extension and will exist
      * in the same directory as this file.
      *
@@ -66,15 +51,26 @@ public final class CyderAudioFile {
      * @throws IllegalArgumentException if the provided new name is invalid
      */
     @CanIgnoreReturnValue
-    public File convertTo(SupportedAudioFileType audioFileType, String newName) {
+    public Future<CyderAudioFile> convertTo(SupportedAudioFileType audioFileType, String newName) {
         Preconditions.checkNotNull(audioFileType);
         Preconditions.checkNotNull(newName);
         Preconditions.checkArgument(FileUtil.isValidFilename(newName));
 
-        // todo this method should block and should be annotated as such with our new annotatio
+        // todo builder:
+        //  need to allow placing in a specific folder with a specific name or generated name
+
         // todo using ffmpeg, convert
 
         return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        File myFile = new File(SystemPropertyKey.JAVA_IO_TMPDIR.getProperty() + "my_file.txt");
+        System.out.println("Exists: " + myFile.exists());
+        myFile.createNewFile();
+        System.out.println("Exists: " + myFile.exists());
+        myFile.delete();
+        System.out.println("Exists: " + myFile.exists());
     }
 
     /**
@@ -88,7 +84,12 @@ public final class CyderAudioFile {
         return method.determineAudioLength(audioFile);
     }
 
-    public File dreamify() {
+    /**
+     * Dreamifies this audio file and returns a new audio file representing the newly created dreamified audio file.
+     *
+     * @return the dreamified audio file
+     */
+    public Future<CyderAudioFile> dreamify() {
         return null; // todo, should have a dreamifier util that this can invoke?
     }
 
@@ -97,10 +98,7 @@ public final class CyderAudioFile {
      *
      * @return returns the dreamified audio file
      */
-    public Future<File> dreamify(File saveToFile) {
+    public Future<CyderAudioFile> dreamify(File saveToFile) {
         return Futures.immediateFuture(null);
-
-        // todo figure out name and pass to other method which accepts an empty file pointer for
-        //  which we should use create the file for and save it to
     }
 }

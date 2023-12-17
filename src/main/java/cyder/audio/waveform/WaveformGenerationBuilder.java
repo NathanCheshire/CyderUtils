@@ -1,4 +1,4 @@
-package cyder.audio.visualization;
+package cyder.audio.waveform;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.CyderAudioFile;

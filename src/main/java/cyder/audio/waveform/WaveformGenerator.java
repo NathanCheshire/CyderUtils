@@ -1,4 +1,4 @@
-package cyder.audio.visualization;
+package cyder.audio.waveform;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.CyderAudioFile;
@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 /**
  * A utility class for generating audio waveforms PNGs using {@link WaveformGenerationBuilder}s.
@@ -51,8 +52,13 @@ public final class WaveformGenerator {
 
         CyderAudioFile audioFile = builder.getAudioFile();
         // todo what to call? Temp file too so not needed afterwards?
-        File convertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE, "");
-        WaveFile wav = new WaveFile(convertedToWav);
+        Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE, "");
+        while (!futureConvertedToWav.isDone()) Thread.onSpinWait();
+        CyderAudioFile convertedToWav = null;
+        try {
+            convertedToWav = futureConvertedToWav.get();
+        } catch (Exception e) {}
+        WaveFile wav = null; // todo
 
         int numFrames = (int) wav.getNumFrames();
         if (numFrames < width) width = numFrames;
