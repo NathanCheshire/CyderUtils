@@ -131,6 +131,7 @@ public final class CyderTemporaryFile {
 
         if (mode == FileMode.BINARY) {
             File file = buildFile();
+
             try (FileInputStream fis = new FileInputStream(file)) {
                 byte[] data = new byte[fis.available()];
                 fis.read(data);
@@ -184,6 +185,47 @@ public final class CyderTemporaryFile {
         }
 
         throw new IllegalArgumentException("Unsupported file mode: " + mode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof CyderTemporaryFile)) {
+            return false;
+        }
+
+        CyderTemporaryFile other = (CyderTemporaryFile) o;
+
+        return other.getOutputExtension().equals(getOutputExtension())
+                && other.getOutputName().equals(getOutputName())
+                && other.outputDirectory.getAbsolutePath().equals(outputDirectory.getAbsolutePath());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int ret = outputDirectory.hashCode();
+        ret = 31 * ret + outputName.hashCode();
+        ret = 31 * ret + outputExtension.hashCode();
+        return ret;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "CyderTemporaryFile{"
+                + "\"outputDirectory\"=" + outputDirectory + ","
+                + "\"outputName\"=" + outputName + ","
+                + "\"outputExtension\"=" + outputExtension
+                + "}";
     }
 
     /**
