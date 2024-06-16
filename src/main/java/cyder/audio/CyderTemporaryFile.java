@@ -7,7 +7,7 @@ import cyder.enumerations.SystemPropertyKey;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 
-import java.io.File;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -52,6 +52,123 @@ public final class CyderTemporaryFile {
     }
 
     /**
+     * Builds and returns a {@link File} pointer for this temporary file.
+     *
+     * @return a {@link File} pointer for this temporary file
+     */
+    public File buildFile() {
+        String extension = outputExtension.startsWith(".") ? outputExtension : "." + outputExtension;
+        return new File(outputDirectory, outputName + extension);
+    }
+
+    /**
+     * Returns whether this temporary file exists.
+     *
+     * @return whether this temporary file exists
+     */
+    public boolean exists() {
+        return buildFile().exists();
+    }
+
+    /**
+     * Attempts to create this file.
+     *
+     * @return whether the file was created and now exists
+     */
+    @CanIgnoreReturnValue
+    public boolean create() {
+        File pointer = buildFile();
+
+        try {
+            return pointer.createNewFile();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Deletes this file if it exists and returns whether the file exists.
+     *
+     * @return whether the file exists after the delete operation
+     */
+    public boolean delete() {
+        File pointer = buildFile();
+        return pointer.delete();
+    }
+
+    /**
+     * Returns the outputName of this temporary file.
+     *
+     * @return the outputName of this temporary file
+     */
+    public String getOutputName() {
+        return this.outputName;
+    }
+
+    /**
+     * Returns the outputExtension of this temporary file.
+     *
+     * @return the outputExtension of this temporary file
+     */
+    public String getOutputExtension() {
+        return this.outputExtension;
+    }
+
+    /**
+     * Reads the content from this file.
+     *
+     * @param mode the mode to read the file as
+     * @return the data read from the file
+     * @throws NullPointerException if the provided file mode is null
+     * @throws IllegalStateException if this file does not exist
+     * @throws IOException if an error occurs when reading this file
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public Object readAs(FileMode mode) throws IOException {
+        Preconditions.checkNotNull(mode);
+        Preconditions.checkState(exists());
+
+        if (mode == FileMode.BINARY) {
+            File file = buildFile();
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] data = new byte[fis.available()];
+                fis.read(data);
+                return data;
+            } catch (Exception e) {
+                throw new IOException("An error occurred when reading, {file="
+                        + file.getAbsolutePath() + ", mode=" + mode + "}");
+            }
+        } else if (mode == FileMode.TEXT) {
+            File file = buildFile();
+
+            try (BufferedReader bis = new BufferedReader(new FileReader(file))) {
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = bis.readLine()) != null) content.append(line).append("\n");
+                return content.toString();
+            } catch (Exception e) {
+                throw new IOException("An error occurred when reading, {file="
+                        + file.getAbsolutePath() + ", mode=" + mode + "}");
+            }
+        }
+
+        throw new IllegalArgumentException("Unsupported file mode: " + mode);
+    }
+
+    /**
+     * Writes the provided content to this file, creating it if it does not exist.
+     *
+     * @param mode the write mode
+     * @param content the content to write
+     * @return whether the content was successfully written
+     * @throws NullPointerException if the provided mode or content are null
+     */
+    public boolean writeAs(FileMode mode, Object content) {
+        Preconditions.checkNotNull(mode);
+        Preconditions.checkNotNull(content);
+    }
+
+    /**
      * A builder for constructing instances of {@link CyderTemporaryFile}.
      */
     public static final class CyderTemporaryFileBuilder {
@@ -93,6 +210,9 @@ public final class CyderTemporaryFile {
 
         /**
          * Sets the file extension for this builder.
+         * Both the extension and the extension prefixed with a period are allowed.
+         * When building the File, the instance will automatically prefix a period
+         * to the extension if needed.
          *
          * @param outputExtension the extension
          * @return this builder
