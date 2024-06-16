@@ -122,6 +122,7 @@ public final class CyderTemporaryFile {
      * @throws NullPointerException if the provided file mode is null
      * @throws IllegalStateException if this file does not exist
      * @throws IOException if an error occurs when reading this file
+     * @throws IllegalArgumentException if the provided file mode is invalid
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public Object readAs(FileMode mode) throws IOException {
@@ -162,10 +163,27 @@ public final class CyderTemporaryFile {
      * @param content the content to write
      * @return whether the content was successfully written
      * @throws NullPointerException if the provided mode or content are null
+     * @throws IllegalStateException if this file does not exist
+     * @throws IOException if an error occurs when reading this file
+     * @throws IllegalArgumentException if the provided file mode is invalid
      */
-    public boolean writeAs(FileMode mode, Object content) {
+    public boolean writeAs(FileMode mode, Object content) throws IOException {
         Preconditions.checkNotNull(mode);
         Preconditions.checkNotNull(content);
+        Preconditions.checkState(exists());
+
+        File file = buildFile();
+        if (mode == FileMode.BINARY) {
+            try (FileOutputStream fis = new FileOutputStream(file)) {
+                fis.write((byte[]) content);
+            }
+        } else if (mode == FileMode.TEXT) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                bufferedWriter.write((String) content);
+            }
+        }
+
+        throw new IllegalArgumentException("Unsupported file mode: " + mode);
     }
 
     /**
