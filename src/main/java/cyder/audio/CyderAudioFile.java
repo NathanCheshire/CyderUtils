@@ -1,15 +1,23 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.enumerations.SystemPropertyKey;
+import cyder.files.CyderTemporaryFile;
 import cyder.files.FileUtil;
+import cyder.process.CyderProcessException;
+import cyder.process.ProcessResult;
+import cyder.process.ProcessUtil;
+import cyder.threads.CyderThreadFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -56,21 +64,34 @@ public final class CyderAudioFile {
         Preconditions.checkNotNull(newName);
         Preconditions.checkArgument(FileUtil.isValidFilename(newName));
 
-        // todo builder:
-        //  need to allow placing in a specific folder with a specific name or generated name
+        CyderTemporaryFile temporaryConversionFile = new CyderTemporaryFile.Builder()
+                .setOutputFilename(newName)
+                .setOutputExtension(audioFileType.getExtension())
+                .build();
 
-        // todo using ffmpeg, convert
+        List<String> process = ImmutableList.of(
+                "ffmpeg", "-i", this.audioFile.getAbsolutePath(),
+                temporaryConversionFile.buildFile().getAbsolutePath());
 
-        return null;
+        String threadName = "CyderAudioFile.convertTo process";
+        return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
+            Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(process);
+            while (!futureResult.isDone()) Thread.onSpinWait();
+
+            try {
+                ProcessResult result = futureResult.get();
+
+                if (result.hasErrors()) throw new CyderProcessException("CyderAudioFile.convertTo process"
+                        + " result contains errors: " + result.getErrorOutput());
+                return new CyderAudioFile(temporaryConversionFile.buildFile());
+            } catch (Exception e) {
+                throw new CyderProcessException(e);
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {
-        File myFile = new File(SystemPropertyKey.JAVA_IO_TMPDIR.getProperty() + "my_file.txt");
-        System.out.println("Exists: " + myFile.exists());
-        myFile.createNewFile();
-        System.out.println("Exists: " + myFile.exists());
-        myFile.delete();
-        System.out.println("Exists: " + myFile.exists());
+        // todo test convert to
     }
 
     /**

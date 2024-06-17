@@ -1,4 +1,4 @@
-package cyder.audio;
+package cyder.files;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -45,7 +45,7 @@ public final class CyderTemporaryFile {
      *
      * @param builder the builder to construct this instance from
      */
-    private CyderTemporaryFile(CyderTemporaryFileBuilder builder) {
+    private CyderTemporaryFile(Builder builder) {
         this.outputDirectory = builder.outputDirectory;
         this.outputName = builder.outputFilename;
         this.outputExtension = builder.outputExtension;
@@ -231,7 +231,7 @@ public final class CyderTemporaryFile {
     /**
      * A builder for constructing instances of {@link CyderTemporaryFile}.
      */
-    public static final class CyderTemporaryFileBuilder {
+    public static final class Builder {
         @SuppressWarnings("SpellCheckingInspection")
         private static final SimpleDateFormat deafultFilenameDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
 
@@ -240,14 +240,14 @@ public final class CyderTemporaryFile {
         private String outputExtension = ".tmp";
 
         /**
-         * Constructs a new instance of a {@link CyderTemporaryFileBuilder} with the following defaults:
+         * Constructs a new instance of a {@link Builder} with the following defaults:
          * <ul>
          *     <li>outputDirectory: JAVA_IO_TMPDIR</li>
          *     <li>outputName: a date string in the format 20240615_065622_500</li>
          *     <li>outputExtension: .tmp</li>
          * </ul>
          */
-        public CyderTemporaryFileBuilder() {
+        public Builder() {
             outputFilename = generateDefaultName();
         }
 
@@ -260,7 +260,7 @@ public final class CyderTemporaryFile {
          * @throws IllegalArgumentException if the provided String is empty
          */
         @CanIgnoreReturnValue
-        public CyderTemporaryFileBuilder setOutputFilename(String outputFilename) {
+        public Builder setOutputFilename(String outputFilename) {
             Preconditions.checkNotNull(outputFilename);
             Preconditions.checkArgument(!outputFilename.trim().isEmpty());
 
@@ -280,7 +280,7 @@ public final class CyderTemporaryFile {
          * @throws IllegalArgumentException if the provided String is empty
          */
         @CanIgnoreReturnValue
-        public CyderTemporaryFileBuilder setOutputExtension(String outputExtension) {
+        public Builder setOutputExtension(String outputExtension) {
             Preconditions.checkNotNull(outputExtension);
             Preconditions.checkArgument(!outputExtension.trim().isEmpty());
 
@@ -297,7 +297,7 @@ public final class CyderTemporaryFile {
          * @throws IllegalArgumentException if the provided File is not a file; see {@link File#isFile()}
          */
         @CanIgnoreReturnValue
-        public CyderTemporaryFileBuilder setOutputDirectory(File outputDirectory) {
+        public Builder setOutputDirectory(File outputDirectory) {
             Preconditions.checkNotNull(outputDirectory);
             Preconditions.checkArgument(outputDirectory.isFile());
 
@@ -313,7 +313,7 @@ public final class CyderTemporaryFile {
          * @throws NullPointerException if the provided String is null
          * @throws IllegalArgumentException if the provided String is empty or does not contain a period
          */
-        public CyderTemporaryFileBuilder setFilenameAndExtension(String nameAndExtension) {
+        public Builder setFilenameAndExtension(String nameAndExtension) {
             Preconditions.checkNotNull(nameAndExtension);
             Preconditions.checkArgument(!nameAndExtension.trim().isEmpty());
             Preconditions.checkArgument(nameAndExtension.contains("."));

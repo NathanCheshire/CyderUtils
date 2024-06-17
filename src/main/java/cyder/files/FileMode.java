@@ -1,4 +1,6 @@
-package cyder.audio;
+package cyder.files;
+
+import cyder.files.CyderTemporaryFile;
 
 /**
  * The supported modes for reading/writing to/from a {@link CyderTemporaryFile}.
