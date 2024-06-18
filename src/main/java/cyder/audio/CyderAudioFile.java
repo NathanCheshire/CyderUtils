@@ -2,7 +2,6 @@ package cyder.audio;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.files.CyderTemporaryFile;
@@ -13,15 +12,11 @@ import cyder.process.ProcessUtil;
 import cyder.threads.CyderThreadFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
@@ -29,11 +24,59 @@ import java.util.stream.Collectors;
  */
 public final class CyderAudioFile {
     /**
+     * The highpass value for dreamifying an audio file.
+     */
+    private static final int DREAMIFY_HIGH_PASS = 200;
+
+    /**
+     * The low pass value for dreamifying an audio file.
+     */
+    private static final int DREAMIFY_LOW_PASS = 1500;
+
+    /**
      * The encapsulated audio file.
      */
     private final File audioFile;
 
-    // todo from String and from File
+    /**
+     * The highpass value for the dreamify ffmpeg filter.
+     */
+    private final int dreamifyHighPass;
+
+    /**
+     * The lowpass value for the dreamify ffmpeg filter.
+     */
+    private final int dreamifyLowPass;
+
+    /**
+     * Returns a new instance of a CyderAudioFile from the provided filepath.
+     *
+     * @param filepath the filepath to construct the audio file from
+     * @return a new instance of a CyderAudioFile from the provided filepath
+     * @throws NullPointerException if the provided filepath is null
+     * @throws IllegalArgumentException if the provided filepath is empty
+     */
+    public static CyderAudioFile from(String filepath) {
+        Preconditions.checkNotNull(filepath);
+        Preconditions.checkArgument(!filepath.isEmpty());
+
+        return new CyderAudioFile(new File(filepath));
+    }
+
+    /**
+     * Returns a new instance of a CyderAudioFile from the provided file.
+     *
+     * @param audioFile the audio file to use
+     * @return a new instance of a CyderAudioFile from the provided file
+     * @throws NullPointerException if the provided file is empty
+     * @throws IllegalArgumentException if the provided file does not exist
+     */
+    public static CyderAudioFile from(File audioFile) {
+        Preconditions.checkNotNull(audioFile);
+        Preconditions.checkArgument(audioFile.isFile());
+
+        return new CyderAudioFile(audioFile);
+    }
 
     /**
      * Constructs a new CyderAudioFile.
@@ -44,12 +87,28 @@ public final class CyderAudioFile {
      *                                  exist or is not a file or is not a supported audio type
      */
     public CyderAudioFile(File audioFile) {
+        this(audioFile, DREAMIFY_HIGH_PASS, DREAMIFY_LOW_PASS);
+    }
+
+    /**
+     * Constructs a new CyderAudioFile.
+     *
+     * @param audioFile the audio file
+     * @throws NullPointerException     if the provided audio file is null
+     * @throws IllegalArgumentException if the provided audio file does not
+     *                                  exist or is not a file or is not a supported audio type
+     *                                  or the high pass is less than or equal to the low pass
+     */
+    public CyderAudioFile(File audioFile, int dreamifyHighPass, int dreamifyLowPass) {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
+        Preconditions.checkArgument(dreamifyHighPass > dreamifyLowPass);
 
         this.audioFile = audioFile;
+        this.dreamifyHighPass = dreamifyHighPass;
+        this.dreamifyLowPass = dreamifyLowPass;
     }
 
     /**
@@ -95,20 +154,6 @@ public final class CyderAudioFile {
         });
     }
 
-    public static void main(String[] args) throws IOException {
-        // todo test convert to
-        CyderAudioFile mp3 = new CyderAudioFile(
-                new File("/Users/nathancheshire/Downloads/Test/WhereTheyAt.mp3"));
-        Future<Optional<CyderAudioFile>> result = mp3.dreamify();
-        while (!result.isDone()) Thread.onSpinWait();
-        System.out.println("Done");
-        try {
-            System.out.println(result.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Returns the length of the encapsulated audio file using the provided method.
      *
@@ -121,22 +166,13 @@ public final class CyderAudioFile {
     }
 
     /**
-     * The highpass value for dreamifying an audio file.
+     * Returns the highpass lowpass filter commands to use in combination with ffmpeg
+     * to "dreamify" an audio file.
+     *
+     * @return the highpass lowpass filter commands string
      */
-    private static final int HIGHPASS = 200;
-
-    /**
-     * The low pass value for dreamifying an audio file.
-     */
-    private static final int LOW_PASS = 1500;
-
-    /**
-     * The -filter:a flag for setting high and low pass data.
-     */
-    private static final String FILTER_DASH_A = "-filter:a";
-
     private String constructHighpassLowpassFilter() {
-        return "\"" + "highpass=f=" + HIGHPASS + ", " + "lowpass=f=" + LOW_PASS + "\"";
+        return "\"" + "highpass=f=" + dreamifyHighPass + ", " + "lowpass=f=" + dreamifyLowPass + "\"";
     }
 
     /**
@@ -158,13 +194,12 @@ public final class CyderAudioFile {
                     "ffmpeg",
                     "-i",
                     safeFilename,
-                    FILTER_DASH_A,
+                    "-filter:a",
                     constructHighpassLowpassFilter(),
-                    safeOutputFilename};
-            System.out.println(Arrays.stream(command).collect(Collectors.joining(" ")));
+                    safeOutputFilename
+            };
             Future<ProcessResult> result = ProcessUtil.getProcessOutput(command);
             while (!result.isDone()) Thread.onSpinWait();
-            System.out.println(result.get());
 
             CyderAudioFile ret = new CyderAudioFile(outputFile);
             return Optional.of(ret);
@@ -172,11 +207,42 @@ public final class CyderAudioFile {
     }
 
     /**
-     * Dreamifies the encapsulated file and returns a reference to the new dreamified audio file.
-     *
-     * @return returns the dreamified audio file
+     * {@inheritDoc}
      */
-    public Future<CyderAudioFile> dreamify(File saveToFile) {
-        return Futures.immediateFuture(null);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof CyderAudioFile)) {
+            return false;
+        }
+
+        CyderAudioFile other = (CyderAudioFile) o;
+        return this.audioFile.equals(other.audioFile)
+                && this.dreamifyLowPass == other.dreamifyLowPass
+                && this.dreamifyHighPass == other.dreamifyHighPass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "CyderAudioFile{"
+                + "audioFile=" + audioFile + ", "
+                + "dreamifyLowPass=" + dreamifyLowPass + ", "
+                + "dreamifyHighPass=" + dreamifyHighPass
+                + "}";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int ret = audioFile.hashCode();
+        ret = 31 * ret + Integer.hashCode(dreamifyLowPass);
+        ret = 31 * ret + Integer.hashCode(dreamifyHighPass);
+        return ret;
     }
 }
