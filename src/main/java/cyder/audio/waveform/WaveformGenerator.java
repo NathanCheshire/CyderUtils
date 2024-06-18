@@ -51,7 +51,6 @@ public final class WaveformGenerator {
         Graphics2D g2d = waveformImage.createGraphics();
 
         CyderAudioFile audioFile = builder.getAudioFile();
-        // todo what to call? Temp file too so not needed afterwards?
         Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE, "");
         while (!futureConvertedToWav.isDone()) Thread.onSpinWait();
         CyderAudioFile convertedToWav = null;

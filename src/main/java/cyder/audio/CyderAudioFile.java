@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.audio.validation.SupportedAudioFileType;
-import cyder.enumerations.SystemPropertyKey;
 import cyder.files.CyderTemporaryFile;
 import cyder.files.FileUtil;
 import cyder.process.CyderProcessException;
@@ -16,9 +15,13 @@ import cyder.threads.CyderThreadFactory;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
@@ -29,6 +32,8 @@ public final class CyderAudioFile {
      * The encapsulated audio file.
      */
     private final File audioFile;
+
+    // todo from String and from File
 
     /**
      * Constructs a new CyderAudioFile.
@@ -70,7 +75,7 @@ public final class CyderAudioFile {
                 .build();
 
         List<String> process = ImmutableList.of(
-                "ffmpeg", "-i", this.audioFile.getAbsolutePath(),
+                "ffmpeg", "-y", "-i", this.audioFile.getAbsolutePath(),
                 temporaryConversionFile.buildFile().getAbsolutePath());
 
         String threadName = "CyderAudioFile.convertTo process";
@@ -92,6 +97,16 @@ public final class CyderAudioFile {
 
     public static void main(String[] args) throws IOException {
         // todo test convert to
+        CyderAudioFile mp3 = new CyderAudioFile(
+                new File("/Users/nathancheshire/Downloads/Test/WhereTheyAt.mp3"));
+        Future<Optional<CyderAudioFile>> result = mp3.dreamify();
+        while (!result.isDone()) Thread.onSpinWait();
+        System.out.println("Done");
+        try {
+            System.out.println(result.get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -106,12 +121,54 @@ public final class CyderAudioFile {
     }
 
     /**
+     * The highpass value for dreamifying an audio file.
+     */
+    private static final int HIGHPASS = 200;
+
+    /**
+     * The low pass value for dreamifying an audio file.
+     */
+    private static final int LOW_PASS = 1500;
+
+    /**
+     * The -filter:a flag for setting high and low pass data.
+     */
+    private static final String FILTER_DASH_A = "-filter:a";
+
+    private String constructHighpassLowpassFilter() {
+        return "\"" + "highpass=f=" + HIGHPASS + ", " + "lowpass=f=" + LOW_PASS + "\"";
+    }
+
+    /**
      * Dreamifies this audio file and returns a new audio file representing the newly created dreamified audio file.
      *
      * @return the dreamified audio file
      */
-    public Future<CyderAudioFile> dreamify() {
-        return null; // todo, should have a dreamifier util that this can invoke?
+    public Future<Optional<CyderAudioFile>> dreamify() {
+        String executorThreadName = "CyderAudioFile dreamifier, " + this;
+        return Executors.newSingleThreadExecutor(
+                new CyderThreadFactory(executorThreadName)).submit(() -> {
+
+            String safeFilename = "\"" + audioFile.getAbsolutePath() + "\"";
+
+            File outputFile = FileUtil.addSuffixToFilename(audioFile, "_dreamy");
+            String safeOutputFilename = "\"" + outputFile.getAbsolutePath() + "\"";
+
+            String[] command = {
+                    "ffmpeg",
+                    "-i",
+                    safeFilename,
+                    FILTER_DASH_A,
+                    constructHighpassLowpassFilter(),
+                    safeOutputFilename};
+            System.out.println(Arrays.stream(command).collect(Collectors.joining(" ")));
+            Future<ProcessResult> result = ProcessUtil.getProcessOutput(command);
+            while (!result.isDone()) Thread.onSpinWait();
+            System.out.println(result.get());
+
+            CyderAudioFile ret = new CyderAudioFile(outputFile);
+            return Optional.of(ret);
+        });
     }
 
     /**

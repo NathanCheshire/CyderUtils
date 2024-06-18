@@ -299,7 +299,7 @@ public final class CyderTemporaryFile {
         @CanIgnoreReturnValue
         public Builder setOutputDirectory(File outputDirectory) {
             Preconditions.checkNotNull(outputDirectory);
-            Preconditions.checkArgument(outputDirectory.isFile());
+            Preconditions.checkArgument(!outputDirectory.isFile());
 
             this.outputDirectory = outputDirectory;
             return this;

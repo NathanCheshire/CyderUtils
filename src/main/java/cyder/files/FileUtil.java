@@ -913,16 +913,14 @@ public final class FileUtil {
      *
      * @param file the file to find the total bytes of
      * @return the total bytes of the file
+     * @throws IOException if an exception occurs when reading the file
      */
-    public static long getTotalBytes(File file) {
+    public static long getTotalBytes(File file) throws IOException {
         Preconditions.checkNotNull(file);
         Preconditions.checkArgument(file.exists());
 
         try (FileInputStream fis = new FileInputStream((file))) {
             return fis.available();
-        } catch (Exception e) {
-            // todo throw exception
-            throw new FatalException(e.getMessage());
         }
     }
 
@@ -961,5 +959,56 @@ public final class FileUtil {
         }
 
         return true;
+    }
+
+    /**
+     * Creates a new file pointer from the provided file pointer with the new extension.
+     * Note, the file is not automatically created if it does not exist.
+     *
+     * @param file         the file
+     * @param newExtension the new extension
+     * @return a new file pointer with all the same information regarding the
+     * path and filename but with the new extension
+     * @throws NullPointerException if the provided file or extension are null
+     * @throws IllegalArgumentException if the provided file is not a file or the newExtension is empty
+     */
+    public static File swapExtension(File file, String newExtension) {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.isFile());
+        Preconditions.checkNotNull(newExtension);
+        Preconditions.checkArgument(!newExtension.trim().isEmpty());
+
+        String oldFilePath = file.getAbsolutePath();
+        String fileNameWithoutExtension = oldFilePath.replaceFirst("[.][^.]+$", "");
+        String newFileName = fileNameWithoutExtension + "." + newExtension;
+
+        return new File(newFileName);
+    }
+
+    /**
+     * Adds the provided suffix to the end of the filename before the extension.
+     * Note, the file is not automatically created if it does not exist
+     *
+     * @param file the file to add a suffix to the name of
+     * @param suffix the suffix to append
+     * @return a new file pointer to the suffixed filename
+     * @throws NullPointerException if the provided file or string are null
+     * @throws IllegalArgumentException if the provided file is not a file or the suffix is empty
+     * @throws IllegalStateException if the calculated new filename is invalid
+     */
+    public static File addSuffixToFilename(File file, String suffix) {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(file.isFile());
+        Preconditions.checkNotNull(suffix);
+        Preconditions.checkArgument(!suffix.trim().isEmpty());
+
+        String fileName = file.getName();
+        String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+        String extension = fileName.substring(fileName.lastIndexOf('.'));
+
+        String newFileName = nameWithoutExtension + suffix + extension;
+        if (!isValidFilename(newFileName))
+            throw new IllegalStateException("Proposed new filename is invalid: " + newFileName);
+        return new File(file.getParent(), newFileName);
     }
 }
