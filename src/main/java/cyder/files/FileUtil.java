@@ -987,7 +987,7 @@ public final class FileUtil {
 
     /**
      * Adds the provided suffix to the end of the filename before the extension.
-     * Note, the file is not automatically created if it does not exist
+     * Note, the file is not automatically created if it does not exist.
      *
      * @param file the file to add a suffix to the name of
      * @param suffix the suffix to append

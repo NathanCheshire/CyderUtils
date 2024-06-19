@@ -9,7 +9,6 @@ import cyder.strings.CyderStrings;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
@@ -51,7 +50,7 @@ public final class WaveformGenerator {
         Graphics2D g2d = waveformImage.createGraphics();
 
         CyderAudioFile audioFile = builder.getAudioFile();
-        Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE, "");
+        Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE);
         while (!futureConvertedToWav.isDone()) Thread.onSpinWait();
         CyderAudioFile convertedToWav = null;
         try {

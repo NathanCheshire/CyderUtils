@@ -24,14 +24,14 @@ import java.util.concurrent.Future;
  */
 public final class CyderAudioFile {
     /**
-     * The highpass value for dreamifying an audio file.
+     * The default highpass value for dreamifying an audio file.
      */
-    private static final int DREAMIFY_HIGH_PASS = 200;
+    private static final int DEFAULT_DREAMIFY_HIGH_PASS = 200;
 
     /**
-     * The low pass value for dreamifying an audio file.
+     * The default low pass value for dreamifying an audio file.
      */
-    private static final int DREAMIFY_LOW_PASS = 1500;
+    private static final int DEFAULT_DREAMIFY_LOW_PASS = 1500;
 
     /**
      * The encapsulated audio file.
@@ -41,12 +41,17 @@ public final class CyderAudioFile {
     /**
      * The highpass value for the dreamify ffmpeg filter.
      */
-    private final int dreamifyHighPass;
+    private int dreamifyHighPass;
 
     /**
      * The lowpass value for the dreamify ffmpeg filter.
      */
-    private final int dreamifyLowPass;
+    private int dreamifyLowPass;
+
+    /**
+     * The directory to output files to such as converted and dreamified files.
+     */
+    private File outputDirectory;
 
     /**
      * Returns a new instance of a CyderAudioFile from the provided filepath.
@@ -78,6 +83,10 @@ public final class CyderAudioFile {
         return new CyderAudioFile(audioFile);
     }
 
+    private CyderAudioFile(Builder builder) {
+        this(builder.audioFie, builder.highpass, builder.lowpass);
+    }
+
     /**
      * Constructs a new CyderAudioFile.
      *
@@ -87,7 +96,7 @@ public final class CyderAudioFile {
      *                                  exist or is not a file or is not a supported audio type
      */
     public CyderAudioFile(File audioFile) {
-        this(audioFile, DREAMIFY_HIGH_PASS, DREAMIFY_LOW_PASS);
+        this(audioFile, DEFAULT_DREAMIFY_HIGH_PASS, DEFAULT_DREAMIFY_LOW_PASS);
     }
 
     /**
@@ -109,6 +118,25 @@ public final class CyderAudioFile {
         this.audioFile = audioFile;
         this.dreamifyHighPass = dreamifyHighPass;
         this.dreamifyLowPass = dreamifyLowPass;
+        this.outputDirectory = audioFile.getParentFile();
+    }
+
+    public void setDefaultDreamifyHighPass(int highPass) {
+        Preconditions.checkArgument(highPass > dreamifyLowPass);
+        this.dreamifyHighPass = highPass;
+    }
+
+    public void setDefaultDreamifyLowPass(int lowpass) {
+        Preconditions.checkArgument(lowpass < dreamifyHighPass);
+        this.dreamifyLowPass = lowpass;
+    }
+
+    public void setOutputDirectory(File outputDirectory) {
+        Preconditions.checkNotNull(outputDirectory);
+        Preconditions.checkArgument(outputDirectory.isDirectory());
+        Preconditions.checkArgument(outputDirectory.exists());
+
+        this.outputDirectory = outputDirectory;
     }
 
     /**
@@ -117,20 +145,17 @@ public final class CyderAudioFile {
      * in the same directory as this file.
      *
      * @param audioFileType the audio file type to convert to
-     * @param newName the new filename
      * @return the converted file
-     * @throws NullPointerException if either the provided audio file type or new name are null
-     * @throws IllegalArgumentException if the provided new name is invalid
+     * @throws NullPointerException if the provided audio file new name is null
      */
     @CanIgnoreReturnValue
-    public Future<CyderAudioFile> convertTo(SupportedAudioFileType audioFileType, String newName) {
+    public Future<CyderAudioFile> convertTo(SupportedAudioFileType audioFileType) {
         Preconditions.checkNotNull(audioFileType);
-        Preconditions.checkNotNull(newName);
-        Preconditions.checkArgument(FileUtil.isValidFilename(newName));
 
         CyderTemporaryFile temporaryConversionFile = new CyderTemporaryFile.Builder()
-                .setOutputFilename(newName)
+                .setOutputFilename(FileUtil.getFilename(audioFile))
                 .setOutputExtension(audioFileType.getExtension())
+                .setOutputDirectory(outputDirectory)
                 .build();
 
         List<String> process = ImmutableList.of(
@@ -181,6 +206,7 @@ public final class CyderAudioFile {
      * @return the dreamified audio file
      */
     public Future<Optional<CyderAudioFile>> dreamify() {
+        // todo allow other output directory
         String executorThreadName = "CyderAudioFile dreamifier, " + this;
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(executorThreadName)).submit(() -> {
@@ -244,5 +270,56 @@ public final class CyderAudioFile {
         ret = 31 * ret + Integer.hashCode(dreamifyLowPass);
         ret = 31 * ret + Integer.hashCode(dreamifyHighPass);
         return ret;
+    }
+
+    /**
+     * A builder for constructing new instances of a {@link CyderAudioFile}.
+     */
+    public static class Builder {
+        private int highpass = DEFAULT_DREAMIFY_HIGH_PASS;
+        private int lowpass = DEFAULT_DREAMIFY_LOW_PASS;
+        private final File audioFie;
+        private File outputDirectory;
+
+        public Builder(File audioFile) {
+            Preconditions.checkNotNull(audioFile);
+            Preconditions.checkArgument(audioFile.exists());
+            Preconditions.checkArgument(audioFile.isFile());
+            Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
+
+            this.audioFie = audioFile;
+        }
+
+        public Builder setHighpass(int highpass) {
+            Preconditions.checkArgument(highpass > lowpass);
+            this.highpass = highpass;
+            return this;
+        }
+
+        public Builder setLowpass(int lowpass) {
+            Preconditions.checkArgument(lowpass < highpass);
+            this.lowpass = lowpass;
+            return this;
+        }
+
+        public Builder setOutputDirectory(File outputDirectory) {
+            Preconditions.checkNotNull(outputDirectory);
+            Preconditions.checkArgument(outputDirectory.isDirectory());
+            Preconditions.checkArgument(outputDirectory.exists());
+
+            this.outputDirectory = outputDirectory;
+            return this;
+        }
+
+        /**
+         * Constructs a new CyderAudioFile using this builder.
+         *
+         * @return a new CyderAudioFile
+         */
+        public CyderAudioFile build() {
+            CyderAudioFile ret = new CyderAudioFile(this);
+            ret.setOutputDirectory(outputDirectory);
+            return ret;
+        }
     }
 }
