@@ -9,6 +9,7 @@ import cyder.files.FileUtil;
 import cyder.process.CyderProcessException;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
+import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 
 import java.io.File;
@@ -206,15 +207,16 @@ public final class CyderAudioFile {
      * @return the dreamified audio file
      */
     public Future<Optional<CyderAudioFile>> dreamify() {
-        // todo allow other output directory
         String executorThreadName = "CyderAudioFile dreamifier, " + this;
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(executorThreadName)).submit(() -> {
 
-            String safeFilename = "\"" + audioFile.getAbsolutePath() + "\"";
+            String safeFilename = StringUtil.surroundWithQuotes(audioFile.getAbsolutePath());
 
-            File outputFile = FileUtil.addSuffixToFilename(audioFile, "_dreamy");
-            String safeOutputFilename = "\"" + outputFile.getAbsolutePath() + "\"";
+            String filename = FileUtil.getFilename(audioFile)
+                    + "_dreamy" + FileUtil.getExtension(audioFile);
+            File outputFile = new File(outputDirectory, filename);
+            String safeOutputFilename = StringUtil.surroundWithQuotes(outputFile.getAbsolutePath());
 
             String[] command = {
                     "ffmpeg",
