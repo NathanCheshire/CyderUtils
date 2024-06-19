@@ -122,16 +122,36 @@ public final class CyderAudioFile {
         this.outputDirectory = audioFile.getParentFile();
     }
 
-    public void setDefaultDreamifyHighPass(int highPass) {
+    /**
+     * Sets the dreamify highpass filter value.
+     *
+     * @param highPass the dreamify highpass filter value
+     * @throws IllegalArgumentException if the provided highpass is less than or equal to the lowpass
+     */
+    public void setDreamifyHighPass(int highPass) {
         Preconditions.checkArgument(highPass > dreamifyLowPass);
         this.dreamifyHighPass = highPass;
     }
 
-    public void setDefaultDreamifyLowPass(int lowpass) {
+    /**
+     * Sets the dreamify lowpass filter value.
+     *
+     * @param lowpass the dreamify highpass filter value
+     * @throws IllegalArgumentException if the provided lowpass is greater than or equal to the highpass
+     */
+    public void setDreamifyLowPass(int lowpass) {
         Preconditions.checkArgument(lowpass < dreamifyHighPass);
         this.dreamifyLowPass = lowpass;
     }
 
+    /**
+     * Sets the directory to output files to such as in the case of dreamify or convert to.
+     * See {@link #dreamify()} and {@link #convertTo(SupportedAudioFileType)}.
+     *
+     * @param outputDirectory the directory to output files to
+     * @throws NullPointerException if the provided file is null
+     * @throws IllegalArgumentException if the provided file is not a directory or does not exist
+     */
     public void setOutputDirectory(File outputDirectory) {
         Preconditions.checkNotNull(outputDirectory);
         Preconditions.checkArgument(outputDirectory.isDirectory());
@@ -185,6 +205,7 @@ public final class CyderAudioFile {
      *
      * @param method the audio length computation method
      * @return the length of the audio file
+     * @throws NullPointerException if the provided method is null
      */
     public Future<Duration> getAudioLength(DetermineAudioLengthMethod method) {
         Preconditions.checkNotNull(method);
@@ -278,11 +299,33 @@ public final class CyderAudioFile {
      * A builder for constructing new instances of a {@link CyderAudioFile}.
      */
     public static class Builder {
+        /**
+         * The highpass value for the dreamify ffmpeg filter.
+         */
         private int highpass = DEFAULT_DREAMIFY_HIGH_PASS;
+
+        /**
+         * The lowpass value for the dreamify ffmpeg filter.
+         */
         private int lowpass = DEFAULT_DREAMIFY_LOW_PASS;
+
+        /**
+         * The encapsulated audio file.
+         */
         private final File audioFie;
+
+        /**
+         * The directory to output files to such as converted and dreamified files.
+         */
         private File outputDirectory;
 
+        /**
+         * Constructs a new CyderAudioFileBuilder.
+         *
+         * @param audioFile the audio file
+         * @throws NullPointerException if the audio file is null
+         * @throws IllegalArgumentException if the audio file does not exist, is not a file, or is not supported
+         */
         public Builder(File audioFile) {
             Preconditions.checkNotNull(audioFile);
             Preconditions.checkArgument(audioFile.exists());
@@ -292,18 +335,40 @@ public final class CyderAudioFile {
             this.audioFie = audioFile;
         }
 
+        /**
+         * Sets the highpass value for the dreamify ffmpeg filter.
+         *
+         * @param highpass the highpass value for the dreamify ffmpeg filter
+         * @return this builder
+         * @throws IllegalArgumentException if the provided highpass is less than or equal to the lowpass
+         */
         public Builder setHighpass(int highpass) {
             Preconditions.checkArgument(highpass > lowpass);
             this.highpass = highpass;
             return this;
         }
 
+        /**
+         * Sets the lowpass value for the dreamify ffmpeg filter.
+         *
+         * @param lowpass the lowpass value for the dreamify ffmpeg filter
+         * @return this builder
+         * @throws IllegalArgumentException if the provided lowpass is greater than or equal to the highpass
+         */
         public Builder setLowpass(int lowpass) {
             Preconditions.checkArgument(lowpass < highpass);
             this.lowpass = lowpass;
             return this;
         }
 
+        /**
+         * Sets the directory to output files to such as converted and dreamified files.
+         *
+         * @param outputDirectory the directory to output files to such as converted and dreamified files
+         * @return this builder
+         * @throws NullPointerException if the provided file is null
+         * @throws IllegalArgumentException if the provided file is a directory or does not exist
+         */
         public Builder setOutputDirectory(File outputDirectory) {
             Preconditions.checkNotNull(outputDirectory);
             Preconditions.checkArgument(outputDirectory.isDirectory());
