@@ -1,6 +1,7 @@
 package cyder.audio.waveform;
 
 import com.google.common.base.Preconditions;
+import cyder.annotations.Blocking;
 import cyder.audio.CyderAudioFile;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.audio.wav.WaveFile;
@@ -18,6 +19,7 @@ import java.util.concurrent.Future;
 public final class WaveformGenerator {
     /**
      * The number denoting a value should be interpolated.
+     * This could be any negative value, but I have elected to choose -69 for the memes.
      */
     private static final int INTERPOLATION_REQUIRED = -69;
 
@@ -30,7 +32,7 @@ public final class WaveformGenerator {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    // todo annotation for blocking?
+    // todo annotation for something is blocking and should be wrapped in another thread? where to use?
 
     /**
      * Generates and returns a {@link BufferedImage} representing the audio file's waveform.
@@ -40,6 +42,7 @@ public final class WaveformGenerator {
      * @return a {@link BufferedImage} representing the audio file's waveform
      * @throws NullPointerException if the provided builder is null
      */
+    @Blocking
     public static BufferedImage generate(WaveformGenerationBuilder builder) {
         Preconditions.checkNotNull(builder);
 
