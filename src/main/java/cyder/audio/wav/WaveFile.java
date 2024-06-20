@@ -2,6 +2,7 @@ package cyder.audio.wav;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
+import cyder.audio.CyderAudioFile;
 import cyder.enumerations.Extension;
 import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
@@ -89,7 +90,7 @@ public final class WaveFile {
      * Suppress default constructor.
      */
     private WaveFile() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Invalid constructor, a valid wave file is required");
     }
 
     /**

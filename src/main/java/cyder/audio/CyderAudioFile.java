@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.audio.validation.SupportedAudioFileType;
+import cyder.audio.wav.WaveFile;
+import cyder.enumerations.Extension;
 import cyder.files.CyderTemporaryFile;
 import cyder.files.FileUtil;
 import cyder.process.CyderProcessException;
@@ -27,12 +29,12 @@ public final class CyderAudioFile {
     /**
      * The default highpass value for dreamifying an audio file.
      */
-    private static final int DEFAULT_DREAMIFY_HIGH_PASS = 200;
+    private static final int DEFAULT_DREAMIFY_HIGH_PASS = 1500;
 
     /**
      * The default low pass value for dreamifying an audio file.
      */
-    private static final int DEFAULT_DREAMIFY_LOW_PASS = 1500;
+    private static final int DEFAULT_DREAMIFY_LOW_PASS = 200;
 
     /**
      * The encapsulated audio file.
@@ -190,9 +192,8 @@ public final class CyderAudioFile {
 
             try {
                 ProcessResult result = futureResult.get();
-
-                if (result.hasErrors()) throw new CyderProcessException("CyderAudioFile.convertTo process"
-                        + " result contains errors: " + result.getErrorOutput());
+                // FFmpeg uses the error stream for process output,
+                // so we do not care about it containing errors here
                 return new CyderAudioFile(temporaryConversionFile.buildFile());
             } catch (Exception e) {
                 throw new CyderProcessException(e);
@@ -253,6 +254,18 @@ public final class CyderAudioFile {
             CyderAudioFile ret = new CyderAudioFile(outputFile);
             return Optional.of(ret);
         });
+    }
+
+    /**
+     * Returns a new instance of {@link WaveFile} from the internal audio file.
+     *
+     * @return a new WaveFile instance
+     * @throws IllegalStateException if this audio file is not a wave file
+     */
+    public WaveFile toWaveFile() {
+        Preconditions.checkState(FileUtil.validateExtension(audioFile, Extension.WAV.getExtension()));
+
+        return new WaveFile(audioFile);
     }
 
     /**

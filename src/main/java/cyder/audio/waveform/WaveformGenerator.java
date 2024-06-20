@@ -5,11 +5,15 @@ import cyder.annotations.Blocking;
 import cyder.audio.CyderAudioFile;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.audio.wav.WaveFile;
+import cyder.audio.wav.WaveFileException;
+import cyder.enumerations.Extension;
 import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
@@ -17,6 +21,12 @@ import java.util.concurrent.Future;
  * A utility class for generating audio waveforms PNGs using {@link WaveformGenerationBuilder}s.
  */
 public final class WaveformGenerator {
+    public static void main(String[] args) throws IOException {
+        CyderAudioFile caf = CyderAudioFile.from("/Users/nathancheshire/Downloads/TastyCarrots.mp3");
+        BufferedImage image = new WaveformGenerationBuilder(caf).generate();
+        ImageIO.write(image, Extension.PNG.getExtensionWithoutPeriod(), new File("/Users/nathancheshire/Downloads/TastyCarrots.png"));
+    }
+
     /**
      * The number denoting a value should be interpolated.
      * This could be any negative value, but I have elected to choose -69 for the memes.
@@ -32,8 +42,6 @@ public final class WaveformGenerator {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    // todo annotation for something is blocking and should be wrapped in another thread? where to use?
-
     /**
      * Generates and returns a {@link BufferedImage} representing the audio file's waveform.
      * Note this method is blocking meaning the caller should invoke this method inside a separate thread.
@@ -41,6 +49,7 @@ public final class WaveformGenerator {
      * @param builder the builder for configuring the output image
      * @return a {@link BufferedImage} representing the audio file's waveform
      * @throws NullPointerException if the provided builder is null
+     * @throws WaveFileException if the builder's encapsulated {@link CyderAudioFile} is not or cannot be converted to a wave file
      */
     @Blocking
     public static BufferedImage generate(WaveformGenerationBuilder builder) {
@@ -54,12 +63,16 @@ public final class WaveformGenerator {
 
         CyderAudioFile audioFile = builder.getAudioFile();
         Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE);
+
         while (!futureConvertedToWav.isDone()) Thread.onSpinWait();
-        CyderAudioFile convertedToWav = null;
+        CyderAudioFile convertedToWav;
         try {
             convertedToWav = futureConvertedToWav.get();
-        } catch (Exception e) {}
-        WaveFile wav = null; // todo
+        } catch (Exception e) {
+            throw new WaveFileException("Failed to convert audio file to wav");
+        }
+
+        WaveFile wav = convertedToWav.toWaveFile();
 
         int numFrames = (int) wav.getNumFrames();
         if (numFrames < width) width = numFrames;
@@ -131,11 +144,7 @@ public final class WaveformGenerator {
 
         try {
             wav.stop();
-        } catch(IOException ignored) {
-            // todo
-        }
-
-        wav = null;
+        } catch(IOException ignored) {}
 
         return waveformImage;
     }

@@ -2,9 +2,11 @@ package cyder.audio.waveform;
 
 import com.google.common.base.Preconditions;
 import cyder.audio.CyderAudioFile;
+import cyder.audio.wav.WaveFileException;
 import cyder.color.CyderColors;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * A builder for constructing the parameters of waveform png generation from a {@link cyder.audio.CyderAudioFile}.
@@ -203,6 +205,16 @@ public final class WaveformGenerationBuilder {
     public void setCenterLineColor(Color centerLineColor) {
         Preconditions.checkNotNull(centerLineColor);
         this.centerLineColor = centerLineColor;
+    }
+
+    /**
+     * Generates and returns a {@link BufferedImage} from this builder.
+     *
+     * @return a {@link BufferedImage} representing the audio file's waveform
+     * @throws WaveFileException if this builder's encapsulated {@link CyderAudioFile} is not or cannot be converted to a wave file
+     */
+    public BufferedImage generate() {
+        return WaveformGenerator.generate(this);
     }
 
     /**
