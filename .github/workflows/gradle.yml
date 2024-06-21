@@ -29,7 +29,7 @@ jobs:
       - name: Set up ChromeDriver
         uses: nanasess/setup-chromedriver@v1
         with:
-          chromedriver-version: latest
+          chromedriver-version: '114.0.5735.90' # Specify a stable version
 
       - name: Grant execute permission for gradlew (Unix)
         if: runner.os != 'Windows'
