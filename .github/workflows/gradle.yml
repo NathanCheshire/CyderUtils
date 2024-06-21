@@ -35,6 +35,28 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
+      - name: Install dependencies on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg python3 python3-pip
+          pip3 install mutagen
+
+      - name: Install dependencies on macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew update
+          brew install ffmpeg python3
+          pip3 install mutagen
+
+      - name: Install dependencies on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install ffmpeg python
+          python -m pip install --upgrade pip
+          pip install mutagen
+        shell: powershell
+
       - name: Build with Gradle and run tests
         run: ./gradlew build test --stacktrace
         env:
@@ -51,10 +73,11 @@ jobs:
           file: ./build/reports/jacoco/test/xml/index.xml
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: always()
 
       - name: Upload Test Report
-        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-reports
           path: build/reports/tests/test/
+        if: always()

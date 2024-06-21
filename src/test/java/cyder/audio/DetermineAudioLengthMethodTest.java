@@ -63,6 +63,8 @@ class DetermineAudioLengthMethodTest {
                 () -> DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(new File("some_file.acc")));
     }
 
+    // todo ffmpeg and mutagen needed since these are just mutagen right now
+
     /**
      * Tests for the determineAudioLength method works for a mp3 file.
      */
