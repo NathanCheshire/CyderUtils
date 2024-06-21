@@ -7,13 +7,9 @@ import cyder.audio.ffmpeg.*;
 import cyder.audio.parsers.ShowStreamOutput;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.constants.CyderRegexPatterns;
-import cyder.exceptions.FatalException;
 import cyder.files.CyderTemporaryFile;
 import cyder.files.FileUtil;
-import cyder.process.CyderProcessException;
-import cyder.process.ProcessResult;
-import cyder.process.ProcessUtil;
-import cyder.process.PythonPackage;
+import cyder.process.*;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.time.TimeUtil;
@@ -22,6 +18,7 @@ import cyder.utils.SerializationUtil;
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -73,7 +70,7 @@ public enum DetermineAudioLengthMethod {
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
-     * @throws FatalException           if the process fails to determine the audio length
+     * @throws CyderProcessException    if the process fails to determine the audio length
      */
     private static Future<Duration> getLengthViaFfmpeg(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -98,7 +95,8 @@ public enum DetermineAudioLengthMethod {
             while (!futureResult.isDone()) Thread.onSpinWait();
 
             ProcessResult result = futureResult.get();
-            if (result.hasErrors()) throw new FatalException("Process result contains errors");
+            if (result.hasErrors())
+                throw new CyderProcessException("Process result contains errors: " + result.getErrorOutput());
 
             String joinedOutput = StringUtil.joinParts(result.getStandardOutput(), "");
             String trimmedOutput = joinedOutput.replaceAll(CyderRegexPatterns.multipleWhiteSpaceRegex, "");
@@ -127,7 +125,8 @@ public enum DetermineAudioLengthMethod {
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
-     * @throws CyderProcessException if {@link PythonPackage#MUTAGEN} is not and cannot be installed
+     * @throws CyderProcessException if {@link PythonPackage#MUTAGEN} is not and cannot be
+     *                               installed or a valid working Python command cannot be found
      */
     private static Future<Duration> getLengthViaMutagen(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -159,9 +158,14 @@ public enum DetermineAudioLengthMethod {
             File scriptFile = temporaryPythonScriptFile.buildFile();
             FileUtil.writeLinesToFile(scriptFile, script, false);
 
-            // TODO might not be python3, need to try python first
+            Future<Optional<String>> firstWorkingPythonInvocableCommand
+                    = PythonProgram.PYTHON.getFirstWorkingProgramName();
+            while (!firstWorkingPythonInvocableCommand.isDone()) Thread.onSpinWait();
+            Optional<String> firstCommandOptional = firstWorkingPythonInvocableCommand.get();
+            if (firstCommandOptional.isEmpty()) throw new CyderProcessException("Failed to find working Python command");
+
             Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
-                    ImmutableList.of("python3", scriptFile.getAbsolutePath()));
+                    ImmutableList.of(firstCommandOptional.get(), scriptFile.getAbsolutePath()));
             while (!mutagenInstalled.isDone()) Thread.onSpinWait();
             ProcessResult result = mutagenLengthResult.get();
 

@@ -1,7 +1,12 @@
 package cyder.process;
 
 import com.google.common.collect.ImmutableList;
+import cyder.threads.CyderThreadFactory;
 import cyder.utils.OsUtil;
+
+import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Common Python programs/binaries utilized by Cyder.
@@ -59,5 +64,22 @@ public enum PythonProgram {
      */
     public boolean isInstalled() {
         return programNames.stream().anyMatch(OsUtil::isBinaryInstalled);
+    }
+
+    /**
+     * Returns the first working command of this program.
+     *
+     * @return the first working command of this program, empty optional else
+     */
+    public Future<Optional<String>> getFirstWorkingProgramName() {
+        String threadName = "PythonProgram." + this + "getFirstWorkingProgramName thread";
+        return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
+            for (String programName : programNames) {
+                boolean isInstalled = OsUtil.isBinaryInstalled(programName);
+                if (isInstalled) return Optional.of(programName);
+            }
+
+            return Optional.empty();
+        });
     }
 }
