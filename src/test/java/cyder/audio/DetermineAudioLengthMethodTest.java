@@ -1,5 +1,6 @@
 package cyder.audio;
 
+import cyder.utils.OsUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -68,7 +69,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForMp3() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                new File("src/test/java/cyder/audio/TastyCarrots.mp3"));
+                OsUtil.buildFile("src", "test", "java", "cyder", "audio", "TastyCarrots.mp3"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -86,7 +87,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForWav() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                new File("src/test/java/cyder/audio/TastyCarrots.wav"));
+                OsUtil.buildFile("src", "test", "java", "cyder", "audio", "TastyCarrots.wav"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -104,7 +105,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForOgg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                new File("src/test/java/cyder/audio/TastyCarrots.ogg"));
+                OsUtil.buildFile("src", "test", "java", "cyder", "audio", "TastyCarrots.ogg"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -122,7 +123,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForM4a() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                new File("src/test/java/cyder/audio/TastyCarrots.m4a"));
+                OsUtil.buildFile("src", "test", "java", "cyder", "audio", "TastyCarrots.m4a"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
