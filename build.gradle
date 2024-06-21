@@ -46,6 +46,10 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += '--enable-preview'
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 ext {
     annotationsVersion = '23.0.0'
     guavaVersion = '31.1-jre'
