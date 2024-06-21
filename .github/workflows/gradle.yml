@@ -26,25 +26,10 @@ jobs:
         with:
           chrome-version: latest
 
-      - name: Download ChromeDriver for Ubuntu
-        run: |
-          curl -Lo chromedriver.zip "https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip"
-          unzip chromedriver.zip -d /usr/local/bin/
-        if: matrix.os == 'ubuntu-latest'
-
-      - name: Download ChromeDriver for macOS
-        run: |
-          curl -Lo chromedriver.zip "https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_mac64.zip"
-          unzip chromedriver.zip -d /usr/local/bin/
-        if: matrix.os == 'macos-latest'
-
-      - name: Download ChromeDriver for Windows
-        run: |
-          Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/$(Invoke-RestMethod -Uri https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_win32.zip" -OutFile "chromedriver.zip"
-          Expand-Archive chromedriver.zip -DestinationPath $Env:ProgramFiles
-          $Env:Path += ";$Env:ProgramFiles\chromedriver_win32"
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
+      - name: Set up ChromeDriver
+        uses: nanasess/setup-chromedriver@v1
+        with:
+          chromedriver-version: latest
 
       - name: Grant execute permission for gradlew (Unix)
         if: runner.os != 'Windows'
