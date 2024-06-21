@@ -59,6 +59,8 @@ public final class PythonUtil {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
+    // todo this whole arch is hinting at a python dependency class with builder
+    // todo so maybe PipDependency class
     /**
      * Returns a list of required Python packages which were not found to be installed.
      *
