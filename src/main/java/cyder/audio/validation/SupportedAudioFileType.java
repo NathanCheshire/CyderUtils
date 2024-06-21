@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import cyder.audio.AudioValidationUtil;
 import cyder.audio.ffmpeg.FfmpegArgument;
 import cyder.files.FileUtil;
+import org.jsoup.nodes.TextNode;
 
 import java.io.File;
 import java.util.Arrays;
@@ -120,6 +121,8 @@ public enum SupportedAudioFileType {
 
         return Arrays.stream(values()).anyMatch(supportedAudioFileType -> {
             boolean extensionMatches = FileUtil.validateExtension(audioFile, supportedAudioFileType.getExtension());
+            boolean noSignature = supportedAudioFileType.getSignature().isEmpty();
+            if (noSignature) return extensionMatches;
             boolean fileSignatureMatches =
                     FileUtil.fileMatchesSignature(audioFile, supportedAudioFileType.getSignature());
             return extensionMatches && fileSignatureMatches;

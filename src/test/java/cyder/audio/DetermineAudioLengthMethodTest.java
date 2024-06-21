@@ -81,7 +81,7 @@ class DetermineAudioLengthMethodTest {
     }
 
     /**
-     * Tests for the determineAudioLength method works for wav file.
+     * Tests for the determineAudioLength method works for a wav file.
      */
     @Test
     void testDetermineAudioLengthWorksForWav() {
@@ -98,5 +98,39 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    // todo tests for other supported audio file formats
+    /**
+     * Tests for the determineAudioLength method works for an ogg file.
+     */
+    @Test
+    void testDetermineAudioLengthWorksForOgg() {
+        Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
+                new File("src/test/java/cyder/audio/TastyCarrots.ogg"));
+        assertDoesNotThrow(() -> futureDuration.get());
+
+        try {
+            Duration duration = futureDuration.get();
+            assertEquals(176.0, duration.getSeconds());
+            assertEquals(4.25E8, duration.getNano());
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Tests for the determineAudioLength method works for a m4a file.
+     */
+    @Test
+    void testDetermineAudioLengthWorksForM4a() {
+        Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
+                new File("src/test/java/cyder/audio/TastyCarrots.m4a"));
+        assertDoesNotThrow(() -> futureDuration.get());
+
+        try {
+            Duration duration = futureDuration.get();
+            assertEquals(176.0, duration.getSeconds());
+            assertEquals(4.48E8, duration.getNano());
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
