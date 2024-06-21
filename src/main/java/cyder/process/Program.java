@@ -1,36 +1,46 @@
 package cyder.process;
 
+import com.google.common.collect.ImmutableList;
 import cyder.utils.OsUtil;
 
 /**
  * Common external programs/binaries utilized by Cyder.
  */
 public enum Program { // todo rename to python programs and then need python package
-    PIP("pip", "pip.exe"),
-    PYTHON("python", "python.exe");
+    PIP(ImmutableList.of("pip"), "pip.exe"),
+    PYTHON(ImmutableList.of("python", "python3"), "python.exe");
 
     /**
      * The name of this program.
      */
-    private final String programName;
+    private final ImmutableList<String> programNames;
 
     /**
      * The filename of this program, extension included even though it's likely an exe.
      */
     private final String filename;
 
-    Program(String programName, String filename) {
-        this.programName = programName;
+    Program(ImmutableList<String> programNames, String filename) {
+        this.programNames = programNames;
         this.filename = filename;
     }
 
     /**
-     * Returns the name of this program.
+     * Returns the names of this program.
      *
-     * @return the name of this program
+     * @return the names of this program
      */
-    public String getProgramName() {
-        return programName;
+    public ImmutableList<String> getProgramNames() {
+        return programNames;
+    }
+
+    /**
+     * Returns the first program name.
+     *
+     * @return the first program name
+     */
+    public String getFirstProgramName() {
+        return programNames.get(0);
     }
 
     /**
@@ -48,6 +58,6 @@ public enum Program { // todo rename to python programs and then need python pac
      * @return whether this program is installed
      */
     public boolean isInstalled() {
-        return OsUtil.isBinaryInstalled(programName);
+        return programNames.stream().anyMatch(OsUtil::isBinaryInstalled);
     }
 }

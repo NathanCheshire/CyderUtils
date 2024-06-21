@@ -1,5 +1,7 @@
 package cyder.process;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cyder.annotations.Blocking;
 import cyder.snakes.PythonUtil;
 
 import java.util.Optional;
@@ -42,10 +44,14 @@ public enum PythonPackage {
     /**
      * Installs this python package using pip if not already present.
      *
-     * // todo return future boolean for whether it was installed properly or not
+     * @return whether the package is installed following completion of the installation request
      */
-    public void install() {
-        PythonUtil.installPipDependency(this);
+    @Blocking
+    @CanIgnoreReturnValue
+    public Future<Boolean> install() {
+        Future<ProcessResult> result = PythonUtil.installPipDependency(this);
+        while (!result.isDone()) Thread.onSpinWait();
+        return isInstalled();
     }
 
     /**

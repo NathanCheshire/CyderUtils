@@ -117,7 +117,7 @@ public final class PythonUtil {
         return Executors.newSingleThreadExecutor(new CyderThreadFactory("Python Version Finder"))
                 .submit(() -> {
                     Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
-                            Program.PYTHON.getProgramName()
+                            Program.PYTHON.getFirstProgramName()
                                     + " "
                                     + VERSION_ARGUMENT);
 
@@ -151,11 +151,11 @@ public final class PythonUtil {
     @CanIgnoreReturnValue
     public static Future<ProcessResult> installPipDependency(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PYTHON.getProgramName()));
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PIP.getProgramName()));
+        Preconditions.checkArgument(Program.PYTHON.isInstalled());
+        Preconditions.checkArgument(Program.PIP.isInstalled());
 
         return ProcessUtil.getProcessOutput(
-                Program.PIP.getProgramName()
+                Program.PIP.getFirstProgramName()
                         + " "
                         + INSTALL
                         + " "
@@ -170,8 +170,8 @@ public final class PythonUtil {
      */
     public static Future<Boolean> isPipDependencyPresent(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PYTHON.getProgramName()));
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PIP.getProgramName()));
+        Preconditions.checkArgument(Program.PYTHON.isInstalled());
+        Preconditions.checkArgument(Program.PIP.isInstalled());
 
         String threadName = "isPipDependencyPresent thread, packageName"
                 + ": "
@@ -181,7 +181,7 @@ public final class PythonUtil {
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
-                    Program.PIP.getProgramName()
+                    Program.PIP.getFirstProgramName()
                             + " "
                             + SHOW
                             + " "
@@ -210,8 +210,8 @@ public final class PythonUtil {
      */
     public static Future<Optional<String>> getPipDependencyVersion(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PYTHON.getProgramName()));
-        Preconditions.checkArgument(OsUtil.isBinaryInstalled(Program.PIP.getProgramName()));
+        Preconditions.checkArgument(Program.PYTHON.isInstalled());
+        Preconditions.checkArgument(Program.PIP.isInstalled());
 
         String threadName = "getPipDependencyVersion thread, packageName"
                 + ": "
@@ -221,7 +221,7 @@ public final class PythonUtil {
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             ImmutableList<String> command = ImmutableList.of(
-                    Program.PIP.getProgramName(), SHOW, pythonPackage.getPackageName()
+                    Program.PIP.getFirstProgramName(), SHOW, pythonPackage.getPackageName()
             );
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(command);
 

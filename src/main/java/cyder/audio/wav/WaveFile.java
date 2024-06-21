@@ -2,12 +2,9 @@ package cyder.audio.wav;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
-import cyder.audio.CyderAudioFile;
 import cyder.enumerations.Extension;
-import cyder.exceptions.FatalException;
 import cyder.exceptions.IllegalMethodException;
 import cyder.files.FileUtil;
-import cyder.strings.CyderStrings;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -120,8 +117,7 @@ public final class WaveFile {
     /**
      * Sets up the {@link AudioInputStream} and other fields related to this wav file.
      *
-     * @throws IOException                   if the constructed {@link AudioInputStream} cannot be read from or closed properly
-     * @throws UnsupportedAudioFileException if the File does not point to valid audio file data recognized by the system
+     * @throws IOException if the AudioInputStream cannot read from the wave file
      */
     private void setupStreams() throws IOException, UnsupportedAudioFileException {
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(wavFile);
@@ -137,7 +133,7 @@ public final class WaveFile {
         data = new byte[(int) dataLength];
         int bytesRead = audioInputStream.read(data);
         if (bytesRead == -1) {
-            throw new FatalException("Failed to read bytes from FileInputStream constructed from: " + wavFile);
+            throw new IOException("Failed to read bytes from FileInputStream constructed from: " + wavFile);
         }
 
         audioInputStream.close();

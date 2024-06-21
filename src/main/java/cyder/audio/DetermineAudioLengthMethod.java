@@ -1,14 +1,16 @@
 package cyder.audio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
 import cyder.audio.ffmpeg.*;
 import cyder.audio.parsers.ShowStreamOutput;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.constants.CyderRegexPatterns;
 import cyder.exceptions.FatalException;
-import cyder.process.ProcessResult;
-import cyder.process.ProcessUtil;
+import cyder.files.CyderTemporaryFile;
+import cyder.files.FileUtil;
+import cyder.process.*;
 import cyder.strings.StringUtil;
 import cyder.threads.CyderThreadFactory;
 import cyder.time.TimeUtil;
@@ -16,6 +18,9 @@ import cyder.utils.SerializationUtil;
 
 import java.io.File;
 import java.time.Duration;
+import java.time.temporal.TemporalUnit;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -105,6 +110,13 @@ public enum DetermineAudioLengthMethod {
         });
     }
 
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Future<Duration> duration = getLengthViaMutagen(
+                new File("/Users/nathancheshire/Downloads/TastyCarrots.mp3"));
+        while (!duration.isDone()) Thread.onSpinWait();
+        System.out.println(duration.get().getNano());
+    }
+
     /**
      * Computes the length of the provided audio file using Mutagen.
      *
@@ -113,6 +125,7 @@ public enum DetermineAudioLengthMethod {
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
+     * @throws CyderProcessException if {@link PythonPackage#MUTAGEN} is not and cannot be installed
      */
     private static Future<Duration> getLengthViaMutagen(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -122,9 +135,45 @@ public enum DetermineAudioLengthMethod {
 
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            // todo construct python command using wrappers
-            // parse response
-            return Duration.ofSeconds(0);
+            Future<Boolean> mutagenInstalled = PythonPackage.MUTAGEN.isInstalled();
+            while (!mutagenInstalled.isDone()) Thread.onSpinWait();;
+            if (!mutagenInstalled.get()) {
+                Future<Boolean> installationRequest = PythonPackage.MUTAGEN.install();
+                while (!installationRequest.isDone()) Thread.onSpinWait();
+                if (!installationRequest.get()) throw new CyderProcessException("Failed to install Mutagen");
+            }
+
+            ImmutableList<String> script = ImmutableList.of(
+                    "import sys",
+                    "from mutagen import File",
+                    "audio_file = File(\"" + audioFile.getAbsolutePath() + "\")",
+                    "print(audio_file.info.length)"
+            );
+
+            CyderTemporaryFile temporaryPythonScriptFile = new CyderTemporaryFile.Builder()
+                    .setFilenameAndExtension("mutagen_length.py")
+                    .build();
+            temporaryPythonScriptFile.create();
+            File scriptFile = temporaryPythonScriptFile.buildFile();
+            FileUtil.writeLinesToFile(scriptFile, script, false);
+
+            Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
+                    ImmutableList.of("python3", scriptFile.getAbsolutePath()));
+            while (!mutagenInstalled.isDone()) Thread.onSpinWait();
+            ProcessResult result = mutagenLengthResult.get();
+
+            if (result.hasErrors()) {
+                throw new CyderProcessException("Mutagen length process result contains errors: " + result.getErrorOutput());
+            }
+
+            List<String> output = result.getStandardOutput();
+            if (output.size() > 1) {
+                throw new CyderProcessException("Mutagen length process result contains more than one line: " + output);
+            }
+
+            float seconds = Float.parseFloat(output.get(0));
+            float millis = seconds * 1000.0f;
+            return Duration.ofMillis(Math.round(millis));
         });
     }
 
