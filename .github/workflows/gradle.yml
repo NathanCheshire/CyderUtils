@@ -21,15 +21,33 @@ jobs:
           java-version: '17.0.6'
           distribution: 'temurin'
 
-      - name: Set up ChromeDriver
-        uses: electronuserland/action-chromedriver@v1
-        with:
-          chromedriver-version: latest
-
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: latest
+
+      - name: Download ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          curl -Lo chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver.zip -d /usr/local/bin/
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Download ChromeDriver for macOS
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          curl -Lo chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_mac64.zip"
+          unzip chromedriver.zip -d /usr/local/bin/
+        if: matrix.os == 'macos-latest'
+
+      - name: Download ChromeDriver for Windows
+        run: |
+          $chrome_version = (Get-Command "chrome").FileVersionInfo.FileVersion
+          Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/$chrome_version/chromedriver_win32.zip" -OutFile "chromedriver.zip"
+          Expand-Archive chromedriver.zip -DestinationPath $Env:ProgramFiles
+          $Env:Path += ";$Env:ProgramFiles\chromedriver_win32"
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
 
       - name: Grant execute permission for gradlew (Unix)
         if: runner.os != 'Windows'
