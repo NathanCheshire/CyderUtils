@@ -6,12 +6,11 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cyder.exceptions.IllegalMethodException;
 import cyder.process.ProcessResult;
 import cyder.process.ProcessUtil;
-import cyder.process.Program;
+import cyder.process.PythonProgram;
 import cyder.process.PythonPackage;
 import cyder.props.Props;
 import cyder.strings.CyderStrings;
 import cyder.threads.CyderThreadFactory;
-import cyder.utils.OsUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +116,7 @@ public final class PythonUtil {
         return Executors.newSingleThreadExecutor(new CyderThreadFactory("Python Version Finder"))
                 .submit(() -> {
                     Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
-                            Program.PYTHON.getFirstProgramName()
+                            PythonProgram.PYTHON.getFirstProgramName()
                                     + " "
                                     + VERSION_ARGUMENT);
 
@@ -151,11 +150,11 @@ public final class PythonUtil {
     @CanIgnoreReturnValue
     public static Future<ProcessResult> installPipDependency(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(Program.PYTHON.isInstalled());
-        Preconditions.checkArgument(Program.PIP.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PYTHON.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PIP.isInstalled());
 
         return ProcessUtil.getProcessOutput(
-                Program.PIP.getFirstProgramName()
+                PythonProgram.PIP.getFirstProgramName()
                         + " "
                         + INSTALL
                         + " "
@@ -170,8 +169,8 @@ public final class PythonUtil {
      */
     public static Future<Boolean> isPipDependencyPresent(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(Program.PYTHON.isInstalled());
-        Preconditions.checkArgument(Program.PIP.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PYTHON.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PIP.isInstalled());
 
         String threadName = "isPipDependencyPresent thread, packageName"
                 + ": "
@@ -181,7 +180,7 @@ public final class PythonUtil {
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(
-                    Program.PIP.getFirstProgramName()
+                    PythonProgram.PIP.getFirstProgramName()
                             + " "
                             + SHOW
                             + " "
@@ -210,8 +209,8 @@ public final class PythonUtil {
      */
     public static Future<Optional<String>> getPipDependencyVersion(PythonPackage pythonPackage) {
         Preconditions.checkNotNull(pythonPackage);
-        Preconditions.checkArgument(Program.PYTHON.isInstalled());
-        Preconditions.checkArgument(Program.PIP.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PYTHON.isInstalled());
+        Preconditions.checkArgument(PythonProgram.PIP.isInstalled());
 
         String threadName = "getPipDependencyVersion thread, packageName"
                 + ": "
@@ -221,7 +220,7 @@ public final class PythonUtil {
 
         return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
             ImmutableList<String> command = ImmutableList.of(
-                    Program.PIP.getFirstProgramName(), SHOW, pythonPackage.getPackageName()
+                    PythonProgram.PIP.getFirstProgramName(), SHOW, pythonPackage.getPackageName()
             );
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(command);
 

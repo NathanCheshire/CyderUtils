@@ -157,6 +157,7 @@ public enum DetermineAudioLengthMethod {
             File scriptFile = temporaryPythonScriptFile.buildFile();
             FileUtil.writeLinesToFile(scriptFile, script, false);
 
+            // TODO might not be python3, need to try python first
             Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
                     ImmutableList.of("python3", scriptFile.getAbsolutePath()));
             while (!mutagenInstalled.isDone()) Thread.onSpinWait();

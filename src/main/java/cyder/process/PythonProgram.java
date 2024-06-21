@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableList;
 import cyder.utils.OsUtil;
 
 /**
- * Common external programs/binaries utilized by Cyder.
+ * Common Python programs/binaries utilized by Cyder.
  */
-public enum Program { // todo rename to python programs and then need python package
+public enum PythonProgram {
     PIP(ImmutableList.of("pip"), "pip.exe"),
     PYTHON(ImmutableList.of("python", "python3"), "python.exe");
 
@@ -20,7 +20,7 @@ public enum Program { // todo rename to python programs and then need python pac
      */
     private final String filename;
 
-    Program(ImmutableList<String> programNames, String filename) {
+    PythonProgram(ImmutableList<String> programNames, String filename) {
         this.programNames = programNames;
         this.filename = filename;
     }
