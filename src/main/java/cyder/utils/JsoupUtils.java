@@ -6,6 +6,10 @@ import cyder.exceptions.IllegalMethodException;
 import cyder.strings.CyderStrings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
 
 import java.util.Optional;
 
@@ -35,10 +39,20 @@ public class JsoupUtils {
         Preconditions.checkArgument(!url.isEmpty());
         Preconditions.checkArgument(CyderRegexPatterns.urlFormationPattern.matcher(url).matches());
 
+        Document doc = null;
+
         try {
-            return Optional.of(Jsoup.connect(url).get());
-        } catch (Exception ignored) {
-            return Optional.empty();
-        }
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+
+            WebDriver driver = new ChromeDriver(options);
+            driver.get(url);
+            String pageSource = driver.getPageSource();
+            doc = Jsoup.parse(pageSource);
+        } catch (Exception ignored) {}
+
+        return Optional.ofNullable(doc);
     }
 }

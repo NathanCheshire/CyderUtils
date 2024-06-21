@@ -79,6 +79,11 @@ dependencies {
     implementation 'net.lingala.zip4j:zip4j:' + zip4jVersion
     implementation 'com.github.nathancheshire:gravatarjavaclient:' + gravatarClientHash
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
+
+    // Selenium dependencies
+    implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
+
 
 build.dependsOn(compileJava, compileTestJava)

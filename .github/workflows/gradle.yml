@@ -21,6 +21,16 @@ jobs:
           java-version: '17.0.6'
           distribution: 'temurin'
 
+      - name: Set up ChromeDriver
+        uses: electronuserland/action-chromedriver@v1
+        with:
+          chromedriver-version: latest
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: latest
+
       - name: Grant execute permission for gradlew (Unix)
         if: runner.os != 'Windows'
         run: chmod +x gradlew
