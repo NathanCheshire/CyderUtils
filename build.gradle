@@ -20,6 +20,7 @@ jacocoTestReport {
 
 test {
     useJUnitPlatform()
+    jvmArgs += '--enable-preview'
 }
 
 group 'cyder-utils'
@@ -41,8 +42,8 @@ allprojects {
     }
 }
 
-tasks.withType(JavaCompile).each {
-    it.options.compilerArgs.add('--enable-preview')
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += '--enable-preview'
 }
 
 ext {
