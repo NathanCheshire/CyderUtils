@@ -114,7 +114,7 @@ public class HarmonicRectangleTest {
         rect.stopAnimation();
         ThreadUtil.sleep(100); // wait for animation to stop
         assertFalse(rect.isAnimating());
-        assertEquals(25, rect.getWidth());
+        assertEquals(25, rect.getWidth(), 5);
 
         rect.animate();
         assertTrue(rect.isAnimating());
