@@ -3,7 +3,10 @@ package cyder.audio;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import cyder.annotations.ForReadability;
-import cyder.audio.ffmpeg.*;
+import cyder.audio.ffmpeg.FfmpegArgument;
+import cyder.audio.ffmpeg.FfmpegCommandBuilder;
+import cyder.audio.ffmpeg.FfmpegPrintFormat;
+import cyder.audio.ffmpeg.FfmpegStreamEntry;
 import cyder.audio.parsers.ShowStreamOutput;
 import cyder.audio.validation.SupportedAudioFileType;
 import cyder.constants.CyderRegexPatterns;
@@ -129,8 +132,8 @@ public enum DetermineAudioLengthMethod {
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
-     * @throws CyderProcessException if {@link PythonPackage#MUTAGEN} is not and cannot be
-     *                               installed or a valid working Python command cannot be found
+     * @throws CyderProcessException    if {@link PythonPackage#MUTAGEN} is not and cannot be
+     *                                  installed or a valid working Python command cannot be found
      */
     private static Future<Duration> getLengthViaMutagen(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -141,7 +144,8 @@ public enum DetermineAudioLengthMethod {
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
             Future<Boolean> mutagenInstalled = PythonPackage.MUTAGEN.isInstalled();
-            while (!mutagenInstalled.isDone()) Thread.onSpinWait();;
+            while (!mutagenInstalled.isDone()) Thread.onSpinWait();
+
             if (!mutagenInstalled.get()) {
                 Future<Boolean> installationRequest = PythonPackage.MUTAGEN.install();
                 while (!installationRequest.isDone()) Thread.onSpinWait();
@@ -151,7 +155,8 @@ public enum DetermineAudioLengthMethod {
             ImmutableList<String> script = ImmutableList.of(
                     "import sys",
                     "from mutagen import File",
-                    "audio_file = File(\"" + audioFile.getAbsolutePath() + "\")",
+                    "audio_file = File(\"" + audioFile.getAbsolutePath().replace("\\", "\\\\")
+                            + "\")",
                     "print(audio_file.info.length)"
             );
 
@@ -166,7 +171,8 @@ public enum DetermineAudioLengthMethod {
                     = PythonProgram.PYTHON.getFirstWorkingProgramName();
             while (!firstWorkingPythonInvocableCommand.isDone()) Thread.onSpinWait();
             Optional<String> firstCommandOptional = firstWorkingPythonInvocableCommand.get();
-            if (firstCommandOptional.isEmpty()) throw new CyderProcessException("Failed to find working Python command");
+            if (firstCommandOptional.isEmpty())
+                throw new CyderProcessException("Failed to find working Python command");
 
             Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
                     ImmutableList.of(firstCommandOptional.get(), scriptFile.getAbsolutePath()));
@@ -174,7 +180,8 @@ public enum DetermineAudioLengthMethod {
             ProcessResult result = mutagenLengthResult.get();
 
             if (result.hasErrors()) {
-                throw new CyderProcessException("Mutagen length process result contains errors: " + result.getErrorOutput());
+                throw new CyderProcessException(
+                        "Mutagen length process result contains errors: " + result.getErrorOutput());
             }
 
             List<String> output = result.getStandardOutput();
