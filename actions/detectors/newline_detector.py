@@ -13,34 +13,32 @@ class NewLineDetector(Detector):
                 f"{file.get_path():<{max_len}} {file.get_size():>10}")
 
             current_running_new_lines = 0
-            anchored = False
-            originally_anchored = False
-            last_anchor = None
+            in_newline_content = True
+            past_starting_newlines = False
             last_anchor_line_number = 0
 
             lines = file.get_lines()
             for line_index, line in enumerate(lines):
                 line_empty = self._is_line_empty(line)
 
-                if line_empty and not originally_anchored:
+                if line_empty and not past_starting_newlines:
                     # line is empty and not encountered starting file non whitespace content so continue
                     continue
-                elif not line_empty and not anchored:
+                elif not line_empty and in_newline_content:
                     # we were counting newlines and now we have encountered a non-newline
                     if current_running_new_lines > 1:
                         self.print_stats(
                             current_running_new_lines, last_anchor_line_number, line_index + 1, lines)
                         num_failures += 1
 
-                    originally_anchored = True
-                    anchored = True
-                    last_anchor = line
+                    past_starting_newlines = True
+                    in_newline_content = False
                     current_running_new_lines = 0
                 elif line_empty:
                     # line is empty so increment or start counting
                     if current_running_new_lines == 0:
                         last_anchor_line_number = line_index
-                    anchored = False
+                    in_newline_content = True
                     current_running_new_lines += 1
 
         if not num_failures:

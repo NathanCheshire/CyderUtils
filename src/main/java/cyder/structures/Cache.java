@@ -3,7 +3,7 @@ package cyder.structures;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A cache for a type.
@@ -24,7 +24,7 @@ public class Cache<T> {
     /**
      * The function to invoke to update the currently cached value if requested.
      */
-    private Function<Void, T> cachedValueUpdater;
+    private Supplier<T> cachedValueUpdater;
 
     /**
      * Constructs a new cache with an initial value of null.
@@ -37,7 +37,7 @@ public class Cache<T> {
      * Constructs a new cache.
      *
      * @param initialValue the initial value cached
-     * @param allowNull whether null is allowed as a cached value
+     * @param allowNull    whether null is allowed as a cached value
      * @throws NullPointerException if the provided initial value is null when allowNull is false
      */
     public Cache(T initialValue, boolean allowNull) {
@@ -58,14 +58,11 @@ public class Cache<T> {
     }
 
     /**
-     * Returns the current cache value.
+     * Returns the current cached value.
      *
      * @return the current cache value
-     * @throws IllegalStateException if the cache value is not present
      */
     public T getCache() {
-        if (!isCachePresent() && cachedValueUpdater != null) refreshCachedValue();
-        Preconditions.checkState(isCachePresent());
         return cachedValue;
     }
 
@@ -105,7 +102,7 @@ public class Cache<T> {
      * @param function the function to invoke to refresh the cache
      * @throws NullPointerException if the provided function is null
      */
-    public void setCachedValueUpdater(Function<Void, T> function) {
+    public void setCachedValueUpdater(Supplier<T> function) {
         cachedValueUpdater = Preconditions.checkNotNull(function);
     }
 
@@ -116,7 +113,7 @@ public class Cache<T> {
      */
     public void refreshCachedValue() {
         Preconditions.checkState(cachedValueUpdater != null);
-        cachedValue = cachedValueUpdater.apply(null);
+        cachedValue = cachedValueUpdater.get();
     }
 
     /**
@@ -140,8 +137,9 @@ public class Cache<T> {
         }
 
         Cache<?> other = (Cache<?>) o;
-        return other.cachedValue == cachedValueUpdater
-                && other.cachedValueUpdater == cachedValueUpdater;
+        return other.cachedValue.equals(cachedValueUpdater)
+                && other.allowNull == allowNull
+                && other.cachedValueUpdater.equals(cachedValueUpdater);
     }
 
     /**
@@ -151,6 +149,7 @@ public class Cache<T> {
     public String toString() {
         return "Cache{"
                 + "cachedValue=" + cachedValue
+                + "allowNull=" + allowNull
                 + ", cachedValueUpdater=" + cachedValueUpdater
                 + "}";
     }
@@ -162,6 +161,7 @@ public class Cache<T> {
     public int hashCode() {
         int ret = cachedValue.hashCode();
         ret = 31 * ret + cachedValueUpdater.hashCode();
+        ret = 31 * ret + Boolean.hashCode(allowNull);
         return ret;
     }
 }
