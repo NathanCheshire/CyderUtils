@@ -8,35 +8,7 @@ import argparse
 import sys
 import os
 
-def find_files(starting_dir: str, extensions: list = [], recursive: bool = False) -> list:
-    """
-    Finds all files within the provided directory that end in one of the provided extensions.
-
-    :param starting_dir: the directory to start recursion from
-    :param extensions: a list of valid extensions such as [".java"]
-    :param recursive: whether to recurse through found subdirectories
-    :return: a list of discovered files
-    """
-
-    ret = []
-
-    if len(extensions) == 0:
-        raise Exception('Error: must provide valid extensions')
-
-    if os.path.isdir(starting_dir):
-        for sub_directory in os.listdir(starting_dir):
-            if recursive:
-                ret = ret + \
-                    find_files(os.path.join(starting_dir, sub_directory),
-                               extensions, recursive)
-            else:
-                ret.append(os.path.join(starting_dir, sub_directory))
-    else:
-        for extension in extensions:
-            if starting_dir.endswith(extension):
-                ret.append(starting_dir)
-
-    return ret
+from util.utils import find_files
 
 
 def find_unnecessary_new_lines(start_directory: str):
@@ -47,7 +19,8 @@ def find_unnecessary_new_lines(start_directory: str):
     :param start_directory: the starting directory to recursively find the files from
     """
     failed = False
-    java_files = find_files(starting_dir=start_directory, extensions=['.java'], recursive=True)
+    java_files = find_files(starting_dir=start_directory,
+                            extensions=['.java'], recursive=True)
 
     for file in java_files:
         print(f"Searching file {file}")
@@ -111,7 +84,7 @@ def main():
                         help='the starting directory')
 
     args = parser.parse_args()
-    
+
     find_unnecessary_new_lines(start_directory=args.starting_directory)
 
 

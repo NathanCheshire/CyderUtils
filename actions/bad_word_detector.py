@@ -10,51 +10,7 @@ import os
 
 
 from new_line_detector import find_files
-
-
-class BadWord:
-    """ 
-    A record type for holding a bad word and information about its origin.
-    """
-
-    def __init__(self, clazz: str, line_number: int, line: str, words: list) -> None:
-        """
-        Constructs a new BadWord.
-
-        :param clazz: the class the bad word was found in.
-        :param line_number: the line number of the file the bad word was found in
-        :param line: the full line the bad word was found in
-        :param words: the list of bad words found on the file line
-        """
-
-        self._clazz = clazz
-        self._line_number = line_number
-        self._line = line
-        self._words = words
-
-    def get_class(self) -> str:
-        """ 
-        Returns the Java class this bad word was found from.
-        """
-        return self._clazz
-
-    def get_line_number(self) -> int:
-        """ 
-        Returns the line number this bad word was found at.
-        """
-        return self._line_number
-
-    def get_line(self) -> str:
-        """ 
-        Returns the full text line this bad word was found from.
-        """
-        return self._line
-
-    def get_words(self) -> list:
-        """
-        Returns the list of bad words which triggered a bad word match.
-        """
-        return self._words
+from util.file_and_location import FileAndLocation
 
 
 def find_bad_words(starting_dir: str, filter_path: str, extensions: list) -> list:
@@ -87,8 +43,9 @@ def find_bad_words(starting_dir: str, filter_path: str, extensions: list) -> lis
         for line_number, line in enumerate(file_lines):
             words = contains_blocked_word(line, bad_words)
             if words is not None:
-                ret.append(
-                    BadWord(clazz=file, line_number=line_number, line=line, words=words))
+                file = FileAndLocation(os.path.basename(
+                    file), file, line_number, line_number, words)
+                ret.append(file)
 
     return ret
 
@@ -141,7 +98,8 @@ def main():
 
     extensions = ['.java', '.kt', '.py', '.md', '.txt']
 
-    bad_words = find_bad_words(args.starting_directory, args.filter, extensions)
+    bad_words = find_bad_words(
+        args.starting_directory, args.filter, extensions)
     len_bad_words = len(bad_words)
 
     if len_bad_words > 0:
