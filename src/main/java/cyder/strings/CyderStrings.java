@@ -8,7 +8,7 @@ import cyder.exceptions.IllegalMethodException;
  */
 public final class CyderStrings {
     /**
-     * A string to be displayed when an illegal or {@link Deprecated} constructor is invoked.
+     * A string to be displayed when an illegal constructor is invoked.
      */
     public static final String ILLEGAL_CONSTRUCTOR = "Illegal constructor";
 
@@ -82,6 +82,7 @@ public final class CyderStrings {
      */
     public static final String carriageReturnChar = "\r";
 
+    // todo need an ellipse util that allows n starting, k ending, middle chars, etc.
     /**
      * The dots for a title or menu item that is cut off due to being too long.
      */

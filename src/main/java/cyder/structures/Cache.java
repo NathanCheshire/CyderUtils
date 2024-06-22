@@ -17,33 +17,44 @@ public class Cache<T> {
     private T cachedValue;
 
     /**
+     * Whether this cache allows null values.
+     */
+    private final boolean allowNull;
+
+    /**
      * The function to invoke to update the currently cached value if requested.
      */
     private Function<Void, T> cachedValueUpdater;
 
     /**
-     * Constructs a new cache.
+     * Constructs a new cache with an initial value of null.
      */
-    public Cache() {}
+    public Cache() {
+        this(null, true);
+    }
 
     /**
      * Constructs a new cache.
      *
      * @param initialValue the initial value cached
-     * @throws NullPointerException if the provided initial value is null
+     * @param allowNull whether null is allowed as a cached value
+     * @throws NullPointerException if the provided initial value is null when allowNull is false
      */
-    public Cache(T initialValue) {
-        cachedValue = Preconditions.checkNotNull(initialValue);
+    public Cache(T initialValue, boolean allowNull) {
+        if (!allowNull) Preconditions.checkNotNull(initialValue);
+        this.cachedValue = initialValue;
+        this.allowNull = allowNull;
     }
 
     /**
      * Sets the cache value.
      *
      * @param newCache the new cache value
-     * @throws NullPointerException if newCache is null
+     * @throws NullPointerException if newCache is null and null is not allowed
      */
     public void setCache(T newCache) {
-        cachedValue = Preconditions.checkNotNull(newCache);
+        if (!allowNull) Preconditions.checkNotNull(newCache);
+        cachedValue = newCache;
     }
 
     /**
@@ -78,11 +89,11 @@ public class Cache<T> {
      * Caches the provided value if no cache is currently present.
      *
      * @return whether the new value was cached
-     * @throws NullPointerException if the new value is null
+     * @throws NullPointerException if the new value is null and null is not allowed
      */
     @CanIgnoreReturnValue
     public boolean cacheIfNotPresent(T newValue) {
-        Preconditions.checkNotNull(newValue);
+        if (!allowNull) Preconditions.checkNotNull(newValue);
         if (isCachePresent()) return false;
         cachedValue = newValue;
         return true;
@@ -106,6 +117,15 @@ public class Cache<T> {
     public void refreshCachedValue() {
         Preconditions.checkState(cachedValueUpdater != null);
         cachedValue = cachedValueUpdater.apply(null);
+    }
+
+    /**
+     * Returns whether this cache allows null.
+     *
+     * @return whether this cache allows null
+     */
+    public boolean isNullAllowed() {
+        return allowNull;
     }
 
     /**

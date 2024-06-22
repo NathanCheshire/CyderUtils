@@ -18,7 +18,8 @@ class NewLineDetector(Detector):
             last_anchor = None
             last_anchor_line_number = 0
 
-            for line_index, line in enumerate(file.get_lines()):
+            lines = file.get_lines()
+            for line_index, line in enumerate(lines):
                 line_empty = self._is_line_empty(line)
 
                 if line_empty and not originally_anchored:
@@ -27,8 +28,8 @@ class NewLineDetector(Detector):
                 elif not line_empty and not anchored:
                     # we were counting newlines and now we have encountered a non-newline
                     if current_running_new_lines > 1:
-                        self.print_stats(current_running_new_lines, last_anchor_line_number,
-                                         last_anchor, line_index + 1, line)
+                        self.print_stats(
+                            current_running_new_lines, last_anchor_line_number, line_index + 1, lines)
                         num_failures += 1
 
                     originally_anchored = True
@@ -44,7 +45,7 @@ class NewLineDetector(Detector):
 
         if not num_failures:
             print(
-                f"\n{green}{bold}No newlines found in {len(self._files)} searched files{reset}\n")
+                f"\n{green}{bold}No duplicate newlines found in {len(self._files)} searched files{reset}\n")
         else:
             print(
                 f"\n{red}{bold}Found {num_failures} violation{'' if num_failures == 1 else 's'}{reset}\n")
@@ -57,15 +58,21 @@ class NewLineDetector(Detector):
         """
         return len(line.strip()) == 0
 
-    def print_stats(self, num_unnecessary_new_lines: int, starting_line_num: int,
-                    starting_line: str, ending_list_num: int, ending_line: str):
+    def print_line_number_prefix(self, number: int, content: str) -> None:
+        print(f"{red}{number}{reset} {bold}: {blue}{content}")
+
+    def print_stats(self, num_unnecessary_new_lines: int, starting_line_num: int, ending_line_num: int, lines: list[str]):
         """
         Prints the statistics found for the current file.
         """
 
+        concerned_with_lines = lines[starting_line_num - 1:ending_line_num]
+
         print(f"{blue}{bold}{sep}")
         print(
             f"Found {red}{num_unnecessary_new_lines}{blue} new lines between\n")
-        print(f"{red}{starting_line_num}{reset} {bold}: {blue}{starting_line}")
-        print(f"{red}{ending_list_num}{reset} {bold}: {blue}{ending_line}")
+
+        for index, line in enumerate(concerned_with_lines):
+            self.print_line_number_prefix(index + starting_line_num, line)
+
         print(f"{sep}{reset}")

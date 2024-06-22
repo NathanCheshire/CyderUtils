@@ -130,7 +130,7 @@ public final class ToStringUtil {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // todo exceptions
         }
 
         StringBuilder ret = new StringBuilder();
