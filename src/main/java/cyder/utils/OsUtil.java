@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
@@ -210,17 +212,8 @@ public final class OsUtil {
         checkNotNull(directories);
         checkArgument(directories.length > 0);
 
-        StringBuilder ret = new StringBuilder();
-
-        for (int i = 0 ; i < directories.length ; i++) {
-            ret.append(directories[i]);
-
-            if (i != directories.length - 1) {
-                ret.append(FILE_SEP);
-            }
-        }
-
-        return ret.toString();
+        Path path = Paths.get("", directories);
+        return path.toAbsolutePath().normalize().toString();
     }
 
     /**

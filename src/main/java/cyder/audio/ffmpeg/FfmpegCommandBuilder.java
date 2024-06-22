@@ -17,11 +17,19 @@ public final class FfmpegCommandBuilder {
     private final ArrayList<String> commandParts = new ArrayList<>();
 
     /**
-     * Constructs a new FfmpegCommandBuilder with the
-     * initial command part of {@link FfmpegArgument#FFMPEG}.
+     * Constructs a new FfmpegCommandBuilder with {@link FfmpegArgument#FFMPEG} as the initial argument.
      */
     public FfmpegCommandBuilder() {
-        commandParts.add(FfmpegArgument.FFMPEG.getArgumentName());
+        this(FfmpegArgument.FFMPEG);
+    }
+
+    /**
+     * Constructs a new FfmpegCommandBuilder with the provided initial argument.
+     *
+     * @param startingArgument the starting argument such as {@link FfmpegArgument#FFMPEG}
+     */
+    public FfmpegCommandBuilder(FfmpegArgument startingArgument) {
+        commandParts.add(startingArgument.getArgumentName());
     }
 
     /**

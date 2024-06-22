@@ -82,21 +82,25 @@ public enum DetermineAudioLengthMethod {
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
             String absolutePath = audioFile.getAbsolutePath();
 
-            String command = new FfmpegCommandBuilder()
-                    .addArgument(FfmpegArgument.LOG_LEVEL.getArgument(), FfmpegLogLevel.QUIET.getLogLevelName())
+            String command = new FfmpegCommandBuilder(FfmpegArgument.FFPROBE)
                     .addArgument(FfmpegArgument.PRINT_FORMAT.getArgument(), FfmpegPrintFormat.JSON.getFormatName())
                     .addArgument(FfmpegArgument.SHOW_STREAMS.getArgument())
                     .addArgument(FfmpegArgument.SHOW_ENTRIES.getArgument(),
                             FfmpegStreamEntry.DURATION.getStreamCommand())
-                    .addArgument(StringUtil.surroundWithQuotes(absolutePath))
+                    .addArgument(absolutePath)
                     .build();
 
             Future<ProcessResult> futureResult = ProcessUtil.getProcessOutput(command);
             while (!futureResult.isDone()) Thread.onSpinWait();
 
-            ProcessResult result = futureResult.get();
-            if (result.hasErrors())
-                throw new CyderProcessException("Process result contains errors: " + result.getErrorOutput());
+            ProcessResult result;
+
+            try {
+                result = futureResult.get();
+                if (futureResult.isCancelled()) throw new RuntimeException("Future was canceled");
+            } catch (Exception e) {
+                throw new CyderProcessException(e);
+            }
 
             String joinedOutput = StringUtil.joinParts(result.getStandardOutput(), "");
             String trimmedOutput = joinedOutput.replaceAll(CyderRegexPatterns.multipleWhiteSpaceRegex, "");

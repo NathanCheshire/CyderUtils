@@ -5,6 +5,7 @@ package cyder.audio.ffmpeg;
  */
 public enum FfmpegArgument {
     FFMPEG("ffmpeg"),
+    FFPROBE("ffprobe"),
     LOG_LEVEL("v"),
     INPUT("i"),
     AUDIO_QUALITY("q:a"),
