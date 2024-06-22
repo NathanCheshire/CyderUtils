@@ -90,11 +90,16 @@ public final class CyderVideoFile {
             while (!futureResult.isDone()) Thread.onSpinWait();
             try {
                 ProcessResult result = futureResult.get();
-                if (result.hasErrors()) throw new CyderVideoException(""); // todo
-                if (!uniqueFile.exists()) throw new CyderVideoException(""); // todo
+                if (result.hasErrors()) {
+                    throw new CyderVideoException("CyderVideoFile.extractAudio process contains errors, e:"
+                            + result.getErrorOutput());
+                }
+                if (!uniqueFile.exists()) {
+                    throw new CyderVideoException("CyderVideoFile.extractAudio failed to create audio file");
+                }
                 return uniqueFile;
             } catch (InterruptedException | ExecutionException e) {
-                throw new CyderVideoException(e); // todo
+                throw new CyderVideoException(e);
             }
         });
     }
@@ -117,14 +122,6 @@ public final class CyderVideoFile {
      * Shows the video player for the encapsulated video using a {@link CyderFrame}.
      */
     private void showVideoPlayer() {
-        // todo logic at some point
-
-        // extract frames of video, partitioned or bulk, figure that out
-        // ffmpeg -i BadApple.mp4 "%04d.png"
-        // extract audio to mp3
-        // compute milliseconds per frame needed to make the video last as long as the audio does
-        // have audio playing and start moving through frames
-        // need to keep track of how far ahead/behind the audio is so that we can sleep for more/less
-        // to catch up
+        // todo play video on CyderFrame is MVP; media controls to come
     }
 }

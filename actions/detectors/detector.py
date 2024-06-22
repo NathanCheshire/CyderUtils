@@ -3,7 +3,7 @@ from filescanner.scanned_file import ScannedFile
 from preconditions.preconditions import Preconditions
 
 
-class Dectector():
+class Detector():
     """
     A class for detecting specifics within scanned files.
     """

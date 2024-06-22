@@ -21,7 +21,7 @@ public final class Subroutine {
     private final Supplier<Boolean> routine;
 
     /**
-     * The name of the thread to invoke the routine inside of if this is a parallel subroutine.
+     * The name of the thread to invoke the routine inside if this is a parallel subroutine.
      */
     private final String threadName;
 

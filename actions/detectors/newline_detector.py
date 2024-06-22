@@ -1,9 +1,9 @@
 import sys
-from detectors.detector import Dectector
+from detectors.detector import Detector
 from color.colors import *
 
 
-class NewLineDetector(Dectector):
+class NewLineDetector(Detector):
     def detect(self):
         max_len = max(len(file._file_path) for file in self._files)
 
@@ -47,7 +47,7 @@ class NewLineDetector(Dectector):
                 f"\n{green}{bold}No newlines found in {len(self._files)} searched files{reset}\n")
         else:
             print(
-                f"\n{green}{bold}Found {num_failures} violation{'' if num_failures == 1 else 's'}{reset}\n")
+                f"\n{red}{bold}Found {num_failures} violation{'' if num_failures == 1 else 's'}{reset}\n")
 
         sys.exit(1 if num_failures else 0)
 

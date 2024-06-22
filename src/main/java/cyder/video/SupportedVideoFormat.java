@@ -1,6 +1,7 @@
 package cyder.video;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import cyder.files.FileUtil;
 
 import java.io.File;
@@ -13,12 +14,14 @@ public enum SupportedVideoFormat {
     /**
      * The MP4 video format (MPEG-4).
      */
-    MP4(".mp4");
+    MP4(".mp4", ImmutableList.of(0x66, 0x74, 0x79, 0x70));
 
     private final String extension;
+    private final ImmutableList<Integer> signature;
 
-    SupportedVideoFormat(String extension) {
+    SupportedVideoFormat(String extension, ImmutableList<Integer> signature) {
         this.extension = extension;
+        this.signature = signature;
     }
 
     /**
@@ -34,7 +37,10 @@ public enum SupportedVideoFormat {
         Preconditions.checkArgument(file.exists());
         Preconditions.checkArgument(file.isFile());
 
-        return Arrays.stream(values()).anyMatch(supportedVideoFormat
-                -> FileUtil.getExtension(file).equals(supportedVideoFormat.extension));
+        return Arrays.stream(values()).anyMatch(supportedVideoFormat -> {
+            boolean extensionMatches = FileUtil.getExtension(file).equals(supportedVideoFormat.extension);
+            boolean signatureMatches = FileUtil.fileMatchesSignature(file, supportedVideoFormat.signature);
+            return extensionMatches && signatureMatches;
+        });
     }
 }

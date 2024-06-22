@@ -13,3 +13,6 @@ if __name__ == '__main__':
 
     print_running("newline detector")
     NewLineDetector(java_and_kotlin_files).detect()
+
+    print_running("word filter")
+    
