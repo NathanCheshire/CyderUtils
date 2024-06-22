@@ -398,7 +398,6 @@ public final class NotificationController {
         }, queueExecutor);
     }
 
-
     /**
      * Generates a mouse adapter for a notification container.
      *

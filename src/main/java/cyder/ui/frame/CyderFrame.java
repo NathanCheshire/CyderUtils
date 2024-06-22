@@ -1600,7 +1600,6 @@ public class CyderFrame extends JFrame {
                     }
                 }
 
-
                 super.dispose();
                 postCloseActions.forEach(Runnable::run);
             } catch (Exception e) {

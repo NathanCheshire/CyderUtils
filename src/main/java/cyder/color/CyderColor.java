@@ -177,8 +177,6 @@ public final class CyderColor extends Color {
         return ImmutableList.copyOf(ret);
     }
 
-
-
     /**
      * Returns whether the provided color value is within the range [0, 255].
      *
