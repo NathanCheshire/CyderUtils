@@ -1,6 +1,5 @@
 package cyder.audio.exceptions;
 
-
 import cyder.exceptions.CyderExceptionMixin;
 
 /**
