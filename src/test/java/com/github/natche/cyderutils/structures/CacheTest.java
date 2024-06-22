@@ -10,6 +10,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CacheTest {
     /**
+     * An implementation of a possible cache refresh supplier.
+     */
+    private final CacheRefreshSupplier<Port> cacheRefreshSupplier = new CacheRefreshSupplier<>() {
+        @Override
+        public Port get() {
+            // You can do lots of other logic here like async calls
+            return new Port(1738);
+        }
+
+        @Override
+        public String toString() {
+            return "1738.port.supplier";
+        }
+    };
+
+    /**
      * Constructs a new instance of this class for testing purposes.
      */
     CacheTest() {}
@@ -96,10 +112,9 @@ class CacheTest {
      */
     @Test
     void testSetCachedValueUpdater() {
-        Port port = Port.from(CommonServicePort.DNS);
         Cache<Port> portCache = new Cache<>(null, true);
         assertThrows(NullPointerException.class, () -> portCache.setCachedValueUpdater(null));
-        assertDoesNotThrow(() -> portCache.setCachedValueUpdater(() -> port));
+        assertDoesNotThrow(() -> portCache.setCachedValueUpdater(cacheRefreshSupplier));
     }
 
     /**
@@ -107,6 +122,77 @@ class CacheTest {
      */
     @Test
     void testRefreshCachedValue() {
+        Port port = Port.from(CommonServicePort.DNS);
+        Cache<Port> portCache = new Cache<>(null, true);
+        assertThrows(IllegalStateException.class, portCache::refreshCachedValue);
 
+        portCache.setCache(port);
+        Port httpsPort = Port.from(CommonServicePort.HTTPS);
+        portCache.setCachedValueUpdater(cacheRefreshSupplier);
+        assertDoesNotThrow(portCache::refreshCachedValue);
+        assertEquals(new Port(1738), portCache.getCache());
+    }
+
+    /**
+     * Tests for the isNullAllowed method.
+     */
+    @Test
+    void testIsNullAllowed() {
+        Cache<?> nullAllowed = new Cache<>(null, true);
+        Cache<?> nullDisallowed = new Cache<>(new Object(), false);
+
+        assertTrue(nullAllowed.isNullAllowed());
+        assertFalse(nullDisallowed.isNullAllowed());
+    }
+
+    /**
+     * Tests for the equals method.
+     */
+    @Test
+    void testEquals() {
+        Port port = Port.from(CommonServicePort.HTTPS);
+        Cache<?> first = new Cache<>(port, false);
+        Cache<?> equal = new Cache<>(port, false);
+        Cache<?> notEqual = new Cache<>(port, true);
+
+        assertEquals(first, first);
+        assertEquals(first, equal);
+        assertNotEquals(first, notEqual);
+        assertNotEquals(first, new Object());
+    }
+
+    /**
+     * Tests for the hashcode method.
+     */
+    @Test
+    void testHashCode() {
+        Port port = Port.from(CommonServicePort.HTTPS);
+        Cache<?> first = new Cache<>(port, false);
+        Cache<?> equal = new Cache<>(port, false);
+        Cache<?> notEqual = new Cache<>(port, true);
+
+        assertEquals(first.hashCode(), first.hashCode());
+        assertEquals(first.hashCode(), equal.hashCode());
+        assertNotEquals(first.hashCode(), notEqual.hashCode());
+        assertEquals(-2112506629, first.hashCode());
+        assertEquals(-2112506635, notEqual.hashCode());
+    }
+
+
+    /**
+     * Tests for the toString method.
+     */
+    @Test
+    void testToString() {
+        Port port = Port.from(CommonServicePort.HTTPS);
+        Cache<?> first = new Cache<>(port, false);
+        Cache<Port> notEqual = new Cache<>(port, true);
+
+        notEqual.setCachedValueUpdater(cacheRefreshSupplier);
+
+        assertEquals("Cache{cachedValue=Port{port=443, portAvailableTimeout=PT0.4S}allowNull=false,"
+                + " cachedValueUpdater=null}", first.toString());
+        assertEquals("Cache{cachedValue=Port{port=443, portAvailableTimeout=PT0.4S}allowNull=true,"
+                + " cachedValueUpdater=1738.port.supplier}", notEqual.toString());
     }
 }

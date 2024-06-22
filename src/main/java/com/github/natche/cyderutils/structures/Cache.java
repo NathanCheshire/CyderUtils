@@ -3,14 +3,14 @@ package com.github.natche.cyderutils.structures;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.util.function.Supplier;
+import java.util.Objects;
 
 /**
  * A cache for a type.
  *
  * @param <T> the type of cache.
  */
-public class Cache<T> {
+public final class Cache<T> {
     /**
      * The current cache value.
      */
@@ -24,7 +24,7 @@ public class Cache<T> {
     /**
      * The function to invoke to update the currently cached value if requested.
      */
-    private Supplier<T> cachedValueUpdater;
+    private CacheRefreshSupplier<T> cachedValueUpdater;
 
     /**
      * Constructs a new cache with an initial value of null.
@@ -97,13 +97,13 @@ public class Cache<T> {
     }
 
     /**
-     * Sets the function to invoke to refresh the cache.
+     * Sets the supplier to invoke to refresh the cache.
      *
-     * @param function the function to invoke to refresh the cache
-     * @throws NullPointerException if the provided function is null
+     * @param supplier the supplier to invoke to refresh the cache
+     * @throws NullPointerException if the provided supplier is null
      */
-    public void setCachedValueUpdater(Supplier<T> function) {
-        cachedValueUpdater = Preconditions.checkNotNull(function);
+    public void setCachedValueUpdater(CacheRefreshSupplier<T> supplier) {
+        cachedValueUpdater = Preconditions.checkNotNull(supplier);
     }
 
     /**
@@ -136,10 +136,11 @@ public class Cache<T> {
             return false;
         }
 
+
         Cache<?> other = (Cache<?>) o;
-        return other.cachedValue.equals(cachedValueUpdater)
+        return other.cachedValue.equals(cachedValue)
                 && other.allowNull == allowNull
-                && other.cachedValueUpdater.equals(cachedValueUpdater);
+                && Objects.equals(other.cachedValueUpdater, cachedValueUpdater);
     }
 
     /**
@@ -160,7 +161,7 @@ public class Cache<T> {
     @Override
     public int hashCode() {
         int ret = cachedValue.hashCode();
-        ret = 31 * ret + cachedValueUpdater.hashCode();
+        ret = 31 * ret + Objects.hash(cachedValueUpdater);
         ret = 31 * ret + Boolean.hashCode(allowNull);
         return ret;
     }
