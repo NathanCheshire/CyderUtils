@@ -155,8 +155,7 @@ public enum DetermineAudioLengthMethod {
             ImmutableList<String> script = ImmutableList.of(
                     "import sys",
                     "from mutagen import File",
-                    "audio_file = File(\"" + audioFile.getAbsolutePath().replace("\\", "\\\\")
-                            + "\")",
+                    "audio_file = File(r\"" + audioFile.getAbsolutePath() + "\")",
                     "print(audio_file.info.length)"
             );
 
