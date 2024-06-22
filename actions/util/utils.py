@@ -25,11 +25,11 @@ def find_files(starting_directory: str, extensions: list[str], recursive: bool =
     if recursive:
         return [os.path.join(root, file)
                 for root, _, files in os.walk(starting_directory)
-                for file in files if is_valid_file(file)]
+                for file in files if is_valid_file(file, extensions)]
     else:
         return [os.path.join(starting_directory, file)
                 for file in os.listdir(starting_directory)
-                if os.path.isfile(os.path.join(starting_directory, file)) and is_valid_file(file)]
+                if os.path.isfile(os.path.join(starting_directory, file)) and is_valid_file(file, extensions)]
 
 
 def strip_lines(lines: list[str]) -> list[str]:

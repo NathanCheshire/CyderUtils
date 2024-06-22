@@ -1,0 +1,13 @@
+name: Commit detections
+
+on:
+  push:
+jobs:
+  detections:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run detections
+        run: |
+          ./actions/run.sh
