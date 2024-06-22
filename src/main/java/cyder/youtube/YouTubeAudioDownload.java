@@ -615,7 +615,6 @@ public class YouTubeAudioDownload {
         thumbnailDownloadName = YouTubeUtil.getDownloadSaveName(providedDownloadString);
     }
 
-
     /**
      * The actions to invoke when an exception is thrown inside of the download thread.
      *
