@@ -70,7 +70,6 @@ public final class AudioValidationUtil {
             int bytesRead = fis.read(buffer);
             AtomicInteger byteOffset = new AtomicInteger();
 
-
             while (byteOffset.get() < bytesRead - (int) DataUnit.NIBBLE.getValue()) {
                 ByteBuffer byteBuffer = ByteBuffer.wrap(buffer, byteOffset.get(), (int) DataUnit.NIBBLE.getValue());
                 byteBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -86,8 +85,6 @@ public final class AudioValidationUtil {
             }
         } catch (IOException e) {
             throw new AudioException(e);
-
-
         }
 
         return false;
