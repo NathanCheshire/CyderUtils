@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
-import java.lang.IllegalStateException
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -149,7 +148,7 @@ class CPlayerTest
         assertTrue(player.isPlaying)
         player.stopPlaying()
         assertFalse(player.isCanceled)
-        Thread.sleep(5000) // wait for callback to fire
+        while (!called.get()) Thread.onSpinWait() // wait for callback to fire
         assertTrue(called.get())
         assertFalse(player.isPlaying)
     }
@@ -170,8 +169,8 @@ class CPlayerTest
 
         player.play()
         player.stopPlaying()
-        Thread.sleep(5000) // wait for callbacks to fire
-//        assertEquals(5, int.get())
+        while (int.get() != 5) Thread.onSpinWait() // wait for callback to fire
+        assertEquals(5, int.get())
         assertFalse(player.isPlaying)
         assertFalse(player.isCanceled)
     }
