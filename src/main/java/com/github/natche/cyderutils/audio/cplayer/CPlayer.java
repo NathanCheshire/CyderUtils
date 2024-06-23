@@ -18,10 +18,15 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import java.util.logging.Logger;
+
+
 /**
  * An encapsulated JLayer {@link Player} for playing singular audio files.
  */
 public final class CPlayer {
+    private static final Logger logger = Logger.getLogger(CPlayer.class.getName());
+
     /**
      * The audio file this player will stream/play.
      */
@@ -84,7 +89,9 @@ public final class CPlayer {
         playing.set(true);
         canceled.set(false);
 
+        logger.info("Starting thread");
         CyderThreadRunner.submit(() -> {
+            logger.info("Inside of thread");
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
 
@@ -92,6 +99,7 @@ public final class CPlayer {
                 if (!canceled.get() && playing.get()) player.play();
 
                 if (!canceled.get()) {
+                    logger.info("Running callbacks");
                     onCompletionCallbacks.forEach(CyderRunnable::run);
                 }
             } catch (JavaLayerException | IOException e) {

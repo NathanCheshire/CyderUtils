@@ -148,7 +148,7 @@ class CPlayerTest
         assertTrue(player.isPlaying)
         player.stopPlaying()
         assertFalse(player.isCanceled)
-        while (!called.get()) Thread.onSpinWait() // wait for callback to fire
+        Thread.sleep(1000)
         assertTrue(called.get())
         assertFalse(player.isPlaying)
     }
@@ -169,7 +169,7 @@ class CPlayerTest
 
         player.play()
         player.stopPlaying()
-        while (int.get() != 5) Thread.onSpinWait() // wait for callback to fire
+        Thread.sleep(1000)
         assertEquals(5, int.get())
         assertFalse(player.isPlaying)
         assertFalse(player.isCanceled)
@@ -180,8 +180,8 @@ class CPlayerTest
      */
     @Test
     fun testEquals() {
-        val first = CPlayer(validAudioFile);
-        val equal = CPlayer(validAudioFile);
+        val first = CPlayer(validAudioFile)
+        val equal = CPlayer(validAudioFile)
 
         val notEqual = CPlayer(validAudioFile).addOnCompletionCallback { Thread.sleep(1) }
 
@@ -196,8 +196,8 @@ class CPlayerTest
      */
     @Test
     fun testHashCode() {
-        val first = CPlayer(validAudioFile);
-        val equal = CPlayer(validAudioFile);
+        val first = CPlayer(validAudioFile)
+        val equal = CPlayer(validAudioFile)
 
         val notEqual = CPlayer(validAudioFile).addOnCompletionCallback { Thread.sleep(0) }
 
@@ -211,7 +211,7 @@ class CPlayerTest
      */
     @Test
     fun testToString() {
-        val first = CPlayer(validAudioFile);
+        val first = CPlayer(validAudioFile)
         val notEqual = CPlayer(validAudioFile).addOnCompletionCallback(object : CyderRunnable {
             override fun run() {
                 Thread.sleep(0)
