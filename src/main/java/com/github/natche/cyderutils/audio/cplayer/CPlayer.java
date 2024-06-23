@@ -10,7 +10,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
-import javax.sound.sampled.AudioFileFormat;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +87,10 @@ public final class CPlayer {
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
                 player.play();
-                if (!canceled.get()) onCompletionCallbacks.forEach(Runnable::run);
+                if (!canceled.get()) {
+                    onCompletionCallbacks.forEach(Runnable::run);
+                    System.out.println("executed completion callbacks");
+                }
             } catch (JavaLayerException | IOException e) {
                 throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
             } finally {
@@ -116,6 +118,15 @@ public final class CPlayer {
     public void cancelPlaying() {
         canceled.set(true);
         closeResources();
+    }
+
+    /**
+     * Returns whether this CPlayer has been canceled.
+     *
+     * @return whether this CPlayer has been canceled
+     */
+    public boolean isCanceled() {
+        return canceled.get();
     }
 
     /**
