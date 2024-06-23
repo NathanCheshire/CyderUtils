@@ -5,6 +5,7 @@ import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.structures.CyderRunnable;
+import com.github.natche.cyderutils.threads.CyderThreadFactory;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -16,10 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import java.util.logging.Logger;
-
 
 /**
  * An encapsulated JLayer {@link Player} for playing singular audio files.
@@ -90,7 +90,7 @@ public final class CPlayer {
         canceled.set(false);
 
         logger.info("Starting thread");
-        CyderThreadRunner.submit(() -> {
+        Executors.newSingleThreadExecutor(new CyderThreadFactory(getPlayThreadName())).submit(() -> {
             logger.info("Inside of thread");
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
@@ -107,7 +107,7 @@ public final class CPlayer {
             } finally {
                 closeResources();
             }
-        }, getPlayThreadName());
+        });
     }
 
     /**
