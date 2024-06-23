@@ -4,6 +4,7 @@ import com.github.natche.cyderutils.annotations.ForReadability;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
+import com.github.natche.cyderutils.structures.CyderRunnable;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -34,7 +35,7 @@ public final class CPlayer {
     /**
      * The runnables to invoke upon a completion event.
      */
-    private final ArrayList<Runnable> onCompletionCallbacks;
+    private final ArrayList<CyderRunnable> onCompletionCallbacks;
 
     /**
      * Whether this player has been canceled.
@@ -78,7 +79,7 @@ public final class CPlayer {
      * The audio is played in a new thread.
      */
     public void play() {
-        Preconditions.checkArgument(!playing.get());
+        Preconditions.checkState(!playing.get());
 
         playing.set(true);
         canceled.set(false);
@@ -86,16 +87,17 @@ public final class CPlayer {
         CyderThreadRunner.submit(() -> {
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
-                player.play();
+
+                // Edge case of cancel or stop called before this thread started playing
+                if (!canceled.get() && playing.get()) player.play();
+
                 if (!canceled.get()) {
-                    onCompletionCallbacks.forEach(Runnable::run);
-                    System.out.println("executed completion callbacks");
+                    onCompletionCallbacks.forEach(CyderRunnable::run);
                 }
             } catch (JavaLayerException | IOException e) {
                 throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
             } finally {
                 closeResources();
-                playing.set(false);
             }
         }, getPlayThreadName());
     }
@@ -107,7 +109,7 @@ public final class CPlayer {
      */
     @ForReadability
     private String getPlayThreadName() {
-        return "CPlayer{"
+        return "CPlayer.play"
                 + "audioFile=\"" + audioFile.getAbsolutePath() + "\""
                 + "}";
     }
@@ -140,19 +142,22 @@ public final class CPlayer {
      * Closes all resources open by this player.
      */
     private void closeResources() {
+        playing.set(false);
         if (player != null) player.close();
         player = null;
     }
 
     /**
      * Adds the callback to invoke upon a completion event.
+     * Note, a completion is a play invocation finishing or a call to {@link #stopPlaying()}.
+     * Invoking {@link #cancelPlaying()} will not trigger completion callbacks
      *
      * @param callback the callback to invoke upon a completion event
      * @return this player
      * @throws NullPointerException if the provide callback is null
      */
     @CanIgnoreReturnValue
-    public CPlayer addOnCompletionCallback(Runnable callback) {
+    public CPlayer addOnCompletionCallback(CyderRunnable callback) {
         Preconditions.checkNotNull(callback);
         onCompletionCallbacks.add(callback);
         return this;
@@ -202,10 +207,10 @@ public final class CPlayer {
 
         CPlayer other = (CPlayer) o;
         return audioFile.equals(other.audioFile)
-                && player.equals(other.player)
+                && Objects.equals(player, other.player)
                 && Objects.equals(other.onCompletionCallbacks, onCompletionCallbacks)
-                && playing.equals(other.playing)
-                && canceled.equals(other.canceled);
+                && playing.get() == other.playing.get()
+                && canceled.get() == other.canceled.get();
     }
 
     /**
@@ -214,7 +219,7 @@ public final class CPlayer {
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();
-        ret = 31 * ret + player.hashCode();
+        ret = 31 * ret + Objects.hashCode(player);
         ret = 31 * ret + Objects.hashCode(onCompletionCallbacks);
         ret = 31 * ret + Boolean.hashCode(playing.get());
         ret = 31 * ret + Boolean.hashCode(canceled.get());

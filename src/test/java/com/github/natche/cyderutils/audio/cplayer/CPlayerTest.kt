@@ -1,10 +1,14 @@
 package com.github.natche.cyderutils.audio.cplayer
 
+import com.github.natche.cyderutils.exceptions.IllegalMethodException
+import com.github.natche.cyderutils.structures.CyderRunnable
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
+import java.lang.IllegalStateException
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -16,6 +20,9 @@ class CPlayerTest
  * Creates a new instance of this class for testing purposes.
  */
 {
+    /**
+     * A valid audio file.
+     */
     private val validAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -29,6 +36,9 @@ class CPlayerTest
         "TastyCarrots.mp3"
     )
 
+    /**
+     * Another valid audio file of a different extension.
+     */
     private val anotherValidAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -42,6 +52,9 @@ class CPlayerTest
         "TastyCarrots.wav"
     )
 
+    /**
+     * An invalid audio file of an unsupported extension.
+     */
     private val invalidAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -68,6 +81,27 @@ class CPlayerTest
         assertDoesNotThrow { CPlayer(validAudioFile) }
     }
 
+    /**
+     * Tests to ensure the suppressed default constructor is not invocable.
+     */
+    @Test
+    fun testConstructionUsingSuppressedConstructor() {
+        val constructor = CPlayer::class.java.getDeclaredConstructor()
+        constructor.isAccessible = true
+
+        val exception = assertThrows(InvocationTargetException::class.java) {
+            constructor.newInstance()
+        }
+
+        val cause = exception.cause
+        assertNotNull(cause)
+        assertTrue(cause is IllegalMethodException)
+        assertEquals("Invalid constructor; required audio file", cause?.message)
+    }
+
+    /**
+     * Tests for the play method.
+     */
     @Test
     fun testPlay() {
         val player = CPlayer(validAudioFile)
@@ -76,7 +110,8 @@ class CPlayerTest
     }
 
     /**
-     * Tests for the following methods:
+     * Tests for the functionality of cancel playing; transitively tests the following methods:
+     *
      *  - [CPlayer.play]
      *  - [CPlayer.cancelPlaying]
      *  - [CPlayer.isPlaying]
@@ -90,63 +125,125 @@ class CPlayerTest
         val player = CPlayer(validAudioFile)
         player.addOnCompletionCallback { called.set(true) }
         assertDoesNotThrow { player.play() }
-        Thread.sleep(500)
+        assertThrows(IllegalStateException::class.java) { player.play() }
         assertEquals(validAudioFile, player.audioFile)
         assertTrue(player.isUsingAudioFile(validAudioFile))
         assertTrue(player.isPlaying)
         player.cancelPlaying()
         assertTrue(player.isCanceled)
-        // Sleep to allow callbacks to execute if they would and state to reset
-        Thread.sleep(500)
         assertFalse(called.get())
         assertFalse(player.isPlaying)
     }
 
+    /**
+     * Tests the functionality of stop playing.
+     */
     @Test
     fun testStopPlaying() {
         val called = AtomicBoolean(false)
         val player = CPlayer(validAudioFile)
         player.addOnCompletionCallback { called.set(true) }
         assertDoesNotThrow { player.play() }
-        Thread.sleep(500)
         assertEquals(validAudioFile, player.audioFile)
         assertTrue(player.isUsingAudioFile(validAudioFile))
         assertTrue(player.isPlaying)
         player.stopPlaying()
         assertFalse(player.isCanceled)
-        // Sleep to allow callbacks to execute if they would and state to reset
-        Thread.sleep(500)
+        Thread.sleep(1000) // wait for callback to fire
         assertTrue(called.get())
         assertFalse(player.isPlaying)
     }
 
+    /**
+     * Tests for adding on completion callbacks and that they are called.
+     */
     @Test
     fun testAddOnCompletionCallback() {
         val int = AtomicInteger(0)
         val player = CPlayer(validAudioFile)
 
-        player.addOnCompletionCallback {int.incrementAndGet()}
-        player.addOnCompletionCallback {int.incrementAndGet()}
-        player.addOnCompletionCallback {int.incrementAndGet()}
-        player.addOnCompletionCallback {int.incrementAndGet()}
-        player.addOnCompletionCallback {int.incrementAndGet()}
+        player.addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.incrementAndGet() }
 
         player.play()
-        // todo sleeps shouldn't be needed here
-        Thread.sleep(2000)
         player.stopPlaying()
-        Thread.sleep(2000)
+        Thread.sleep(1000) // wait for callbacks to fire
         assertEquals(5, int.get())
         assertFalse(player.isPlaying)
         assertFalse(player.isCanceled)
     }
 
+    /**
+     * Test for the equals method.
+     */
     @Test
-    fun testEquals() {}
+    fun testEquals() {
+        val first = CPlayer(validAudioFile);
+        val equal = CPlayer(validAudioFile);
 
-    @Test
-    fun testHashCode() {}
+        val notEqual = CPlayer(validAudioFile).addOnCompletionCallback { Thread.sleep(1) }
 
+        assertEquals(first, first)
+        assertEquals(first, equal)
+        assertNotEquals(first, notEqual)
+        assertNotEquals(first, Object())
+    }
+
+    /**
+     * Tests for the hashCode method.
+     */
     @Test
-    fun testToString() {}
+    fun testHashCode() {
+        val first = CPlayer(validAudioFile);
+        val equal = CPlayer(validAudioFile);
+
+        val notEqual = CPlayer(validAudioFile).addOnCompletionCallback(object : CyderRunnable {
+            override fun run() {
+                Thread.sleep(0)
+            }
+
+            override fun toString(): String {
+                return "CustomRunnable with sleep(0)"
+            }
+
+            override fun hashCode(): Int {
+                return 0
+            }
+        })
+
+        assertEquals(first.hashCode(), equal.hashCode())
+        assertNotEquals(first.hashCode(), notEqual.hashCode())
+        assertEquals(777911974, first.hashCode())
+        assertEquals(777940804, notEqual.hashCode())
+    }
+
+    /**
+     * Test for the toString method.
+     */
+    @Test
+    fun testToString() {
+        val first = CPlayer(validAudioFile);
+        val notEqual = CPlayer(validAudioFile).addOnCompletionCallback(object : CyderRunnable {
+            override fun run() {
+                Thread.sleep(0)
+            }
+
+            override fun toString(): String {
+                return "CustomRunnable with sleep(0)"
+            }
+        })
+
+        assertEquals(
+            "AudioPlayer{audioFile=" + validAudioFile.absolutePath
+                    + ", player=null, onCompletionCallback=[], canceled=false, playing=false}", first.toString()
+        )
+        assertEquals(
+            "AudioPlayer{audioFile=" + validAudioFile.absolutePath
+                    + ", player=null, onCompletionCallback=[CustomRunnable with sleep(0)],"
+                    + " canceled=false, playing=false}", notEqual.toString()
+        )
+    }
 }

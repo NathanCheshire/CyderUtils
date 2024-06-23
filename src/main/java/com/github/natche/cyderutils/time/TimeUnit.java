@@ -7,6 +7,7 @@ import static com.github.natche.cyderutils.time.TimeUtil.*;
 /**
  * Common units of time and conversions between them.
  */
+@Deprecated // todo use concurrent/TimeUnit.java
 public enum TimeUnit {
     MILLISECONDS,
     SECONDS,
