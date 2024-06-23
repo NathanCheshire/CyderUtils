@@ -1,14 +1,17 @@
 package com.github.natche.cyderutils.audio.cplayer;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.annotations.ForReadability;
+import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,6 +44,15 @@ public final class CPlayer {
      * Whether this player is currently playing audio.
      */
     private final AtomicBoolean playing = new AtomicBoolean();
+
+    /**
+     * Suppress default constructor.
+     *
+     * @throws IllegalArgumentException if invoked
+     */
+    private CPlayer() {
+        throw new IllegalMethodException("Invalid constructor; required audio file");
+    }
 
     /**
      * Constructs a new CPlayer object.
@@ -76,7 +88,7 @@ public final class CPlayer {
                 player.play();
                 if (!canceled.get()) onCompletionCallbacks.forEach(Runnable::run);
             } catch (JavaLayerException | IOException e) {
-               throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
+                throw new CPlayerException("Failed to play audio file, exception: " + e.getMessage());
             } finally {
                 closeResources();
                 playing.set(false);
@@ -176,10 +188,11 @@ public final class CPlayer {
         }
 
         CPlayer other = (CPlayer) o;
-        return audioFile == other.audioFile
+        return audioFile.equals(other.audioFile)
+                && player.equals(other.player)
                 && Objects.equals(other.onCompletionCallbacks, onCompletionCallbacks)
-                && playing == other.playing
-                && canceled == other.canceled;
+                && playing.equals(other.playing)
+                && canceled.equals(other.canceled);
     }
 
     /**
@@ -188,6 +201,7 @@ public final class CPlayer {
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();
+        ret = 31 * ret + player.hashCode();
         ret = 31 * ret + Objects.hashCode(onCompletionCallbacks);
         ret = 31 * ret + Boolean.hashCode(playing.get());
         ret = 31 * ret + Boolean.hashCode(canceled.get());

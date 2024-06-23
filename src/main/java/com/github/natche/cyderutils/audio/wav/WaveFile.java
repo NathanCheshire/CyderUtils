@@ -16,7 +16,7 @@ import java.util.Objects;
 
 /**
  * Wrapper class for a wave (.wav) file.
- * See <a href="http://soundfile.sapp.org/doc/WaveFormat">this link</a>
+ * See <a href="http://soundfile.sapp.org/doc/WaveFormat">here</a>
  * to reference the wav file data structure.
  * <p>
  * Instances of this class are immutable.

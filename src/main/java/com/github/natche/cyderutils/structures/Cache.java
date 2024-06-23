@@ -136,7 +136,6 @@ public final class Cache<T> {
             return false;
         }
 
-
         Cache<?> other = (Cache<?>) o;
         return other.cachedValue.equals(cachedValue)
                 && other.allowNull == allowNull

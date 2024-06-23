@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A builder for constructing the parameters of waveform png generation from a {@link cyderutils.audio.CyderAudioFile}.
+ * A builder for constructing the parameters of waveform png generation from a {@link CyderAudioFile}.
  */
 public final class WaveformGenerationBuilder {
     private static final int DEFAULT_WIDTH = 300;
