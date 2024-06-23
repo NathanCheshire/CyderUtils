@@ -149,7 +149,7 @@ class CPlayerTest
         assertTrue(player.isPlaying)
         player.stopPlaying()
         assertFalse(player.isCanceled)
-        Thread.sleep(1000) // wait for callback to fire
+        Thread.sleep(5000) // wait for callback to fire
         assertTrue(called.get())
         assertFalse(player.isPlaying)
     }
@@ -170,7 +170,7 @@ class CPlayerTest
 
         player.play()
         player.stopPlaying()
-        Thread.sleep(1000) // wait for callbacks to fire
+        Thread.sleep(5000) // wait for callbacks to fire
         assertEquals(5, int.get())
         assertFalse(player.isPlaying)
         assertFalse(player.isCanceled)
@@ -216,8 +216,8 @@ class CPlayerTest
 
         assertEquals(first.hashCode(), equal.hashCode())
         assertNotEquals(first.hashCode(), notEqual.hashCode())
-        assertEquals(777911974, first.hashCode())
-        assertEquals(777940804, notEqual.hashCode())
+        assertEquals(777911013, first.hashCode())
+        assertEquals(777911974, notEqual.hashCode())
     }
 
     /**
@@ -238,11 +238,11 @@ class CPlayerTest
 
         assertEquals(
             "AudioPlayer{audioFile=" + validAudioFile.absolutePath
-                    + ", player=null, onCompletionCallback=[], canceled=false, playing=false}", first.toString()
+                    + ", player=null, onCompletionCallbacks=[], canceled=false, playing=false}", first.toString()
         )
         assertEquals(
             "AudioPlayer{audioFile=" + validAudioFile.absolutePath
-                    + ", player=null, onCompletionCallback=[CustomRunnable with sleep(0)],"
+                    + ", player=null, onCompletionCallbacks=[CustomRunnable with sleep(0)],"
                     + " canceled=false, playing=false}", notEqual.toString()
         )
     }

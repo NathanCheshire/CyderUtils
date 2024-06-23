@@ -208,7 +208,7 @@ public final class CPlayer {
         CPlayer other = (CPlayer) o;
         return audioFile.equals(other.audioFile)
                 && Objects.equals(player, other.player)
-                && Objects.equals(other.onCompletionCallbacks, onCompletionCallbacks)
+                && other.onCompletionCallbacks.size() == onCompletionCallbacks.size()
                 && playing.get() == other.playing.get()
                 && canceled.get() == other.canceled.get();
     }
@@ -220,7 +220,7 @@ public final class CPlayer {
     public int hashCode() {
         int ret = audioFile.hashCode();
         ret = 31 * ret + Objects.hashCode(player);
-        ret = 31 * ret + Objects.hashCode(onCompletionCallbacks);
+        ret = 31 * ret + Integer.hashCode(onCompletionCallbacks.size());
         ret = 31 * ret + Boolean.hashCode(playing.get());
         ret = 31 * ret + Boolean.hashCode(canceled.get());
         return ret;
@@ -234,7 +234,7 @@ public final class CPlayer {
         return "AudioPlayer{"
                 + "audioFile=" + audioFile
                 + ", player=" + player
-                + ", onCompletionCallback=" + onCompletionCallbacks
+                + ", onCompletionCallbacks=" + onCompletionCallbacks
                 + ", canceled=" + canceled
                 + ", playing=" + playing
                 + "}";
