@@ -148,6 +148,7 @@ public final class FileUtil {
      * @param file the file to determine if it is a supported image type
      * @return whether the provided file is a supported image file
      */
+    @Deprecated
     public static boolean isSupportedImageExtension(File file) {
         Preconditions.checkNotNull(file);
 
@@ -170,6 +171,7 @@ public final class FileUtil {
      * @param file the filename to determine if it is a supported audio type
      * @return whether the provided file is a supported audio file
      */
+    @Deprecated
     public static boolean isSupportedAudioExtension(File file) {
         Preconditions.checkNotNull(file);
 
@@ -189,6 +191,7 @@ public final class FileUtil {
      * @param file the file to validate
      * @return whether the provided file is a supported font file
      */
+    @Deprecated
     public static boolean isSupportedFontExtension(File file) {
         Preconditions.checkNotNull(file);
 

@@ -70,7 +70,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForMp3UsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.mp3"));
+                        "resources", "TastyCarrots.mp3"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -89,7 +89,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForMp3UsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.mp3"));
+                        "resources", "TastyCarrots.mp3"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -108,7 +108,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForWavUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.wav"));
+                        "resources", "TastyCarrots.wav"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -127,7 +127,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForWavUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.wav"));
+                        "resources", "TastyCarrots.wav"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -146,7 +146,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForOggUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.ogg"));
+                        "resources", "TastyCarrots.ogg"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -165,7 +165,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForOggUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.ogg"));
+                        "resources", "TastyCarrots.ogg"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -184,7 +184,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForM4aUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.m4a"));
+                        "resources", "TastyCarrots.m4a"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {
@@ -203,7 +203,7 @@ class DetermineAudioLengthMethodTest {
     void testDetermineAudioLengthWorksForM4aUsingFfmpegUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
                 OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
-                        "TastyCarrots.m4a"));
+                        "resources", "TastyCarrots.m4a"));
         assertDoesNotThrow(() -> futureDuration.get());
 
         try {

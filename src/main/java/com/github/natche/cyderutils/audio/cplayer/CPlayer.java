@@ -1,6 +1,7 @@
 package com.github.natche.cyderutils.audio.cplayer;
 
 import com.github.natche.cyderutils.annotations.ForReadability;
+import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
@@ -9,6 +10,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
+import javax.sound.sampled.AudioFileFormat;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +68,7 @@ public final class CPlayer {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
         this.audioFile = audioFile;
         this.onCompletionCallbacks = new ArrayList<>();
