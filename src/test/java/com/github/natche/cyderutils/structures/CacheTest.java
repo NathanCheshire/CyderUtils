@@ -178,7 +178,6 @@ class CacheTest {
         assertEquals(-2112506635, notEqual.hashCode());
     }
 
-
     /**
      * Tests for the toString method.
      */
