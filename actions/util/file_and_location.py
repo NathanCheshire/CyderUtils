@@ -1,3 +1,6 @@
+from color.colors import *
+
+
 class FileAndLocation:
     """ 
     A record type for holding information about a file, its path, and a specific line range.
@@ -49,3 +52,17 @@ class FileAndLocation:
         Returns the list of lines within the specified range.
         """
         return self._lines
+
+    def _print_line_number_prefix(self, number: int, content: str) -> None:
+        print(f"{red}{number}{reset} {bold}: {blue}{content}")
+
+    def print_self(self):
+        concerned_with_lines = self._lines[self._start_line - 1:self._end_line]
+
+        print(f"{blue}{bold}{sep}{reset}")
+        print(f"{bold}{self._file_path}")
+        print(f"{blue}{bold}")
+        for index, line in enumerate(concerned_with_lines):
+            self._print_line_number_prefix(index + self._start_line, line)
+
+        print(f"{sep}{reset}")
