@@ -9,6 +9,7 @@ class WordFilterDetector(Detector):
         blocked_words_file = os.path.join(
             os.path.dirname(__file__), '../blocked.txt')
         blocked_words = read_lines(blocked_words_file)
+        ignore_from = ["./actions/venv", './venv']
 
         num_failures = 0
         ret = []
@@ -20,6 +21,8 @@ class WordFilterDetector(Detector):
                 if line_empty:
                     continue
                 if os.path.abspath(blocked_words_file) == os.path.abspath(file.get_path()):
+                    continue
+                if any(file.get_path().startswith(ignore) for ignore in ignore_from):
                     continue
 
                 parts = line.strip().split()
