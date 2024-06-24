@@ -22,9 +22,11 @@ class WordFilterDetector(Detector):
                 if os.path.abspath(blocked_words_file) == os.path.abspath(file.get_path()):
                     continue
 
-                if line in blocked_words:
-                    ret.append(FileAndLocation(os.path.basename(file.get_path()), file.get_path(),
-                               line_index + 1, line_index + 1, lines))
+                parts = line.strip().split()
+                for part in parts:
+                    if part.strip() in blocked_words:
+                        ret.append(FileAndLocation(os.path.basename(file.get_path()), file.get_path(),
+                                                   line_index + 1, line_index + 1, lines))
 
         self._num_failures = num_failures
         return ret

@@ -151,7 +151,6 @@ class CPlayerTest
         Thread.sleep(1000)
         assertTrue(called.get())
         assertFalse(player.isPlaying)
-        // fuck
     }
 
     /**
