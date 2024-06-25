@@ -65,4 +65,4 @@ class FileAndLocation:
         for index, line in enumerate(concerned_with_lines):
             self._print_line_number_prefix(index + self._start_line, line)
 
-        print(f"{sep}{reset}")
+        print(f"{reset}")
