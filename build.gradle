@@ -1,3 +1,5 @@
+import java.time.Duration
+
 //file:noinspection SpellCheckingInspection
 
 plugins {
@@ -22,7 +24,13 @@ jacocoTestReport {
 test {
     useJUnitPlatform()
     jvmArgs += '--enable-preview'
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    // Set a timeout for tests to prevent hanging tests
+    timeout = Duration.ofMinutes(2)
 }
+
 
 group 'cyder-utils'
 version '0.1.0'

@@ -97,6 +97,7 @@ public final class CPlayer {
                 // Edge case of cancel or stop called before this thread started playing
                 if (!canceled.get() && playing.get()) player.play();
 
+                // todo we never get here on automated tests
                 logger.info("After play() in thread");
                 if (!canceled.get()) {
                     logger.info("Running callbacks from play()");

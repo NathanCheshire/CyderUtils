@@ -60,7 +60,7 @@ jobs:
         shell: powershell
 
       - name: Build with Gradle and run tests
-        run: ./gradlew build test --stacktrace
+        run: ./gradlew build test --info --stacktrace
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
 
