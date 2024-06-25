@@ -88,17 +88,18 @@ public final class CPlayer {
         playing.set(true);
         canceled.set(false);
 
-        logger.info("Starting thread");
+        logger.info("Starting play() thread");
         Executors.newSingleThreadExecutor(new CyderThreadFactory(getPlayThreadName())).submit(() -> {
-            logger.info("Inside of thread");
+            logger.info("Inside of play() thread");
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
 
                 // Edge case of cancel or stop called before this thread started playing
                 if (!canceled.get() && playing.get()) player.play();
 
+                logger.info("After play() in thread");
                 if (!canceled.get()) {
-                    logger.info("Running callbacks");
+                    logger.info("Running callbacks from play()");
                     onCompletionCallbacks.forEach(CyderRunnable::run);
                 }
             } catch (JavaLayerException | IOException e) {

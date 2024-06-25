@@ -163,10 +163,10 @@ class CPlayerTest
         val player = CPlayer(validAudioFile)
 
         player.addOnCompletionCallback { int.incrementAndGet() }
-            .addOnCompletionCallback { int.incrementAndGet() }
-            .addOnCompletionCallback { int.incrementAndGet() }
-            .addOnCompletionCallback { int.incrementAndGet() }
-            .addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
 
         assertEquals(5, player.onCompletionCallbackLength)
 
