@@ -148,6 +148,7 @@ class CPlayerTest
         assertTrue(player.isPlaying)
         player.stopPlaying()
         assertFalse(player.isCanceled)
+        assertEquals(1, player.onCompletionCallbackLength)
         Thread.sleep(1000)
         assertTrue(called.get())
         assertFalse(player.isPlaying)
@@ -166,6 +167,8 @@ class CPlayerTest
             .addOnCompletionCallback { int.incrementAndGet() }
             .addOnCompletionCallback { int.incrementAndGet() }
             .addOnCompletionCallback { int.incrementAndGet() }
+
+        assertEquals(5, player.onCompletionCallbackLength)
 
         player.play()
         player.stopPlaying()

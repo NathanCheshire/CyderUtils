@@ -6,7 +6,6 @@ import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.structures.CyderRunnable;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
-import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javazoom.jl.decoder.JavaLayerException;
@@ -169,6 +168,15 @@ public final class CPlayer {
         Preconditions.checkNotNull(callback);
         onCompletionCallbacks.add(callback);
         return this;
+    }
+
+    /**
+     * Returns the number of on-completion callbacks.
+     *
+     * @return the number of on-completion callbacks
+     */
+    public int getOnCompletionCallbackLength() {
+        return onCompletionCallbacks.size();
     }
 
     /**
