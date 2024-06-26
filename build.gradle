@@ -91,7 +91,11 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
     implementation 'net.lingala.zip4j:zip4j:' + zip4jVersion
     implementation 'com.github.nathancheshire:gravatarjavaclient:' + gravatarClientHash
+
+    // Test
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.5.1'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
 
     // Selenium dependencies
     implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
