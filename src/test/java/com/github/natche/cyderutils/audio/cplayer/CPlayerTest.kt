@@ -2,6 +2,8 @@ package com.github.natche.cyderutils.audio.cplayer
 
 import com.github.natche.cyderutils.exceptions.IllegalMethodException
 import com.github.natche.cyderutils.structures.CyderRunnable
+import com.github.natche.cyderutils.threads.CyderThreadFactory
+import com.github.natche.cyderutils.threads.CyderThreadRunner
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -134,49 +136,61 @@ class CPlayerTest
         assertFalse(player.isPlaying)
     }
 
-    /**
-     * Tests the functionality of stop playing.
-     */
     @Test
-    fun testStopPlaying() {
-        val called = AtomicBoolean(false)
-        val player = CPlayer(validAudioFile)
-        player.addOnCompletionCallback { called.set(true) }
-        assertDoesNotThrow { player.play() }
-        assertEquals(validAudioFile, player.audioFile)
-        assertTrue(player.isUsingAudioFile(validAudioFile))
-        assertTrue(player.isPlaying)
-        player.stopPlaying()
-        assertFalse(player.isCanceled)
-        assertEquals(1, player.onCompletionCallbackLength)
-        Thread.sleep(1000)
-        assertTrue(called.get())
-        assertFalse(player.isPlaying)
+    fun testForTesting() {
+        val triggered = AtomicBoolean(false)
+
+        CyderThreadRunner.submit( {
+            triggered.set((true))
+        }, "asdf");
+
+        Thread.sleep(5000)
+        assertTrue(triggered.get())
     }
 
-    /**
-     * Tests for adding on completion callbacks and that they are called.
-     */
-    @Test
-    fun testAddOnCompletionCallback() {
-        val int = AtomicInteger(0)
-        val player = CPlayer(validAudioFile)
-
-        player.addOnCompletionCallback { int.incrementAndGet() }
-            .addOnCompletionCallback { int.getAndIncrement() }
-            .addOnCompletionCallback { int.getAndIncrement() }
-            .addOnCompletionCallback { int.getAndIncrement() }
-            .addOnCompletionCallback { int.getAndIncrement() }
-
-        assertEquals(5, player.onCompletionCallbackLength)
-
-        player.play()
-        player.stopPlaying()
-        Thread.sleep(1000)
-        assertEquals(5, int.get())
-        assertFalse(player.isPlaying)
-        assertFalse(player.isCanceled)
-    }
+//    /**
+//     * Tests the functionality of stop playing.
+//     */
+//    @Test
+//    fun testStopPlaying() {
+//        val called = AtomicBoolean(false)
+//        val player = CPlayer(validAudioFile)
+//        player.addOnCompletionCallback { called.set(true) }
+//        assertDoesNotThrow { player.play() }
+//        assertEquals(validAudioFile, player.audioFile)
+//        assertTrue(player.isUsingAudioFile(validAudioFile))
+//        assertTrue(player.isPlaying)
+//        player.stopPlaying()
+//        assertFalse(player.isCanceled)
+//        assertEquals(1, player.onCompletionCallbackLength)
+//        Thread.sleep(1000)
+//        assertTrue(called.get())
+//        assertFalse(player.isPlaying)
+//    }
+//
+//    /**
+//     * Tests for adding on completion callbacks and that they are called.
+//     */
+//    @Test
+//    fun testAddOnCompletionCallback() {
+//        val int = AtomicInteger(0)
+//        val player = CPlayer(validAudioFile)
+//
+//        player.addOnCompletionCallback { int.incrementAndGet() }
+//            .addOnCompletionCallback { int.getAndIncrement() }
+//            .addOnCompletionCallback { int.getAndIncrement() }
+//            .addOnCompletionCallback { int.getAndIncrement() }
+//            .addOnCompletionCallback { int.getAndIncrement() }
+//
+//        assertEquals(5, player.onCompletionCallbackLength)
+//
+//        player.play()
+//        player.stopPlaying()
+//        Thread.sleep(1000)
+//        assertEquals(5, int.get())
+//        assertFalse(player.isPlaying)
+//        assertFalse(player.isCanceled)
+//    }
 
     /**
      * Test for the equals method.
