@@ -2,20 +2,27 @@ package com.github.natche.cyderutils.audio.cplayer
 
 import com.github.natche.cyderutils.exceptions.IllegalMethodException
 import com.github.natche.cyderutils.structures.CyderRunnable
-import com.github.natche.cyderutils.threads.CyderThreadFactory
 import com.github.natche.cyderutils.threads.CyderThreadRunner
 import com.github.natche.cyderutils.utils.OsUtil
+import com.nhaarman.mockitokotlin2.doAnswer
+import javazoom.jl.player.Player
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mockito.*
+import org.mockito.junit.jupiter.MockitoExtension
 import java.io.File
+import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Test for the [CPlayer].
  */
+@ExtendWith(MockitoExtension::class)
 class CPlayerTest
 /**
  * Creates a new instance of this class for testing purposes.
@@ -123,74 +130,100 @@ class CPlayerTest
     @Test
     fun testCancelPlaying() {
         val called = AtomicBoolean(false)
+
+        // Construct player and set internal JLayer player to timeout
         val player = CPlayer(validAudioFile)
+        val mockPlayer = mock(Player::class.java)
+        lenient().doAnswer {
+            Thread.sleep(5000)
+            null
+        }.`when`(mockPlayer).play()
+        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
+        playerField.isAccessible = true
+        playerField.set(player, mockPlayer)
+
         player.addOnCompletionCallback { called.set(true) }
         assertDoesNotThrow { player.play() }
         assertThrows(IllegalStateException::class.java) { player.play() }
         assertEquals(validAudioFile, player.audioFile)
         assertTrue(player.isUsingAudioFile(validAudioFile))
         assertTrue(player.isPlaying)
+
         player.cancelPlaying()
+        Thread.sleep(5000)
         assertTrue(player.isCanceled)
         assertFalse(called.get())
         assertFalse(player.isPlaying)
     }
 
+    /**
+     * Tests the functionality of stop playing.
+     */
     @Test
-    fun testForTesting() {
-        val triggered = AtomicBoolean(false)
+    fun testStopPlaying() {
+        val called = AtomicBoolean(false)
 
-        CyderThreadRunner.submit( {
-            triggered.set((true))
-        }, "asdf");
+        // Construct player and set internal JLayer player to timeout
+        val player = CPlayer(validAudioFile)
+        val mockPlayer = mock(Player::class.java)
+        lenient().doAnswer {
+            Thread.sleep(1000)
+            null
+        }.`when`(mockPlayer).play()
+
+        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
+        playerField.isAccessible = true
+        playerField.set(player, mockPlayer)
+
+        player.addOnCompletionCallback { called.set(true) }
+        assertDoesNotThrow { player.play() }
+        assertEquals(validAudioFile, player.audioFile)
+        assertTrue(player.isUsingAudioFile(validAudioFile))
+        assertTrue(player.isPlaying)
+        player.stopPlaying()
+        assertFalse(player.isCanceled)
+        assertEquals(1, player.onCompletionCallbackLength)
 
         Thread.sleep(5000)
-        assertTrue(triggered.get())
+
+        assertTrue(called.get())
+        assertFalse(player.isPlaying)
     }
 
-//    /**
-//     * Tests the functionality of stop playing.
-//     */
-//    @Test
-//    fun testStopPlaying() {
-//        val called = AtomicBoolean(false)
-//        val player = CPlayer(validAudioFile)
-//        player.addOnCompletionCallback { called.set(true) }
-//        assertDoesNotThrow { player.play() }
-//        assertEquals(validAudioFile, player.audioFile)
-//        assertTrue(player.isUsingAudioFile(validAudioFile))
-//        assertTrue(player.isPlaying)
-//        player.stopPlaying()
-//        assertFalse(player.isCanceled)
-//        assertEquals(1, player.onCompletionCallbackLength)
-//        Thread.sleep(1000)
-//        assertTrue(called.get())
-//        assertFalse(player.isPlaying)
-//    }
-//
-//    /**
-//     * Tests for adding on completion callbacks and that they are called.
-//     */
-//    @Test
-//    fun testAddOnCompletionCallback() {
-//        val int = AtomicInteger(0)
-//        val player = CPlayer(validAudioFile)
-//
-//        player.addOnCompletionCallback { int.incrementAndGet() }
-//            .addOnCompletionCallback { int.getAndIncrement() }
-//            .addOnCompletionCallback { int.getAndIncrement() }
-//            .addOnCompletionCallback { int.getAndIncrement() }
-//            .addOnCompletionCallback { int.getAndIncrement() }
-//
-//        assertEquals(5, player.onCompletionCallbackLength)
-//
-//        player.play()
-//        player.stopPlaying()
-//        Thread.sleep(1000)
-//        assertEquals(5, int.get())
-//        assertFalse(player.isPlaying)
-//        assertFalse(player.isCanceled)
-//    }
+    /**
+     * Tests for adding on completion callbacks and that they are called.
+     */
+    @Test
+    fun testAddOnCompletionCallback() {
+        val int = AtomicInteger(0)
+
+        // Construct player and set internal JLayer player to timeout
+        val player = CPlayer(validAudioFile)
+        val mockPlayer = mock(Player::class.java)
+        lenient().doAnswer {
+            Thread.sleep(1000)
+            null
+        }.`when`(mockPlayer).play()
+
+        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
+        playerField.isAccessible = true
+        playerField.set(player, mockPlayer)
+
+        player.addOnCompletionCallback { int.incrementAndGet() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+            .addOnCompletionCallback { int.getAndIncrement() }
+
+        assertEquals(5, player.onCompletionCallbackLength)
+
+        player.play()
+        player.stopPlaying()
+        Thread.sleep(5000)
+        assertEquals(5, int.get())
+        assertFalse(player.isPlaying)
+        assertFalse(player.isCanceled)
+    }
 
     /**
      * Test for the equals method.

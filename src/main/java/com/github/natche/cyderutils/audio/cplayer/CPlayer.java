@@ -5,7 +5,7 @@ import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.structures.CyderRunnable;
-import com.github.natche.cyderutils.threads.CyderThreadFactory;
+import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javazoom.jl.decoder.JavaLayerException;
@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -47,6 +46,11 @@ public final class CPlayer {
      * Whether this player is currently playing audio.
      */
     private final AtomicBoolean playing = new AtomicBoolean();
+
+    /**
+     * Whether this player was requested to stop playing.
+     */
+    private final AtomicBoolean requestedToStopPlaying = new AtomicBoolean();
 
     /**
      * Suppress default constructor.
@@ -85,13 +89,16 @@ public final class CPlayer {
         playing.set(true);
         canceled.set(false);
 
-        Executors.newSingleThreadExecutor(new CyderThreadFactory(getPlayThreadName())).submit(() -> {
+        CyderThreadRunner.submit(() -> {
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
                 player = new Player(bis);
 
                 // Edge case of cancel or stop called before this thread started playing
-                if (!canceled.get() && playing.get()) player.play();
+                if (!canceled.get() && !requestedToStopPlaying.get()) {
+                    player.play();
+                }
                 playing.set(false);
+                requestedToStopPlaying.set(false);
 
                 if (!canceled.get()) {
                     onCompletionCallbacks.forEach(CyderRunnable::run);
@@ -101,7 +108,7 @@ public final class CPlayer {
             } finally {
                 closeResources();
             }
-        });
+        }, getPlayThreadName());
     }
 
     /**
@@ -121,6 +128,7 @@ public final class CPlayer {
      */
     public void cancelPlaying() {
         canceled.set(true);
+        requestedToStopPlaying.set(true);
         closeResources();
     }
 
@@ -137,6 +145,7 @@ public final class CPlayer {
      * Stops the player, the completion callbacks will be invoked if present.
      */
     public void stopPlaying() {
+        requestedToStopPlaying.set(true);
         closeResources();
     }
 
