@@ -49,6 +49,9 @@ public final class CPlayer {
 
     /**
      * Whether this player was requested to stop playing.
+     * A request to stop playing is immediately set, whereas {@link #playing} might remain true
+     * for a period following the invocation of {@link #stopPlaying()} or {@link #cancelPlaying()}.
+     * Thus, this reflects the internal intent of the future proceedings of the audio.
      */
     private final AtomicBoolean requestedToStopPlaying = new AtomicBoolean();
 

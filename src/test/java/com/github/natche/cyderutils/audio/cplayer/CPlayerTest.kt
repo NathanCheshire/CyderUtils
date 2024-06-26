@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.audio.cplayer
 
 import com.github.natche.cyderutils.exceptions.IllegalMethodException
 import com.github.natche.cyderutils.structures.CyderRunnable
-import com.github.natche.cyderutils.threads.CyderThreadRunner
 import com.github.natche.cyderutils.utils.OsUtil
-import com.nhaarman.mockitokotlin2.doAnswer
 import javazoom.jl.player.Player
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -15,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import java.io.File
 import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
