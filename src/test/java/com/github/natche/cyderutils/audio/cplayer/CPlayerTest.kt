@@ -3,15 +3,14 @@ package com.github.natche.cyderutils.audio.cplayer
 import com.github.natche.cyderutils.exceptions.IllegalMethodException
 import com.github.natche.cyderutils.structures.CyderRunnable
 import com.github.natche.cyderutils.utils.OsUtil
-import javazoom.jl.player.Player
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import java.io.BufferedInputStream
 import java.io.File
-import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -25,6 +24,22 @@ class CPlayerTest
  * Creates a new instance of this class for testing purposes.
  */
 {
+    /**
+     * The audio player factory used for testing purposes since JLayer does not play well
+     * inside of GitHub Actions Gradle tests.
+     */
+    private val testAudioPlayerFactory: (BufferedInputStream) -> AudioPlayer = {
+        object : AudioPlayer {
+            override fun play() {
+                Thread.sleep(5000)
+            }
+
+            override fun close() {
+                Thread.sleep(500)
+            }
+        }
+    }
+
     /**
      * A valid audio file.
      */
@@ -43,6 +58,7 @@ class CPlayerTest
 
     /**
      * Another valid audio file of a different extension.
+     * todo use me
      */
     private val anotherValidAudioFile = OsUtil.buildFile(
         "src",
@@ -128,16 +144,8 @@ class CPlayerTest
     fun testCancelPlaying() {
         val called = AtomicBoolean(false)
 
-        // Construct player and set internal JLayer player to timeout
         val player = CPlayer(validAudioFile)
-        val mockPlayer = mock(Player::class.java)
-        lenient().doAnswer {
-            Thread.sleep(5000)
-            null
-        }.`when`(mockPlayer).play()
-        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
-        playerField.isAccessible = true
-        playerField.set(player, mockPlayer)
+        player.setAudioPlayerFactory(testAudioPlayerFactory)
 
         player.addOnCompletionCallback { called.set(true) }
         assertDoesNotThrow { player.play() }
@@ -160,17 +168,8 @@ class CPlayerTest
     fun testStopPlaying() {
         val called = AtomicBoolean(false)
 
-        // Construct player and set internal JLayer player to timeout
         val player = CPlayer(validAudioFile)
-        val mockPlayer = mock(Player::class.java)
-        lenient().doAnswer {
-            Thread.sleep(1000)
-            null
-        }.`when`(mockPlayer).play()
-
-        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
-        playerField.isAccessible = true
-        playerField.set(player, mockPlayer)
+        player.setAudioPlayerFactory(testAudioPlayerFactory)
 
         player.addOnCompletionCallback { called.set(true) }
         assertDoesNotThrow { player.play() }
@@ -196,15 +195,7 @@ class CPlayerTest
 
         // Construct player and set internal JLayer player to timeout
         val player = CPlayer(validAudioFile)
-        val mockPlayer = mock(Player::class.java)
-        lenient().doAnswer {
-            Thread.sleep(1000)
-            null
-        }.`when`(mockPlayer).play()
-
-        val playerField: Field = CPlayer::class.java.getDeclaredField("player")
-        playerField.isAccessible = true
-        playerField.set(player, mockPlayer)
+        player.setAudioPlayerFactory(testAudioPlayerFactory)
 
         player.addOnCompletionCallback { int.incrementAndGet() }
             .addOnCompletionCallback { int.getAndIncrement() }
@@ -221,6 +212,8 @@ class CPlayerTest
         assertFalse(player.isPlaying)
         assertFalse(player.isCanceled)
     }
+
+    // todo test for play/stop repeated
 
     /**
      * Test for the equals method.

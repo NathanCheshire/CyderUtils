@@ -23,14 +23,71 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class CPlayer {
     /**
+     * The default audio player object used internally by this class.
+     * This is required since {@link Player} does not directly implement {@link AudioPlayer}
+     * due to the way Java interfaces resolve.
+     */
+    private static final class DefaultAudioPlayer implements AudioPlayer {
+        /**
+         * The encapsulated player used for audio playback.
+         */
+        private final Player player;
+
+        /**
+         * Constructs a new DefaultAudioPlayer.
+         *
+         * @param bis the buffered input stream to read from
+         * @throws JavaLayerException if an exception occurs.
+         */
+        public DefaultAudioPlayer(BufferedInputStream bis) throws JavaLayerException {
+            this.player = new Player(bis);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void play() throws JavaLayerException {
+            player.play();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() {
+            player.close();
+        }
+    }
+
+    /**
+     * The default factory for generating {@link AudioPlayer}s using {@link Player}s.
+     */
+    private static final class DefaultAudioPlayerFactory implements AudioPlayerFactory {
+        @Override
+        public AudioPlayer create(BufferedInputStream bis) {
+            try {
+                return new DefaultAudioPlayer(bis);
+            } catch (JavaLayerException e) {
+                throw new CPlayerException(e);
+            }
+        }
+    }
+
+    /**
      * The audio file this player will stream/play.
      */
     private final File audioFile;
 
     /**
-     * The JLayer player object.
+     * The factory which generates a new {@link AudioPlayer} when required.
      */
-    private Player player;
+    private AudioPlayerFactory playerFactory = new DefaultAudioPlayerFactory();
+
+    /**
+     * The AudioPlayer object usually a {@link Player}.
+     */
+    private AudioPlayer player;
 
     /**
      * The runnables to invoke upon a completion event.
@@ -83,6 +140,17 @@ public final class CPlayer {
     }
 
     /**
+     * Sets the factory this instance will use to generate a new {@link AudioPlayer}.
+     *
+     * @param factory the factory
+     * @throws NullPointerException if the provided factory is null
+     */
+    public void setAudioPlayerFactory(AudioPlayerFactory factory) {
+        Preconditions.checkNotNull(factory);
+        this.playerFactory = factory;
+    }
+
+    /**
      * Plays the encapsulated audio file.
      * The audio is played in a new thread.
      */
@@ -94,7 +162,7 @@ public final class CPlayer {
 
         CyderThreadRunner.submit(() -> {
             try (BufferedInputStream bis = FileUtil.bisForFile(audioFile)) {
-                player = new Player(bis);
+                player = playerFactory.create(bis);
 
                 // Edge case of cancel or stop called before this thread started playing
                 if (!canceled.get() && !requestedToStopPlaying.get()) {
@@ -121,7 +189,7 @@ public final class CPlayer {
      */
     @ForReadability
     private String getPlayThreadName() {
-        return "CPlayer.play"
+        return "CPlayer.play{"
                 + "audioFile=\"" + audioFile.getAbsolutePath() + "\""
                 + "}";
     }
