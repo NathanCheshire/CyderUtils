@@ -58,7 +58,6 @@ class CPlayerTest
 
     /**
      * Another valid audio file of a different extension.
-     * todo use me
      */
     private val anotherValidAudioFile = OsUtil.buildFile(
         "src",
@@ -120,15 +119,6 @@ class CPlayerTest
         assertEquals("Invalid constructor; required audio file", cause?.message)
     }
 
-    /**
-     * Tests for the play method.
-     */
-    @Test
-    fun testPlay() {
-        val player = CPlayer(validAudioFile)
-        assertDoesNotThrow { player.play() }
-        assertTrue(player.isPlaying)
-    }
 
     /**
      * Tests for the functionality of cancel playing; transitively tests the following methods:
@@ -213,7 +203,50 @@ class CPlayerTest
         assertFalse(player.isCanceled)
     }
 
-    // todo test for play/stop repeated
+    /**
+     * Tests for calling play and stop multiple times.
+     */
+    @Test
+    fun testPlayStopRepeated() {
+        val player = CPlayer(anotherValidAudioFile)
+        player.setAudioPlayerFactory {
+            object : AudioPlayer {
+                override fun play() {
+                    Thread.sleep(50)
+                }
+
+                override fun close() {
+                    Thread.sleep(50)
+                }
+            }
+        }
+
+        assertFalse(player.isPlaying)
+        assertDoesNotThrow { player.play() }
+        assertTrue(player.isPlaying)
+        assertDoesNotThrow { player.stopPlaying() }
+        Thread.sleep(50)
+        assertFalse(player.isPlaying)
+
+        assertDoesNotThrow { player.play() }
+        assertTrue(player.isPlaying)
+        assertDoesNotThrow { player.stopPlaying() }
+        Thread.sleep(50)
+        assertFalse(player.isPlaying)
+
+        assertDoesNotThrow { player.play() }
+        assertTrue(player.isPlaying)
+        assertDoesNotThrow { player.stopPlaying() }
+        Thread.sleep(50)
+        assertFalse(player.isPlaying)
+
+        assertDoesNotThrow { player.play() }
+        assertTrue(player.isPlaying)
+        assertDoesNotThrow { player.stopPlaying() }
+        Thread.sleep(50)
+        assertFalse(player.isPlaying)
+    }
+
 
     /**
      * Test for the equals method.
