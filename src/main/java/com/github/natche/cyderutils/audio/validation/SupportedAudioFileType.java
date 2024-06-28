@@ -136,7 +136,7 @@ public enum SupportedAudioFileType {
      * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist or is not a file
      */
-    public boolean isAudioFileOfType(File audioFile) {
+    public boolean isOfType(File audioFile) {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
