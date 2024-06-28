@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Wrapper class for a wave (.wav) file.
@@ -84,6 +84,11 @@ public final class WaveFile {
     private final File wavFile;
 
     /**
+     * Whether the clip is playing.
+     */
+    private final AtomicBoolean clipPlaying = new AtomicBoolean(false);
+
+    /**
      * Suppress default constructor.
      */
     private WaveFile() {
@@ -145,6 +150,16 @@ public final class WaveFile {
             clipStream = AudioSystem.getAudioInputStream(wavFile);
             clip.open(clipStream);
             clip.setFramePosition(0);
+            clip.addLineListener(event -> {
+                LineEvent.Type type = event.getType();
+                if (LineEvent.Type.START.equals(type)) {
+                    clipPlaying.set(true);
+                } else if (LineEvent.Type.STOP.equals(type) || LineEvent.Type.CLOSE.equals(type)) {
+                    clipPlaying.set(false);
+                }
+            });
+
+
             isPlayable = true;
         } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             // non 16/8-bit audio file
@@ -240,7 +255,7 @@ public final class WaveFile {
         long sum = 0;
         int numSamples = getNumSamples();
 
-        for (int i = 0; i < numSamples; i++) {
+        for (int i = 0 ; i < numSamples ; i++) {
             sum += getSample(i);
         }
 
@@ -263,6 +278,7 @@ public final class WaveFile {
      */
     public void play() {
         Preconditions.checkNotNull(clip);
+        Preconditions.checkState(!clipPlaying.get());
         clip.start();
     }
 
@@ -275,6 +291,7 @@ public final class WaveFile {
     public void stop() throws IOException {
         Preconditions.checkNotNull(clip);
         Preconditions.checkNotNull(clipStream);
+        Preconditions.checkState(clipPlaying.get());
 
         clip.stop();
         clipStream.close();
@@ -303,8 +320,8 @@ public final class WaveFile {
      *
      * @return the duration of this wave file in seconds
      */
-    public int getDurationTime() {
-        return (int) (getNumFrames() / getAudioFormat().getFrameRate());
+    public float getDurationTime() {
+        return (getNumFrames() / getAudioFormat().getFrameRate());
     }
 
     /**
@@ -326,15 +343,6 @@ public final class WaveFile {
     }
 
     /**
-     * Returns the clip for this wav file.
-     *
-     * @return the clip for this wav file
-     */
-    public Clip getClip() {
-        return clip;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -342,11 +350,10 @@ public final class WaveFile {
         int ret = Integer.hashCode(numChannels);
         ret = ret * 31 + Arrays.hashCode(data);
         ret = ret * 31 + Boolean.hashCode(isPlayable);
-        ret = ret * 31 + audioFormat.hashCode();
-        ret = ret * 31 + Objects.hashCode(clip);
         ret = ret * 31 + Integer.hashCode(sampleSize);
         ret = ret * 31 + Long.hashCode(numFrames);
         ret = ret * 31 + Integer.hashCode(sampleRate);
+        ret = ret * 31 + Boolean.hashCode(clipPlaying.get());
         return ret;
     }
 
@@ -359,12 +366,11 @@ public final class WaveFile {
                 + "numChannels=" + numChannels
                 + ", dataLength=" + data.length
                 + ", isPlayable=" + isPlayable
-                + ", audioFormat=" + audioFormat
-                + ", clip=" + clip
                 + ", sampleSize=" + sampleSize
                 + ", numFrames=" + numFrames
                 + ", sampleRate=" + sampleRate
                 + ", wavFile=" + wavFile
+                + ", clipPlaying=" + clipPlaying.get()
                 + "}";
     }
 
@@ -384,10 +390,9 @@ public final class WaveFile {
         return numChannels == other.numChannels
                 && Arrays.equals(data, other.data)
                 && isPlayable == other.isPlayable
-                && audioFormat.equals(other.audioFormat)
-                && clip.equals(other.clip)
                 && numFrames == other.numFrames
-                && sampleRate == other.numFrames
+                && sampleRate == other.sampleRate
+                && clipPlaying.get() == other.clipPlaying.get()
                 && wavFile.equals(other.wavFile);
     }
 }

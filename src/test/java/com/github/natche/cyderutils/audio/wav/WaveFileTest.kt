@@ -63,8 +63,8 @@ class WaveFileTest {
         assertEquals(0, south.getSample(10237771 - 1))
 
         // middles
-        assertEquals(57681, carrots.getSample( carrots.numSamples / 2))
-        assertEquals(64247, south.getSample( south.numSamples / 2))
+        assertEquals(57681, carrots.getSample(carrots.numSamples / 2))
+        assertEquals(64247, south.getSample(south.numSamples / 2))
     }
 
     /**
@@ -107,61 +107,108 @@ class WaveFileTest {
      * Tests for the stop method.
      */
     @Test
-    fun testStop() {}
+    fun testStop() {
+        val localSouth = WaveFile(southWav)
+        assertThrows(IllegalStateException::class.java) { localSouth.stop() }
+
+        localSouth.play()
+        assertDoesNotThrow { localSouth.stop() }
+    }
 
     /**
      * Tests for the get audio format.
      */
     @Test
-    fun testGetAudioFormat() {}
+    fun testGetAudioFormat() {
+        val carrotFormat = carrots.audioFormat
+        assertEquals(2, carrotFormat.channels)
+        assertEquals(44100.0f, carrotFormat.frameRate)
+        assertEquals(4, carrotFormat.frameSize)
+        assertFalse(carrotFormat.isBigEndian)
+        assertEquals(44100.0f, carrotFormat.sampleRate)
+        assertEquals(16, carrotFormat.sampleSizeInBits)
+
+        val southFormat = south.audioFormat
+        assertEquals(2, southFormat.channels)
+        assertEquals(48000.0f, southFormat.frameRate)
+        assertEquals(4, southFormat.frameSize)
+        assertFalse(southFormat.isBigEndian)
+        assertEquals(48000.0f, southFormat.sampleRate)
+        assertEquals(16, southFormat.sampleSizeInBits)
+    }
 
     /**
      * Tests for the get sample size method.
      */
     @Test
-    fun testGetSampleSize() {}
+    fun testGetSampleSize() {
+        assertEquals(2, carrots.sampleSize)
+        assertEquals(2, south.sampleSize)
+    }
 
     /**
      * Tests for the get duration time method.
      */
     @Test
-    fun testGetDurationTime() {}
+    fun testGetDurationTime() {
+        assertEquals(176.42522f, carrots.durationTime)
+        assertEquals(213.2869f, south.durationTime)
+    }
 
     /**
      * Tests for the get num frames method.
      */
     @Test
-    fun testGetNumFrames() {}
+    fun testGetNumFrames() {
+        assertEquals(7780352, carrots.numFrames)
+        assertEquals(10237771, south.numFrames)
+    }
 
     /**
      * Tests for the get sample rate method.
      */
     @Test
-    fun testGetSampleRate() {}
-
-    /**
-     * Tests for the get clip method.
-     */
-    @Test
-    fun testGetClip() {}
+    fun testGetSampleRate() {
+        assertEquals(44100, carrots.sampleRate)
+        assertEquals(48000, south.sampleRate)
+    }
 
     /**
      * Tests for the equals method.
      */
     @Test
-    fun testEquals() {}
+    fun testEquals() {
+        assertEquals(carrots, carrots)
+        assertEquals(carrots, WaveFile(carrotsWav))
+        assertNotEquals(carrots, south)
+        assertNotEquals(carrots, Object())
+    }
 
     /**
      * Tests for the hashcode method.
      */
     @Test
-    fun testHashCode() {}
+    fun testHashCode() {
+        assertEquals(carrots.hashCode(), carrots.hashCode())
+        assertEquals(carrots.hashCode(), WaveFile(carrotsWav).hashCode())
+        assertNotEquals(carrots.hashCode(), south.hashCode())
+
+        assertEquals(-710041619, carrots.hashCode())
+        assertEquals(-2129642959, south.hashCode())
+    }
 
     /**
      * Tests for the toString method.
      */
     @Test
-    fun testToString() {}
+    fun testToString() {
+        assertEquals("WaveFile{numChannels=2, dataLength=31121408, isPlayable=true, sampleSize=2,"
+                + " numFrames=7780352, sampleRate=44100, wavFile=" + carrotsWav.absolutePath
+                + ", clipPlaying=false}", carrots.toString())
+        assertEquals("WaveFile{numChannels=2, dataLength=40951084, isPlayable=true, sampleSize=2,"
+                + " numFrames=10237771, sampleRate=48000, wavFile=" + southWav.absolutePath
+                + ", clipPlaying=false}", south.toString())
+    }
 
     companion object {
         private val carrotsWav = OsUtil.buildFile(
@@ -204,7 +251,7 @@ class WaveFileTest {
         )
 
         private lateinit var carrots: WaveFile
-        private lateinit var south : WaveFile
+        private lateinit var south: WaveFile
 
         @JvmStatic
         @BeforeAll

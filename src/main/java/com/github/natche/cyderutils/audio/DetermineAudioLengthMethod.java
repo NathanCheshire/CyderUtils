@@ -40,6 +40,8 @@ public enum DetermineAudioLengthMethod {
      */
     PYTHON_MUTAGEN(DetermineAudioLengthMethod::getLengthViaMutagen);
 
+    // todo add wave file duration clip? Maybe just clip if it'll work for other audio file types
+
     /**
      * The pattern used to extract the duration seconds floating point number from the
      * show streams command output.
