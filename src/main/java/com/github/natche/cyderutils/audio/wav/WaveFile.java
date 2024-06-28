@@ -170,8 +170,8 @@ public final class WaveFile {
      *
      * @return the number of samples in this wav file
      */
-    // todo will this change after construction?
     public int getNumSamples() {
+        // todo could just save this off
         return data.length / (sampleSize * numChannels);
     }
 
@@ -199,6 +199,52 @@ public final class WaveFile {
         }
 
         return ByteBuffer.wrap(sampleBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+    }
+
+    /**
+     * Returns the maximum sample this wave file contains.
+     *
+     * @return the maximum sample this wave file contains
+     */
+    public int getMaxSample() {
+        int ret = Integer.MIN_VALUE;
+
+        for (int i = 0 ; i < getNumSamples() ; i++) {
+            ret = Math.max(ret, getSample(i));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Returns the minimum sample this wave file contains.
+     *
+     * @return the minimum sample this wave file contains
+     */
+    public int getMinSample() {
+        int ret = Integer.MAX_VALUE;
+
+        for (int i = 0 ; i < getNumSamples() ; i++) {
+            ret = Math.min(ret, getSample(i));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Returns the average sample this wave file contains.
+     *
+     * @return the average sample this wave file contains
+     */
+    public int getAverageSample() {
+        long sum = 0;
+        int numSamples = getNumSamples();
+
+        for (int i = 0; i < numSamples; i++) {
+            sum += getSample(i);
+        }
+
+        return (int) (sum / numSamples);
     }
 
     /**

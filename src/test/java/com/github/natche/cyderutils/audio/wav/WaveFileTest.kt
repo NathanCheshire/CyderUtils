@@ -1,59 +1,17 @@
 package com.github.natche.cyderutils.audio.wav
 
-import com.github.natche.cyderutils.audio.cplayer.CPlayer
 import com.github.natche.cyderutils.exceptions.IllegalMethodException
 import com.github.natche.cyderutils.utils.OsUtil
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.lang.IllegalArgumentException
-import java.lang.NullPointerException
 import java.lang.reflect.InvocationTargetException
 
 /**
  * Tests for [WaveFile]s.
  */
 class WaveFileTest {
-    private val carrotsWav = OsUtil.buildFile(
-        "src",
-        "test",
-        "java",
-        "com",
-        "github",
-        "natche",
-        "cyderutils",
-        "audio",
-        "resources",
-        "TastyCarrots.wav"
-    )
-
-    private val southWav = OsUtil.buildFile(
-        "src",
-        "test",
-        "java",
-        "com",
-        "github",
-        "natche",
-        "cyderutils",
-        "audio",
-        "resources",
-        "ManOfTheSouth.wav"
-    )
-
-    private val mp3 = OsUtil.buildFile(
-        "src",
-        "test",
-        "java",
-        "com",
-        "github",
-        "natche",
-        "cyderutils",
-        "audio",
-        "resources",
-        "TastyCarrots.mp3"
-    )
-
     /**
      * Tests construction of wave files.
      */
@@ -85,9 +43,6 @@ class WaveFileTest {
      */
     @Test
     fun testGetNumChannels() {
-        val carrots = WaveFile(carrotsWav)
-        val south = WaveFile(southWav)
-
         assertEquals(2, carrots.numChannels)
         assertEquals(2, south.numChannels)
     }
@@ -97,9 +52,6 @@ class WaveFileTest {
      */
     @Test
     fun testGetSample() {
-        val carrots = WaveFile(carrotsWav)
-        val south = WaveFile(southWav)
-
         assertEquals(7780352, carrots.numSamples)
         assertEquals(10237771, south.numSamples)
 
@@ -116,10 +68,40 @@ class WaveFileTest {
     }
 
     /**
+     * Tests for the get max sample method.
+     */
+    @Test
+    fun testGetMaxSample() {
+        assertEquals(65535, carrots.maxSample)
+        assertEquals(65535, south.maxSample)
+    }
+
+    /**
+     * Tests for the get min sample method.
+     */
+    @Test
+    fun testGetMinSample() {
+        assertEquals(0, carrots.minSample)
+        assertEquals(0, south.minSample)
+    }
+
+    /**
+     * Tests for the get average sample method.
+     */
+    @Test
+    fun testGetAverageSample() {
+        assertEquals(32131, carrots.averageSample)
+        assertEquals(33049, south.averageSample)
+    }
+
+    /**
      * Tests for the is playable method.
      */
     @Test
-    fun testIsPlayable() {}
+    fun testIsPlayable() {
+        assertTrue(carrots.isPlayable)
+        assertTrue(south.isPlayable)
+    }
 
     /**
      * Tests for the stop method.
@@ -180,4 +162,55 @@ class WaveFileTest {
      */
     @Test
     fun testToString() {}
+
+    companion object {
+        private val carrotsWav = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "TastyCarrots.wav"
+        )
+
+        private val southWav = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "ManOfTheSouth.wav"
+        )
+
+        private val mp3 = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "TastyCarrots.mp3"
+        )
+
+        private lateinit var carrots: WaveFile
+        private lateinit var south : WaveFile
+
+        @JvmStatic
+        @BeforeAll
+        fun setUp(): Unit {
+            carrots = WaveFile(carrotsWav)
+            south = WaveFile(southWav)
+        }
+    }
 }
