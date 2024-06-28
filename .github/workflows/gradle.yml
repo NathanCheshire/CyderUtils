@@ -39,7 +39,12 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg python3 python3-pip alsa-utils pulseaudio
+          sudo apt-get install -y ffmpeg python3 python3-pip alsa-utils pulseaudio pulseaudio-utils
+          sudo apt-get install -y sox libsox-fmt-all
+          sudo modprobe snd-aloop
+          pactl load-module module-null-sink sink_name=Virtual_Sink
+          pactl load-module module-alsa-sink device=hw:0,0
+          pactl set-default-sink Virtual_Sink
           pip3 install mutagen
 
       - name: Install dependencies on macOS
