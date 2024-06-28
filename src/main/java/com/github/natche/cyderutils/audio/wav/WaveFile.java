@@ -1,10 +1,10 @@
 package com.github.natche.cyderutils.audio.wav;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.Immutable;
+import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.enumerations.Extension;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.files.FileUtil;
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.Immutable;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -95,7 +95,7 @@ public final class WaveFile {
      *
      * @param file the wave file
      * @throws NullPointerException     if the provided file is null
-     * @throws IllegalArgumentException if the provided file does not exist
+     * @throws IllegalArgumentException if the provided file does not exist, is not a file,
      *                                  or is not of the {@link Extension#WAV} extension
      * @throws WaveFileException        if an exception occurs when attempting to set up
      *                                  the streams related to the wave file
@@ -103,40 +103,42 @@ public final class WaveFile {
     public WaveFile(File file) {
         Preconditions.checkNotNull(file);
         Preconditions.checkArgument(file.exists());
-        Preconditions.checkArgument(FileUtil.validateExtension(file, Extension.WAV.getExtension()));
+        Preconditions.checkArgument(file.isFile());
+        Preconditions.checkArgument(SupportedAudioFileType.WAVE.isOfType(file));
 
         wavFile = file;
 
-        try {
-            setupStreams();
-        } catch (UnsupportedAudioFileException | IOException e) {
-            throw new WaveFileException("Failed to setup wave file: " + e.getMessage());
-        }
+        setupStreams();
     }
 
     /**
      * Sets up the {@link AudioInputStream} and other fields related to this wav file.
      *
-     * @throws IOException if the AudioInputStream cannot read from the wave file
+     * @throws WaveFileException if an exception occurs during setup such as failing to
+     *                           create an audio input stream or to read from the stream
      */
-    private void setupStreams() throws IOException, UnsupportedAudioFileException {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(wavFile);
-        audioFormat = audioInputStream.getFormat();
-        numFrames = audioInputStream.getFrameLength();
+    private void setupStreams() throws WaveFileException {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(wavFile);
+            audioFormat = audioInputStream.getFormat();
+            numFrames = audioInputStream.getFrameLength();
 
-        sampleRate = (int) audioFormat.getSampleRate();
-        sampleSize = audioFormat.getSampleSizeInBits() / BITS_PER_SAMPLE;
-        numChannels = audioFormat.getChannels();
+            sampleRate = (int) audioFormat.getSampleRate();
+            sampleSize = audioFormat.getSampleSizeInBits() / BITS_PER_SAMPLE;
+            numChannels = audioFormat.getChannels();
 
-        long dataLength = numFrames * audioFormat.getSampleSizeInBits() * audioFormat.getChannels() / 8;
+            long dataLength = numFrames * audioFormat.getSampleSizeInBits() * audioFormat.getChannels() / 8;
 
-        data = new byte[(int) dataLength];
-        int bytesRead = audioInputStream.read(data);
-        if (bytesRead == -1) {
-            throw new IOException("Failed to read bytes from FileInputStream constructed from: " + wavFile);
+            data = new byte[(int) dataLength];
+            int bytesRead = audioInputStream.read(data);
+            if (bytesRead == -1) {
+                throw new IOException("Failed to read bytes from FileInputStream constructed from: " + wavFile);
+            }
+
+            audioInputStream.close();
+        } catch (IOException | UnsupportedAudioFileException e) {
+            throw new WaveFileException(e);
         }
-
-        audioInputStream.close();
 
         try {
             clip = AudioSystem.getClip();
@@ -149,6 +151,28 @@ public final class WaveFile {
             isPlayable = false;
             clip = null;
         }
+    }
+
+    /**
+     * Returns the number of channels this wav file contains.
+     * If there are two channels, the first sample is the first data point for the first channel,
+     * the second sample is the first data point for the second channel, the third sample is the second
+     * data point for the first channel, and so on.
+     *
+     * @return the number of channels this wav file contains
+     */
+    public int getNumChannels() {
+        return numChannels;
+    }
+
+    /**
+     * Returns the number of samples in this wav file.
+     *
+     * @return the number of samples in this wav file
+     */
+    // todo will this change after construction?
+    public int getNumSamples() {
+        return data.length / (sampleSize * numChannels);
     }
 
     /**
@@ -165,7 +189,7 @@ public final class WaveFile {
      */
     public int getSample(int samplePoint) {
         Preconditions.checkArgument(samplePoint >= 0);
-        Preconditions.checkArgument(samplePoint <= data.length / sampleSize);
+        Preconditions.checkArgument(samplePoint < getNumSamples());
 
         byte[] sampleBytes = new byte[INT_SIZE];
 
@@ -200,7 +224,7 @@ public final class WaveFile {
      * Stops the clip of this WAV file if playing.
      *
      * @throws NullPointerException if either the encapsulated clip or clip stream are null
-     * @throws IOException if an input or output error occurs when closing the clip stream
+     * @throws IOException          if an input or output error occurs when closing the clip stream
      */
     public void stop() throws IOException {
         Preconditions.checkNotNull(clip);
