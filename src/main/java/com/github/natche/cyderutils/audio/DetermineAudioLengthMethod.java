@@ -1,13 +1,10 @@
 package com.github.natche.cyderutils.audio;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.annotations.ForReadability;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegArgument;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegCommandBuilder;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegPrintFormat;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegStreamEntry;
-import com.github.natche.cyderutils.audio.parsers.ShowStreamOutput;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
 import com.github.natche.cyderutils.files.CyderTemporaryFile;
@@ -16,16 +13,18 @@ import com.github.natche.cyderutils.process.*;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
 import com.github.natche.cyderutils.time.TimeUtil;
-import com.github.natche.cyderutils.utils.SerializationUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The methods Cyder supports for extracting the audio length from a {@link SupportedAudioFileType}.
@@ -40,6 +39,13 @@ public enum DetermineAudioLengthMethod {
      * Determine an audio file's length using the Python package Mutagen.
      */
     PYTHON_MUTAGEN(DetermineAudioLengthMethod::getLengthViaMutagen);
+
+    /**
+     * The pattern used to extract the duration seconds floating point number from the
+     * show streams command output.
+     */
+    private static final Pattern showStreamsDurationPattern
+            = Pattern.compile("\"duration\":\\s*\"(\\d+\\.\\d+)\"");
 
     private final Function<File, Future<Duration>> audioLengthComputationFunction;
 
@@ -107,9 +113,17 @@ public enum DetermineAudioLengthMethod {
 
             String joinedOutput = StringUtil.joinParts(result.getStandardOutput(), "");
             String trimmedOutput = joinedOutput.replaceAll(CyderRegexPatterns.multipleWhiteSpaceRegex, "");
-            ShowStreamOutput output = SerializationUtil.fromJson(trimmedOutput, ShowStreamOutput.class);
 
-            String millisPropertyString = output.getStreams().get(0).getDuration();
+            /*
+                Here we used to have parser classes and use Gson to serialize into the proper JSON structure
+                and obtain the duration from the output, this was a lot of boilerplate code just to find the
+                "duration" key and its value. Therefore, I have opted to just use a regex to get the value.
+             */
+
+            Matcher matcher = showStreamsDurationPattern.matcher(trimmedOutput);
+            if (!matcher.find()) throw new CyderProcessException("Failed to find duration in show streams output: "
+                    + trimmedOutput);
+            String millisPropertyString = matcher.group(1);
             double seconds = Double.parseDouble(millisPropertyString);
             int millis = (int) (seconds * TimeUtil.millisInSecond);
 
