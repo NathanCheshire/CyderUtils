@@ -40,24 +40,21 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y linux-headers-$(uname -r) alsa-utils ffmpeg
-          git clone https://github.com/sysprog21/vsnd.git
-          cd vsnd
-          make
-          sudo modprobe snd_pcm
-          mkfifo /tmp/audio.pcm
-          sudo insmod vsnd.ko out_fifo_name=/tmp/audio.pcm
-        continue-on-error: true
+          sudo apt-get install -y alsa-utils pulseaudio ffmpeg
+          pulseaudio --start
+          pactl load-module module-null-sink sink_name=Virtual_Sink
+          pactl set-default-sink Virtual_Sink
+          pactl set-default-source Virtual_Sink.monitor
+          sudo apt-get install -y sox libsox-fmt-all
 
       - name: Install dependencies on macOS
         if: matrix.os == 'macos-latest'
         run: |
           brew update
-          brew install ffmpeg python3
+          brew install ffmpeg
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
-        continue-on-error: true
 
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
@@ -69,20 +66,42 @@ jobs:
           cd scream
           ./build.bat
           ./install.bat
-        continue-on-error: true
+        shell: powershell
+
+      - name: Print available audio mixers (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "Available audio mixers:"
+          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          javac AudioDebug.java
+          java AudioDebug
+
+      - name: Print available audio mixers (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "Available audio mixers:"
+          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          javac AudioDebug.java
+          java AudioDebug
+
+      - name: Print available audio mixers (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo "Available audio mixers:"
+          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          javac AudioDebug.java
+          java AudioDebug
         shell: powershell
 
       - name: Build with Gradle and run tests
         run: ./gradlew build test --info --stacktrace
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
-        continue-on-error: true
 
       - name: Generate code coverage with JaCoCo
         run: ./gradlew jacocoTestReport
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
-        continue-on-error: true
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
