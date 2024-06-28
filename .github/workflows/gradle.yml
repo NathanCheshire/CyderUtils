@@ -39,7 +39,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg python3 python3-pip
+          sudo apt-get install -y ffmpeg python3 python3-pip alsa-utils pulseaudio
           pip3 install mutagen
 
       - name: Install dependencies on macOS
