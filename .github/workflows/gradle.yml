@@ -72,7 +72,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           echo "Available audio mixers:"
-          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
           javac AudioDebug.java
           java AudioDebug
 
@@ -80,7 +80,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           echo "Available audio mixers:"
-          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
           javac AudioDebug.java
           java AudioDebug
 
@@ -88,7 +88,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           echo "Available audio mixers:"
-          java -cp . -e "import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }" > AudioDebug.java
+          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
           javac AudioDebug.java
           java AudioDebug
         shell: powershell
