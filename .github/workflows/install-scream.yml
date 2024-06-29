@@ -32,7 +32,16 @@ jobs:
           Write-Host "Install Path: $installPath"
           if (Test-Path $installPath) {
               Write-Host "Install file found"
+              # Install the driver
+              Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
+              # Verify the driver installation
+              pnputil /enum-drivers | findstr /i "scream"
           } else {
               Write-Host "Install file NOT found"
           }
         shell: powershell
+
+      - name: Echo Verification Result
+        run: |
+          echo Driver installation verification completed.
+        shell: bash
