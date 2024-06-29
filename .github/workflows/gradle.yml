@@ -58,9 +58,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install mutagen
           # Download and install Scream virtual audio card
-          Invoke-WebRequest -Uri "https://github.com/duncanthrax/scream/releases/download/v3.5/scream-3.5.0-x64.zip" -OutFile "scream.zip"
+          $currentDate = Get-Date
+          $newDate = Get-Date "2023-07-04 12:00:00"
+          Set-Date $newDate
+          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/v4.0/scream-4.0.0.zip"
+          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
           Expand-Archive -Path "scream.zip" -DestinationPath "."
-          Start-Process -FilePath "scream-3.5.0-x64\\setup.exe" -ArgumentList "/S" -NoNewWindow -Wait
+          # Install the driver
+          Start-Process -FilePath ".\scream-4.0.0\install-x64.bat" -ArgumentList "/S" -NoNewWindow -Wait
+          # Revert date back to current
+          Set-Date $currentDate
         shell: powershell
 
       - name: Build with Gradle and run tests
