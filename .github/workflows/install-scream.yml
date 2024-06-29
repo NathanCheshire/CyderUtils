@@ -19,22 +19,26 @@ jobs:
           $currentDate = Get-Date
           $newDate = Get-Date "2023-07-04 12:00:00"
           Set-Date $newDate
-          # Disable SSL certificate validation
-          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          # Disable SSL certificate validation using HttpClientHandler
           Add-Type @"
-          using System.Net;
+          using System.Net.Http;
           using System.Security.Cryptography.X509Certificates;
-          public class TrustAllCertsPolicy : ICertificatePolicy {
-              public bool CheckValidationResult(
-                  ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem) {
-                  return true;
+          using System.Net.Security;
+
+          public class IgnoreSslCertificatePolicy {
+              public static HttpClientHandler GetHandler() {
+                  HttpClientHandler handler = new HttpClientHandler();
+                  handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+                  return handler;
               }
           }
           "@
-          [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-          # Download the Scream zip file
+          $handler = [IgnoreSslCertificatePolicy]::GetHandler()
+          $client = New-Object System.Net.Http.HttpClient($handler)
           $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
-          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
+          $response = $client.GetAsync($screamUrl).Result
+          $response.EnsureSuccessStatusCode()
+          [System.IO.File]::WriteAllBytes("scream.zip", $response.Content.ReadAsByteArrayAsync().Result)
           # Revert the system date back to current
           Set-Date $currentDate
           # Extract the Scream zip file
