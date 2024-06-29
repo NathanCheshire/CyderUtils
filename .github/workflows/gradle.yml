@@ -64,8 +64,8 @@ jobs:
           pip install mutagen
           git clone https://github.com/duncanthrax/scream.git
           cd scream
-          ./build.bat
-          ./install.bat
+          .\build.bat
+          .\install.bat
         shell: powershell
 
       - name: Print available audio mixers (Ubuntu)
@@ -91,7 +91,7 @@ jobs:
           echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
           javac AudioDebug.java
           java AudioDebug
-        shell: powershell
+        shell: cmd
 
       - name: Build with Gradle and run tests
         run: ./gradlew build test --info --stacktrace
