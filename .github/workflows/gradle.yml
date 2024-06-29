@@ -61,11 +61,11 @@ jobs:
           $currentDate = Get-Date
           $newDate = Get-Date "2023-07-04 12:00:00"
           Set-Date $newDate
-          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/v4.0/scream-4.0.0.zip"
+          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
           Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
           Expand-Archive -Path "scream.zip" -DestinationPath "."
           # Install the driver
-          Start-Process -FilePath ".\scream-4.0.0\install-x64.bat" -ArgumentList "/S" -NoNewWindow -Wait
+          Start-Process -FilePath ".\Scream4.0\install-x64.bat" -ArgumentList "/S" -NoNewWindow -Wait
           # Revert date back to current
           Set-Date $currentDate
         shell: powershell
