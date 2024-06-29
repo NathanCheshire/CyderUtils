@@ -66,8 +66,16 @@ jobs:
           Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
           # Verify extraction
           Get-ChildItem -Path "Scream"
+          # Ensure correct path
+          $installPath = Join-Path $pwd "Scream\install-x64.bat"
+          Write-Host "Install Path: $installPath"
+          if (Test-Path $installPath) {
+              Write-Host "Install file found"
+          } else {
+              Write-Host "Install file NOT found"
+          }
           # Install the driver
-          Start-Process -FilePath ".\Scream\install-x64.bat" -ArgumentList "/S" -NoNewWindow -Wait
+          Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
           # Revert date back to current
           Set-Date $currentDate
         shell: powershell
