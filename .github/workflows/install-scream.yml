@@ -1,0 +1,38 @@
+name: Verify Scream installation file
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies on Windows
+        run: |
+          choco install python
+          python -m pip install --upgrade pip
+          pip install mutagen
+          # Download and install Scream virtual audio card
+          $currentDate = Get-Date
+          $newDate = Get-Date "2023-07-04 12:00:00"
+          Set-Date $newDate
+          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
+          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
+          Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
+          # Verify extraction
+          Get-ChildItem -Path "Scream"
+          Get-ChildItem -Path "Scream\Install"
+          # Ensure correct path
+          $installPath = Join-Path $pwd "Scream\Install\install-x64.bat"
+          Write-Host "Install Path: $installPath"
+          if (Test-Path $installPath) {
+              Write-Host "Install file found"
+          } else {
+              Write-Host "Install file NOT found"
+          }
+        shell: powershell

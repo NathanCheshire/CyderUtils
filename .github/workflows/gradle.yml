@@ -1,106 +1,106 @@
-name: Gradle build and test
-
-on:
-  push:
-  workflow_dispatch:
-
-jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17.0.6'
-          distribution: 'temurin'
-
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: latest
-
-      - name: Set up ChromeDriver
-        uses: nanasess/setup-chromedriver@v1
-        with:
-          chromedriver-version: '114.0.5735.90'
-
-      - name: Grant execute permission for gradlew (Unix)
-        if: runner.os != 'Windows'
-        run: chmod +x gradlew
-
-      - name: Install dependencies on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-
-      - name: Install dependencies on macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew update
-          brew install ffmpeg
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install mutagen
-
-      - name: Install dependencies on Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install ffmpeg python
-          python -m pip install --upgrade pip
-          pip install mutagen
-          # Download and install Scream virtual audio card
-          $currentDate = Get-Date
-          $newDate = Get-Date "2023-07-04 12:00:00"
-          Set-Date $newDate
-          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
-          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
-          Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
-          # Verify extraction
-          Get-ChildItem -Path "Scream"
-          # Ensure correct path
-          $installPath = Join-Path $pwd "Scream\install-x64.bat"
-          Write-Host "Install Path: $installPath"
-          if (Test-Path $installPath) {
-              Write-Host "Install file found"
-          } else {
-              Write-Host "Install file NOT found"
-          }
-          # Install the driver
-          Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
-          # Revert date back to current
-          Set-Date $currentDate
-        shell: powershell
-
-      - name: Build with Gradle and run tests
-        run: ./gradlew build test --info --stacktrace
-        env:
-          IP_KEY: ${{ secrets.IP_KEY }}
-
-      - name: Generate code coverage with JaCoCo
-        run: ./gradlew jacocoTestReport
-        env:
-          IP_KEY: ${{ secrets.IP_KEY }}
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./build/reports/jacoco/test/xml/index.xml
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: always()
-
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-reports
-          path: build/reports/tests/test/
-        if: always()
+#name: Gradle build and test
+#
+#on:
+#  push:
+#  workflow_dispatch:
+#
+#jobs:
+#  build:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+#    runs-on: ${{ matrix.os }}
+#
+#    steps:
+#      - name: Check out repository
+#        uses: actions/checkout@v3
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '17.0.6'
+#          distribution: 'temurin'
+#
+#      - name: Set up Chrome
+#        uses: browser-actions/setup-chrome@v1
+#        with:
+#          chrome-version: latest
+#
+#      - name: Set up ChromeDriver
+#        uses: nanasess/setup-chromedriver@v1
+#        with:
+#          chromedriver-version: '114.0.5735.90'
+#
+#      - name: Grant execute permission for gradlew (Unix)
+#        if: runner.os != 'Windows'
+#        run: chmod +x gradlew
+#
+#      - name: Install dependencies on Ubuntu
+#        if: matrix.os == 'ubuntu-latest'
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y ffmpeg
+#
+#      - name: Install dependencies on macOS
+#        if: matrix.os == 'macos-latest'
+#        run: |
+#          brew update
+#          brew install ffmpeg
+#          python3 -m venv venv
+#          source venv/bin/activate
+#          pip install mutagen
+#
+#      - name: Install dependencies on Windows
+#        if: matrix.os == 'windows-latest'
+#        run: |
+#          choco install ffmpeg python
+#          python -m pip install --upgrade pip
+#          pip install mutagen
+#          # Download and install Scream virtual audio card
+#          $currentDate = Get-Date
+#          $newDate = Get-Date "2023-07-04 12:00:00"
+#          Set-Date $newDate
+#          $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
+#          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
+#          Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
+#          # Verify extraction
+#          Get-ChildItem -Path "Scream"
+#          # Ensure correct path
+#          $installPath = Join-Path $pwd "Scream\install-x64.bat"
+#          Write-Host "Install Path: $installPath"
+#          if (Test-Path $installPath) {
+#              Write-Host "Install file found"
+#          } else {
+#              Write-Host "Install file NOT found"
+#          }
+#          # Install the driver
+#          Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
+#          # Revert date back to current
+#          Set-Date $currentDate
+#        shell: powershell
+#
+#      - name: Build with Gradle and run tests
+#        run: ./gradlew build test --info --stacktrace
+#        env:
+#          IP_KEY: ${{ secrets.IP_KEY }}
+#
+#      - name: Generate code coverage with JaCoCo
+#        run: ./gradlew jacocoTestReport
+#        env:
+#          IP_KEY: ${{ secrets.IP_KEY }}
+#
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v3
+#        with:
+#          file: ./build/reports/jacoco/test/xml/index.xml
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#        if: always()
+#
+#      - name: Upload Test Report
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: test-reports
+#          path: build/reports/tests/test/
+#        if: always()
