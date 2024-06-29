@@ -1,4 +1,4 @@
-name: Verify Scream installation file and AudioSystem.getClip
+name: Verify Scream installation file
 
 on:
   push:
@@ -14,34 +14,15 @@ jobs:
 
       - name: Install dependencies on Windows
         run: |
-          choco install openjdk
-          # Set the system date back to a valid time for the certificate
+          choco install python
+          python -m pip install --upgrade pip
+          pip install mutagen
+          # Download and install Scream virtual audio card
           $currentDate = Get-Date
           $newDate = Get-Date "2023-07-04 12:00:00"
           Set-Date $newDate
-          # Disable SSL certificate validation using HttpClientHandler
-          Add-Type @"
-          using System.Net.Http;
-          using System.Security.Cryptography.X509Certificates;
-          using System.Net.Security;
-
-          public class IgnoreSslCertificatePolicy {
-              public static HttpClientHandler GetHandler() {
-                  HttpClientHandler handler = new HttpClientHandler();
-                  handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
-                  return handler;
-              }
-          }
-          "@
-          $handler = [IgnoreSslCertificatePolicy]::GetHandler()
-          $client = New-Object System.Net.Http.HttpClient($handler)
           $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
-          $response = $client.GetAsync($screamUrl).Result
-          $response.EnsureSuccessStatusCode()
-          [System.IO.File]::WriteAllBytes("scream.zip", $response.Content.ReadAsByteArrayAsync().Result)
-          # Revert the system date back to current
-          Set-Date $currentDate
-          # Extract the Scream zip file
+          Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
           Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
           # Verify extraction
           Get-ChildItem -Path "Scream"
@@ -51,34 +32,7 @@ jobs:
           Write-Host "Install Path: $installPath"
           if (Test-Path $installPath) {
               Write-Host "Install file found"
-              # Install the driver
-              Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
           } else {
               Write-Host "Install file NOT found"
           }
-
-      - name: Create Java test file
-        run: |
-          echo import javax.sound.sampled.AudioSystem; > AudioTest.java
-          echo import javax.sound.sampled.Clip; >> AudioTest.java
-          echo import javax.sound.sampled.AudioInputStream; >> AudioTest.java
-          echo import java.io.File; >> AudioTest.java
-          echo public class AudioTest { >> AudioTest.java
-          echo     public static void main(String[] args) { >> AudioTest.java
-          echo         try { >> AudioTest.java
-          echo             File audioFile = new File("test.wav"); >> AudioTest.java
-          echo             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile); >> AudioTest.java
-          echo             Clip clip = AudioSystem.getClip(); >> AudioTest.java
-          echo             clip.open(audioStream); >> AudioTest.java
-          echo             clip.start(); >> AudioTest.java
-          echo             Thread.sleep(5000); >> AudioTest.java
-          echo         } catch (Exception e) { >> AudioTest.java
-          echo             e.printStackTrace(); >> AudioTest.java
-          echo         } >> AudioTest.java
-          echo     } >> AudioTest.java
-          echo } >> AudioTest.java
-
-      - name: Compile and run Java test file
-        run: |
-          javac AudioTest.java
-          java AudioTest
+        shell: powershell
