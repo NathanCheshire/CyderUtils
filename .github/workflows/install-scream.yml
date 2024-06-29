@@ -1,4 +1,4 @@
-name: Verify Scream installation file
+name: Verify Scream installation file and AudioSystem.getClip
 
 on:
   push:
@@ -14,9 +14,7 @@ jobs:
 
       - name: Install dependencies on Windows
         run: |
-          choco install python
-          python -m pip install --upgrade pip
-          pip install mutagen
+          choco install openjdk
           # Download and install Scream virtual audio card
           $currentDate = Get-Date
           $newDate = Get-Date "2023-07-04 12:00:00"
@@ -32,7 +30,36 @@ jobs:
           Write-Host "Install Path: $installPath"
           if (Test-Path $installPath) {
               Write-Host "Install file found"
+              # Install the driver
+              Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
           } else {
               Write-Host "Install file NOT found"
           }
-        shell: powershell
+          # Revert date back to current
+          Set-Date $currentDate
+
+      - name: Create Java test file
+        run: |
+          echo import javax.sound.sampled.AudioSystem; > AudioTest.java
+          echo import javax.sound.sampled.Clip; >> AudioTest.java
+          echo import javax.sound.sampled.AudioInputStream; >> AudioTest.java
+          echo import java.io.File; >> AudioTest.java
+          echo public class AudioTest { >> AudioTest.java
+          echo     public static void main(String[] args) { >> AudioTest.java
+          echo         try { >> AudioTest.java
+          echo             File audioFile = new File("test.wav"); >> AudioTest.java
+          echo             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile); >> AudioTest.java
+          echo             Clip clip = AudioSystem.getClip(); >> AudioTest.java
+          echo             clip.open(audioStream); >> AudioTest.java
+          echo             clip.start(); >> AudioTest.java
+          echo             Thread.sleep(5000); >> AudioTest.java
+          echo         } catch (Exception e) { >> AudioTest.java
+          echo             e.printStackTrace(); >> AudioTest.java
+          echo         } >> AudioTest.java
+          echo     } >> AudioTest.java
+          echo } >> AudioTest.java
+
+      - name: Compile and run Java test file
+        run: |
+          javac AudioTest.java
+          java AudioTest
