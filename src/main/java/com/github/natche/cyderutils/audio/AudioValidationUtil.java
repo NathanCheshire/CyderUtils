@@ -48,6 +48,9 @@ public final class AudioValidationUtil {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
+    // todo use this in supported audio file type to validate the m4a file since
+    //  there's no exact signature
+
     /**
      * Validates that the provided file is a valid M4A file.
      * <p>

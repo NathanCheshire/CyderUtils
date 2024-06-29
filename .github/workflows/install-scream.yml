@@ -46,10 +46,16 @@ jobs:
           # Verify extraction
           Get-ChildItem -Path "Scream"
           Get-ChildItem -Path "Scream\Install"
-          # Install the driver using pnputil
-          $driverPath = Join-Path $pwd "Scream\Install\driver\x64\Scream.inf"
-          Write-Host "Driver Path: $driverPath"
-          pnputil /add-driver $driverPath /install
+          # Ensure correct path
+          $installPath = Join-Path $pwd "Scream\Install\install-x64.bat"
+          Write-Host "Install Path: $installPath"
+          if (Test-Path $installPath) {
+              Write-Host "Install file found"
+              # Install the driver
+              Start-Process -FilePath $installPath -ArgumentList "/S" -NoNewWindow -Wait
+          } else {
+              Write-Host "Install file NOT found"
+          }
 
       - name: Create Java test file
         run: |

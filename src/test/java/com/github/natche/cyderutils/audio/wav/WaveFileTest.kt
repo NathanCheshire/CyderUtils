@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.lang.RuntimeException
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -257,8 +258,12 @@ class WaveFileTest {
         @JvmStatic
         @BeforeAll
         fun setUp(): Unit {
-            carrots = WaveFile(carrotsWav)
-            south = WaveFile(southWav)
+            try {
+                carrots = WaveFile(carrotsWav)
+                south = WaveFile(southWav)
+            } catch (e: WaveFileException) {
+                throw RuntimeException(e)
+            }
         }
     }
 }
