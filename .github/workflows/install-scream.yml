@@ -15,12 +15,16 @@ jobs:
       - name: Install dependencies on Windows
         run: |
           choco install openjdk
-          # Download and install Scream virtual audio card
+          # Set the system date back to a valid time for the certificate
           $currentDate = Get-Date
           $newDate = Get-Date "2023-07-04 12:00:00"
           Set-Date $newDate
+          # Download the Scream zip file
           $screamUrl = "https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip"
           Invoke-WebRequest -Uri $screamUrl -OutFile "scream.zip"
+          # Revert the system date back to current
+          Set-Date $currentDate
+          # Extract the Scream zip file
           Expand-Archive -Path "scream.zip" -DestinationPath "Scream"
           # Verify extraction
           Get-ChildItem -Path "Scream"
@@ -35,8 +39,6 @@ jobs:
           } else {
               Write-Host "Install file NOT found"
           }
-          # Revert date back to current
-          Set-Date $currentDate
 
       - name: Create Java test file
         run: |
