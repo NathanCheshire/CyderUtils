@@ -30,7 +30,7 @@ jobs:
       - name: Set up ChromeDriver
         uses: nanasess/setup-chromedriver@v1
         with:
-          chromedriver-version: '114.0.5735.90' # Specify a stable version
+          chromedriver-version: '114.0.5735.90'
 
       - name: Grant execute permission for gradlew (Unix)
         if: runner.os != 'Windows'
@@ -40,12 +40,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y alsa-utils pulseaudio ffmpeg
-          pulseaudio --start
-          pactl load-module module-null-sink sink_name=Virtual_Sink
-          pactl set-default-sink Virtual_Sink
-          pactl set-default-source Virtual_Sink.monitor
-          sudo apt-get install -y sox libsox-fmt-all
+          sudo apt-get install -y ffmpeg
 
       - name: Install dependencies on macOS
         if: matrix.os == 'macos-latest'
@@ -62,36 +57,7 @@ jobs:
           choco install ffmpeg python
           python -m pip install --upgrade pip
           pip install mutagen
-          git clone https://github.com/duncanthrax/scream.git
-          cd scream
-          .\build.bat
-          .\install.bat
         shell: powershell
-
-      - name: Print available audio mixers (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          echo "Available audio mixers:"
-          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
-          javac AudioDebug.java
-          java AudioDebug
-
-      - name: Print available audio mixers (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          echo "Available audio mixers:"
-          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
-          javac AudioDebug.java
-          java AudioDebug
-
-      - name: Print available audio mixers (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          echo "Available audio mixers:"
-          echo 'import javax.sound.sampled.AudioSystem; import java.util.Arrays; public class AudioDebug { public static void main(String[] args) { System.out.println(Arrays.toString(AudioSystem.getMixerInfo())); } }' > AudioDebug.java
-          javac AudioDebug.java
-          java AudioDebug
-        shell: cmd
 
       - name: Build with Gradle and run tests
         run: ./gradlew build test --info --stacktrace

@@ -112,6 +112,7 @@ class WaveFileTest {
         assertThrows(IllegalStateException::class.java) { localSouth.stop() }
 
         localSouth.play()
+        Thread.sleep(50)
         assertDoesNotThrow { localSouth.stop() }
     }
 
