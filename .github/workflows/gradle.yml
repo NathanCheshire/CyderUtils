@@ -50,7 +50,7 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 &
           sleep 5  # Wait for Xvfb and PulseAudio to start
           export DISPLAY=:99
-          ./gradlew build test --info --stacktrace
+          ./gradlew clean build test --info --stacktrace --no-daemon
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
 
@@ -63,7 +63,7 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
-          ./gradlew build test --info --stacktrace
+          ./gradlew clean build test --info --stacktrace --no-daemon
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
 
@@ -82,7 +82,7 @@ jobs:
           Import-Certificate -FilePath ScreamCertificate.cer -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
           Scream\Install\helpers\devcon-x64.exe install Scream\Install\driver\x64\Scream.inf *Scream
           net start audiosrv
-          ./gradlew build test --info --stacktrace
+          ./gradlew clean build test --info --stacktrace --no-daemon
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
         shell: powershell
