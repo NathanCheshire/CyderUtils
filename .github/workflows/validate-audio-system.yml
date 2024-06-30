@@ -43,9 +43,10 @@ jobs:
         run: |
           choco install -y vb-cable
           Start-Sleep -Seconds 5
-          Set-DefaultAudioDevice -Role Multimedia -DeviceName "CABLE Input"
+        shell: powershell
 
-      - name: Create and run Java audio test
+      - name: Create and run Java audio test on Ubuntu and macOS
+        if: matrix.os != 'windows-latest'
         run: |
           echo 'import javax.sound.sampled.AudioSystem;
           import javax.sound.sampled.AudioInputStream;
@@ -90,6 +91,51 @@ jobs:
           java AudioTest
         shell: bash
 
+      - name: Create and run Java audio test on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo 'import javax.sound.sampled.AudioSystem;
+          import javax.sound.sampled.AudioInputStream;
+          import javax.sound.sampled.Clip;
+          import javax.sound.sampled.LineUnavailableException;
+          import javax.sound.sampled.UnsupportedAudioFileException;
+          import java.io.File;
+          import java.io.IOException;
+
+          public class AudioTest {
+              public static void main(String[] args) {
+                  try {
+                      System.out.println("Starting audio test...");
+                      File audioFile = new File(".github/workflows/test.wav");
+                      if (!audioFile.exists()) {
+                          System.out.println("Audio file not found.");
+                          return;
+                      }
+                      System.out.println("Audio file found, loading...");
+                      AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                      System.out.println("Audio stream obtained, getting clip...");
+                      Clip clip = AudioSystem.getClip();
+                      System.out.println("Clip obtained, opening clip...");
+                      clip.open(audioStream);
+                      System.out.println("Audio system initialized and clip loaded successfully.");
+                  } catch (LineUnavailableException e) {
+                      System.err.println("LineUnavailableException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (UnsupportedAudioFileException e) {
+                      System.err.println("UnsupportedAudioFileException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (IOException e) {
+                      System.err.println("IOException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (Exception e) {
+                      System.err.println("General Exception: " + e.getMessage());
+                      e.printStackTrace();
+                  }
+              }
+          }' > AudioTest.java
+          javac AudioTest.java
+          java AudioTest
+        shell: powershell
+
       - name: Print end time
-        run:
-          echo "End time: $(date)"
+        run: echo "End time: $(date)"
