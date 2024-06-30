@@ -35,16 +35,54 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 &
           sleep 5
           export DISPLAY=:99
-          aplay -l
+          # Verify PulseAudio setup
+          pulseaudio --check
           pactl list modules
+          aplay -l
+
+      - name: Create and run Java audio test on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo 'import javax.sound.sampled.AudioSystem;
+          import javax.sound.sampled.AudioInputStream;
+          import javax.sound.sampled.Clip;
+          import javax.sound.sampled.LineUnavailableException;
+          import javax.sound.sampled.UnsupportedAudioFileException;
+          import java.io.File;
+          import java.io.IOException;
+          public class AudioTest {
+              public static void main(String[] args) {
+                  try {
+                      File audioFile = new File("src/test/resources/test.wav");
+                      if (!audioFile.exists()) {
+                          System.out.println("Audio file not found.");
+                          return;
+                      }
+                      AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                      Clip clip = AudioSystem.getClip();
+                      clip.open(audioStream);
+                      System.out.println("Audio system initialized and clip loaded successfully.");
+                  } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }' > AudioTest.java
+          javac AudioTest.java
+          java AudioTest
+
+      - name: Build with Gradle and run audio setup test on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+        env:
+          DISPLAY: ":99"
 
       - name: Install BlackHole on macOS
         if: matrix.os == 'macos-latest'
         run: |
-          brew install blackhole-2ch
-          sudo mkdir -p /Library/Audio/Plug-Ins/HAL/BlackHole.driver
-          sudo cp -R /usr/local/Cellar/blackhole/0.6.0/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
+          brew install --cask blackhole-2ch
           sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
+          ls /Library/Audio/Plug-Ins/HAL/
 
       - name: Install Scream on Windows
         if: matrix.os == 'windows-latest'
@@ -75,5 +113,6 @@ jobs:
         run: net start audiosrv
         shell: powershell
 
-      - name: Build with Gradle and run audio setup test
+      - name: Build with Gradle and run audio setup test on Windows
+        if: matrix.os == 'windows-latest'
         run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
