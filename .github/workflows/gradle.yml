@@ -50,11 +50,11 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: echo "DISPLAY=:99" >> $GITHUB_ENV
 
-      - name: List PulseAudio Modules
+      - name: Verify PulseAudio Modules
         if: matrix.os == 'ubuntu-latest'
         run: pactl list modules
 
-      - name: List audio devices (Linux)
+      - name: Verify Audio Devices (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: aplay -l
 
@@ -67,6 +67,11 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
+
+      - name: Verify Audio Devices (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          system_profiler SPAudioDataType
 
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
