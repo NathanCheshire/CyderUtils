@@ -33,10 +33,13 @@ jobs:
           pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
           pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
 
-      - name: Install Soundflower on macOS
+      - name: Install BlackHole on macOS
         if: matrix.os == 'macos-latest'
         run: |
-          brew install --cask soundflower
+          brew install blackhole-2ch
+          sudo mkdir -p /Library/Audio/Plug-Ins/HAL
+          sudo cp -R /usr/local/Caskroom/blackhole/*/BlackHole.kext /Library/Audio/Plug-Ins/HAL/
+          sudo kextload /Library/Audio/Plug-Ins/HAL/BlackHole.kext
 
       - name: Create and run Java audio test
         run: |
