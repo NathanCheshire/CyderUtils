@@ -41,7 +41,7 @@ jobs:
           public class AudioTest {
               public static void main(String[] args) {
                   try {
-                      File audioFile = new File("test.wav");
+                      File audioFile = new File(".github/workflows/test.wav");
                       if (!audioFile.exists()) {
                           System.out.println("Audio file not found.");
                           return;
