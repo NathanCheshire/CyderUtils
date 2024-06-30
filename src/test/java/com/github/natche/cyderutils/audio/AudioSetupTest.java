@@ -19,7 +19,7 @@ public class AudioSetupTest {
     @Test
     public void testAudioSystemInitialization() {
         try {
-            File audioFile = OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio","resources", "ManOfTheSouth.wav")
+            File audioFile = OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio","resources", "ManOfTheSouth.wav");
             if (!audioFile.exists()) {
                 fail("Audio file not found.");
             }
