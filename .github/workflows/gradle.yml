@@ -50,6 +50,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: echo "DISPLAY=:99" >> $GITHUB_ENV
 
+      - name: List PulseAudio Modules
+        if: matrix.os == 'ubuntu-latest'
+        run: pactl list modules
+
       - name: List audio devices (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: aplay -l
@@ -126,6 +130,10 @@ jobs:
                       System.out.println("Audio system initialized and clip loaded successfully.");
                   } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
                       e.printStackTrace();
+                      System.out.println("Exception details: " + e.getMessage());
+                  } catch (Exception e) {
+                      e.printStackTrace();
+                      System.out.println("Unexpected exception details: " + e.getMessage());
                   }
               }
           }' > AudioTest.java
@@ -157,4 +165,11 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests/test/
+        if: always()
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: build/test-results/
         if: always()
