@@ -5,6 +5,8 @@ import com.github.natche.cyderutils.enumerations.Extension;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
+import org.junit.platform.commons.logging.Logger;
+import org.junit.platform.commons.logging.LoggerFactory;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -23,6 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Immutable
 public final class WaveFile {
+    private static final Logger logger = LoggerFactory.getLogger(WaveFile.class);
+
     /**
      * The number of bits per sample of a wav file.
      */
@@ -161,6 +165,7 @@ public final class WaveFile {
 
             isPlayable = true;
         } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+            logger.info(e, () -> "Error setting up streams");
             // non 16/8-bit audio file
             isPlayable = false;
             clip = null;
