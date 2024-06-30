@@ -50,6 +50,10 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 &
           sleep 5  # Wait for Xvfb and PulseAudio to start
           export DISPLAY=:99
+          # Check the status of PulseAudio
+          pulseaudio --check
+          pactl list modules
+          aplay -l
           ./gradlew clean build test --info --stacktrace --no-daemon
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
@@ -60,6 +64,9 @@ jobs:
           brew update
           brew install ffmpeg
           brew install blackhole-2ch
+          sudo mkdir -p /Library/Audio/Plug-Ins/HAL/BlackHole.driver
+          sudo cp -R /usr/local/Cellar/blackhole/2.0.0/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
+          sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
