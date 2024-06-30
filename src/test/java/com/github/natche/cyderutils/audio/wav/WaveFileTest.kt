@@ -187,7 +187,7 @@ class WaveFileTest {
     @Test
     fun testEquals() {
         assertEquals(carrots, carrots)
-        assertEquals(carrots, WaveFile(carrotsWav))
+        assertEquals(carrots, equalCarrots)
         assertNotEquals(carrots, south)
         assertNotEquals(carrots, Object())
     }
@@ -263,12 +263,14 @@ class WaveFileTest {
         )
 
         private lateinit var carrots: WaveFile
+        private lateinit var equalCarrots: WaveFile
         private lateinit var south: WaveFile
 
         @JvmStatic
         @BeforeAll
         fun setUp(): Unit {
             carrots = WaveFile(carrotsWav)
+            equalCarrots = WaveFile(carrotsWav)
             south = WaveFile(southWav)
         }
     }
