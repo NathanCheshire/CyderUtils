@@ -25,7 +25,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pulseaudio
           pulseaudio --check || pulseaudio --start
-          pactl load-module module-null-sink sink_name=default
+          pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
+          pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
 
       - name: Create and run Java audio test
         run: |
