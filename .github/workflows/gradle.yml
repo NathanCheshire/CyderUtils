@@ -36,7 +36,10 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
-      - name: Install dependencies on Ubuntu
+      - name: Build Gradle Wrapper
+        run: ./gradlew wrapper --gradle-version 7.4
+
+      - name: Run setup and tests on Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
@@ -46,20 +49,12 @@ jobs:
           pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
           Xvfb :99 -screen 0 1024x768x24 &
           sleep 5  # Wait for Xvfb and PulseAudio to start
+          export DISPLAY=:99
+          ./gradlew build test --info --stacktrace
+        env:
+          IP_KEY: ${{ secrets.IP_KEY }}
 
-      - name: Set DISPLAY environment variable
-        if: matrix.os == 'ubuntu-latest'
-        run: echo "DISPLAY=:99" >> $GITHUB_ENV
-
-      - name: Verify PulseAudio Modules
-        if: matrix.os == 'ubuntu-latest'
-        run: pactl list modules
-
-      - name: Verify Audio Devices (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: aplay -l
-
-      - name: Install dependencies on macOS
+      - name: Run setup and tests on macOS
         if: matrix.os == 'macos-latest'
         run: |
           brew update
@@ -68,12 +63,11 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
+          ./gradlew build test --info --stacktrace
+        env:
+          IP_KEY: ${{ secrets.IP_KEY }}
 
-      - name: Verify Audio Devices (macOS)
-        if: matrix.os == 'macos-latest'
-        run: system_profiler SPAudioDataType
-
-      - name: Install dependencies on Windows
+      - name: Run setup and tests on Windows
         if: matrix.os == 'windows-latest'
         run: |
           choco install ffmpeg python
@@ -83,91 +77,20 @@ jobs:
           Expand-Archive -Path Scream4.0.zip -DestinationPath Scream
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
-        shell: powershell
-
-      - name: Setup MSVC Dev Cmd
-        if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Sign and Install Scream Driver on Windows
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
           signtool sign /v /fd SHA256 /f ScreamCertificate.pfx Scream\Install\driver\x64\Scream.cat
           Import-Certificate -FilePath ScreamCertificate.cer -CertStoreLocation Cert:\LocalMachine\root
           Import-Certificate -FilePath ScreamCertificate.cer -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
           Scream\Install\helpers\devcon-x64.exe install Scream\Install\driver\x64\Scream.inf *Scream
-        timeout-minutes: 5
-
-      - name: Start Windows Audio Service
-        if: matrix.os == 'windows-latest'
-        run: net start audiosrv
-        shell: powershell
-
-      - name: Create and run Java audio test
-        run: |
-          echo 'import javax.sound.sampled.AudioSystem;
-          import javax.sound.sampled.AudioInputStream;
-          import javax.sound.sampled.Clip;
-          import javax.sound.sampled.LineUnavailableException;
-          import javax.sound.sampled.UnsupportedAudioFileException;
-          import java.io.File;
-          import java.io.IOException;
-          import java.awt.GraphicsEnvironment;
-
-          public class AudioTest {
-              public static void main(String[] args) {
-                  if (GraphicsEnvironment.isHeadless()) {
-                      System.out.println("Running in headless mode");
-                  } else {
-                      System.out.println("Not running in headless mode");
-                  }
-
-                  try {
-                      File audioFile = new File(".github/workflows/test.wav");
-                      if (!audioFile.exists()) {
-                          System.out.println("Audio file not found.");
-                          return;
-                      }
-                      AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-                      Clip clip = AudioSystem.getClip();
-                      clip.open(audioStream);
-                      System.out.println("Audio system initialized and clip loaded successfully.");
-                  } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-                      e.printStackTrace();
-                      System.out.println("Exception details: " + e.getMessage());
-                  } catch (Exception e) {
-                      e.printStackTrace();
-                      System.out.println("Unexpected exception details: " + e.getMessage());
-                  }
-              }
-          }' > AudioTest.java
-          javac AudioTest.java
-          java AudioTest
-
-      - name: Build with Gradle and run tests
-        run: |
-          pulseaudio --check || pulseaudio --start
-          pactl list modules
-          aplay -l
+          net start audiosrv
           ./gradlew build test --info --stacktrace
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
-          DISPLAY: ":99"
+        shell: powershell
 
       - name: Generate code coverage with JaCoCo
         run: ./gradlew jacocoTestReport
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
-          DISPLAY: ":99"
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./build/reports/jacoco/test/xml/index.xml
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: always()
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v2
