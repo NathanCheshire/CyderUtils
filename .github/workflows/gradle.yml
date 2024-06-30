@@ -45,6 +45,7 @@ jobs:
           pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
           pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
           Xvfb :99 -screen 0 1024x768x24 &
+          sleep 5  # Wait for Xvfb and PulseAudio to start
 
       - name: Set DISPLAY environment variable
         if: matrix.os == 'ubuntu-latest'
@@ -70,8 +71,7 @@ jobs:
 
       - name: Verify Audio Devices (macOS)
         if: matrix.os == 'macos-latest'
-        run: |
-          system_profiler SPAudioDataType
+        run: system_profiler SPAudioDataType
 
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
