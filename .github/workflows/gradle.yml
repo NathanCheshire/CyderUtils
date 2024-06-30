@@ -63,8 +63,7 @@ jobs:
         run: |
           brew update
           brew install ffmpeg
-          brew install blackhole-2ch
-          sudo cp -R /Library/Audio/Plug-Ins/HAL/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
+          brew install --cask blackhole-2ch
           sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
           python3 -m venv venv
           source venv/bin/activate
@@ -72,6 +71,12 @@ jobs:
           ./gradlew clean build test --info --stacktrace --no-daemon
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
+
+      - name: Install Windows SDK for signtool
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install windows-sdk-10.1
+        shell: powershell
 
       - name: Run setup and tests on Windows
         if: matrix.os == 'windows-latest'
@@ -83,6 +88,8 @@ jobs:
           Expand-Archive -Path Scream4.0.zip -DestinationPath Scream
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
+          # Add the path to signtool
+          $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\x64'
           signtool sign /v /fd SHA256 /f ScreamCertificate.pfx Scream\Install\driver\x64\Scream.cat
           Import-Certificate -FilePath ScreamCertificate.cer -CertStoreLocation Cert:\LocalMachine\root
           Import-Certificate -FilePath ScreamCertificate.cer -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
