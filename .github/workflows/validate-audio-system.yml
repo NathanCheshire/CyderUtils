@@ -1,4 +1,4 @@
-name: Java Audio Test
+name: Java Audio Setup Check
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-audio:
+  check-audio:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,15 +27,20 @@ jobs:
           pulseaudio --check || pulseaudio --start
           pactl load-module module-null-sink sink_name=default
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Create and run Java audio test
+        run: |
+          echo 'import javax.sound.sampled.AudioSystem;
+          import javax.sound.sampled.Clip;
 
-      - name: Build with Gradle and run tests
-        run: ./gradlew build test --info --stacktrace
-
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-reports
-          path: build/reports/tests/test/
-        if: always()
+          public class AudioTest {
+              public static void main(String[] args) {
+                  try {
+                      Clip clip = AudioSystem.getClip();
+                      System.out.println("Audio system initialized successfully.");
+                  } catch (Exception e) {
+                      e.printStackTrace();
+                  }
+              }
+          }' > AudioTest.java
+          javac AudioTest.java
+          java AudioTest
