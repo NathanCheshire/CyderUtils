@@ -64,8 +64,7 @@ jobs:
           brew update
           brew install ffmpeg
           brew install blackhole-2ch
-          sudo mkdir -p /Library/Audio/Plug-Ins/HAL/BlackHole.driver
-          sudo cp -R /usr/local/Cellar/blackhole/2.0.0/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
+          sudo cp -R /Library/Audio/Plug-Ins/HAL/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
           sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
           python3 -m venv venv
           source venv/bin/activate
