@@ -40,13 +40,18 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg pulseaudio xvfb
+          pulseaudio --check || pulseaudio --start
+          pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
+          pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
+          Xvfb :99 -screen 0 1024x768x24 &
 
       - name: Install dependencies on macOS
         if: matrix.os == 'macos-latest'
         run: |
           brew update
           brew install ffmpeg
+          brew install blackhole-2ch
           python3 -m venv venv
           source venv/bin/activate
           pip install mutagen
@@ -57,30 +62,11 @@ jobs:
           choco install ffmpeg python
           python -m pip install --upgrade pip
           pip install mutagen
-        shell: powershell
-
-      - name: Install PulseAudio on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pulseaudio
-          pulseaudio --check || pulseaudio --start
-          pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
-          pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
-
-      - name: Install BlackHole on macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install blackhole-2ch
-
-      - name: Install Scream on Windows
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
           Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip -OutFile Scream4.0.zip
           Expand-Archive -Path Scream4.0.zip -DestinationPath Scream
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
+        shell: powershell
 
       - name: Setup MSVC Dev Cmd
         if: matrix.os == 'windows-latest'
@@ -101,6 +87,10 @@ jobs:
         run: net start audiosrv
         shell: powershell
 
+      - name: Set DISPLAY environment variable
+        if: matrix.os == 'ubuntu-latest'
+        run: echo "::set-env name=DISPLAY::99"
+
       - name: Create and run Java audio test
         run: |
           echo 'import javax.sound.sampled.AudioSystem;
@@ -110,9 +100,16 @@ jobs:
           import javax.sound.sampled.UnsupportedAudioFileException;
           import java.io.File;
           import java.io.IOException;
+          import java.awt.GraphicsEnvironment;
 
           public class AudioTest {
               public static void main(String[] args) {
+                  if (GraphicsEnvironment.isHeadless()) {
+                      System.out.println("Running in headless mode");
+                  } else {
+                      System.out.println("Not running in headless mode");
+                  }
+
                   try {
                       File audioFile = new File(".github/workflows/test.wav");
                       if (!audioFile.exists()) {
@@ -135,11 +132,13 @@ jobs:
         run: ./gradlew build test --info --stacktrace
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
+          DISPLAY: ":99"
 
       - name: Generate code coverage with JaCoCo
         run: ./gradlew jacocoTestReport
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
+          DISPLAY: ":99"
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
@@ -149,7 +148,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         if: always()
 
-      - name: Upload Test Report
+      - name: Upload Test Reports
         uses: actions/upload-artifact@v2
         with:
           name: test-reports
