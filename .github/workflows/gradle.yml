@@ -46,6 +46,14 @@ jobs:
           pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
           Xvfb :99 -screen 0 1024x768x24 &
 
+      - name: Set DISPLAY environment variable
+        if: matrix.os == 'ubuntu-latest'
+        run: echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: List audio devices (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: aplay -l
+
       - name: Install dependencies on macOS
         if: matrix.os == 'macos-latest'
         run: |
@@ -86,10 +94,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: net start audiosrv
         shell: powershell
-
-      - name: Set DISPLAY environment variable
-        if: matrix.os == 'ubuntu-latest'
-        run: echo "::set-env name=DISPLAY::99"
 
       - name: Create and run Java audio test
         run: |
