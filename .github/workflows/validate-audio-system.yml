@@ -1,0 +1,41 @@
+name: Java Audio Test
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-audio:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17.0.6'
+          distribution: 'temurin'
+
+      - name: Install PulseAudio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pulseaudio
+          pulseaudio --check || pulseaudio --start
+          pactl load-module module-null-sink sink_name=default
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle and run tests
+        run: ./gradlew build test --info --stacktrace
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: build/reports/tests/test/
+        if: always()

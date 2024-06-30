@@ -159,7 +159,6 @@ public final class WaveFile {
                 }
             });
 
-
             isPlayable = true;
         } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             // non 16/8-bit audio file
