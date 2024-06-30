@@ -146,7 +146,11 @@ jobs:
           java AudioTest
 
       - name: Build with Gradle and run tests
-        run: ./gradlew build test --info --stacktrace
+        run: |
+          pulseaudio --check || pulseaudio --start
+          pactl list modules
+          aplay -l
+          ./gradlew build test --info --stacktrace
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
           DISPLAY: ":99"
@@ -170,11 +174,4 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests/test/
-        if: always()
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: build/test-results/
         if: always()
