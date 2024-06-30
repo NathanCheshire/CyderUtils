@@ -42,6 +42,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           choco install -y vb-cable
+          Start-Sleep -Seconds 5
+          Set-DefaultAudioDevice -Role Multimedia -DeviceName "CABLE Input"
 
       - name: Create and run Java audio test
         run: |
@@ -56,19 +58,38 @@ jobs:
           public class AudioTest {
               public static void main(String[] args) {
                   try {
+                      System.out.println("Starting audio test...");
                       File audioFile = new File(".github/workflows/test.wav");
                       if (!audioFile.exists()) {
                           System.out.println("Audio file not found.");
                           return;
                       }
+                      System.out.println("Audio file found, loading...");
                       AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+                      System.out.println("Audio stream obtained, getting clip...");
                       Clip clip = AudioSystem.getClip();
+                      System.out.println("Clip obtained, opening clip...");
                       clip.open(audioStream);
                       System.out.println("Audio system initialized and clip loaded successfully.");
-                  } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+                  } catch (LineUnavailableException e) {
+                      System.err.println("LineUnavailableException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (UnsupportedAudioFileException e) {
+                      System.err.println("UnsupportedAudioFileException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (IOException e) {
+                      System.err.println("IOException: " + e.getMessage());
+                      e.printStackTrace();
+                  } catch (Exception e) {
+                      System.err.println("General Exception: " + e.getMessage());
                       e.printStackTrace();
                   }
               }
           }' > AudioTest.java
           javac AudioTest.java
           java AudioTest
+        shell: bash
+
+      - name: Print end time
+        run:
+          echo "End time: $(date)"
