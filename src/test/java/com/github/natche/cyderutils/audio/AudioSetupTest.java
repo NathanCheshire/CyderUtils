@@ -1,5 +1,6 @@
 package com.github.natche.cyderutils.audio;
 
+import com.github.natche.cyderutils.utils.OsUtil;
 import org.junit.jupiter.api.Test;
 
 import javax.sound.sampled.AudioSystem;
@@ -18,7 +19,7 @@ public class AudioSetupTest {
     @Test
     public void testAudioSystemInitialization() {
         try {
-            File audioFile = new File("src/test/resources/test.wav");
+            File audioFile = OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio","resources", "ManOfTheSouth.wav")
             if (!audioFile.exists()) {
                 fail("Audio file not found.");
             }
