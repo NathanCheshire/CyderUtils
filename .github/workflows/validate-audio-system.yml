@@ -38,15 +38,13 @@ jobs:
         run: |
           brew install blackhole-2ch
 
-      - name: Install VB-Cable on Windows
+      - name: Install Scream on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          choco install -y vb-cable
-          Start-Sleep -Seconds 5
-          $device = Get-PnpDevice -FriendlyName 'VB-Cable' | Where-Object { $_.Status -eq 'OK' }
-          if ($device) {
-            Set-DefaultAudioDevice -Role Multimedia -DeviceName "CABLE Input (VB-Audio Virtual Cable)"
-          }
+          Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.8/Scream3.8.zip -OutFile Scream3.8.zip
+          Expand-Archive -Path Scream3.8.zip -DestinationPath Scream
+          Import-Certificate -FilePath Scream\Install\driver\x64\Scream.cat -CertStoreLocation Cert:\LocalMachine\TrustedPublisher 
+          Scream\Install\helpers\devcon-x64.exe install Scream\Install\driver\x64\Scream.inf *Scream
         shell: powershell
 
       - name: Create and run Java audio test
