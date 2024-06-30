@@ -31,14 +31,26 @@ jobs:
       - name: Create and run Java audio test
         run: |
           echo 'import javax.sound.sampled.AudioSystem;
+          import javax.sound.sampled.AudioInputStream;
           import javax.sound.sampled.Clip;
+          import javax.sound.sampled.LineUnavailableException;
+          import javax.sound.sampled.UnsupportedAudioFileException;
+          import java.io.File;
+          import java.io.IOException;
 
           public class AudioTest {
               public static void main(String[] args) {
                   try {
+                      File audioFile = new File("test.wav");
+                      if (!audioFile.exists()) {
+                          System.out.println("Audio file not found.");
+                          return;
+                      }
+                      AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
                       Clip clip = AudioSystem.getClip();
-                      System.out.println("Audio system initialized successfully.");
-                  } catch (Exception e) {
+                      clip.open(audioStream);
+                      System.out.println("Audio system initialized and clip loaded successfully.");
+                  } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
                       e.printStackTrace();
                   }
               }
