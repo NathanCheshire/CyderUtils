@@ -33,14 +33,10 @@ jobs:
           pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
           pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
 
-      - name: Install PulseAudio on macOS
+      - name: Install Soundflower on macOS
         if: matrix.os == 'macos-latest'
         run: |
-          brew update
-          brew install pulseaudio
-          pulseaudio --check || pulseaudio --start
-          pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
-          pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
+          brew install --cask soundflower
 
       - name: Create and run Java audio test
         run: |
