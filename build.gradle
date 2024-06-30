@@ -1,7 +1,5 @@
 import java.time.Duration
 
-//file:noinspection SpellCheckingInspection
-
 plugins {
     id 'java'
     id 'jacoco'
@@ -29,8 +27,11 @@ test {
     }
     // Set a timeout for tests to prevent hanging tests
     timeout = Duration.ofMinutes(2)
-}
 
+    // Ensure the test environment is not headless
+    systemProperty 'java.awt.headless', 'false'
+    environment 'DISPLAY', ':99.0' // Use Xvfb for Linux environments if needed
+}
 
 group 'cyder-utils'
 version '0.1.0'
@@ -98,13 +99,11 @@ dependencies {
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation 'org.mockito:mockito-inline:4.3.1'
 
-
     // Selenium dependencies
     implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
-
 
 build.dependsOn(compileJava, compileTestJava)
 repositories {
