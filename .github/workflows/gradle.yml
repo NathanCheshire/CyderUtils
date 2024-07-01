@@ -1,4 +1,4 @@
-name: Java Audio Setup Check
+name: Gradle build and test
 
 on:
   push:
