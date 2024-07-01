@@ -46,8 +46,8 @@ jobs:
         run: net start audiosrv
         shell: powershell
 
-      - name: Build with Gradle and run audio setup test
-        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+      - name: Build with Gradle
+        run: ./gradlew clean build --info --stacktrace --no-daemon
 
       - name: Generate code coverage with JaCoCo
         run: ./gradlew jacocoTestReport
