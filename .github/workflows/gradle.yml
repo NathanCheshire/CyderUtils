@@ -2,8 +2,6 @@ name: Java Audio Setup Check
 
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -43,12 +41,10 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           brew install --cask blackhole-2ch
+          sudo mkdir -p /Library/Audio/Plug-Ins/HAL
+          sudo cp -R /Library/Audio/Plug-Ins/HAL/BlackHole.driver /Library/Audio/Plug-Ins/HAL/
           sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
           ls /Library/Audio/Plug-Ins/HAL/
-
-      - name: Verify BlackHole Setup
-        if: matrix.os == 'macos-latest'
-        run: ls /Library/Audio/Plug-Ins/HAL/
 
       - name: Install Scream on Windows
         if: matrix.os == 'windows-latest'
@@ -89,12 +85,26 @@ jobs:
           pactl list modules
           aplay -l
 
+      - name: Verify BlackHole Setup
+        if: matrix.os == 'macos-latest'
+        run: ls /Library/Audio/Plug-Ins/HAL/
+
       - name: Verify Scream Setup
         if: matrix.os == 'windows-latest'
         run: sc query audiosrv
         shell: powershell
 
-      - name: Build with Gradle and run audio setup test
-        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+      - name: Build with Gradle and run audio setup test on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
         env:
           DISPLAY: ":99"
+
+      - name: Build with Gradle and run audio setup test on macOS
+        if: matrix.os == 'macos-latest'
+        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+
+      - name: Build with Gradle and run audio setup test on Windows
+        if: matrix.os == 'windows-latest'
+        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
