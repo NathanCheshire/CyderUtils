@@ -5,14 +5,8 @@ import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.mockStatic
 import java.io.File
-import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
-import javax.sound.sampled.AudioInputStream
-import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.Clip
 
 
 /**
@@ -59,19 +53,19 @@ class WaveFileTest {
      */
     @Test
     fun testGetSample() {
-        assertEquals(7780352, carrots.numSamples)
-        assertEquals(10237771, south.numSamples)
+        assertEquals(441344, carrots.numSamples)
+        assertEquals(480256, south.numSamples)
 
         // endpoints
         assertEquals(0, carrots.getSample(0))
-        assertEquals(0, carrots.getSample(7780352 - 1))
+        assertEquals(63756, carrots.getSample(441344 - 1))
 
         assertEquals(0, south.getSample(0))
-        assertEquals(0, south.getSample(10237771 - 1))
+        assertEquals(50534, south.getSample(480256 - 1))
 
         // middles
-        assertEquals(57681, carrots.getSample(carrots.numSamples / 2))
-        assertEquals(64247, south.getSample(south.numSamples / 2))
+        assertEquals(4027, carrots.getSample(carrots.numSamples / 2))
+        assertEquals(63029, south.getSample(south.numSamples / 2))
     }
 
     /**
@@ -97,8 +91,8 @@ class WaveFileTest {
      */
     @Test
     fun testGetAverageSample() {
-        assertEquals(32131, carrots.averageSample)
-        assertEquals(33049, south.averageSample)
+        assertEquals(31889, carrots.averageSample)
+        assertEquals(32736, south.averageSample)
     }
 
     /**
@@ -159,8 +153,8 @@ class WaveFileTest {
      */
     @Test
     fun testGetDurationTime() {
-        assertEquals(176.42522f, carrots.durationTime)
-        assertEquals(213.2869f, south.durationTime)
+        assertEquals(10.0078f, carrots.durationTime)
+        assertEquals(10.005333f, south.durationTime)
     }
 
     /**
@@ -168,8 +162,8 @@ class WaveFileTest {
      */
     @Test
     fun testGetNumFrames() {
-        assertEquals(7780352, carrots.numFrames)
-        assertEquals(10237771, south.numFrames)
+        assertEquals(441344, carrots.numFrames)
+        assertEquals(480256, south.numFrames)
     }
 
     /**
@@ -201,8 +195,8 @@ class WaveFileTest {
         assertEquals(carrots.hashCode(), WaveFile(carrotsWav).hashCode())
         assertNotEquals(carrots.hashCode(), south.hashCode())
 
-        assertEquals(-710041619, carrots.hashCode())
-        assertEquals(-2129642959, south.hashCode())
+        assertEquals(865705099, carrots.hashCode())
+        assertEquals(754789234, south.hashCode())
     }
 
     /**
@@ -211,13 +205,13 @@ class WaveFileTest {
     @Test
     fun testToString() {
         assertEquals(
-            "WaveFile{numChannels=2, dataLength=31121408, isPlayable=true, sampleSize=2,"
-                    + " numFrames=7780352, sampleRate=44100, wavFile=" + carrotsWav.absolutePath
+            "WaveFile{numChannels=2, dataLength=1765376, isPlayable=true, sampleSize=2,"
+                    + " numFrames=441344, sampleRate=44100, wavFile=" + carrotsWav.absolutePath
                     + ", clipPlaying=false}", carrots.toString()
         )
         assertEquals(
-            "WaveFile{numChannels=2, dataLength=40951084, isPlayable=true, sampleSize=2,"
-                    + " numFrames=10237771, sampleRate=48000, wavFile=" + southWav.absolutePath
+            "WaveFile{numChannels=2, dataLength=1921024, isPlayable=true, sampleSize=2,"
+                    + " numFrames=480256, sampleRate=48000, wavFile=" + southWav.absolutePath
                     + ", clipPlaying=false}", south.toString()
         )
     }

@@ -75,8 +75,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.57E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(3.1E7, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -94,8 +94,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.57E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(3.1E7, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -113,8 +113,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.25E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(8000000.0, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -132,8 +132,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.25E8, duration.getNano());
+            assertEquals(10, duration.getSeconds());
+            assertEquals(7000000.0, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -151,8 +151,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.25E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(1.8E7, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -170,8 +170,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.25E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(1.7E7, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -189,8 +189,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.48E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(3.1E7, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -208,8 +208,8 @@ class DetermineAudioLengthMethodTest {
 
         try {
             Duration duration = futureDuration.get();
-            assertEquals(176.0, duration.getSeconds());
-            assertEquals(4.25E8, duration.getNano());
+            assertEquals(10.0, duration.getSeconds());
+            assertEquals(8000000.0, duration.getNano());
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
