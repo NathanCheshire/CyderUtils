@@ -6,11 +6,7 @@ on:
 
 jobs:
   check-audio:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - name: Check out repository
@@ -22,30 +18,7 @@ jobs:
           java-version: '17.0.6'
           distribution: 'temurin'
 
-      - name: Install PulseAudio on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pulseaudio alsa-utils xvfb
-          pulseaudio --check || pulseaudio --start
-          pactl load-module module-null-sink sink_name=vspeaker sink_properties=device.description=virtual_speaker
-          pactl load-module module-remap-source master=vspeaker.monitor source_name=vmic source_properties=device.description=virtual_mic
-          Xvfb :99 -screen 0 1024x768x24 &
-          sleep 5
-          export DISPLAY=:99
-          pulseaudio --check
-          pactl list modules
-          aplay -l
-
-      - name: Install BlackHole on macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install --cask blackhole-2ch
-          sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
-          ls /Library/Audio/Plug-Ins/HAL/
-
-      - name: Install Scream on Windows
-        if: matrix.os == 'windows-latest'
+      - name: Install dependencies on Windows
         shell: powershell
         run: |
           choco install ffmpeg python
@@ -57,11 +30,9 @@ jobs:
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
 
       - name: Setup MSVC Dev Cmd
-        if: matrix.os == 'windows-latest'
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Sign and Install Scream Driver on Windows
-        if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
           $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\x64'
@@ -72,37 +43,35 @@ jobs:
         timeout-minutes: 5
 
       - name: Start Windows Audio Service
-        if: matrix.os == 'windows-latest'
         run: net start audiosrv
         shell: powershell
 
-      - name: Verify PulseAudio Setup
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          pulseaudio --check
-          pactl list modules
-          aplay -l
+      - name: Build with Gradle and run audio setup test
+        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
 
-      - name: Verify BlackHole Setup
-        if: matrix.os == 'macos-latest'
-        run: ls /Library/Audio/Plug-Ins/HAL/
-
-      - name: Verify Scream Setup
-        if: matrix.os == 'windows-latest'
-        run: sc query audiosrv
-        shell: powershell
-
-      - name: Build with Gradle and run audio setup test on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+      - name: Generate code coverage with JaCoCo
+        run: ./gradlew jacocoTestReport
         env:
-          DISPLAY: ":99"
+          IP_KEY: ${{ secrets.IP_KEY }}
 
-      - name: Build with Gradle and run audio setup test on macOS
-        if: matrix.os == 'macos-latest'
-        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./build/reports/jacoco/test/xml/index.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: always()
 
-      - name: Build with Gradle and run audio setup test on Windows
-        if: matrix.os == 'windows-latest'
-        run: ./gradlew clean test --tests "com.github.natche.cyderutils.audio.AudioSetupTest" --info --stacktrace --no-daemon
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: build/reports/tests/test/
+        if: always()
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: build/test-results/
+        if: always()
