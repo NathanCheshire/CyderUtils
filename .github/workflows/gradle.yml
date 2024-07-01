@@ -46,6 +46,10 @@ jobs:
           sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
           ls /Library/Audio/Plug-Ins/HAL/
 
+      - name: Verify BlackHole Setup
+        if: matrix.os == 'macos-latest'
+        run: ls /Library/Audio/Plug-Ins/HAL/
+
       - name: Install Scream on Windows
         if: matrix.os == 'windows-latest'
         shell: powershell
@@ -84,10 +88,6 @@ jobs:
           pulseaudio --check
           pactl list modules
           aplay -l
-
-      - name: Verify BlackHole Setup
-        if: matrix.os == 'macos-latest'
-        run: ls /Library/Audio/Plug-Ins/HAL/
 
       - name: Verify Scream Setup
         if: matrix.os == 'windows-latest'
