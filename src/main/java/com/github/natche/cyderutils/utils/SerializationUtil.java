@@ -11,21 +11,15 @@ import com.github.natche.cyderutils.strings.CyderStrings;
 import java.io.*;
 import java.lang.reflect.Type;
 
-/**
- * A class for serializing data from a string or url source into a provided parser base class.
- */
+/** A class for serializing data from a string or url source into a provided parser base class. */
 public final class SerializationUtil {
-    /**
-     * The master Gson object used for all of Cyder.
-     */
+    /** The master Gson object used for all of Cyder. */
     private static final Gson gson = new GsonBuilder()
             .setLenient()
             .setPrettyPrinting()
             .create();
 
-    /**
-     * The number of chars to log prior to a deserialization or after a serialization of an object.
-     */
+    /** The number of chars to log prior to a deserialization or after a serialization of an object. */
     private static final int charsToLog = 50;
 
     /**

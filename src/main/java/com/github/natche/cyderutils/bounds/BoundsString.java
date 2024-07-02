@@ -12,19 +12,13 @@ import com.github.natche.cyderutils.strings.CyderStrings;
  */
 @Immutable
 public final class BoundsString {
-    /**
-     * The text of this bounds string.
-     */
+    /** The text of this bounds string. */
     private final String text;
 
-    /**
-     * The width of this bounds string.
-     */
+    /** The width of this bounds string. */
     private final int width;
 
-    /**
-     * The height of this bounds string.
-     */
+    /** The height of this bounds string. */
     private final int height;
 
     /**
@@ -82,9 +76,7 @@ public final class BoundsString {
         return height;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = text.hashCode();
@@ -93,9 +85,7 @@ public final class BoundsString {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "BoundsString{"
@@ -105,9 +95,7 @@ public final class BoundsString {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean equals(Object o) {
         if (this == o) {
             return true;

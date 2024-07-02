@@ -5,34 +5,22 @@ package com.github.natche.cyderutils.weather.parsers;
  * Sys is a bad name for this class.
  */
 public class Sys {
-    /**
-     * The OpenWeatherMap API internal type field.
-     */
+    /** The OpenWeatherMap API internal type field. */
     private int type;
 
-    /**
-     * The OpenWeatherMap API internal id field.
-     */
+    /** The OpenWeatherMap API internal id field. */
     private int id;
 
-    /**
-     * The country of origin.
-     */
+    /** The country of origin. */
     private String country;
 
-    /**
-     * The time of sunrise.
-     */
+    /** The time of sunrise. */
     private long sunrise;
 
-    /**
-     * The time of sunset.
-     */
+    /** The time of sunset. */
     private long sunset;
 
-    /**
-     * Constructs a new sys object.
-     */
+    /** Constructs a new sys object. */
     public Sys() {}
 
     /**
@@ -125,9 +113,7 @@ public class Sys {
         return sunset;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -145,9 +131,7 @@ public class Sys {
                 && other.sunset == sunset;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(type);
@@ -160,9 +144,7 @@ public class Sys {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Sys{"

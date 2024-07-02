@@ -1,4 +1,2 @@
-/**
- * Utilities related to network scraping.
- */
+/** Utilities related to network scraping. */
 package com.github.natche.cyderutils.network.scrapers;

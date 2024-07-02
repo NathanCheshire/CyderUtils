@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 import com.github.natche.cyderutils.network.scrapers.ScraperResult;
 
-/**
- * Represents the result of an IP information lookup from showmyip.com.
- */
+/** Represents the result of an IP information lookup from showmyip.com. */
 @Immutable
 public final class ShowMyIpResult implements ScraperResult {
     private final String ipv4;
@@ -184,9 +182,7 @@ public final class ShowMyIpResult implements ScraperResult {
         return userAgent;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ShowMyIpResult{"
@@ -204,9 +200,7 @@ public final class ShowMyIpResult implements ScraperResult {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = ipv4.hashCode();
@@ -223,9 +217,7 @@ public final class ShowMyIpResult implements ScraperResult {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -248,9 +240,7 @@ public final class ShowMyIpResult implements ScraperResult {
                 && userAgent.equals(other.userAgent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getFromUrl() {
         return ShowMyIpScraper.url;

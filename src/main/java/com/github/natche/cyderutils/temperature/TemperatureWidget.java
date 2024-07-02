@@ -20,50 +20,32 @@ import java.util.Optional;
 
 import static com.github.natche.cyderutils.temperature.TemperatureUtil.*;
 
-/**
- * A temperature conversion widget.
- */
+/** A temperature conversion widget. */
 @Vanilla
 @CyderAuthor
 public final class TemperatureWidget {
-    /**
-     * The frame for this widget.
-     */
+    /** The frame for this widget. */
     private CyderFrame temperatureFrame;
 
-    /**
-     * The field to receive the temperature input.
-     */
+    /** The field to receive the temperature input. */
     private CyderTextField startingValueField;
 
-    /**
-     * The old Fahrenheit checkbox.
-     */
+    /** The old Fahrenheit checkbox. */
     private CyderCheckbox oldFahrenheit;
 
-    /**
-     * The new Fahrenheit checkbox.
-     */
+    /** The new Fahrenheit checkbox. */
     private CyderCheckbox newFahrenheit;
 
-    /**
-     * The old celsius checkbox.
-     */
+    /** The old celsius checkbox. */
     private CyderCheckbox oldCelsius;
 
-    /**
-     * The new celsius checkbox.
-     */
+    /** The new celsius checkbox. */
     private CyderCheckbox newCelsius;
 
-    /**
-     * The old kelvin checkbox.
-     */
+    /** The old kelvin checkbox. */
     private CyderCheckbox oldKelvin;
 
-    /**
-     * The new kelvin checkbox.
-     */
+    /** The new kelvin checkbox. */
     private CyderCheckbox newKelvin;
 
     /**
@@ -75,43 +57,27 @@ public final class TemperatureWidget {
         return new TemperatureWidget();
     }
 
-    /**
-     * Temperature converter widget to convert between kelvin, fahrenheit, and celsius.
-     */
+    /** Temperature converter widget to convert between kelvin, fahrenheit, and celsius. */
     private TemperatureWidget() {}
 
-    /**
-     * The decimal formatter for the result.
-     */
+    /** The decimal formatter for the result. */
     private static final DecimalFormat resultFormatter = new DecimalFormat("#.####");
 
-    /**
-     * The text for the reset values button.
-     */
+    /** The text for the reset values button. */
     private static final String RESET_VALUES = "Reset Values";
 
-    /**
-     * The temperature units supported by Cyder for conversion.
-     */
+    /** The temperature units supported by Cyder for conversion. */
     private enum Unit {
-        /**
-         * The imperial temperature unit.
-         */
+        /** The imperial temperature unit. */
         FAHRENHEIT("Fahrenheit"),
 
-        /**
-         * The SI temperature unit.
-         */
+        /** The SI temperature unit. */
         CELSIUS("Celsius"),
 
-        /**
-         * The primary temperature uit
-         */
+        /** The primary temperature uit */
         KELVIN("Kelvin");
 
-        /**
-         * The name of this temperature unit.
-         */
+        /** The name of this temperature unit. */
         private final String name;
 
         Unit(String name) {
@@ -128,14 +94,10 @@ public final class TemperatureWidget {
         }
     }
 
-    /**
-     * The text for the calculate button.
-     */
+    /** The text for the calculate button. */
     private static final String CALCULATE = "Calculate";
 
-    /**
-     * The theme for the buttons.
-     */
+    /** The theme for the buttons. */
     private static final ThemeBuilder buttonTheme = new ThemeBuilder()
             .setBackgroundColor(CyderColors.regularRed)
             .setBorderLength(5)
@@ -143,26 +105,18 @@ public final class TemperatureWidget {
             .setForegroundColor(CyderColors.navy)
             .setFont(CyderFonts.SEGOE_20);
 
-    /**
-     * The regex for the value field.
-     */
+    /** The regex for the value field. */
     private static final String valueFieldRegex = "-?(([0-9]*)\\.?[0-9]*)";
 
-    /**
-     * The measurement label text.
-     */
+    /** The measurement label text. */
     private static final String MEASUREMENT = "Measurement:";
 
-    /**
-     * Shows a new TemperatureWidget.
-     */
+    /** Shows a new TemperatureWidget. */
     public static void showGui() {
         getInstance().innerShowGui();
     }
 
-    /**
-     * Shows the temperature widget GUI.
-     */
+    /** Shows the temperature widget GUI. */
     private void innerShowGui() {
         UiUtil.closeIfOpen(temperatureFrame);
 
@@ -275,9 +229,7 @@ public final class TemperatureWidget {
         temperatureFrame.finalizeAndShow();
     }
 
-    /**
-     * Performs the logic for when the calculate button is pressed.
-     */
+    /** Performs the logic for when the calculate button is pressed. */
     @ForReadability
     private void calculateButtonAction() {
         String startingValueText = startingValueField.getTrimmedText();
@@ -419,17 +371,13 @@ public final class TemperatureWidget {
         }
     }
 
-    /**
-     * Clears the value field.
-     */
+    /** Clears the value field. */
     @ForReadability
     private void clearFieldInput() {
         startingValueField.setText("");
     }
 
-    /**
-     * Resets the temperature widget state.
-     */
+    /** Resets the temperature widget state. */
     @ForReadability
     private void reset() {
         temperatureFrame.revokeAllNotifications();

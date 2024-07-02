@@ -5,14 +5,10 @@ import com.google.errorprone.annotations.Immutable;
 
 import java.util.concurrent.ThreadFactory;
 
-/**
- * A custom thread factory for Cyder.
- */
+/** A custom thread factory for Cyder. */
 @Immutable
 public final class CyderThreadFactory implements ThreadFactory {
-    /**
-     * The name of this thread factory.
-     */
+    /** The name of this thread factory. */
     private final String name;
 
     /**
@@ -49,9 +45,7 @@ public final class CyderThreadFactory implements ThreadFactory {
         return new Thread(Preconditions.checkNotNull(runnable), name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderThreadFactory{name=\"" + name + "\"}";

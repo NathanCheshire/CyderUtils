@@ -39,19 +39,13 @@ import java.util.*;
  */
 @SuppressWarnings("SpellCheckingInspection") /* urls */
 public final class StringUtil {
-    /**
-     * The default number of elements of a {@link JTextPane}s {@link StyledDocument}.
-     */
+    /** The default number of elements of a {@link JTextPane}s {@link StyledDocument}. */
     private static final int defaultDocumentElements = 3;
 
-    /**
-     * The output pane to print to in the case an object is created.
-     */
+    /** The output pane to print to in the case an object is created. */
     private final CyderOutputPane linkedCyderPane;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private StringUtil() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
@@ -546,9 +540,7 @@ public final class StringUtil {
         return false;
     }
 
-    /**
-     * The list of blocked words as found from the static file "blocked.txt".
-     */
+    /** The list of blocked words as found from the static file "blocked.txt". */
     private static ImmutableList<String> blockedWords;
 
     private static void loadBlockedWords() {
@@ -568,9 +560,7 @@ public final class StringUtil {
         StringUtil.blockedWords = ImmutableList.copyOf(blockedWords);
     }
 
-    /**
-     * A record for holding information regarding a located bad word.
-     */
+    /** A record for holding information regarding a located bad word. */
     public record BlockedWordResult(boolean failed, String triggerWord) {}
 
     /**
@@ -644,24 +634,16 @@ public final class StringUtil {
         return input.replaceAll(",\\s*", ", ");
     }
 
-    /**
-     * The name for the element to grab from the DOM returned when getting a Dictionary.com html document.
-     */
+    /** The name for the element to grab from the DOM returned when getting a Dictionary.com html document. */
     private static final String DEFINITION_ELEMENT_NAME = "one-click-content css-nnyc96 e1q3nk1v1";
 
-    /**
-     * The dictionary base url.
-     */
+    /** The dictionary base url. */
     private static final String DICTIONARY_BASE = "https://www.dictionary.com/browse/";
 
-    /**
-     * The pad 10 class name of elements to remove from the JSoup document.
-     */
+    /** The pad 10 class name of elements to remove from the JSoup document. */
     private static final String PAD_10 = "pad_10";
 
-    /**
-     * The pad 20 class name of elements to remove from the JSoup document.
-     */
+    /** The pad 20 class name of elements to remove from the JSoup document. */
     private static final String PAD_20 = "pad_20";
 
     /**
@@ -689,14 +671,10 @@ public final class StringUtil {
         return Optional.empty();
     }
 
-    /**
-     * The suffix for a wikipedia summary scrape.
-     */
+    /** The suffix for a wikipedia summary scrape. */
     private static final String WIKI_SUM_URL_SUFFIX = "&prop=extracts&exintro&explaintext&redirects=1&titles=";
 
-    /**
-     * The string to split the wikisum results on.
-     */
+    /** The string to split the wikisum results on. */
     private static final String wikiSumSplitOn = "\"extract\":\"";
 
     /**
@@ -893,9 +871,7 @@ public final class StringUtil {
      */
     public static final int SIZE_ADDITIVE = 10;
 
-    /**
-     * The font render context to use for string bounds calculations.
-     */
+    /** The font render context to use for string bounds calculations. */
     private static final FontRenderContext fontRenderContext =
             new FontRenderContext(new AffineTransform(), true, true);
 
@@ -957,9 +933,7 @@ public final class StringUtil {
         return (int) font.getStringBounds(text, fontRenderContext).getHeight();
     }
 
-    /**
-     * The regex to target non Ascii characters.
-     */
+    /** The regex to target non Ascii characters. */
     private static final String nonAsciiRegex = "[^\\x00-\\x7F]";
 
     /**

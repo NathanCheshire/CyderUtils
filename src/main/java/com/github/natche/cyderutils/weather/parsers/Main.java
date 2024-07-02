@@ -5,49 +5,31 @@ package com.github.natche.cyderutils.weather.parsers;
  * I have no idea why this is called main; LocalAttributes would be a much better name.
  */
 public class Main {
-    /**
-     * The local temperature.
-     */
+    /** The local temperature. */
     private float temp;
 
-    /**
-     * The local feels-like temperature.
-     */
+    /** The local feels-like temperature. */
     private float feels_like;
 
-    /**
-     * The minimum temperature.
-     */
+    /** The minimum temperature. */
     private float temp_min;
 
-    /**
-     * The maximum temperature.
-     */
+    /** The maximum temperature. */
     private float temp_max;
 
-    /**
-     * The atmospheric pressure.
-     */
+    /** The atmospheric pressure. */
     private float pressure;
 
-    /**
-     * The local humidity.
-     */
+    /** The local humidity. */
     private float humidity;
 
-    /**
-     * The sea level on the WSG84 ellipse.
-     */
+    /** The sea level on the WSG84 ellipse. */
     private float sea_level;
 
-    /**
-     * The ground level of the location.
-     */
+    /** The ground level of the location. */
     private float grnd_level;
 
-    /**
-     * Constructs a new main object.
-     */
+    /** Constructs a new main object. */
     Main() {}
 
     /**
@@ -194,9 +176,7 @@ public class Main {
         this.grnd_level = grnd_level;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -217,9 +197,7 @@ public class Main {
                 && other.grnd_level == grnd_level;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Float.hashCode(temp);
@@ -234,9 +212,7 @@ public class Main {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Main{"

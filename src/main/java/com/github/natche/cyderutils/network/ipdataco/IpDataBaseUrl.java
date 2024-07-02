@@ -1,12 +1,8 @@
 package com.github.natche.cyderutils.network.ipdataco;
 
-/**
- * The supported base URls for querying IpData objects via a {@link IpDataManager}.
- */
+/** The supported base URls for querying IpData objects via a {@link IpDataManager}. */
 public enum IpDataBaseUrl {
-    /**
-     * The standard ipdata base url.
-     */
+    /** The standard ipdata base url. */
     STANDARD("https://api.ipdata.co/?api-key="),
 
     /**

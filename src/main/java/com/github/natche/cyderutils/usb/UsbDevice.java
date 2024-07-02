@@ -12,24 +12,16 @@ import com.github.natche.cyderutils.strings.CyderStrings;
  */
 @Immutable
 public class UsbDevice {
-    /**
-     * The status of the usb device.
-     */
+    /** The status of the usb device. */
     private final String status;
 
-    /**
-     * The type of the usb device.
-     */
+    /** The type of the usb device. */
     private final String type;
 
-    /**
-     * The name of the device.
-     */
+    /** The name of the device. */
     private final String friendlyName;
 
-    /**
-     * The instance id of the device.
-     */
+    /** The instance id of the device. */
     private final String instanceId;
 
     /**
@@ -101,9 +93,7 @@ public class UsbDevice {
         return instanceId;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "UsbDevice{"
@@ -114,9 +104,7 @@ public class UsbDevice {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -132,9 +120,7 @@ public class UsbDevice {
                 && getInstanceId().equals(other.getInstanceId());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = status.hashCode();

@@ -9,13 +9,9 @@ import org.jsoup.nodes.Element;
 
 import java.util.Optional;
 
-/**
- * Utilities related to web-scraping.
- */
+/** Utilities related to web-scraping. */
 public final class ShowMyIpScraper implements Scraper {
-    /**
-     * The URL this scraper scrapes details from.
-     */
+    /** The URL this scraper scrapes details from. */
     public static final String url = "https://www.showmyip.com/";
 
     @SuppressWarnings("SpellCheckingInspection")

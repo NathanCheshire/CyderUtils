@@ -10,13 +10,9 @@ import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-/**
- * A subroutine for completing startup subroutines which are not necessary for Cyder to run properly.
- */
+/** A subroutine for completing startup subroutines which are not necessary for Cyder to run properly. */
 public final class SufficientSubroutines {
-    /**
-     * The minimum acceptable Python major version.
-     */
+    /** The minimum acceptable Python major version. */
     private static final int MIN_PYTHON_MAJOR_VERSION = 3;
 
     /**
@@ -25,26 +21,18 @@ public final class SufficientSubroutines {
      */
     private static final String PYTHON_PACKAGES_INSTALLED_ENSURER = "Python Packages Installed Ensurer";
 
-    /**
-     * The name of the sufficient subroutine to check for Python 3 being installed.
-     */
+    /** The name of the sufficient subroutine to check for Python 3 being installed. */
     private static final String PYTHON_3_INSTALLED_ENSURER = "Python 3 Installed Ensurer";
 
-    /**
-     * The name for the thread which executes the sequential subroutines.
-     */
+    /** The name for the thread which executes the sequential subroutines. */
     private static final String SUFFICIENT_SUBROUTINE_EXECUTOR_THREAD_NAME = "Sufficient Subroutine Executor";
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private SufficientSubroutines() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    /**
-     * The subroutines to execute.
-     */
+    /** The subroutines to execute. */
     public static final ImmutableList<Subroutine> subroutines = ImmutableList.of(
             new Subroutine(() -> {
                 Future<ImmutableList<PythonPackage>> futureMissingPackages =
@@ -107,9 +95,7 @@ public final class SufficientSubroutines {
             }, PYTHON_3_INSTALLED_ENSURER)
     );
 
-    /**
-     * Executes the sufficient subroutines in a separate thread.
-     */
+    /** Executes the sufficient subroutines in a separate thread. */
     public static void executeSubroutines() {
         CyderThreadRunner.submit(() -> {
             for (Subroutine sufficientSubroutine : subroutines) {

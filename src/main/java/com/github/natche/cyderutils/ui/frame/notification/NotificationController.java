@@ -23,83 +23,51 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * A controller for the notification queue system of a particular {@link CyderFrame}.
- */
+/** A controller for the notification queue system of a particular {@link CyderFrame}. */
 public final class NotificationController {
-    /**
-     * The notification text for log statements.
-     */
+    /** The notification text for log statements. */
     private static final String NOTIFICATION = "Notification";
 
-    /**
-     * The foreground color used for notifications.
-     */
+    /** The foreground color used for notifications. */
     private static final Color notificationForegroundColor = CyderColors.regularPurple;
 
-    /**
-     * The maximum allowable notification width to frame width ratio.
-     */
+    /** The maximum allowable notification width to frame width ratio. */
     private static final double maxNotificationToFrameWidthRatio = 0.85;
 
-    /**
-     * The maximum allowable notification height to frame height ratio.
-     */
+    /** The maximum allowable notification height to frame height ratio. */
     private static final double maxNotificationToFrameHeightRatio = 0.45;
 
-    /**
-     * The duration gap between a notification disappearing and the next one appearing.
-     */
+    /** The duration gap between a notification disappearing and the next one appearing. */
     private static final Duration timeBetweenNotifications = Duration.ofMillis(800);
 
-    /**
-     * The font used for CyderFrame notifications (typically equivalent to segoe20)
-     */
+    /** The font used for CyderFrame notifications (typically equivalent to segoe20) */
     private static final Font notificationFont = new Font("Segoe UI Black", Font.BOLD, 20);
 
-    /**
-     * The number of milliseconds per word a notification should be visible for.
-     */
+    /** The number of milliseconds per word a notification should be visible for. */
     private static final long msPerWord = 300;
 
-    /**
-     * The padding for notification containers and their painted container objects.
-     */
+    /** The padding for notification containers and their painted container objects. */
     private static final int notificationPadding = 5;
 
-    /**
-     * The prefix for the tooltip on notifications.
-     */
+    /** The prefix for the tooltip on notifications. */
     private static final String tooltipPrefix = "Notified at: ";
 
-    /**
-     * The frame this queue is controlling.
-     */
+    /** The frame this queue is controlling. */
     private final CyderFrame controlFrame;
 
-    /**
-     * The executor service for running the notification queue when necessary for the control frame.
-     */
+    /** The executor service for running the notification queue when necessary for the control frame. */
     private final ExecutorService queueExecutor;
 
-    /**
-     * Whether the notification queue is currently running.
-     */
+    /** Whether the notification queue is currently running. */
     private final AtomicBoolean queueRunning;
 
-    /**
-     * Whether this controller has been killed.
-     */
+    /** Whether this controller has been killed. */
     private final AtomicBoolean killed;
 
-    /**
-     * The notification queue to pull from.
-     */
+    /** The notification queue to pull from. */
     private final ArrayList<CyderNotification> notificationQueue = new ArrayList<>();
 
-    /**
-     * The notification currently being shown/animated.
-     */
+    /** The notification currently being shown/animated. */
     private CyderNotification currentNotification;
 
     /**
@@ -255,9 +223,7 @@ public final class NotificationController {
                 || builder.getContainer().getHeight() > getMaxAllowableHeight();
     }
 
-    /**
-     * Kills this notification controller, revoking all notifications currently displaying and clearing the queue.
-     */
+    /** Kills this notification controller, revoking all notifications currently displaying and clearing the queue. */
     public void kill() {
         killed.set(true);
         notificationQueue.clear();
@@ -323,17 +289,13 @@ public final class NotificationController {
         return revoked.get();
     }
 
-    /**
-     * Revokes all notifications currently showing and from the queue.
-     */
+    /** Revokes all notifications currently showing and from the queue. */
     public void revokeAllNotifications() {
         notificationQueue.clear();
         if (currentNotification != null) currentNotification.kill();
     }
 
-    /**
-     * Revalidates the position of the current notification if it is not in the middle of an animation.
-     */
+    /** Revalidates the position of the current notification if it is not in the middle of an animation. */
     public void revalidateCurrentNotificationPosition() {
         if (currentNotification != null && !currentNotification.isAnimating()) {
             currentNotification.setToMidAnimationPosition();
@@ -377,9 +339,7 @@ public final class NotificationController {
         return (int) Math.ceil(controlFrame.getWidth() * maxNotificationToFrameHeightRatio);
     }
 
-    /**
-     * Starts the notification queue if necessary.
-     */
+    /** Starts the notification queue if necessary. */
     private synchronized void startQueueIfNecessary() {
         if (queueRunning.get() || notificationQueue.isEmpty()) return;
         queueRunning.set(true);

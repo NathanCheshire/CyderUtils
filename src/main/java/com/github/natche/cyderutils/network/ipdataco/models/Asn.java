@@ -3,34 +3,22 @@ package com.github.natche.cyderutils.network.ipdataco.models;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 
-/**
- * An object representing an autonomous system number and related data from ipdata.co.
- */
+/** An object representing an autonomous system number and related data from ipdata.co. */
 @Immutable
 public final class Asn {
-    /**
-     * The autonomous system number.
-     */
+    /** The autonomous system number. */
     private final String asn;
 
-    /**
-     * The organization name.
-     */
+    /** The organization name. */
     private final String name;
 
-    /**
-     * The website of the organization.
-     */
+    /** The website of the organization. */
     private final String domain;
 
-    /**
-     * The network prefix the IP address belongs to.
-     */
+    /** The network prefix the IP address belongs to. */
     private final String route;
 
-    /**
-     * The usage type associated with teh IP address and ASN.
-     */
+    /** The usage type associated with teh IP address and ASN. */
     private final String type;
 
     /**
@@ -108,9 +96,7 @@ public final class Asn {
         return type;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Asn{"
@@ -122,9 +108,7 @@ public final class Asn {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = asn.hashCode();
@@ -135,9 +119,7 @@ public final class Asn {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

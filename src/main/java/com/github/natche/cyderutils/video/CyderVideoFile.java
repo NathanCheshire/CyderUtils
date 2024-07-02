@@ -22,9 +22,7 @@ import java.util.concurrent.Future;
  * See {@link SupportedVideoFormat} for the formats possible for encapsulation.
  */
 public final class CyderVideoFile {
-    /**
-     * The encapsulated video file.
-     */
+    /** The encapsulated video file. */
     private final File videoFile;
 
     /**
@@ -118,9 +116,7 @@ public final class CyderVideoFile {
                 + ", startTime=" + System.currentTimeMillis();
     }
 
-    /**
-     * Shows the video player for the encapsulated video using a {@link CyderFrame}.
-     */
+    /** Shows the video player for the encapsulated video using a {@link CyderFrame}. */
     private void showVideoPlayer() {
         // todo play video on CyderFrame is MVP; media controls to come
     }

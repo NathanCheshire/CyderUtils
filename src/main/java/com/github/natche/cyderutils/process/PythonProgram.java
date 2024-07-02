@@ -8,21 +8,15 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * Common Python programs/binaries utilized by Cyder.
- */
+/** Common Python programs/binaries utilized by Cyder. */
 public enum PythonProgram {
     PIP(ImmutableList.of("pip"), "pip.exe"),
     PYTHON(ImmutableList.of("python", "python3"), "python.exe");
 
-    /**
-     * The name of this program.
-     */
+    /** The name of this program. */
     private final ImmutableList<String> programNames;
 
-    /**
-     * The filename of this program, extension included even though it's likely an exe.
-     */
+    /** The filename of this program, extension included even though it's likely an exe. */
     private final String filename;
 
     PythonProgram(ImmutableList<String> programNames, String filename) {

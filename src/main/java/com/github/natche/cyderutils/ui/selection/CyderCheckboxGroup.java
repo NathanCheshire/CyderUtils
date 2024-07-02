@@ -5,28 +5,18 @@ import com.github.natche.cyderutils.strings.StringUtil;
 
 import java.util.ArrayList;
 
-/**
- * A group of {@link CyderCheckbox}s in which only one may be checked at a time.
- */
+/** A group of {@link CyderCheckbox}s in which only one may be checked at a time. */
 public class CyderCheckboxGroup {
-    /**
-     * The list of checkboxes.
-     */
+    /** The list of checkboxes. */
     private final ArrayList<CyderCheckbox> checkboxes = new ArrayList<>();
 
-    /**
-     * The currently checked checkbox.
-     */
+    /** The currently checked checkbox. */
     private CyderCheckbox currentlyCheckedBox;
 
-    /**
-     * Constructs a new CyderCheckboxGroup object.
-     */
+    /** Constructs a new CyderCheckboxGroup object. */
     public CyderCheckboxGroup() {}
 
-    /**
-     * Clears all checked checkboxes in this group.
-     */
+    /** Clears all checked checkboxes in this group. */
     public void clearSelection() {
         if (currentlyCheckedBox != null) {
             currentlyCheckedBox.setNotChecked();
@@ -70,9 +60,7 @@ public class CyderCheckboxGroup {
         refreshNonOwnerBoxes();
     }
 
-    /**
-     * Calls setNotChecked on all checkboxes not equal to the currently checked box of this group.
-     */
+    /** Calls setNotChecked on all checkboxes not equal to the currently checked box of this group. */
     public void refreshNonOwnerBoxes() {
         checkboxes.forEach(checkBox -> {
             if (checkBox != currentlyCheckedBox) {
@@ -81,16 +69,12 @@ public class CyderCheckboxGroup {
         });
     }
 
-    /**
-     * Disables all checkboxes in this group.
-     */
+    /** Disables all checkboxes in this group. */
     public void disableCheckboxes() {
         checkboxes.forEach(checkBox -> checkBox.setEnabled(false));
     }
 
-    /**
-     * Enables all checkboxes in this group.
-     */
+    /** Enables all checkboxes in this group. */
     public void enableCheckboxes() {
         checkboxes.forEach(checkBox -> checkBox.setEnabled(true));
     }
@@ -113,9 +97,7 @@ public class CyderCheckboxGroup {
         return checkboxes.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         if (checkboxes.isEmpty()) {

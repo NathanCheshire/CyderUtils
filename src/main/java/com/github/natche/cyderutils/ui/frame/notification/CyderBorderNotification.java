@@ -11,24 +11,16 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 
 public final class CyderBorderNotification extends CyderToastNotification {
-    /**
-     * The offset from the top and bottom of the frame for border notifications.
-     */
+    /** The offset from the top and bottom of the frame for border notifications. */
     private static final int topBottomOffset = 5;
 
-    /**
-     * The pixel increment for border notification animations.
-     */
+    /** The pixel increment for border notification animations. */
     private static final int animationIncrement = 8;
 
-    /**
-     * The millisecond timeout for border notification animations.
-     */
+    /** The millisecond timeout for border notification animations. */
     private static final int animationTimeout = 8;
 
-    /**
-     * The direction this border notification should appear and disappear from.
-     */
+    /** The direction this border notification should appear and disappear from. */
     private final NotificationDirection notificationDirection;
 
     /**
@@ -41,9 +33,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
         this.notificationDirection = builder.getNotificationDirection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -160,9 +150,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
         g2d.fill(fillPath);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void appear() {
         if (appearInvoked.get()) return;
@@ -219,9 +207,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
         }, appearAnimationService);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void disappear() {
         Preconditions.checkState(appearInvoked.get());
@@ -279,9 +265,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
         }, disappearAnimationService);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setToMidAnimationPosition() {
         int w = getWidth();
@@ -305,9 +289,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
         }
     }
 
-    /**
-     * Sets the position of this notification to the start/end of the animation.
-     */
+    /** Sets the position of this notification to the start/end of the animation. */
     @Override
     public void setToStartAndEndingPosition() {
         int w = getWidth();

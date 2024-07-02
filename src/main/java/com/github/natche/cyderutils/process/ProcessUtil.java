@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * Utilities related to processes and the Java {@link Process} API.
- */
+/** Utilities related to processes and the Java {@link Process} API. */
 public final class ProcessUtil {
     /**
      * Suppress default constructor.

@@ -7,13 +7,9 @@ import com.github.natche.cyderutils.files.FileUtil;
 import java.io.File;
 import java.util.Arrays;
 
-/**
- * The video formats supported by Cyder.
- */
+/** The video formats supported by Cyder. */
 public enum SupportedVideoFormat {
-    /**
-     * The MP4 video format (MPEG-4).
-     */
+    /** The MP4 video format (MPEG-4). */
     MP4(".mp4", ImmutableList.of(0x66, 0x74, 0x79, 0x70));
 
     private final String extension;

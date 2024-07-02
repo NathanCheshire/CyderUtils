@@ -41,43 +41,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
-/**
- * A controller for the tooltip menu of a particular {@link CyderFrame}.
- */
+/** A controller for the tooltip menu of a particular {@link CyderFrame}. */
 public final class TooltipMenuController {
-    /**
-     * The tooltip menu component border color.
-     */
+    /** The tooltip menu component border color. */
     private static final Color borderColor = Color.black;
 
-    /**
-     * The default tooltip menu width.
-     */
+    /** The default tooltip menu width. */
     private static final int defaultWidth = 120;
 
-    /**
-     * The tooltip menu border length
-     */
+    /** The tooltip menu border length */
     private static final int borderLength = 5;
 
-    /**
-     * The height necessary for a single tooltip menu item.
-     */
+    /** The height necessary for a single tooltip menu item. */
     private static final int itemLabelHeight = 30;
 
-    /**
-     * The opacity decrement for the tooltip menu label fade-out animation.
-     */
+    /** The opacity decrement for the tooltip menu label fade-out animation. */
     private static final int opacityAnimationDecrement = 2;
 
-    /**
-     * The animation timeout for the tooltip menu label fade-out animation.
-     */
+    /** The animation timeout for the tooltip menu label fade-out animation. */
     private static final Duration opacityAnimationTimeout = Duration.ofMillis(2);
 
-    /**
-     * The thread name for the tooltip menu label fade-out animation.
-     */
+    /** The thread name for the tooltip menu label fade-out animation. */
     private static final String animateOutThreadName = "CyderFrame tooltip menu fade-out animation";
 
     /**
@@ -105,64 +89,40 @@ public final class TooltipMenuController {
      */
     private static final String mouseOutOfTooltipMenuListenerThreadName = "Mouse out of tooltip menu listener";
 
-    /**
-     * The timeout before fading out the tooltip menu label if the user never interacts with the label.
-     */
+    /** The timeout before fading out the tooltip menu label if the user never interacts with the label. */
     private static final Duration noInteractionFadeOutTimeout = Duration.ofSeconds(3);
 
-    /**
-     * The duration a mouse must remain outside of the menu before the fade out animation is invoked.
-     */
+    /** The duration a mouse must remain outside of the menu before the fade out animation is invoked. */
     private static final Duration outOfTooltipMenuBeforeFadeOut = Duration.ofMillis(1400);
 
-    /**
-     * The frame this controller has control over.
-     */
+    /** The frame this controller has control over. */
     private final CyderFrame controlFrame;
 
-    /**
-     * The menu items for this tooltip menu controller.
-     */
+    /** The menu items for this tooltip menu controller. */
     private final ArrayList<JLabel> menuItems = new ArrayList<>();
 
-    /**
-     * The getter util for getting the frame location input from the user.
-     */
+    /** The getter util for getting the frame location input from the user. */
     private final GetterUtil tooltipMenuItemFrameLocationGetterUtil = GetterUtil.getInstance();
 
-    /**
-     * The getter util for getting the frame size input from the user.
-     */
+    /** The getter util for getting the frame size input from the user. */
     private final GetterUtil tooltipMenuItemFrameSizeGetterUtil = GetterUtil.getInstance();
 
-    /**
-     * Whether the mouse has entered the tooltip menu after it was generated.
-     */
+    /** Whether the mouse has entered the tooltip menu after it was generated. */
     private final AtomicBoolean mouseHasEnteredTooltipMenu = new AtomicBoolean();
 
-    /**
-     * The opacity the menu should be painted with.
-     */
+    /** The opacity the menu should be painted with. */
     private final AtomicInteger opacity = new AtomicInteger(255);
 
-    /**
-     * The current control key to validate fade-out animation requests.
-     */
+    /** The current control key to validate fade-out animation requests. */
     private final AtomicReference<String> currentFadeOutKey = new AtomicReference<>();
 
-    /**
-     * The generated menu label this controller uses for the tooltip menu label.
-     */
+    /** The generated menu label this controller uses for the tooltip menu label. */
     private JLabel tooltipMenuLabel;
 
-    /**
-     * The scroll pane on the menu label containing the menu items.
-     */
+    /** The scroll pane on the menu label containing the menu items. */
     private CyderScrollPane menuScroll;
 
-    /**
-     * The fade-out animation.
-     */
+    /** The fade-out animation. */
     private ListenableFuture<Void> fadeOutAnimation;
 
     /**
@@ -171,9 +131,7 @@ public final class TooltipMenuController {
      */
     private ListenableFuture<Void> noInteractionFadeOutWaiter;
 
-    /**
-     * The waiter for waiting for a mouse to be out of the menu label.
-     */
+    /** The waiter for waiting for a mouse to be out of the menu label. */
     private ListenableFuture<Void> mouseOutOfMenuWaiter;
 
     /**
@@ -257,9 +215,7 @@ public final class TooltipMenuController {
         constructTooltipMenuLabel();
     }
 
-    /**
-     * Cancels the {@link #noInteractionFadeOutWaiter} if running.
-     */
+    /** Cancels the {@link #noInteractionFadeOutWaiter} if running. */
     private void cancelNoInteractionFadeOutWaiter() {
         if (noInteractionFadeOutWaiter != null) {
             noInteractionFadeOutWaiter.cancel(true);
@@ -285,9 +241,7 @@ public final class TooltipMenuController {
         }, Executors.newSingleThreadExecutor(new CyderThreadFactory(tooltipMenuFadeoutWaiterThreadName)));
     }
 
-    /**
-     * Cancels the mouse out of menu waiter if running.
-     */
+    /** Cancels the mouse out of menu waiter if running. */
     private void cancelMouseOutOfMenuWaiter() {
         if (mouseOutOfMenuWaiter != null) {
             mouseOutOfMenuWaiter.cancel(true);
@@ -318,9 +272,7 @@ public final class TooltipMenuController {
         }, Executors.newSingleThreadExecutor(new CyderThreadFactory(mouseOutOfTooltipMenuListenerThreadName)));
     }
 
-    /**
-     * Cancels the {@link #fadeOutAnimation} if currently running.
-     */
+    /** Cancels the {@link #fadeOutAnimation} if currently running. */
     private void cancelFadeOutAnimation() {
         if (fadeOutAnimation != null) {
             fadeOutAnimation.cancel(true);
@@ -394,9 +346,7 @@ public final class TooltipMenuController {
         }
     }
 
-    /**
-     * Constructs the tooltip menu label for this controller.
-     */
+    /** Constructs the tooltip menu label for this controller. */
     private void constructTooltipMenuLabel() {
         synchronized (this) {
             tooltipMenuLabel = new JLabel() {
@@ -465,9 +415,7 @@ public final class TooltipMenuController {
         }
     }
 
-    /**
-     * Revalidates the size of the label and the size and location of the menu scroll.
-     */
+    /** Revalidates the size of the label and the size and location of the menu scroll. */
     private void revalidateLabelAndScrollSize() {
         int w = calculateWidth();
         int h = calculateHeight();
@@ -561,9 +509,7 @@ public final class TooltipMenuController {
         return new Point((int) x, (int) y);
     }
 
-    /**
-     * The actions to invoke when the frame location tooltip menu item is pressed.
-     */
+    /** The actions to invoke when the frame location tooltip menu item is pressed. */
     private void onFrameLocationTooltipMenuItemPressed() {
         CyderThreadRunner.submit(() -> {
             tooltipMenuItemFrameLocationGetterUtil.closeAllGetFrames();
@@ -650,9 +596,7 @@ public final class TooltipMenuController {
         }, setFrameLocationTooltipMenuWaiterThreadName);
     }
 
-    /**
-     * The actions to invoke when the frame size tooltip menu item is pressed.
-     */
+    /** The actions to invoke when the frame size tooltip menu item is pressed. */
     private void onFrameSizeTooltipMenuItemPressed() {
         CyderThreadRunner.submit(() -> {
             int frameWidth = controlFrame.getWidth();

@@ -5,167 +5,107 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.Objects;
 
-/**
- * A json serialization class for a GitHub repo issue.
- */
+/** A json serialization class for a GitHub repo issue. */
 public class Issue {
-    /**
-     * The url for this issue.
-     */
+    /** The url for this issue. */
     public String url;
 
-    /**
-     * The url for the repository this issue was created for.
-     */
+    /** The url for the repository this issue was created for. */
     @SerializedName("repository_url")
     public String repositoryUrl;
 
-    /**
-     * The labels url for this issue.
-     */
+    /** The labels url for this issue. */
     @SerializedName("labels_url")
     public String labelsUrl;
 
-    /**
-     * The comments url for this issue.
-     */
+    /** The comments url for this issue. */
     @SerializedName("comments_url")
     public String commentsUrl;
 
-    /**
-     * The events url for this issue.
-     */
+    /** The events url for this issue. */
     @SerializedName("events_url")
     public String eventsUrl;
 
-    /**
-     * The html url for this issue.
-     */
+    /** The html url for this issue. */
     @SerializedName("html_url")
     public String htmlUrl;
 
-    /**
-     * The id of this issue.
-     */
+    /** The id of this issue. */
     public int id;
 
-    /**
-     * The node id of this issue.
-     */
+    /** The node id of this issue. */
     @SerializedName("node_id")
     public String nodeId;
 
-    /**
-     * The sequential number of this issue.
-     */
+    /** The sequential number of this issue. */
     public int number;
 
-    /**
-     * The title of this issue.
-     */
+    /** The title of this issue. */
     public String title;
 
-    /**
-     * A user object.
-     */
+    /** A user object. */
     public User user;
 
-    /**
-     * Labels associated with this issue.
-     */
+    /** Labels associated with this issue. */
     public ArrayList<String> labels;
 
-    /**
-     * The state of this issue.
-     */
+    /** The state of this issue. */
     public String state;
 
-    /**
-     * Whether this issue is currently locked.
-     */
+    /** Whether this issue is currently locked. */
     public boolean locked;
 
-    /**
-     * The assignee for this issue.
-     */
+    /** The assignee for this issue. */
     public User assignee;
 
-    /**
-     * The assignees for this issue.
-     */
+    /** The assignees for this issue. */
     public ArrayList<User> assignees;
 
-    /**
-     * Whether this issue is a milestone.
-     */
+    /** Whether this issue is a milestone. */
     public boolean milestone;
 
-    /**
-     * The number of comments on this issue.
-     */
+    /** The number of comments on this issue. */
     public int comments;
 
-    /**
-     * The time at which this issue was created.
-     */
+    /** The time at which this issue was created. */
     @SerializedName("created_at")
     public String createdAt;
 
-    /**
-     * The time at which this issue was last updated at.
-     */
+    /** The time at which this issue was last updated at. */
     @SerializedName("updated_at")
     public String updatedAt;
 
-    /**
-     * The time at which this issue was closed at.
-     */
+    /** The time at which this issue was closed at. */
     @SerializedName("closed_at")
     public String closedAt;
 
-    /**
-     * The association of the author of this issue.
-     */
+    /** The association of the author of this issue. */
     @SerializedName("author_association")
     public String authorAssociation;
 
-    /**
-     * The reason for locking the issue.
-     */
+    /** The reason for locking the issue. */
     @SerializedName("active_lock_reason")
     public String activeLockReason;
 
-    /**
-     * The contents of the issue.
-     */
+    /** The contents of the issue. */
     public String body;
 
-    /**
-     * The reactions to the issue.
-     */
+    /** The reactions to the issue. */
     public Reaction reactions;
 
-    /**
-     * The url for the timeline of this issue.
-     */
+    /** The url for the timeline of this issue. */
     @SerializedName("timeline_url")
     public String timelineUrl;
 
-    /**
-     * Whether this issue was created via the GitHub app.
-     */
+    /** Whether this issue was created via the GitHub app. */
     @SerializedName("performed_via_github_app")
     public boolean performedViaGithubApp;
 
-    /**
-     * The reason for the issue being in the current state.
-     */
+    /** The reason for the issue being in the current state. */
     @SerializedName("state_reason")
     public String stateReason;
 
-    /**
-     * Creates a new issue object.
-     */
+    /** Creates a new issue object. */
     public Issue() {}
 
     /**
@@ -672,9 +612,7 @@ public class Issue {
         this.stateReason = stateReason;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -714,9 +652,7 @@ public class Issue {
                 && other.stateReason.equals(stateReason);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = url.hashCode();
@@ -752,9 +688,7 @@ public class Issue {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Issue{"

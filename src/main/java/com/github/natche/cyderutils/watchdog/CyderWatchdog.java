@@ -13,18 +13,12 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * A watchdog timer for Cyder to detect a freeze on the GUI and kill the application.
- */
+/** A watchdog timer for Cyder to detect a freeze on the GUI and kill the application. */
 public final class CyderWatchdog {
-    /**
-     * The time in ms to wait between checking for the first appearance of AWT-EventQueue-0.
-     */
+    /** The time in ms to wait between checking for the first appearance of AWT-EventQueue-0. */
     public static final int INITIALIZE_TIMEOUT_MS = 3000;
 
-    /**
-     * The time in ms to wait between checking the AWT-EventQueue-0 thread for its status.
-     */
+    /** The time in ms to wait between checking the AWT-EventQueue-0 thread for its status. */
     public static final Duration POLL_TIMEOUT = Duration.ofMillis(Props.watchdogPollTimeout.getValue());
 
     /**
@@ -33,24 +27,16 @@ public final class CyderWatchdog {
      */
     private static final AtomicInteger watchdogCounter = new AtomicInteger();
 
-    /**
-     * The maximum number the watchdog counter can achieve before triggering a fatal reset.
-     */
+    /** The maximum number the watchdog counter can achieve before triggering a fatal reset. */
     public static final int MAX_WATCHDOG_FREEZE_MS = 5000;
 
-    /**
-     * Whether the watchdog has been initialized and started.
-     */
+    /** Whether the watchdog has been initialized and started. */
     private static final AtomicBoolean watchdogInitialized = new AtomicBoolean();
 
-    /**
-     * The previous state of the awt event queue thread.
-     */
+    /** The previous state of the awt event queue thread. */
     private static Thread.State currentAwtEventQueueThreadState;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private CyderWatchdog() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -157,9 +143,7 @@ public final class CyderWatchdog {
         }, "todo name me, customizable with builder"); // todo
     }
 
-    /**
-     * The actions to invoke when a UI halt is detected by the watchdog.
-     */
+    /** The actions to invoke when a UI halt is detected by the watchdog. */
     private static void onUiHaltDetected() {
         // todo hook
     }

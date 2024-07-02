@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.network.scrapers;
 
 import java.util.Optional;
 
-/**
- * An interface all scrapers must implement.
- */
+/** An interface all scrapers must implement. */
 public interface Scraper {
     /**
      * Scrapes using this scraper and returns a new {@link ScraperResult}.

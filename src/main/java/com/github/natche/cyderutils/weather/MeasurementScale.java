@@ -1,17 +1,11 @@
 package com.github.natche.cyderutils.weather;
 
-/**
- * Possible measurement scales, that of imperial or metric.
- */
+/** Possible measurement scales, that of imperial or metric. */
 public enum MeasurementScale {
-    /**
-     * The imperial measurement scale.
-     */
+    /** The imperial measurement scale. */
     IMPERIAL("imperial"),
 
-    /**
-     * The metric measurement scale.
-     */
+    /** The metric measurement scale. */
     METRIC("metric");
 
     private final String weatherDataRepresentation;

@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.strings.CyderStrings;
 
-/**
- * Utilities related to interpolation.
- */
+/** Utilities related to interpolation. */
 public final class InterpolationUtil {
     /**
      * Suppress default constructor.

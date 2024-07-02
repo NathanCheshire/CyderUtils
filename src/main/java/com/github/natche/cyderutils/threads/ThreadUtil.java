@@ -13,9 +13,7 @@ import java.util.stream.Collectors;
 
 // todo we should allow a manager of this and individual ones which can allow an error hook
 
-/**
- * A utility class for querying threads, names, and counts.
- */
+/** A utility class for querying threads, names, and counts. */
 public final class ThreadUtil {
     /**
      * Suppress default constructor.

@@ -1,27 +1,17 @@
 package com.github.natche.cyderutils.elevation;
 
-/**
- * The standard length units for an elevation query.
- */
+/** The standard length units for an elevation query. */
 public enum LengthUnit {
-    /**
-     * The SI unit for length.
-     */
+    /** The SI unit for length. */
     METERS("METERS", 1.0),
 
-    /**
-     * The English unit for length.
-     */
+    /** The English unit for length. */
     FEET("FEET", 0.3048);
 
-    /**
-     * The name of the length unit
-     */
+    /** The name of the length unit */
     private final String name;
 
-    /**
-     * Conversion factor to meters.
-     */
+    /** Conversion factor to meters. */
     private final double toMetersFactor;
 
     LengthUnit(String name, double toMetersFactor) {

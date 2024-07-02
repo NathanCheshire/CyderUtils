@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.audio.ffmpeg;
 
-/**
- * The FFmpeg command and arguments supported by Cyder.
- */
+/** The FFmpeg command and arguments supported by Cyder. */
 public enum FfmpegArgument {
     FFMPEG("ffmpeg"),
     FFPROBE("ffprobe"),

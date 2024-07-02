@@ -23,70 +23,44 @@ import java.util.concurrent.Future;
 
 import static com.github.natche.cyderutils.strings.CyderStrings.ATTEMPTED_INSTANTIATION;
 
-/**
- * Utilities for working with REST APIs provided by <a href="https://www.github.com">GitHub.com</a>.
- */
+/** Utilities for working with REST APIs provided by <a href="https://www.github.com">GitHub.com</a>. */
 public final class GitHubUtil {
-    /**
-     * The Cyder author GitHub username.
-     */
+    /** The Cyder author GitHub username. */
     private static final String authorUsername = "nathancheshire";
 
-    /**
-     * The name for the Cyder GitHub repository.
-     */
+    /** The name for the Cyder GitHub repository. */
     private static final String repoName = "cyderutils";
 
-    /**
-     * The name of the thread for cloning repos from GitHub.
-     */
+    /** The name of the thread for cloning repos from GitHub. */
     private static final String GIT_REPO_CLONER_THREAD_NAME = "Git Repo Cloner";
 
-    /**
-     * Executor service used to clone github repos.
-     */
+    /** Executor service used to clone github repos. */
     private static final ExecutorService cloningExecutor = Executors.newSingleThreadScheduledExecutor(
             new CyderThreadFactory(GIT_REPO_CLONER_THREAD_NAME));
 
-    /**
-     * The url to download Git from.
-     */
+    /** The url to download Git from. */
     private static final String GIT_DOWNLOAD_URL = "https://git-scm.com/downloads";
 
-    /**
-     * The repos keyword for the GitHub repos API.
-     */
+    /** The repos keyword for the GitHub repos API. */
     private static final String REPOS = "repos";
 
-    /**
-     * The repos keyword for the GitHub languages API.
-     */
+    /** The repos keyword for the GitHub languages API. */
     private static final String LANGUAGES = "languages";
 
-    /**
-     * The repos keyword for the GitHub issues API.
-     */
+    /** The repos keyword for the GitHub issues API. */
     private static final String ISSUES = "issues";
 
-    /**
-     * The Git command string.
-     */
+    /** The Git command string. */
     private static final String GIT = "git";
 
-    /**
-     * The GitHub repos API header.
-     */
+    /** The GitHub repos API header. */
     private static final String GITHUB_REPOS_API_HEADER = "https://api.github.com/" + REPOS;
 
-    /**
-     * The url to get the languages used throughout Cyder from.
-     */
+    /** The url to get the languages used throughout Cyder from. */
     private static final String cyderLanguagesUrl = GITHUB_REPOS_API_HEADER + "/" + authorUsername
             + "/" + repoName + "/" + LANGUAGES;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private GitHubUtil() {
         throw new IllegalMethodException(ATTEMPTED_INSTANTIATION);
     }

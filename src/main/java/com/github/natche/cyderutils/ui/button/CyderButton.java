@@ -15,63 +15,39 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-/**
- * A custom styled button for use throughout Cyder.
- */
+/** A custom styled button for use throughout Cyder. */
 public class CyderButton extends JButton {
-    /**
-     * The text color to use when the button is disabled.
-     */
+    /** The text color to use when the button is disabled. */
     public static final Color DISABLED_TEXT_COLOR = Color.black;
 
-    /**
-     * The background color to use when the button is disabled.
-     */
+    /** The background color to use when the button is disabled. */
     public static final Color DISABLED_BACKGROUND_COLOR = Color.darkGray;
 
-    /**
-     * The amount to delay by when alerting.
-     */
+    /** The amount to delay by when alerting. */
     public static final int ALERT_DELAY = 300;
 
-    /**
-     * The number of times to alert by default.
-     */
+    /** The number of times to alert by default. */
     public static final int ALERT_ITERATIONS = 8;
 
-    /**
-     * The hover color for when the button is hovered via a mouse.
-     */
+    /** The hover color for when the button is hovered via a mouse. */
     private Color hoverBackgroundColor;
 
-    /**
-     * The pressed color for when the button is currently pressed via a mouse.
-     */
+    /** The pressed color for when the button is currently pressed via a mouse. */
     private Color pressedBackgroundColor;
 
-    /**
-     * Whether threads for this object have been killed.
-     */
+    /** Whether threads for this object have been killed. */
     private boolean threadsKilled;
 
-    /**
-     * The background color of the button.
-     */
+    /** The background color of the button. */
     private Color backgroundColor;
 
-    /**
-     * The text to place to the left of the text on {@link #setText(String)} calls.
-     */
+    /** The text to place to the left of the text on {@link #setText(String)} calls. */
     private String leftTextPadding = "";
 
-    /**
-     * The text to place to the right of the text on {@link #setText(String)} calls.
-     */
+    /** The text to place to the right of the text on {@link #setText(String)} calls. */
     private String rightTextPadding = "";
 
-    /**
-     * Constructs a new CyderButton
-     */
+    /** Constructs a new CyderButton */
     public CyderButton() {
         this("");
     }
@@ -117,9 +93,7 @@ public class CyderButton extends JButton {
         };
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void paintComponent(Graphics g) {
         setFocusPainted(false);
@@ -136,9 +110,7 @@ public class CyderButton extends JButton {
         super.paintComponent(g);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setText(String text) {
         Preconditions.checkNotNull(text);
@@ -212,9 +184,7 @@ public class CyderButton extends JButton {
         this.pressedBackgroundColor = pressedBackgroundColor;
     }
 
-    /**
-     * Invokes an alert using {@link #ALERT_ITERATIONS}
-     */
+    /** Invokes an alert using {@link #ALERT_ITERATIONS} */
     public void alert() {
         alert(ALERT_ITERATIONS);
     }
@@ -253,24 +223,18 @@ public class CyderButton extends JButton {
         }, getName() + " Alerter");
     }
 
-    /**
-     * Kills any threads associated with this CyderButton instance.
-     */
+    /** Kills any threads associated with this CyderButton instance. */
     public void killThreads() {
         threadsKilled = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return ToStringUtil.commonUiComponentToString(this);
     }
 
-    /**
-     * Adds the default focus listener to this CyderButton.
-     */
+    /** Adds the default focus listener to this CyderButton. */
     public void addDefaultFocusListener() {
         addFocusListener(new FocusAdapter() {
             @Override

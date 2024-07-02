@@ -1,16 +1,12 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * Youtube safe search options for a {@link YouTubeSearchQuery}.
- */
+/** Youtube safe search options for a {@link YouTubeSearchQuery}. */
 public enum YouTubeSafeSearch {
     MODERATE("moderate"),
     NONE("none"),
     STRICT("strict");
 
-    /**
-     * The url parameter for this YouTube safe search.
-     */
+    /** The url parameter for this YouTube safe search. */
     private final String urlParameter;
 
     YouTubeSafeSearch(String urlParameter) {

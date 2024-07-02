@@ -17,59 +17,37 @@ import java.util.concurrent.Semaphore;
  * Note that this does not make the provided objects immutable or thread-safe.
  */
 public class CyderOutputPane {
-    /**
-     * The text used to generate a menu separation label.
-     */
+    /** The text used to generate a menu separation label. */
     private static final String magicMenuSepText = "NateCheshire";
 
-    /**
-     * The starting x value for a menu separation.
-     */
+    /** The starting x value for a menu separation. */
     private static final int menuSepX = 0;
 
-    /**
-     * The starting y value for a menu separation.
-     */
+    /** The starting y value for a menu separation. */
     private static final int menuSepY = 7;
 
-    /**
-     * The width of menu separation components.
-     */
+    /** The width of menu separation components. */
     private static final int menuSepWidth = 175;
 
-    /**
-     * The height of menu separation components.
-     */
+    /** The height of menu separation components. */
     private static final int menuSepHeight = 5;
 
-    /**
-     * The bounds for a menu separation label.
-     */
+    /** The bounds for a menu separation label. */
     private static final Rectangle menuSepBounds = new Rectangle(menuSepX, menuSepY, menuSepWidth, menuSepHeight);
 
-    /**
-     * The default color of menu separator components.
-     */
+    /** The default color of menu separator components. */
     private static final Color DEFAULT_MENU_SEP_COLOR = CyderColors.vanilla;
 
-    /**
-     * The linked JTextPane.
-     */
+    /** The linked JTextPane. */
     private final JTextPane jTextPane;
 
-    /**
-     * The StringUtil object to perform common operations on the JTextPane.
-     */
+    /** The StringUtil object to perform common operations on the JTextPane. */
     private final StringUtil stringUtil;
 
-    /**
-     * The linked Semaphore to make appending/removing to/from the JTextPane thread-safe.
-     */
+    /** The linked Semaphore to make appending/removing to/from the JTextPane thread-safe. */
     private final Semaphore semaphore;
 
-    /**
-     * Instantiation not allowed unless all three arguments are provided
-     */
+    /** Instantiation not allowed unless all three arguments are provided */
     private CyderOutputPane() {
         throw new IllegalStateException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
@@ -120,9 +98,7 @@ public class CyderOutputPane {
         }
     }
 
-    /**
-     * Releases the semaphore lock.
-     */
+    /** Releases the semaphore lock. */
     public void releaseLock() {
         semaphore.release();
     }

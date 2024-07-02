@@ -19,14 +19,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * for creating an ipdata account and acquiring a key.
  */
 public final class IpDataManager {
-    /**
-     * The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid.
-     */
+    /** The byte read from a buffered reader which indicates the key used to query the ipdata API was invalid. */
     private static final int INVALID_KEY_RESPONSE_READ = -1;
 
-    /**
-     * The default timeout between state refreshes.
-     */
+    /** The default timeout between state refreshes. */
     private static final Duration DEFAULT_REFRESH_DURATION = Duration.ofMinutes(15);
 
     /**
@@ -35,34 +31,22 @@ public final class IpDataManager {
      */
     private static final Duration REFRESH_FREQUENCY_UPDATED_CHECK_FREQUENCY = Duration.ofMillis(500);
 
-    /**
-     * Whether the refresher task is running.
-     */
+    /** Whether the refresher task is running. */
     private final AtomicBoolean refresherRunning = new AtomicBoolean();
 
-    /**
-     * The IP data key this manager uses to query ipdata.co.
-     */
+    /** The IP data key this manager uses to query ipdata.co. */
     private final String ipDataKey;
 
-    /**
-     * The base URl this manager use.
-     */
+    /** The base URl this manager use. */
     private IpDataBaseUrl baseUrl;
 
-    /**
-     * The most recent IpData object.
-     */
+    /** The most recent IpData object. */
     private IpData ipData;
 
-    /**
-     * The last time {@link #ipData} was refreshed at.
-     */
+    /** The last time {@link #ipData} was refreshed at. */
     private Instant lastRefreshTime;
 
-    /**
-     * The refresh frequency for re-pulling IP data.
-     */
+    /** The refresh frequency for re-pulling IP data. */
     private Duration refreshFrequency = DEFAULT_REFRESH_DURATION;
 
     /**

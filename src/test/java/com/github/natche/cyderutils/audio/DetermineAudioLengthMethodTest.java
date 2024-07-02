@@ -10,18 +10,12 @@ import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for {@link DetermineAudioLengthMethod}s.
- */
+/** Tests for {@link DetermineAudioLengthMethod}s. */
 class DetermineAudioLengthMethodTest {
-    /**
-     * Creates a new instance of this class for testing purposes.
-     */
+    /** Creates a new instance of this class for testing purposes. */
     DetermineAudioLengthMethodTest() {}
 
-    /**
-     * Tests for the determineAudioLength method when provided a null file.
-     */
+    /** Tests for the determineAudioLength method when provided a null file. */
     @Test
     void testDetermineAudioLengthThrowsForNullFile() {
         assertThrows(NullPointerException.class,
@@ -30,9 +24,7 @@ class DetermineAudioLengthMethodTest {
                 () -> DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(null));
     }
 
-    /**
-     * Tests for the determineAudioLength method when provided a directory file.
-     */
+    /** Tests for the determineAudioLength method when provided a directory file. */
     @Test
     void testDetermineAudioLengthThrowsForDirectoryFile() {
         assertThrows(IllegalArgumentException.class,
@@ -41,9 +33,7 @@ class DetermineAudioLengthMethodTest {
                 () -> DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(new File(".")));
     }
 
-    /**
-     * Tests for the determineAudioLength method when provided a non-existent file.
-     */
+    /** Tests for the determineAudioLength method when provided a non-existent file. */
     @Test
     void testDetermineAudioLengthThrowsForNonExistentFile() {
         assertThrows(IllegalArgumentException.class,
@@ -52,9 +42,7 @@ class DetermineAudioLengthMethodTest {
                 () -> DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(new File("some_file.mp3")));
     }
 
-    /**
-     * Tests for the determineAudioLength method when provided an unsupported file.
-     */
+    /** Tests for the determineAudioLength method when provided an unsupported file. */
     @Test
     void testDetermineAudioLengthThrowsForUnsupportedFile() {
         assertThrows(IllegalArgumentException.class,
@@ -63,9 +51,7 @@ class DetermineAudioLengthMethodTest {
                 () -> DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(new File("some_file.acc")));
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a mp3 file using Python Mutagen.
-     */
+    /** Tests for the determineAudioLength method works for a mp3 file using Python Mutagen. */
     @Test
     void testDetermineAudioLengthWorksForMp3UsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
@@ -82,9 +68,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a mp3 file using FFmpeg.
-     */
+    /** Tests for the determineAudioLength method works for a mp3 file using FFmpeg. */
     @Test
     void testDetermineAudioLengthWorksForMp3UsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
@@ -101,9 +85,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a wav file using Python Mutagen.
-     */
+    /** Tests for the determineAudioLength method works for a wav file using Python Mutagen. */
     @Test
     void testDetermineAudioLengthWorksForWavUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
@@ -120,9 +102,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a wav file using FFmpeg.
-     */
+    /** Tests for the determineAudioLength method works for a wav file using FFmpeg. */
     @Test
     void testDetermineAudioLengthWorksForWavUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
@@ -139,9 +119,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for an ogg file using Python Mutagen.
-     */
+    /** Tests for the determineAudioLength method works for an ogg file using Python Mutagen. */
     @Test
     void testDetermineAudioLengthWorksForOggUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
@@ -158,9 +136,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for an ogg file using FFmpeg.
-     */
+    /** Tests for the determineAudioLength method works for an ogg file using FFmpeg. */
     @Test
     void testDetermineAudioLengthWorksForOggUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
@@ -177,9 +153,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a m4a file using Python Mutagen.
-     */
+    /** Tests for the determineAudioLength method works for a m4a file using Python Mutagen. */
     @Test
     void testDetermineAudioLengthWorksForM4aUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
@@ -196,9 +170,7 @@ class DetermineAudioLengthMethodTest {
         }
     }
 
-    /**
-     * Tests for the determineAudioLength method works for a m4a file using FFmpeg.
-     */
+    /** Tests for the determineAudioLength method works for a m4a file using FFmpeg. */
     @Test
     void testDetermineAudioLengthWorksForM4aUsingFfmpegUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(

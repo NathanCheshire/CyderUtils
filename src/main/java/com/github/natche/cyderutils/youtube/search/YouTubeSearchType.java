@@ -1,16 +1,12 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * A search type for a {@link YouTubeSearchQuery}.
- */
+/** A search type for a {@link YouTubeSearchQuery}. */
 public enum YouTubeSearchType {
     VIDEO("video"),
     CHANNEL("channel"),
     PLAYLIST("playlist");
 
-    /**
-     * The url parameter for this YouTube search type.
-     */
+    /** The url parameter for this YouTube search type. */
     private final String urlParameter;
 
     YouTubeSearchType(String urlParameter) {

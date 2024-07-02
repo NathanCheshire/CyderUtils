@@ -7,39 +7,25 @@ import java.util.ArrayList;
  * See {@link cyderutils.youtube.search.YouTubeSearchQuery}.
  */
 public class YouTubeSearchResultPage {
-    /**
-     * The kind. Typically "youtube#searchListResponse".
-     */
+    /** The kind. Typically "youtube#searchListResponse". */
     private String kind;
 
-    /**
-     * The etag.
-     */
+    /** The etag. */
     private String etag;
 
-    /**
-     * The token for the next search results page.
-     */
+    /** The token for the next search results page. */
     private String nextPageToken;
 
-    /**
-     * The region code of the search results.
-     */
+    /** The region code of the search results. */
     private String regionCode;
 
-    /**
-     * The page info object.
-     */
+    /** The page info object. */
     private PageInfo pageInfo;
 
-    /**
-     * The list of YouTube videos matching the search query.
-     */
+    /** The list of YouTube videos matching the search query. */
     private ArrayList<YouTubeVideo> items;
 
-    /**
-     * Constructs a new YouTube search results page.
-     */
+    /** Constructs a new YouTube search results page. */
     public YouTubeSearchResultPage() {}
 
     /**
@@ -150,9 +136,7 @@ public class YouTubeSearchResultPage {
         this.items = items;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -170,9 +154,7 @@ public class YouTubeSearchResultPage {
                 && other.items.equals(items);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = kind.hashCode();
@@ -184,9 +166,7 @@ public class YouTubeSearchResultPage {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "YouTubeSearchResultPage{"

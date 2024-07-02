@@ -4,68 +4,46 @@ import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * An IP address ipdataco considers a threat.
- */
+/** An IP address ipdataco considers a threat. */
 @Immutable
 public final class Threat {
-    /**
-     * Whether the ip address is associated with a Tor network node.
-     */
+    /** Whether the ip address is associated with a Tor network node. */
     @SerializedName("is_tor")
     private final boolean isTor;
 
-    /**
-     * Whether the ip address is associated with Apple's iCloud relay service.
-     */
+    /** Whether the ip address is associated with Apple's iCloud relay service. */
     @SerializedName("is_icloud_relay")
     private final boolean isIcloudRelay;
 
-    /**
-     * Whether the ip address is a known proxy.
-     */
+    /** Whether the ip address is a known proxy. */
     @SerializedName("is_proxy")
     private final boolean isProxy;
 
-    /**
-     * Whether the ip address belongs to a datacenter such as a cloud provider.
-     */
+    /** Whether the ip address belongs to a datacenter such as a cloud provider. */
     @SerializedName("is_datacenter")
     private final boolean isDatacenter;
 
-    /**
-     * Whether {@link #isTor} or {@link #isProxy} is true.
-     */
+    /** Whether {@link #isTor} or {@link #isProxy} is true. */
     @SerializedName("is_anonymous")
     private final boolean isAnonymous;
 
-    /**
-     * Whether the IP address is a known source of malicious activity such as attacks, malware, bot nets, etc.
-     */
+    /** Whether the IP address is a known source of malicious activity such as attacks, malware, bot nets, etc. */
     @SerializedName("is_known_attacker")
     private final boolean isKnownAttacker;
 
-    /**
-     * Whether the IP address is a known source of spam, harvesting, etc.
-     */
+    /** Whether the IP address is a known source of spam, harvesting, etc. */
     @SerializedName("is_known_abuser")
     private final boolean isKnownAbuser;
 
-    /**
-     * Whether {@link #isKnownAbuser} or {@link #isKnownAttacker} is true.
-     */
+    /** Whether {@link #isKnownAbuser} or {@link #isKnownAttacker} is true. */
     @SerializedName("is_threat")
     private final boolean isThreat;
 
-    /**
-     * Whether an IP address is a bogon.
-     */
+    /** Whether an IP address is a bogon. */
     @SerializedName("is_bogon")
     private final boolean isBogon;
 
-    /**
-     * The list of blocked IP addresses.
-     */
+    /** The list of blocked IP addresses. */
     @SerializedName("blocklists")
     private final ImmutableList<BlockListEntry> blocklist;
 
@@ -196,9 +174,7 @@ public final class Threat {
         return blocklist;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Threat{"
@@ -215,9 +191,7 @@ public final class Threat {
                 + '}';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Boolean.hashCode(isTor);
@@ -233,9 +207,7 @@ public final class Threat {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 
 import java.time.Duration;
 
-/**
- * Possible responses from the audio length python script.
- */
+/** Possible responses from the audio length python script. */
 public enum AudioLengthResponsePrefix {
     ERROR("Error: "),
     RESULT("Audio Length: ");

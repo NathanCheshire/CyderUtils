@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.network;
 
-/**
- * Common network interface service ports.
- */
+/** Common network interface service ports. */
 public enum CommonServicePort {
     HTTP(80, "HTTP", "Web service"),
     HTTPS(443,"HTTPS", "Secure web service"),

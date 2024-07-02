@@ -4,35 +4,23 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A currency object representing a user's home currency.
- */
+/** A currency object representing a user's home currency. */
 @Immutable
 public final class Currency {
-    /**
-     * The full name of the currency.
-     */
+    /** The full name of the currency. */
     private final String name;
 
-    /**
-     * The ISO4217 currency code.
-     */
+    /** The ISO4217 currency code. */
     private final String code;
 
-    /**
-     * The symbol of the currency.
-     */
+    /** The symbol of the currency. */
     private final String symbol;
 
-    /**
-     * The native symbol of the currency.
-     */
+    /** The native symbol of the currency. */
     @SerializedName("native")
     private final String nativeSymbol;
 
-    /**
-     * The plural version of the currency.
-     */
+    /** The plural version of the currency. */
     private final String plural;
 
     /**
@@ -110,9 +98,7 @@ public final class Currency {
         return plural;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Currency{"
@@ -124,9 +110,7 @@ public final class Currency {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = name.hashCode();
@@ -137,9 +121,7 @@ public final class Currency {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

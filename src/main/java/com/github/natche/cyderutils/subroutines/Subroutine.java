@@ -4,29 +4,19 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.errorprone.annotations.Immutable;
 
-/**
- * A subroutine to execute on Cyder startup.
- */
+/** A subroutine to execute on Cyder startup. */
 @Immutable
 public final class Subroutine {
-    /**
-     * The subroutine failed string.
-     */
+    /** The subroutine failed string. */
     private static final String SUBROUTINE_FAILED = "Subroutine failed";
 
-    /**
-     * The routine to invoke.
-     */
+    /** The routine to invoke. */
     private final Supplier<Boolean> routine;
 
-    /**
-     * The name of the thread to invoke the routine inside if this is a parallel subroutine.
-     */
+    /** The name of the thread to invoke the routine inside if this is a parallel subroutine. */
     private final String threadName;
 
-    /**
-     * The failure message to use in the case of the supplier returning false.
-     */
+    /** The failure message to use in the case of the supplier returning false. */
     private final String onFailureMessage;
 
     /**
@@ -88,9 +78,7 @@ public final class Subroutine {
         return onFailureMessage;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = threadName.hashCode();
@@ -98,9 +86,7 @@ public final class Subroutine {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -114,9 +100,7 @@ public final class Subroutine {
                 && getOnFailureMessage().equals(other.getOnFailureMessage());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Subroutine{"

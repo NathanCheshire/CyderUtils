@@ -58,9 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * A custom frame component.
- */
+/** A custom frame component. */
 public class CyderFrame extends JFrame {
     /**
      * The area exposed to allow frame resizing. The maximum is 5 since
@@ -68,19 +66,13 @@ public class CyderFrame extends JFrame {
      */
     public static final int FRAME_RESIZING_LEN = 2;
 
-    /**
-     * The size of the border drawn around the frame.
-     */
+    /** The size of the border drawn around the frame. */
     public static final int BORDER_LEN = Props.frameBorderLength.getValue();
 
-    /**
-     * The value used for {@link #restoreX} and {@link #restoreY} to indicate a drag has not yet occurred.
-     */
+    /** The value used for {@link #restoreX} and {@link #restoreY} to indicate a drag has not yet occurred. */
     public static final int FRAME_NOT_YET_DRAGGED = Integer.MAX_VALUE;
 
-    /**
-     * The default index for adding things to the content pane.
-     */
+    /** The default index for adding things to the content pane. */
     private static final int defaultContentLabelAddingIndex = 0;
 
     /**
@@ -93,44 +85,28 @@ public class CyderFrame extends JFrame {
             JLayeredPane.POPUP_LAYER /* Notifications */
     );
 
-    /**
-     * The index of the pin button.
-     */
+    /** The index of the pin button. */
     private static final int PIN_BUTTON_DEFAULT_INDEX = 1;
 
-    /**
-     * The index of the minimize button.
-     */
+    /** The index of the minimize button. */
     private static final int MINIMIZE_BUTTON_DEFAULT_INDEX = 0;
 
-    /**
-     * The minimum allowable width for a CyderFrame.
-     */
+    /** The minimum allowable width for a CyderFrame. */
     private static final int minimumWidth = 200;
 
-    /**
-     * The maximum allowable height for a CyderFrame.
-     */
+    /** The maximum allowable height for a CyderFrame. */
     private static final int minimumHeight = 100;
 
-    /**
-     * The increment for minimize opacity animations.
-     */
+    /** The increment for minimize opacity animations. */
     private static final float opacityAnimationDelta = 0.05f;
 
-    /**
-     * The delay between minimize animation frames.
-     */
+    /** The delay between minimize animation frames. */
     private static final int opacityAnimationDelay = 5;
 
-    /**
-     * The maximum opacity the frame can be set to for minimize in/out animations.
-     */
+    /** The maximum opacity the frame can be set to for minimize in/out animations. */
     private static final float opacityAnimationMax = 1.0f;
 
-    /**
-     * The minimum opacity the frame can be set to for minimize in/out animations.
-     */
+    /** The minimum opacity the frame can be set to for minimize in/out animations. */
     private static final float opacityAnimationMin = 0.0f;
 
     /**
@@ -139,19 +115,13 @@ public class CyderFrame extends JFrame {
      */
     private static final int restoreAfterMinimizeAnimationDelay = 25;
 
-    /**
-     * The font used for the title label (typically equivalent to agencyFB22).
-     */
+    /** The font used for the title label (typically equivalent to agencyFB22). */
     private static final Font DEFAULT_FRAME_TITLE_FONT = new Font("Agency FB", Font.BOLD, 22);
 
-    /**
-     * The length of the border for the content label.
-     */
+    /** The length of the border for the content label. */
     private static final int contentLabelBorderLength = 3;
 
-    /**
-     * The thread name for the frame fade in animation.
-     */
+    /** The thread name for the frame fade in animation. */
     private static final String FADE_IN_ANIMATION_THREAD_NAME = "Frame Fade-in Animation";
 
     /**
@@ -160,74 +130,46 @@ public class CyderFrame extends JFrame {
      */
     private final AtomicBoolean threadsKilled;
 
-    /**
-     * Actions to be invoked before dispose is invoked.
-     */
+    /** Actions to be invoked before dispose is invoked. */
     private final ArrayList<Runnable> preCloseActions;
 
-    /**
-     * Actions to be invoked after dispose is invoked.
-     */
+    /** Actions to be invoked after dispose is invoked. */
     private final ArrayList<Runnable> postCloseActions;
 
-    /**
-     * The list of actions to invoke following a {@link #setBounds(int, int, int, int)} invocation.
-     */
+    /** The list of actions to invoke following a {@link #setBounds(int, int, int, int)} invocation. */
     private final ArrayList<Runnable> postSetBoundsRunnables;
 
-    /**
-     * The foreground color of the title label
-     */
+    /** The foreground color of the title label */
     private Color titleLabelColor = CyderColors.vanilla;
 
-    /**
-     * The font for the title label.
-     */
+    /** The font for the title label. */
     private Font titleLabelFont = DEFAULT_FRAME_TITLE_FONT;
 
-    /**
-     * This CyderFrame's frame type.
-     */
+    /** This CyderFrame's frame type. */
     private FrameType frameType = FrameType.DEFAULT;
 
-    /**
-     * This CyderFrame's title position.
-     */
+    /** This CyderFrame's title position. */
     private TitlePosition titlePosition = TitlePosition.LEFT;
 
-    /**
-     * This CyderFrame's width.
-     */
+    /** This CyderFrame's width. */
     private int width;
 
-    /**
-     * This CyderFrame's height.
-     */
+    /** This CyderFrame's height. */
     private int height;
 
-    /**
-     * The background image for this CyderFrame.
-     */
+    /** The background image for this CyderFrame. */
     private ImageIcon background;
 
-    /**
-     * The label that hides the exposed area on the top to allow frame resizing.
-     */
+    /** The label that hides the exposed area on the top to allow frame resizing. */
     private JLabel topDragCover;
 
-    /**
-     * The label that hides the exposed area on the bottom to allow frame resizing.
-     */
+    /** The label that hides the exposed area on the bottom to allow frame resizing. */
     private JLabel bottomDragCover;
 
-    /**
-     * The label that hides the exposed area on the left to allow frame resizing.
-     */
+    /** The label that hides the exposed area on the left to allow frame resizing. */
     private JLabel leftDragCover;
 
-    /**
-     * The label that hides the exposed area on the right to allow frame resizing.
-     */
+    /** The label that hides the exposed area on the right to allow frame resizing. */
     private JLabel rightDragCover;
 
     /**
@@ -236,39 +178,25 @@ public class CyderFrame extends JFrame {
      */
     private CyderDragLabel topDrag;
 
-    /**
-     * The bottom component responsible for frame location changes on the bottom.
-     */
+    /** The bottom component responsible for frame location changes on the bottom. */
     private CyderDragLabel bottomDrag;
 
-    /**
-     * The left component responsible for frame location changes on the left.
-     */
+    /** The left component responsible for frame location changes on the left. */
     private CyderDragLabel leftDrag;
 
-    /**
-     * The right component responsible for frame location changes on the right.
-     */
+    /** The right component responsible for frame location changes on the right. */
     private CyderDragLabel rightDrag;
 
-    /**
-     * The x position of the frame to set to after frame de-iconification actions.
-     */
+    /** The x position of the frame to set to after frame de-iconification actions. */
     private int restoreX = FRAME_NOT_YET_DRAGGED;
 
-    /**
-     * The y position of the frame to set to after frame de-iconification actions.
-     */
+    /** The y position of the frame to set to after frame de-iconification actions. */
     private int restoreY = FRAME_NOT_YET_DRAGGED;
 
-    /**
-     * The title of the CyderFrame controlled by the position enum.
-     */
+    /** The title of the CyderFrame controlled by the position enum. */
     private JLabel titleLabel;
 
-    /**
-     * The text displayed on the title label.
-     */
+    /** The text displayed on the title label. */
     private String title;
 
     /**
@@ -284,9 +212,7 @@ public class CyderFrame extends JFrame {
      */
     private JLayeredPane contentLabel;
 
-    /**
-     * Another layered pane that the content label is added to for layering purposes.
-     */
+    /** Another layered pane that the content label is added to for layering purposes. */
     private JLayeredPane iconPane;
 
     /**
@@ -301,24 +227,16 @@ public class CyderFrame extends JFrame {
      */
     private Color backgroundColor = CyderColors.navy;
 
-    /**
-     * The tooltip menu controller for this frame.
-     */
+    /** The tooltip menu controller for this frame. */
     private TooltipMenuController tooltipMenuController;
 
-    /**
-     * The notification controller for this frame.
-     */
+    /** The notification controller for this frame. */
     private NotificationController notificationController;
 
-    /**
-     * Whether to paint the title label on the top drag label when {@link #setTitle(String)} is called.
-     */
+    /** Whether to paint the title label on the top drag label when {@link #setTitle(String)} is called. */
     private boolean paintCyderFrameTitleOnSuperCall = true;
 
-    /**
-     * A message to display before the frame is actually disposed.
-     */
+    /** A message to display before the frame is actually disposed. */
     private String closingConfirmationMessage;
 
     /**
@@ -383,9 +301,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Sets up the bottom drag label.
-     */
+    /** Sets up the bottom drag label. */
     private void setupBottomDragLabel() {
         int w = width - 2 * FRAME_RESIZING_LEN;
         int h = BORDER_LEN - FRAME_RESIZING_LEN;
@@ -405,9 +321,7 @@ public class CyderFrame extends JFrame {
         contentLabel.add(bottomDragCover, JLayeredPane.DRAG_LAYER);
     }
 
-    /**
-     * Sets up the right drag label.
-     */
+    /** Sets up the right drag label. */
     private void setupRightDragLabel() {
         int w = BORDER_LEN - FRAME_RESIZING_LEN;
         int h = height - CyderDragLabel.DEFAULT_HEIGHT - FRAME_RESIZING_LEN;
@@ -427,9 +341,7 @@ public class CyderFrame extends JFrame {
         contentLabel.add(rightDragCover, JLayeredPane.DRAG_LAYER);
     }
 
-    /**
-     * Sets up the left drag label.
-     */
+    /** Sets up the left drag label. */
     private void setupLeftDragLabel() {
         int w = BORDER_LEN - FRAME_RESIZING_LEN;
         int h = height - CyderDragLabel.DEFAULT_HEIGHT - FRAME_RESIZING_LEN;
@@ -449,9 +361,7 @@ public class CyderFrame extends JFrame {
         contentLabel.add(leftDragCover, JLayeredPane.DRAG_LAYER);
     }
 
-    /**
-     * Sets up the top drag label.
-     */
+    /** Sets up the top drag label. */
     private void setupTopDragLabel() {
         int w = width - 2 * FRAME_RESIZING_LEN;
         int h = CyderDragLabel.DEFAULT_HEIGHT - FRAME_RESIZING_LEN;
@@ -485,9 +395,7 @@ public class CyderFrame extends JFrame {
         contentLabel.add(fullDragLabel);
     }
 
-    /**
-     * Initializes and set up the icon pane.
-     */
+    /** Initializes and set up the icon pane. */
     private void setupIconPane() {
         iconPane = new JLayeredPane();
         int w = width - 2 * FRAME_RESIZING_LEN;
@@ -575,9 +483,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Sets up the {@link #iconLabel} for this frame.
-     */
+    /** Sets up the {@link #iconLabel} for this frame. */
     private void setupIconLabel() {
         iconLabel = new JLabel() {
             @Override
@@ -594,9 +500,7 @@ public class CyderFrame extends JFrame {
         iconLabel.setFocusable(false);
     }
 
-    /**
-     * Sets up the title label and adds it to the top drag label.
-     */
+    /** Sets up the title label and adds it to the top drag label. */
     @ForReadability
     private void setupTitleLabel() {
         titleLabel = new JLabel();
@@ -622,58 +526,36 @@ public class CyderFrame extends JFrame {
         notificationController = new NotificationController(this);
     }
 
-    /**
-     * A builder for a {@link CyderFrame}.
-     */
+    /** A builder for a {@link CyderFrame}. */
     public static final class Builder {
-        /**
-         * The default length of a frame.
-         */
+        /** The default length of a frame. */
         private static final int defaultFrameLength = 400;
 
-        /**
-         * The default title of a frame.
-         */
+        /** The default title of a frame. */
         private static final String defaultFrameTitle = "CyderFrame";
 
-        /**
-         * The title for the frame.
-         */
+        /** The title for the frame. */
         private String title = defaultFrameTitle;
 
-        /**
-         * The height for the frame.
-         */
+        /** The height for the frame. */
         private int height = defaultFrameLength;
 
-        /**
-         * The width for the frame.
-         */
+        /** The width for the frame. */
         private int width = defaultFrameLength;
 
-        /**
-         * The background for the frame.
-         */
+        /** The background for the frame. */
         private ImageIcon background = CyderIcons.defaultBackground;
 
-        /**
-         * The background color for the frame.
-         */
+        /** The background color for the frame. */
         private Color backgroundColor = CyderColors.vanilla;
 
-        /**
-         * The type of frame.
-         */
+        /** The type of frame. */
         private FrameType type = FrameType.DEFAULT;
 
-        /**
-         * Whether the frame should be borderless.
-         */
+        /** Whether the frame should be borderless. */
         private boolean borderless = false;
 
-        /**
-         * Constructs a new builder.
-         */
+        /** Constructs a new builder. */
         public Builder() {}
 
         /**
@@ -805,9 +687,7 @@ public class CyderFrame extends JFrame {
             return new CyderFrame(this);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "Builder{"
@@ -821,9 +701,7 @@ public class CyderFrame extends JFrame {
                     + "}";
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int ret = Objects.hashCode(title);
@@ -836,9 +714,7 @@ public class CyderFrame extends JFrame {
             return ret;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -858,9 +734,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The master drag label for borderless frames.
-     */
+    /** The master drag label for borderless frames. */
     private CyderDragLabel fullDragLabel;
 
     /**
@@ -954,9 +828,7 @@ public class CyderFrame extends JFrame {
         cyderPanel.repaint();
     }
 
-    /**
-     * Removes the current cyder panel from the content pane.
-     */
+    /** Removes the current cyder panel from the content pane. */
     public void removeCyderLayoutPanel() {
         Preconditions.checkNotNull(cyderPanel);
 
@@ -1087,9 +959,7 @@ public class CyderFrame extends JFrame {
         correctTitleLength();
     }
 
-    /**
-     * Sets the alignment of the title label based on the currently set title position.
-     */
+    /** Sets the alignment of the title label based on the currently set title position. */
     private void correctTitleLabelAlignment() {
         switch (titlePosition) {
             case LEFT -> titleLabel.setHorizontalAlignment(JLabel.LEFT);
@@ -1098,14 +968,10 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The value to separate the start/end of the title label from the start/end of the drag label.
-     */
+    /** The value to separate the start/end of the title label from the start/end of the drag label. */
     private static final int titleLabelPadding = 5;
 
-    /**
-     * Revalidates the location the title label is anchored to based off of the currently set title position.
-     */
+    /** Revalidates the location the title label is anchored to based off of the currently set title position. */
     private void revalidateTitlePositionLocation() {
         if (isBorderlessFrame()) return;
 
@@ -1205,9 +1071,7 @@ public class CyderFrame extends JFrame {
         return paintCyderFrameTitleOnSuperCall;
     }
 
-    /**
-     * Whether to set the title for the underlying abstract frame object.
-     */
+    /** Whether to set the title for the underlying abstract frame object. */
     private boolean paintSuperTitle = true;
 
     /**
@@ -1348,9 +1212,7 @@ public class CyderFrame extends JFrame {
         return notificationController.revokeNotification(expectedText);
     }
 
-    /**
-     * Removes all currently displayed notifications and wipes the notification queue.
-     */
+    /** Removes all currently displayed notifications and wipes the notification queue. */
     public void revokeAllNotifications() {
         notificationController.revokeAllNotifications();
     }
@@ -1461,9 +1323,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setState(int state) {
         if (state == UiConstants.FRAME_ICONIFIED) {
@@ -1475,19 +1335,13 @@ public class CyderFrame extends JFrame {
         super.setState(state);
     }
 
-    /**
-     * The actions to invoke prior to a minimize-and-iconify invocation.
-     */
+    /** The actions to invoke prior to a minimize-and-iconify invocation. */
     private final ArrayList<Runnable> preMinimizeAndIconifyActions = new ArrayList<>();
 
-    /**
-     * The actions to invoke after a minimize-and-iconify invocation.
-     */
+    /** The actions to invoke after a minimize-and-iconify invocation. */
     private final ArrayList<Runnable> postMinimizeAndIconifyActions = new ArrayList<>();
 
-    /**
-     * Whether this frame's dispose() method has been invoked before.
-     */
+    /** Whether this frame's dispose() method has been invoked before. */
     private final AtomicBoolean disposed = new AtomicBoolean();
 
     /**
@@ -1512,9 +1366,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The hash used to remove this frame from the taskbar exceptions if it was added to it.
-     */
+    /** The hash used to remove this frame from the taskbar exceptions if it was added to it. */
     private String removeFromFrameTaskbarExceptionsHash;
 
     /**
@@ -1538,9 +1390,7 @@ public class CyderFrame extends JFrame {
         this.removeFromFrameTaskbarExceptionsHash = removeFromFrameTaskbarExceptionsHash;
     }
 
-    /**
-     * Whether this frame should fast close when the default dispose is invoked.
-     */
+    /** Whether this frame should fast close when the default dispose is invoked. */
     private boolean shouldFastClose;
 
     /**
@@ -1609,9 +1459,7 @@ public class CyderFrame extends JFrame {
         }, threadName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void dispose() {
         dispose(autoFastClose);
@@ -1634,9 +1482,7 @@ public class CyderFrame extends JFrame {
     // Dancing
     // -------
 
-    /**
-     * The directions for frame dancing.
-     */
+    /** The directions for frame dancing. */
     private enum DancingDirection {
         INITIAL_UP,
         LEFT,
@@ -1645,14 +1491,10 @@ public class CyderFrame extends JFrame {
         UP
     }
 
-    /**
-     * The direction the frame is currently going in its dance routine.
-     */
+    /** The direction the frame is currently going in its dance routine. */
     private DancingDirection dancingDirection = DancingDirection.INITIAL_UP;
 
-    /**
-     * Whether dancing has finished for this frame.
-     */
+    /** Whether dancing has finished for this frame. */
     private boolean dancingFinished;
 
     /**
@@ -1674,14 +1516,10 @@ public class CyderFrame extends JFrame {
         this.dancingFinished = dancingFinished;
     }
 
-    /**
-     * The increment in pixels a singular dance steps takes.
-     */
+    /** The increment in pixels a singular dance steps takes. */
     private static final int dancingIncrement = 10;
 
-    /**
-     * Takes a step in the current dancing direction for a dance routine.
-     */
+    /** Takes a step in the current dancing direction for a dance routine. */
     public void danceStep() {
         switch (dancingDirection) {
             case INITIAL_UP -> {
@@ -1743,9 +1581,7 @@ public class CyderFrame extends JFrame {
         contentPane.setIcon(cyderImage.getImageIcon());
     }
 
-    /**
-     * Revalidates the title position.
-     */
+    /** Revalidates the title position. */
     public void revalidateTitlePosition() {
         if (isBorderlessFrame()) return;
 
@@ -1764,9 +1600,7 @@ public class CyderFrame extends JFrame {
         return topDrag == null;
     }
 
-    /**
-     * Performs repaint actions necessary for a borderless frame.
-     */
+    /** Performs repaint actions necessary for a borderless frame. */
     private void repaintBorderlessFrame() {
         Preconditions.checkState(isBorderlessFrame());
 
@@ -1843,9 +1677,7 @@ public class CyderFrame extends JFrame {
         postSetSizeSetBounds(sameSizes);
     }
 
-    /**
-     * Sets the bounds of the CyderFrame and refreshes all components on the frame.
-     */
+    /** Sets the bounds of the CyderFrame and refreshes all components on the frame. */
     @Override
     public void setBounds(int x, int y, int width, int height) {
         width = attemptInitialWidthCorrectionIfEnabled(width);
@@ -1975,14 +1807,10 @@ public class CyderFrame extends JFrame {
         bottomDrag.repaint();
     }
 
-    /**
-     * The arc length of the arc for rounded window shapes.
-     */
+    /** The arc length of the arc for rounded window shapes. */
     private static final int ROUNDED_ARC = 20;
 
-    /**
-     * Revalidates and updates the frame's shape, that of being rounded or square.
-     */
+    /** Revalidates and updates the frame's shape, that of being rounded or square. */
     private void revalidateFrameShape() {
         if (!isUndecorated()) return;
         Shape shape = null;
@@ -2002,9 +1830,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The gap to keep between the drag label buttons and the start/end of the title label.
-     */
+    /** The gap to keep between the drag label buttons and the start/end of the title label. */
     private static final int titleLabelComponentGap = 10;
 
     /**
@@ -2108,24 +1934,16 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The minimum size dimension.
-     */
+    /** The minimum size dimension. */
     private Dimension minimumFrameSize = new Dimension(minimumWidth, minimumHeight);
 
-    /**
-     * The default maximum length of a frame.
-     */
+    /** The default maximum length of a frame. */
     private static final int defaultMaxFrameLength = 800;
 
-    /**
-     * The maximum size of a CyderFrame.
-     */
+    /** The maximum size of a CyderFrame. */
     private Dimension maximumFrameSize = new Dimension(defaultMaxFrameLength, defaultMaxFrameLength);
 
-    /**
-     * The increment to snap to on resize events.
-     */
+    /** The increment to snap to on resize events. */
     private Dimension frameSnapSize = new Dimension(1, 1);
 
     /**
@@ -2215,9 +2033,7 @@ public class CyderFrame extends JFrame {
         return frameSnapSize;
     }
 
-    /**
-     * The component resizing object for this CyderFrame.
-     */
+    /** The component resizing object for this CyderFrame. */
     private CyderComponentResizer cyderComponentResizer;
 
     /**
@@ -2282,9 +2098,7 @@ public class CyderFrame extends JFrame {
         if (tooltipMenuController != null) tooltipMenuController.revalidateMenuItems();
     }
 
-    /**
-     * Refresh the background in the event of a frame size change or a background image change.
-     */
+    /** Refresh the background in the event of a frame size change or a background image change. */
     public void refreshBackground() {
         try {
             if (iconLabel == null) return;
@@ -2303,9 +2117,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Revalidates the iconLabel, iconPane, and associated CyderPanel if present.
-     */
+    /** Revalidates the iconLabel, iconPane, and associated CyderPanel if present. */
     public void revalidateLayout() {
         int w = width - 2 * FRAME_RESIZING_LEN;
         int h = height - 2 * FRAME_RESIZING_LEN;
@@ -2377,9 +2189,7 @@ public class CyderFrame extends JFrame {
         return backgroundColor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return ToStringUtil.commonUiComponentToString(this);
@@ -2478,16 +2288,12 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Removes all pre-close actions.
-     */
+    /** Removes all pre-close actions. */
     public void removePreCloseActions() {
         preCloseActions.clear();
     }
 
-    /**
-     * Removes all post close actions.
-     */
+    /** Removes all post close actions. */
     public void removePostCloseActions() {
         postCloseActions.clear();
     }
@@ -2528,9 +2334,7 @@ public class CyderFrame extends JFrame {
         closingConfirmationMessage = message;
     }
 
-    /**
-     * Removes any closing confirmation messages set.
-     */
+    /** Removes any closing confirmation messages set. */
     public void removeClosingConfirmation() {
         closingConfirmationMessage = null;
     }
@@ -2579,14 +2383,10 @@ public class CyderFrame extends JFrame {
         return dragLabel.getPinButton().getCurrentState() == PinButton.PinState.PINNED_TO_CONSOLE;
     }
 
-    /**
-     * The relative x value of this frame to the console, used for console pin dragging actions.
-     */
+    /** The relative x value of this frame to the console, used for console pin dragging actions. */
     private int relativeX;
 
-    /**
-     * The relative y value of this frame to the console, used for console pin dragging actions.
-     */
+    /** The relative y value of this frame to the console, used for console pin dragging actions. */
     private int relativeY;
 
     /**
@@ -2637,9 +2437,7 @@ public class CyderFrame extends JFrame {
         super.setIconImage(Preconditions.checkNotNull(image));
     }
 
-    /**
-     * The taskbar icon border color for this CyderFrame instance.
-     */
+    /** The taskbar icon border color for this CyderFrame instance. */
     private Color taskbarIconBorderColor;
 
     /**
@@ -2652,9 +2450,7 @@ public class CyderFrame extends JFrame {
         return taskbarIconBorderColor;
     }
 
-    /**
-     * The custom ImageIcon to use for the taskbar icon if enabled.
-     */
+    /** The custom ImageIcon to use for the taskbar icon if enabled. */
     private ImageIcon customTaskbarIcon;
 
     /**
@@ -2679,44 +2475,28 @@ public class CyderFrame extends JFrame {
     // Debug lines
     // -----------
 
-    /**
-     * Whether drawing debug lines should be performed.
-     */
+    /** Whether drawing debug lines should be performed. */
     private boolean drawDebugLines;
 
-    /**
-     * The label for the horizontal line.
-     */
+    /** The label for the horizontal line. */
     private JLabel debugXLabel;
 
-    /**
-     * The label for the vertical line.
-     */
+    /** The label for the vertical line. */
     private JLabel debugYLabel;
 
-    /**
-     * The image to display at the center of the debug lines.
-     */
+    /** The image to display at the center of the debug lines. */
     private JLabel debugImageLabel;
 
-    /**
-     * The minor axis length of a debug line.
-     */
+    /** The minor axis length of a debug line. */
     private static final int debugLineLength = 4;
 
-    /**
-     * The length of the debug icon.
-     */
+    /** The length of the debug icon. */
     private static final int debugIconLength = 175;
 
-    /**
-     * The stroke width for the debug icon.
-     */
+    /** The stroke width for the debug icon. */
     private static final int debugIconStrokeWidth = 10;
 
-    /**
-     * The color to use for the debug icon.
-     */
+    /** The color to use for the debug icon. */
     private static final Color debugIconColor = CyderColors.navy;
 
     /**
@@ -2824,39 +2604,25 @@ public class CyderFrame extends JFrame {
     // Transparency during drag events
     // -------------------------------
 
-    /**
-     * Whether the opacity should be animated in and out on drag events.
-     */
+    /** Whether the opacity should be animated in and out on drag events. */
     private boolean shouldAnimateOpacity = true;
 
-    /**
-     * The opacity value to set the frame to on drag events.
-     */
+    /** The opacity value to set the frame to on drag events. */
     public static final float DRAG_OPACITY = 0.70f;
 
-    /**
-     * The default frame opacity
-     */
+    /** The default frame opacity */
     public static final float DEFAULT_OPACITY = 1.0f;
 
-    /**
-     * The opacity to grow/shrink by during animations.
-     */
+    /** The opacity to grow/shrink by during animations. */
     public static final float OPACITY_DELTA = 0.01f;
 
-    /**
-     * The delay between opacity sets when transitioning.
-     */
+    /** The delay between opacity sets when transitioning. */
     public static final int DRAG_OPACITY_ANIMATION_DELAY = 5;
 
-    /**
-     * Whether the animator to transition the frame back to DEFAULT_OPACITY is underway.
-     */
+    /** Whether the animator to transition the frame back to DEFAULT_OPACITY is underway. */
     private boolean animatingOut = false;
 
-    /**
-     * Sets the opacity of the frame to {@link CyderFrame#DRAG_OPACITY}.
-     */
+    /** Sets the opacity of the frame to {@link CyderFrame#DRAG_OPACITY}. */
     public void startDragEvent() {
         if (!shouldAnimateOpacity) return;
 
@@ -2873,9 +2639,7 @@ public class CyderFrame extends JFrame {
         }, getTitle() + " Opacity Decrement Animator");
     }
 
-    /**
-     * Sets the opacity of the frame to {@link CyderFrame#DEFAULT_OPACITY}.
-     */
+    /** Sets the opacity of the frame to {@link CyderFrame#DEFAULT_OPACITY}. */
     public void endDragEvent() {
         if (!shouldAnimateOpacity) {
             setOpacity(DEFAULT_OPACITY);
@@ -2900,14 +2664,10 @@ public class CyderFrame extends JFrame {
         }, getTitle() + " Opacity Increment Animator");
     }
 
-    /**
-     * The list of callbacks to invoke when {@link #endDragEvent()} is invoked.
-     */
+    /** The list of callbacks to invoke when {@link #endDragEvent()} is invoked. */
     private final ArrayList<Runnable> endDragEventCallbacks = new ArrayList<>();
 
-    /**
-     * Executes all callbacks registered in {@link #endDragEventCallbacks}.
-     */
+    /** Executes all callbacks registered in {@link #endDragEventCallbacks}. */
     private void executeEndDragEventCallbacks() {
         endDragEventCallbacks.forEach(Runnable::run);
     }
@@ -2958,9 +2718,7 @@ public class CyderFrame extends JFrame {
     // Frame menu logic
     // ----------------
 
-    /**
-     * The menu type for the frame's menu.
-     */
+    /** The menu type for the frame's menu. */
     private MenuType menuType = MenuType.PANEL;
 
     /**
@@ -2974,9 +2732,7 @@ public class CyderFrame extends JFrame {
         revalidateMenu();
     }
 
-    /**
-     * Regenerates the menu and sets the visibility to the state before this method was invoked.
-     */
+    /** Regenerates the menu and sets the visibility to the state before this method was invoked. */
     public void revalidateMenu() {
         if (menuEnabled) {
             boolean wasVisible = UiUtil.notNullAndVisible(menuLabel);
@@ -2985,9 +2741,7 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Revalidates the menu and shows it only if it was visible.
-     */
+    /** Revalidates the menu and shows it only if it was visible. */
     public void revalidateMenuIfVisible() {
         if (UiUtil.notNullAndVisible(menuLabel)) revalidateMenu();
     }
@@ -3001,31 +2755,23 @@ public class CyderFrame extends JFrame {
         return menuType;
     }
 
-    /**
-     * Shows the menu and locks it in the place it was set to.
-     */
+    /** Shows the menu and locks it in the place it was set to. */
     public void lockMenuOut() {
         generateMenu();
         showMenu();
         setMenuButtonShown(false);
     }
 
-    /**
-     * Ensures the menu isn't visible and cannot be triggered.
-     */
+    /** Ensures the menu isn't visible and cannot be triggered. */
     public void lockMenuIn() {
         hideMenu();
         setMenuButtonShown(false);
     }
 
-    /**
-     * The menu button for this frame.
-     */
+    /** The menu button for this frame. */
     private MenuButton menuButton;
 
-    /**
-     * Adds the menu button to the drag label.
-     */
+    /** Adds the menu button to the drag label. */
     private void addMenuButton() {
         if (menuButton != null) return;
 
@@ -3044,21 +2790,15 @@ public class CyderFrame extends JFrame {
         topDrag.addLeftButton(menuButton, 0);
     }
 
-    /**
-     * Removes the menu button from the drag label
-     */
+    /** Removes the menu button from the drag label */
     private void removeMenuButton() {
         if (topDrag.hasLeftButtons()) topDrag.removeLeftButton(menuButton);
     }
 
-    /**
-     * Whether the menu is accessible via clicking on the frame painted title.
-     */
+    /** Whether the menu is accessible via clicking on the frame painted title. */
     private boolean menuEnabled;
 
-    /**
-     * The label to add the menu components to.
-     */
+    /** The label to add the menu components to. */
     private JLabel menuLabel;
 
     /**
@@ -3082,17 +2822,13 @@ public class CyderFrame extends JFrame {
         }
     };
 
-    /**
-     * Clears all menu items from the frame menu.
-     */
+    /** Clears all menu items from the frame menu. */
     public void clearMenuItems() {
         menuItems.clear();
         removeMenuButton();
     }
 
-    /**
-     * The maximum text length allowable for menu items.
-     */
+    /** The maximum text length allowable for menu items. */
     private static final int MAXIMUM_MENU_ITEM_TEXT_LENGTH = 13;
 
     /**
@@ -3181,55 +2917,35 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * The foreground color for menu items.
-     */
+    /** The foreground color for menu items. */
     private static final Color menuItemForeground = CyderColors.vanilla;
 
-    /**
-     * The foreground color for menu items when hovered.
-     */
+    /** The foreground color for menu items when hovered. */
     private static final Color menuItemHoverForeground = CyderColors.regularRed;
 
-    /**
-     * The point at which the menu is placed when visible.
-     */
+    /** The point at which the menu is placed when visible. */
     private static final Point menuAnimateToPoint = new Point(
             BORDER_LEN - FRAME_RESIZING_LEN, CyderDragLabel.DEFAULT_HEIGHT - 2);
 
-    /**
-     * The increment/decrement value when animating the frame menu.
-     */
+    /** The increment/decrement value when animating the frame menu. */
     private static final int menuAnimationInc = 2;
 
-    /**
-     * The delay between animation increments when animating the frame menu.
-     */
+    /** The delay between animation increments when animating the frame menu. */
     private static final int menuAnimationDelay = 1;
 
-    /**
-     * The frame menu width.
-     */
+    /** The frame menu width. */
     private static final int menuWidth = 120;
 
-    /**
-     * The height to add in addition to each menu component.
-     */
+    /** The height to add in addition to each menu component. */
     private static final int menuItemHeightPadding = 5;
 
-    /**
-     * The menu x and y padding.
-     */
+    /** The menu x and y padding. */
     private static final int menuPadding = 5;
 
-    /**
-     * The thickness of the menu label border.
-     */
+    /** The thickness of the menu label border. */
     private static final int menuBorderThickness = 4;
 
-    /**
-     * The offset value for setting the menu label y value.
-     */
+    /** The offset value for setting the menu label y value. */
     private static final int menuYOffset = 5;
 
     /**
@@ -3263,27 +2979,21 @@ public class CyderFrame extends JFrame {
         }
     }
 
-    /**
-     * Shows the menu in the currently set location as defined by {@link MenuType}.
-     */
+    /** Shows the menu in the currently set location as defined by {@link MenuType}. */
     public void showMenu() {
         if (menuLabel == null) generateMenu();
         menuLabel.setLocation(menuAnimateToPoint);
         menuLabel.setVisible(true);
     }
 
-    /**
-     * Hides the menu.
-     */
+    /** Hides the menu. */
     public void hideMenu() {
         if (menuLabel != null) {
             menuLabel.setVisible(false);
         }
     }
 
-    /**
-     * Animates the menu label in.
-     */
+    /** Animates the menu label in. */
     private void animateMenuIn() {
         if (!menuLabel.isVisible()) generateMenu();
 
@@ -3315,9 +3025,7 @@ public class CyderFrame extends JFrame {
         }, threadName);
     }
 
-    /**
-     * Animates out the audio controls.
-     */
+    /** Animates out the audio controls. */
     private void animateMenuOut() {
         checkNotNull(menuLabel);
 
@@ -3460,9 +3168,7 @@ public class CyderFrame extends JFrame {
         innerFinalizeAndShow();
     }
 
-    /**
-     * Invokes {@link #finalizeAndShow(Point)} using {@link #getLocation()} as the point.
-     */
+    /** Invokes {@link #finalizeAndShow(Point)} using {@link #getLocation()} as the point. */
     public void finalizeAndShowCurrentLocation() {
         finalizeAndShow(new Point(getX() + getWidth() / 2, getY() + getHeight() / 2));
     }
@@ -3490,9 +3196,7 @@ public class CyderFrame extends JFrame {
         innerFinalizeAndShow();
     }
 
-    /**
-     * The actions to invoke after other necessary calls of different finalize and show invocations.
-     */
+    /** The actions to invoke after other necessary calls of different finalize and show invocations. */
     private void innerFinalizeAndShow() {
         setOpacity(opacityAnimationMin);
         toFront();
@@ -3603,17 +3307,13 @@ public class CyderFrame extends JFrame {
         titleLabel.repaint();
     }
 
-    /**
-     * Resets the dancing members and state variables.
-     */
+    /** Resets the dancing members and state variables. */
     public void resetDancing() {
         this.dancingDirection = DancingDirection.INITIAL_UP;
         setDancingFinished(false);
     }
 
-    /**
-     * Whether this frame should auto fast-close.
-     */
+    /** Whether this frame should auto fast-close. */
     private boolean autoFastClose = false;
 
     /**

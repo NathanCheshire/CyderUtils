@@ -14,23 +14,15 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
 
-/**
- * Utilities related to validation of API keys.
- */
+/** Utilities related to validation of API keys. */
 public final class ApiKeyUtil {
-    /**
-     * The app id argument.
-     */
+    /** The app id argument. */
     private static final String APP_ID_ARG = "&appid=";
 
-    /**
-     * The units argument for the weather data.
-     */
+    /** The units argument for the weather data. */
     private static final String UNITS_ARG = "&units=";
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private ApiKeyUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

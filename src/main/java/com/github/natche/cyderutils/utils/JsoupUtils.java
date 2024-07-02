@@ -12,9 +12,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.Optional;
 
-/**
- * Utilities related to {@link Jsoup}.
- */
+/** Utilities related to {@link Jsoup}. */
 public class JsoupUtils {
     /**
      * Suppress default constructor.

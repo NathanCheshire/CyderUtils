@@ -26,34 +26,22 @@ import java.util.concurrent.Future;
  * {@link SupportedAudioFileType#isSupported(File)}, for performing certain operations or mutations.
  */
 public final class CyderAudioFile {
-    /**
-     * The default highpass value for dreamifying an audio file.
-     */
+    /** The default highpass value for dreamifying an audio file. */
     private static final int DEFAULT_DREAMIFY_HIGH_PASS = 1500;
 
-    /**
-     * The default low pass value for dreamifying an audio file.
-     */
+    /** The default low pass value for dreamifying an audio file. */
     private static final int DEFAULT_DREAMIFY_LOW_PASS = 200;
 
-    /**
-     * The encapsulated audio file.
-     */
+    /** The encapsulated audio file. */
     private final File audioFile;
 
-    /**
-     * The highpass value for the dreamify ffmpeg filter.
-     */
+    /** The highpass value for the dreamify ffmpeg filter. */
     private int dreamifyHighPass;
 
-    /**
-     * The lowpass value for the dreamify ffmpeg filter.
-     */
+    /** The lowpass value for the dreamify ffmpeg filter. */
     private int dreamifyLowPass;
 
-    /**
-     * The directory to output files to such as converted and dreamified files.
-     */
+    /** The directory to output files to such as converted and dreamified files. */
     private File outputDirectory;
 
     /**
@@ -268,9 +256,7 @@ public final class CyderAudioFile {
         return new WaveFile(audioFile);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -285,9 +271,7 @@ public final class CyderAudioFile {
                 && this.dreamifyHighPass == other.dreamifyHighPass;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderAudioFile{"
@@ -297,9 +281,7 @@ public final class CyderAudioFile {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();
@@ -308,28 +290,18 @@ public final class CyderAudioFile {
         return ret;
     }
 
-    /**
-     * A builder for constructing new instances of a {@link CyderAudioFile}.
-     */
+    /** A builder for constructing new instances of a {@link CyderAudioFile}. */
     public static class Builder {
-        /**
-         * The highpass value for the dreamify ffmpeg filter.
-         */
+        /** The highpass value for the dreamify ffmpeg filter. */
         private int highpass = DEFAULT_DREAMIFY_HIGH_PASS;
 
-        /**
-         * The lowpass value for the dreamify ffmpeg filter.
-         */
+        /** The lowpass value for the dreamify ffmpeg filter. */
         private int lowpass = DEFAULT_DREAMIFY_LOW_PASS;
 
-        /**
-         * The encapsulated audio file.
-         */
+        /** The encapsulated audio file. */
         private final File audioFie;
 
-        /**
-         * The directory to output files to such as converted and dreamified files.
-         */
+        /** The directory to output files to such as converted and dreamified files. */
         private File outputDirectory;
 
         /**

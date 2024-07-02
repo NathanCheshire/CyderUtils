@@ -9,23 +9,15 @@ import java.util.concurrent.Future;
 
 // todo this should be dynamic since it seems like a cool API feature to load from a YML
 
-/**
- * Python packages utilized by Cyder.
- */
+/** Python packages utilized by Cyder. */
 public enum PythonPackage {
-    /**
-     * Pillow package for image utilities.
-     */
+    /** Pillow package for image utilities. */
     PILLOW("Pillow"),
 
-    /**
-     * Mutagen package for audio metadata parsing.
-     */
+    /** Mutagen package for audio metadata parsing. */
     MUTAGEN("Mutagen");
 
-    /**
-     * The package name for this python package.
-     */
+    /** The package name for this python package. */
     private final String packageName;
 
     PythonPackage(String packageName) {

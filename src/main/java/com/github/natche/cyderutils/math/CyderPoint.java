@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 
 import java.awt.*;
 
-/**
- * A point class for exposing additional methods than that of {@link Point}.
- */
+/** A point class for exposing additional methods than that of {@link Point}. */
 public final class CyderPoint extends Point {
     /**
      * Constructs a new instance of a CyderPoint from the provided x,y location.
@@ -220,9 +218,7 @@ public final class CyderPoint extends Point {
         return angleDegrees;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderPoint{"
@@ -231,9 +227,7 @@ public final class CyderPoint extends Point {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(x);
@@ -241,9 +235,7 @@ public final class CyderPoint extends Point {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -9,13 +9,9 @@ import java.awt.*;
  * Used for restorations after resize events.
  */
 final class FocusWrappedComponent {
-    /**
-     * The component.
-     */
+    /** The component. */
     private final Component component;
-    /**
-     * Whether the component in its current state can gain focus.
-     */
+    /** Whether the component in its current state can gain focus. */
     private final boolean wasFocusable;
 
     /**
@@ -29,9 +25,7 @@ final class FocusWrappedComponent {
         this.wasFocusable = wasFocusable;
     }
 
-    /**
-     * Resets the original focusable property of the encapsulated component.
-     */
+    /** Resets the original focusable property of the encapsulated component. */
     public void restoreOriginalFocusableState() {
         if (wasFocusable) component.setFocusable(true);
     }
@@ -54,9 +48,7 @@ final class FocusWrappedComponent {
         return wasFocusable;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "FocusWrappedComponent{"
@@ -65,9 +57,7 @@ final class FocusWrappedComponent {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -81,9 +71,7 @@ final class FocusWrappedComponent {
                 && wasFocusable == other.wasFocusable;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = component.hashCode();

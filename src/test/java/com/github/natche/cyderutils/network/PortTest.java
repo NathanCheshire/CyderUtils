@@ -6,18 +6,12 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for the {@link Port}.
- */
+/** Tests for the {@link Port}. */
 class PortTest {
-    /**
-     * Constructs a new instance of this class for testing purposes.
-     */
+    /** Constructs a new instance of this class for testing purposes. */
     PortTest() {}
 
-    /**
-     * Tests for construction of Ports.
-     */
+    /** Tests for construction of Ports. */
     @Test
     void testConstruction() {
         assertThrows(IllegalArgumentException.class, () -> new Port(-1024));
@@ -33,18 +27,14 @@ class PortTest {
         assertThrows(IllegalArgumentException.class, () -> new Port(65536));
     }
 
-    /**
-     * Tests for construction from {@link CommonServicePort}s.
-     */
+    /** Tests for construction from {@link CommonServicePort}s. */
     @Test
     void testConstructionFrom() {
         assertThrows(NullPointerException.class, () -> Port.from(null));
         assertDoesNotThrow(() -> Port.from(CommonServicePort.HTTP));
     }
 
-    /**
-     * Tests for the accessors and mutators.
-     */
+    /** Tests for the accessors and mutators. */
     @Test
     void testAccessorsMutators() {
         Port port = new Port(143);
@@ -55,9 +45,7 @@ class PortTest {
         assertEquals(Duration.ofSeconds(5), port.getPortAvailableTimeout());
     }
 
-    /**
-     * Tests for the isAvailable method.
-     */
+    /** Tests for the isAvailable method. */
     @Test
     void testIsAvailable() {
         Port someRandomPort = new Port(25000);
@@ -68,9 +56,7 @@ class PortTest {
         assertTrue(someRandomPort.isAvailable());
     }
 
-    /**
-     * Tests for the toString method.
-     */
+    /** Tests for the toString method. */
     @Test
     void testToString() {
         Port port = new Port(25);
@@ -84,9 +70,7 @@ class PortTest {
         assertEquals("Port{port=53, portAvailableTimeout=PT5S}", fromPort.toString());
     }
 
-    /**
-     * Tests for the equals method.
-     */
+    /** Tests for the equals method. */
     @Test
     void testEquals() {
         Port port = new Port(25);
@@ -99,9 +83,7 @@ class PortTest {
         assertNotEquals(port, new Object());
     }
 
-    /**
-     * Tests for the hash code method.
-     */
+    /** Tests for the hash code method. */
     @Test
     void testHashCode() {
         Port port = new Port(25);

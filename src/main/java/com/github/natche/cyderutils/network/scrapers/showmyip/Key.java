@@ -5,9 +5,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Optional;
 
-/**
- * Keys for extracting data from the table shown on the HTML content from showmyip.com.
- */
+/** Keys for extracting data from the table shown on the HTML content from showmyip.com. */
 public enum Key {
     IPv4("Your IPv4"),
     IPv6("Your IPv6"),

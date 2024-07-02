@@ -2,19 +2,13 @@ package com.github.natche.cyderutils.weather.parsers;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * The rain object for {@link WeatherData} objects.
- */
+/** The rain object for {@link WeatherData} objects. */
 public class Rain {
-    /**
-     * The one hour field.
-     */
+    /** The one hour field. */
     @SerializedName("1h")
     private float oneHour;
 
-    /**
-     * Constructs a new rain object.
-     */
+    /** Constructs a new rain object. */
     public Rain() {}
 
     /**
@@ -35,9 +29,7 @@ public class Rain {
         this.oneHour = oneHour;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -50,17 +42,13 @@ public class Rain {
         return other.oneHour == oneHour;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Float.hashCode(oneHour);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Rain{oneHour=" + oneHour + "}";

@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * Supported YouTube API search-list parameters for a {@link YouTubeSearchQuery}.
- */
+/** Supported YouTube API search-list parameters for a {@link YouTubeSearchQuery}. */
 enum YouTubeSearchListApiParameter {
     PART("part"),
     QUERY("q"),
@@ -14,9 +12,7 @@ enum YouTubeSearchListApiParameter {
     VIDEO_DURATION("videoDuration"),
     MAX_RESULTS("maxResults");
 
-    /**
-     * The url parameter name for this parameter.
-     */
+    /** The url parameter name for this parameter. */
     private final String urlParameterName;
 
     YouTubeSearchListApiParameter(String urlParameterName) {

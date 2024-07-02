@@ -10,19 +10,13 @@ import java.util.*;
  * number of categories and their corresponding max (exclusive) values.
  */
 public final class LatencyCategorizer {
-    /**
-     * The default unreachable string.
-     */
+    /** The default unreachable string. */
     private static final String DEFAULT_UNREACHABLE_STRING = "Unreachable";
 
-    /**
-     * The string to return when a latency level is outside the maximum level of this categorizer.
-     */
+    /** The string to return when a latency level is outside the maximum level of this categorizer. */
     private final String unreachableString;
 
-    /**
-     * The latency levels for this categorizer.
-     */
+    /** The latency levels for this categorizer. */
     private final NavigableMap<Long, String> latencyLevels;
 
     /**
@@ -95,9 +89,7 @@ public final class LatencyCategorizer {
         return Collections.max(latencyLevels.keySet());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "LatencyCategorizer{"
@@ -106,9 +98,7 @@ public final class LatencyCategorizer {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = latencyLevels.hashCode();
@@ -116,9 +106,7 @@ public final class LatencyCategorizer {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

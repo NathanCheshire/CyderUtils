@@ -1,27 +1,17 @@
 package com.github.natche.cyderutils.weather.parsers;
 
-/**
- * The wind weather object.
- */
+/** The wind weather object. */
 public class Wind {
-    /**
-     * The wind speed.
-     */
+    /** The wind speed. */
     private float speed;
 
-    /**
-     * The wind bearing in degrees.
-     */
+    /** The wind bearing in degrees. */
     private int deg;
 
-    /**
-     * The wind gusts speed.
-     */
+    /** The wind gusts speed. */
     private float gust;
 
-    /**
-     * Constructs a new wind object.
-     */
+    /** Constructs a new wind object. */
     public Wind() {}
 
     /**
@@ -78,9 +68,7 @@ public class Wind {
         this.gust = gust;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -95,9 +83,7 @@ public class Wind {
                 && gust == other.gust;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Float.hashCode(speed);
@@ -106,9 +92,7 @@ public class Wind {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Wind{"

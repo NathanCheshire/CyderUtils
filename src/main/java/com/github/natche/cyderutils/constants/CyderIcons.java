@@ -8,23 +8,15 @@ import com.github.natche.cyderutils.utils.StaticUtil;
 
 import javax.swing.*;
 
-/**
- * Common {@link ImageIcon}s used throughout Cyder.
- */
+/** Common {@link ImageIcon}s used throughout Cyder. */
 public final class CyderIcons {
-    /**
-     * The Cyder logo.
-     */
+    /** The Cyder logo. */
     public static final ImageIcon CYDER_ICON = new ImageIcon(StaticUtil.getStaticPath("CyderIcon.png"));
 
-    /**
-     * The length of the default background.
-     */
+    /** The length of the default background. */
     private static final int DEFAULT_BACKGROUND_LEN = 1000;
 
-    /**
-     * A default image with dimensions {@link #DEFAULT_BACKGROUND_LEN}x{@link #DEFAULT_BACKGROUND_LEN}.
-     */
+    /** A default image with dimensions {@link #DEFAULT_BACKGROUND_LEN}x{@link #DEFAULT_BACKGROUND_LEN}. */
     public static final ImageIcon defaultBackground = generateDefaultBackground(
             DEFAULT_BACKGROUND_LEN,
             DEFAULT_BACKGROUND_LEN);

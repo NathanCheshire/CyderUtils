@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-/**
- * A utility class for generating audio waveforms PNGs using {@link WaveformGenerationBuilder}s.
- */
+/** A utility class for generating audio waveforms PNGs using {@link WaveformGenerationBuilder}s. */
 public final class WaveformGenerator {
     /**
      * The number denoting a value should be interpolated.

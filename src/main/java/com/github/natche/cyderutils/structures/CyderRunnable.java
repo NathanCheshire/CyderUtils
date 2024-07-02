@@ -1,12 +1,8 @@
 package com.github.natche.cyderutils.structures;
 
-/**
- * A runnable which allows for an easy to read toString representation.
- */
+/** A runnable which allows for an easy to read toString representation. */
 public interface CyderRunnable extends Runnable {
-    /**
-     * Runs this runnable.
-     */
+    /** Runs this runnable. */
     void run();
 
     /**

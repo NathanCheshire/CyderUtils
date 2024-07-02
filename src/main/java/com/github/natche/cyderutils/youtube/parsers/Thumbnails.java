@@ -7,25 +7,17 @@ import com.google.gson.annotations.SerializedName;
  * The thumbnails object for a {@link Snippet}.
  */
 public class Thumbnails {
-    /**
-     * The default resolution thumbnail object.
-     */
+    /** The default resolution thumbnail object. */
     @SerializedName("default")
     private Thumbnail _default;
 
-    /**
-     * The medium resolution thumbnail object.
-     */
+    /** The medium resolution thumbnail object. */
     private Thumbnail medium;
 
-    /**
-     * The highest resolution thumbnail object.
-     */
+    /** The highest resolution thumbnail object. */
     private Thumbnail high;
 
-    /**
-     * Constructs a new thumbnails object.
-     */
+    /** Constructs a new thumbnails object. */
     public Thumbnails() {}
 
     /**
@@ -82,9 +74,7 @@ public class Thumbnails {
         this.high = high;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -99,9 +89,7 @@ public class Thumbnails {
                 && other.high.equals(high);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = _default.hashCode();
@@ -110,9 +98,7 @@ public class Thumbnails {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Thumbnails{"

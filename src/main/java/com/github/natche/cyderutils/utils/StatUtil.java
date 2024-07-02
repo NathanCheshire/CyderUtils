@@ -28,43 +28,27 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Utilities for general statistics related to Cyder.
- */
+/** Utilities for general statistics related to Cyder. */
 public final class StatUtil {
-    /**
-     * If I hit it one time ima pipe her.
-     */
+    /** If I hit it one time ima pipe her. */
     private static final String NO_LIMIT = "no limit";
 
-    /**
-     * The name of the executor service which gets the debug props.
-     */
+    /** The name of the executor service which gets the debug props. */
     private static final String DEBUG_PROPS_EXECUTOR_THREAD_NAME = "Debug Props Getter";
 
-    /**
-     * The starting prefix for a block comment.
-     */
+    /** The starting prefix for a block comment. */
     private static final String blockCommentStart = "/*";
 
-    /**
-     * The ending suffix for a block comment.
-     */
+    /** The ending suffix for a block comment. */
     private static final String blockCommentEnd = "*/";
 
-    /**
-     * A record type to hold the stats returned by {@link StatUtil#getDebugProps(String)}.
-     */
+    /** A record type to hold the stats returned by {@link StatUtil#getDebugProps(String)}. */
     public record DebugStats(ImmutableList<String> lines, ImageIcon countryFlag) {}
 
-    /**
-     * A record to associate a file name with its size.
-     */
+    /** A record to associate a file name with its size. */
     public record FileSize(String name, long size) {}
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private StatUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -408,9 +392,7 @@ public final class StatUtil {
         return ret;
     }
 
-    /**
-     * The file comparator used for comparing files by their sizes in bytes.
-     */
+    /** The file comparator used for comparing files by their sizes in bytes. */
     private static final class FileComparator implements Comparator<FileSize> {
         public int compare(FileSize fs1, FileSize fs2) {
             if (fs1.size() < fs2.size()) {

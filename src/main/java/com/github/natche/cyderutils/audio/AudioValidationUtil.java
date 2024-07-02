@@ -20,15 +20,11 @@ import java.util.stream.IntStream;
  * This class provides methods to validate specific audio file formats.
  */
 public final class AudioValidationUtil {
-    /**
-     * The signature for the FTYP box in MP4 files.
-     */
+    /** The signature for the FTYP box in MP4 files. */
     private static final ImmutableList<Byte> FTYP_BOX
             = ImmutableList.of((byte) 0x66, (byte) 0x74, (byte) 0x79, (byte) 0x70);
 
-    /**
-     * The list of valid brands within the FTYP box for M4A files.
-     */
+    /** The list of valid brands within the FTYP box for M4A files. */
     private static final ImmutableList<ImmutableList<Byte>> VALID_BRANDS = ImmutableList.of(
             ImmutableList.of((byte) 0x4D, (byte) 0x34, (byte) 0x41, (byte) 0x20), // M4A
             ImmutableList.of((byte) 0x69, (byte) 0x73, (byte) 0x6F, (byte) 0x6D), // isom

@@ -11,18 +11,12 @@ import java.util.function.Supplier;
 
 // todo we need to allow for instances of this and then expose a manager
 
-/**
- * A class used to submit runnables and executors.
- */
+/** A class used to submit runnables and executors. */
 public final class CyderThreadRunner {
-    /**
-     * The threads ran for this session of Cyder.
-     */
+    /** The threads ran for this session of Cyder. */
     private static final AtomicInteger threadsRan = new AtomicInteger();
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private CyderThreadRunner() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

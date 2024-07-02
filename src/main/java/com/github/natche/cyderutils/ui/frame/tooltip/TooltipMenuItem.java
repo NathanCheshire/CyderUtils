@@ -11,28 +11,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-/**
- * A menu item for a {@link CyderFrame} tooltip menu.
- */
+/** A menu item for a {@link CyderFrame} tooltip menu. */
 public final class TooltipMenuItem {
-    /**
-     * The list of actions to invoke upon a mouse click event.
-     */
+    /** The list of actions to invoke upon a mouse click event. */
     private final ArrayList<Runnable> mouseClickActions = new ArrayList<>();
 
-    /**
-     * The list of actions to invoke upon a mouse enter event.
-     */
+    /** The list of actions to invoke upon a mouse enter event. */
     private final ArrayList<Runnable> mouseEnterActions = new ArrayList<>();
 
-    /**
-     * The list of actions to invoke upon a mouse exit event.
-     */
+    /** The list of actions to invoke upon a mouse exit event. */
     private final ArrayList<Runnable> mouseExitActions = new ArrayList<>();
 
-    /**
-     * The text to be displayed for this tooltip menu item.
-     */
+    /** The text to be displayed for this tooltip menu item. */
     private final String text;
 
     /**

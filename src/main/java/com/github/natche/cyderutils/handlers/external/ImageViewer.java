@@ -31,73 +31,45 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
-/**
- * A widget which displays the images supported by Cyder in a provided directory.
- */
+/** A widget which displays the images supported by Cyder in a provided directory. */
 public class ImageViewer {
-    /**
-     * The next keyword.
-     */
+    /** The next keyword. */
     private static final String NEXT = "Next";
 
-    /**
-     * The last keyword.
-     */
+    /** The last keyword. */
     private static final String LAST = "Last";
 
-    /**
-     * The rename keyword.
-     */
+    /** The rename keyword. */
     private static final String RENAME = "Rename";
 
-    /**
-     * The maximum length of the image viewer frame.
-     */
+    /** The maximum length of the image viewer frame. */
     private static final int maxFrameLength = 800;
 
-    /**
-     * The maximum dimension of the image viewer frame.
-     */
+    /** The maximum dimension of the image viewer frame. */
     private static final Dimension maxFrameSize = new Dimension(maxFrameLength, maxFrameLength);
 
-    /**
-     * The getter util instance used to acquire the new filename from the user during a rename image attempt.
-     */
+    /** The getter util instance used to acquire the new filename from the user during a rename image attempt. */
     private final GetterUtil getterUtil = GetterUtil.getInstance();
 
-    /**
-     * The list of valid image files in the current directory, not recursive.
-     */
+    /** The list of valid image files in the current directory, not recursive. */
     private final ArrayList<File> validDirectoryImages = new ArrayList<>();
 
-    /**
-     * The watcher for the image directory.
-     */
+    /** The watcher for the image directory. */
     private final DirectoryWatcher imageDirectoryWatcher;
 
-    /**
-     * The starting directory/file.
-     */
+    /** The starting directory/file. */
     private final File imageDirectory;
 
-    /**
-     * The current index of the valid directory images list.
-     */
+    /** The current index of the valid directory images list. */
     private int currentIndex;
 
-    /**
-     * The image frame.
-     */
+    /** The image frame. */
     private CyderFrame pictureFrame;
 
-    /**
-     * The next image button.
-     */
+    /** The next image button. */
     private RightButton nextButton;
 
-    /**
-     * The last image button.
-     */
+    /** The last image button. */
     private LeftButton lastButton;
 
     /**
@@ -204,9 +176,7 @@ public class ImageViewer {
         return new CyderThreadFactory("ImageViewer showGui thread, directory" + ": " + imageDirectory);
     }
 
-    /**
-     * Refreshes the {@link #validDirectoryImages} list based on the currently set {@link #imageDirectory}.
-     */
+    /** Refreshes the {@link #validDirectoryImages} list based on the currently set {@link #imageDirectory}. */
     private void refreshImageFiles() {
         validDirectoryImages.clear();
 
@@ -217,9 +187,7 @@ public class ImageViewer {
         Arrays.stream(neighbors).filter(FileUtil::isSupportedImageExtension).forEach(validDirectoryImages::add);
     }
 
-    /**
-     * Transitions to the next image if possible.
-     */
+    /** Transitions to the next image if possible. */
     private void transitionForward() {
         refreshImageFiles();
         if (validDirectoryImages.size() < 2) return;
@@ -227,9 +195,7 @@ public class ImageViewer {
         revalidateFromTransition();
     }
 
-    /**
-     * Transitions to the previous image if possible.
-     */
+    /** Transitions to the previous image if possible. */
     private void transitionBackward() {
         refreshImageFiles();
         if (validDirectoryImages.size() < 2) return;
@@ -237,9 +203,7 @@ public class ImageViewer {
         revalidateFromTransition();
     }
 
-    /**
-     * The logic to perform following a transition.
-     */
+    /** The logic to perform following a transition. */
     private void revalidateFromTransition() {
         Point oldCenterPoint = pictureFrame.getCenterPointOnScreen();
         ImageIcon image = scaleImageIfNeeded(validDirectoryImages.get(currentIndex));
@@ -272,9 +236,7 @@ public class ImageViewer {
         }
     }
 
-    /**
-     * The actions to invoke when the rename menu item is pressed.
-     */
+    /** The actions to invoke when the rename menu item is pressed. */
     private void onRenameButtonClicked() {
         File currentRename = new File(validDirectoryImages.get(currentIndex).getAbsolutePath());
 
@@ -363,9 +325,7 @@ public class ImageViewer {
         imageDirectoryWatcher.startWatching();
     }
 
-    /**
-     * Revalidates the visibility of the navigation buttons.
-     */
+    /** Revalidates the visibility of the navigation buttons. */
     private void revalidateNavigationButtonVisibility() {
         refreshImageFiles();
         setNavigationButtonsVisibility(validDirectoryImages.size() > 1);

@@ -1,16 +1,12 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * The video definition for a {@link YouTubeSearchQuery}.
- */
+/** The video definition for a {@link YouTubeSearchQuery}. */
 public enum YouTubeVideoDefinition {
     ANY("any"),
     HIGH("high"),
     STANDARD("standard");
 
-    /**
-     * The url parameter for this video definition
-     */
+    /** The url parameter for this video definition */
     private final String urlParameter;
 
     YouTubeVideoDefinition(String urlParameter) {

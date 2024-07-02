@@ -8,13 +8,9 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 
-/**
- * Tests for [WaveFile]s.
- */
+/** Tests for [WaveFile]s. */
 class WaveFileTest {
-    /**
-     * Tests construction of wave files.
-     */
+    /** Tests construction of wave files. */
     @Test
     fun testConstruction() {
         val constructor = WaveFile::class.java.getDeclaredConstructor()
@@ -38,18 +34,14 @@ class WaveFileTest {
         assertDoesNotThrow { WaveFile(southWav) }
     }
 
-    /**
-     * Tests for the get num channels. method.
-     */
+    /** Tests for the get num channels. method. */
     @Test
     fun testGetNumChannels() {
         assertEquals(2, carrots.numChannels)
         assertEquals(2, south.numChannels)
     }
 
-    /**
-     * Tests for the get sample method and num samples.
-     */
+    /** Tests for the get sample method and num samples. */
     @Test
     fun testGetSample() {
         assertEquals(441344, carrots.numSamples)
@@ -67,45 +59,35 @@ class WaveFileTest {
         assertEquals(63029, south.getSample(south.numSamples / 2))
     }
 
-    /**
-     * Tests for the get max sample method.
-     */
+    /** Tests for the get max sample method. */
     @Test
     fun testGetMaxSample() {
         assertEquals(65535, carrots.maxSample)
         assertEquals(65535, south.maxSample)
     }
 
-    /**
-     * Tests for the get min sample method.
-     */
+    /** Tests for the get min sample method. */
     @Test
     fun testGetMinSample() {
         assertEquals(0, carrots.minSample)
         assertEquals(0, south.minSample)
     }
 
-    /**
-     * Tests for the get average sample method.
-     */
+    /** Tests for the get average sample method. */
     @Test
     fun testGetAverageSample() {
         assertEquals(31889, carrots.averageSample)
         assertEquals(32736, south.averageSample)
     }
 
-    /**
-     * Tests for the is playable method.
-     */
+    /** Tests for the is playable method. */
     @Test
     fun testIsPlayable() {
         assertTrue(carrots.isPlayable)
         assertTrue(south.isPlayable)
     }
 
-    /**
-     * Tests for the stop method.
-     */
+    /** Tests for the stop method. */
     @Test
     fun testStop() {
         val localSouth = WaveFile(southWav)
@@ -116,9 +98,7 @@ class WaveFileTest {
         assertDoesNotThrow { localSouth.stop() }
     }
 
-    /**
-     * Tests for the get audio format.
-     */
+    /** Tests for the get audio format. */
     @Test
     fun testGetAudioFormat() {
         val carrotFormat = carrots.audioFormat
@@ -138,45 +118,35 @@ class WaveFileTest {
         assertEquals(16, southFormat.sampleSizeInBits)
     }
 
-    /**
-     * Tests for the get sample size method.
-     */
+    /** Tests for the get sample size method. */
     @Test
     fun testGetSampleSize() {
         assertEquals(2, carrots.sampleSize)
         assertEquals(2, south.sampleSize)
     }
 
-    /**
-     * Tests for the get duration time method.
-     */
+    /** Tests for the get duration time method. */
     @Test
     fun testGetDurationTime() {
         assertEquals(10.0078f, carrots.durationTime)
         assertEquals(10.005333f, south.durationTime)
     }
 
-    /**
-     * Tests for the get num frames method.
-     */
+    /** Tests for the get num frames method. */
     @Test
     fun testGetNumFrames() {
         assertEquals(441344, carrots.numFrames)
         assertEquals(480256, south.numFrames)
     }
 
-    /**
-     * Tests for the get sample rate method.
-     */
+    /** Tests for the get sample rate method. */
     @Test
     fun testGetSampleRate() {
         assertEquals(44100, carrots.sampleRate)
         assertEquals(48000, south.sampleRate)
     }
 
-    /**
-     * Tests for the equals method.
-     */
+    /** Tests for the equals method. */
     @Test
     fun testEquals() {
         assertEquals(carrots, carrots)
@@ -185,9 +155,7 @@ class WaveFileTest {
         assertNotEquals(carrots, Object())
     }
 
-    /**
-     * Tests for the hashcode method.
-     */
+    /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
         assertEquals(carrots.hashCode(), carrots.hashCode())
@@ -198,9 +166,7 @@ class WaveFileTest {
         assertEquals(754789234, south.hashCode())
     }
 
-    /**
-     * Tests for the toString method.
-     */
+    /** Tests for the toString method. */
     @Test
     fun testToString() {
         assertEquals(

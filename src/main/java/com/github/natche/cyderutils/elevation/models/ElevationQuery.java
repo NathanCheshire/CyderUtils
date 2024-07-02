@@ -2,42 +2,28 @@ package com.github.natche.cyderutils.elevation.models;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A json serialization class for an elevation query.
- */
+/** A json serialization class for an elevation query. */
 public class ElevationQuery {
-    /**
-     * The x point of this elevation query.
-     */
+    /** The x point of this elevation query. */
     private double x;
 
-    /**
-     * The y point of this elevation query.
-     */
+    /** The y point of this elevation query. */
     private double y;
 
-    /**
-     * The data source this elevation was obtained from.
-     */
+    /** The data source this elevation was obtained from. */
     @SuppressWarnings("unused")
     @SerializedName("Data_source")
     private String dataSource;
 
-    /**
-     * The elevation at this x,y location.
-     */
+    /** The elevation at this x,y location. */
     @SerializedName("Elevation")
     private String elevation;
 
-    /**
-     * The units of this elevation measurement.
-     */
+    /** The units of this elevation measurement. */
     @SerializedName("Units")
     private String units;
 
-    /**
-     * Constructs a new elevation query object.
-     */
+    /** Constructs a new elevation query object. */
     public ElevationQuery() {}
 
     /**

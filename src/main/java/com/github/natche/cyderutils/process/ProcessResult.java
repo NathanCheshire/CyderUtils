@@ -7,23 +7,15 @@ import com.github.natche.cyderutils.strings.CyderStrings;
 
 import java.util.Collection;
 
-/**
- * The result of a {@link ProcessUtil#getProcessOutput(String) invocation}.
- */
+/** The result of a {@link ProcessUtil#getProcessOutput(String) invocation}. */
 public class ProcessResult {
-    /**
-     * The standard output of the process.
-     */
+    /** The standard output of the process. */
     private final ImmutableList<String> standardOutput;
 
-    /**
-     * The error output of the process.
-     */
+    /** The error output of the process. */
     private final ImmutableList<String> errorOutput;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private ProcessResult() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
@@ -70,9 +62,7 @@ public class ProcessResult {
         return !errorOutput.isEmpty();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -87,9 +77,7 @@ public class ProcessResult {
                 && other.errorOutput.equals(errorOutput);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = standardOutput.hashCode();
@@ -97,9 +85,7 @@ public class ProcessResult {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ProcessResult{"

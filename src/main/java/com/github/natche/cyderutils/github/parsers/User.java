@@ -9,188 +9,122 @@ import com.google.gson.annotations.SerializedName;
  */
 @SuppressWarnings("unused")
 public class User {
-    /**
-     * This user's username.
-     */
+    /** This user's username. */
     public String login;
 
-    /**
-     * This user's id.
-     */
+    /** This user's id. */
     public int id;
 
-    /**
-     * This user's node id.
-     */
+    /** This user's node id. */
     @SerializedName("node_id")
     public String nodeId;
 
-    /**
-     * The url to this user's avatar.
-     */
+    /** The url to this user's avatar. */
     @SerializedName("avatar_url")
     public String avatarUrl;
 
-    /**
-     * The id of this user's gravatar if not using a custom avatar.
-     */
+    /** The id of this user's gravatar if not using a custom avatar. */
     @SerializedName("gravatar_id")
     public String gravatarId;
 
-    /**
-     * The url used to obtain these results from the users API endpoint.
-     */
+    /** The url used to obtain these results from the users API endpoint. */
     public String url;
 
-    /**
-     * The url to this user's GitHub profile page.
-     */
+    /** The url to this user's GitHub profile page. */
     @SerializedName("html_url")
     public String htmlUrl;
 
-    /**
-     * The url to the list of users following this user.
-     */
+    /** The url to the list of users following this user. */
     @SerializedName("following_url")
     public String followingUrl;
 
-    /**
-     * The url to the list of users this user is following.
-     */
+    /** The url to the list of users this user is following. */
     @SerializedName("followers_url")
     public String followersUrl;
 
-    /**
-     * The url to the list of gists this user has created.
-     */
+    /** The url to the list of gists this user has created. */
     @SerializedName("gists_url")
     public String gistsUrl;
 
-    /**
-     * The url to the list of repos this user has stared.
-     */
+    /** The url to the list of repos this user has stared. */
     @SerializedName("starred_url")
     public String starredUrl;
 
-    /**
-     * The subscriptions url for this user.
-     */
+    /** The subscriptions url for this user. */
     @SerializedName("subscriptions_url")
     public String subscriptionsUrl;
 
-    /**
-     * The organizations url for this user.
-     */
+    /** The organizations url for this user. */
     @SerializedName("organizations_url")
     public String organizationsUrl;
 
-    /**
-     * The repos url for this user.
-     */
+    /** The repos url for this user. */
     @SerializedName("repos_url")
     public String reposUrl;
 
-    /**
-     * The events url for this user.
-     */
+    /** The events url for this user. */
     @SerializedName("events_url")
     public String eventsUrl;
 
-    /**
-     * The received events url for this user.
-     */
+    /** The received events url for this user. */
     @SerializedName("received_events_url")
     public String receivedEventsUrl;
 
-    /**
-     * The type of user this is.
-     */
+    /** The type of user this is. */
     public String type;
 
-    /**
-     * Whether this user is an admin.
-     */
+    /** Whether this user is an admin. */
     @SerializedName("site_admin")
     public boolean siteAdmin;
 
-    /**
-     * This user's display name.
-     */
+    /** This user's display name. */
     public String name;
 
-    /**
-     * This user's company.
-     */
+    /** This user's company. */
     public String company;
 
-    /**
-     * This user's blog (actually website, I have no idea why GitHub calls it blog in their API).
-     */
+    /** This user's blog (actually website, I have no idea why GitHub calls it blog in their API). */
     public String blog;
 
-    /**
-     * This user's set location.
-     */
+    /** This user's set location. */
     public String location;
 
-    /**
-     * This user's public email.
-     */
+    /** This user's public email. */
     public String email;
 
-    /**
-     * Whether this user has designated themselves as hireable.
-     */
+    /** Whether this user has designated themselves as hireable. */
     public boolean hireable;
 
-    /**
-     * This user's bio.
-     */
+    /** This user's bio. */
     public String bio;
 
-    /**
-     * This user's twitter username if set.
-     */
+    /** This user's twitter username if set. */
     @SerializedName("twitter_username")
     public String twitterUsername;
 
-    /**
-     * The number of public repos exposed by this user.
-     */
+    /** The number of public repos exposed by this user. */
     @SerializedName("public_repos")
     public int publicRepos;
 
-    /**
-     * The number of public Gists exposed by this user.
-     */
+    /** The number of public Gists exposed by this user. */
     @SerializedName("public_gists")
     public int publicGists;
 
-    /**
-     * The number of followers this user has.
-     */
+    /** The number of followers this user has. */
     public int followers;
 
-    /**
-     * The number of users this user is following.
-     */
+    /** The number of users this user is following. */
     public int following;
 
-    /**
-     * The time this user was created at.
-     */
+    /** The time this user was created at. */
     @SerializedName("created_at")
     public String createdAt;
 
-    /**
-     * The last time this user was updated at.
-     */
+    /** The last time this user was updated at. */
     @SerializedName("updated_at")
     public String updatedAt;
 
-    /**
-     * Constructs a new GitHub user object.
-     */
+    /** Constructs a new GitHub user object. */
     public User() {}
 
     /**
@@ -819,9 +753,7 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -864,9 +796,7 @@ public class User {
                 && other.updatedAt.equals(updatedAt);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = login.hashCode();
@@ -906,9 +836,7 @@ public class User {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "User{"

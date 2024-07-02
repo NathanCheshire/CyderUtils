@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.math.NumberUtil;
 
-/**
- * Utilities related to the Levenshtein distance of strings.
- */
+/** Utilities related to the Levenshtein distance of strings. */
 public final class LevenshteinUtil {
     /**
      * Suppress default constructor.

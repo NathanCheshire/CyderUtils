@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.files;
 
-/**
- * The supported modes for reading/writing to/from a {@link CyderTemporaryFile}.
- */
+/** The supported modes for reading/writing to/from a {@link CyderTemporaryFile}. */
 public enum FileMode {
     /**
      * A binary file; the extension is not expected to be ".bin"

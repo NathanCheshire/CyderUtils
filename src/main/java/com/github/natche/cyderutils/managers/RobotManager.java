@@ -2,23 +2,15 @@ package com.github.natche.cyderutils.managers;
 
 import java.awt.*;
 
-/**
- * A manager for {@link java.awt.Robot}s.
- */
+/** A manager for {@link java.awt.Robot}s. */
 public enum RobotManager {
-    /**
-     * The robot manager instance.
-     */
+    /** The robot manager instance. */
     INSTANCE;
 
-    /**
-     * The maximum number of times to attempt to create a robot before failing.
-     */
+    /** The maximum number of times to attempt to create a robot before failing. */
     private static final int ROBOT_CREATION_ATTEMPTS = 10000;
 
-    /**
-     * The common shared robot.
-     */
+    /** The common shared robot. */
     private Robot commonSharedRobot;
 
     RobotManager() {
@@ -36,9 +28,7 @@ public enum RobotManager {
         return commonSharedRobot;
     }
 
-    /**
-     * Attempts to create the common shared robot.
-     */
+    /** Attempts to create the common shared robot. */
     private void attemptToCreateCommonSharedRobot() {
         int attempts = 0;
         while (attempts < ROBOT_CREATION_ATTEMPTS) {

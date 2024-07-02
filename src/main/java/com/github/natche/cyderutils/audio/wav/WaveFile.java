@@ -27,74 +27,46 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class WaveFile {
     private static final Logger logger = LoggerFactory.getLogger(WaveFile.class);
 
-    /**
-     * The number of bits per sample of a wav file.
-     */
+    /** The number of bits per sample of a wav file. */
     public static final int BITS_PER_SAMPLE = 8;
 
-    /**
-     * The number of bytes for an integer primitive.
-     */
+    /** The number of bytes for an integer primitive. */
     public static final int INT_SIZE = 4;
 
-    /**
-     * The number of channels of the wav.
-     */
+    /** The number of channels of the wav. */
     private int numChannels;
 
-    /**
-     * The wav byte data.
-     */
+    /** The wav byte data. */
     private byte[] data;
 
-    /**
-     * Whether the file could be decoded and is playable.
-     */
+    /** Whether the file could be decoded and is playable. */
     private boolean isPlayable;
 
-    /**
-     * The audio format of the wav.
-     */
+    /** The audio format of the wav. */
     private AudioFormat audioFormat;
 
-    /**
-     * The clip object for the wav.
-     */
+    /** The clip object for the wav. */
     private Clip clip;
 
-    /**
-     * The stream for the clip.
-     */
+    /** The stream for the clip. */
     private AudioInputStream clipStream;
 
-    /**
-     * The sample size of the wav.
-     */
+    /** The sample size of the wav. */
     private int sampleSize = AudioSystem.NOT_SPECIFIED;
 
-    /**
-     * The number of frames of the wav.
-     */
+    /** The number of frames of the wav. */
     private long numFrames = AudioSystem.NOT_SPECIFIED;
 
-    /**
-     * The sample rate of the wav.
-     */
+    /** The sample rate of the wav. */
     private int sampleRate = AudioSystem.NOT_SPECIFIED;
 
-    /**
-     * The wrapped wav file.
-     */
+    /** The wrapped wav file. */
     private final File wavFile;
 
-    /**
-     * Whether the clip is playing.
-     */
+    /** Whether the clip is playing. */
     private final AtomicBoolean clipPlaying = new AtomicBoolean(false);
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private WaveFile() {
         throw new IllegalMethodException("Invalid constructor, a valid wave file is required");
     }
@@ -346,9 +318,7 @@ public final class WaveFile {
         return sampleRate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(numChannels);
@@ -361,9 +331,7 @@ public final class WaveFile {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WaveFile{"
@@ -378,9 +346,7 @@ public final class WaveFile {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

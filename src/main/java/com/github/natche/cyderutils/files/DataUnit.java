@@ -6,49 +6,31 @@ package com.github.natche.cyderutils.files;
  * allowing for easy conversion and calculation of data sizes.
  */
 public enum DataUnit {
-    /**
-     * A single bit.
-     */
+    /** A single bit. */
     BIT(1),
 
-    /**
-     * A nibble, equivalent to 4 bits.
-     */
+    /** A nibble, equivalent to 4 bits. */
     NIBBLE(4),
 
-    /**
-     * A byte, equivalent to 8 bits.
-     */
+    /** A byte, equivalent to 8 bits. */
     BYTE(8),
 
-    /**
-     * A kilobyte, traditionally considered as 1024 bytes.
-     */
+    /** A kilobyte, traditionally considered as 1024 bytes. */
     KILOBYTE(1024 * BYTE.value),
 
-    /**
-     * A megabyte, traditionally considered as 1024 kilobytes.
-     */
+    /** A megabyte, traditionally considered as 1024 kilobytes. */
     MEGABYTE(1024 * KILOBYTE.value),
 
-    /**
-     * A gigabyte, traditionally considered as 1024 megabytes.
-     */
+    /** A gigabyte, traditionally considered as 1024 megabytes. */
     GIGABYTE(1024 * MEGABYTE.value),
 
-    /**
-     * A terabyte, traditionally considered as 1024 gigabytes.
-     */
+    /** A terabyte, traditionally considered as 1024 gigabytes. */
     TERABYTE(1024 * GIGABYTE.value),
 
-    /**
-     * A petabyte, traditionally considered as 1024 terabytes.
-     */
+    /** A petabyte, traditionally considered as 1024 terabytes. */
     PETABYTE(1024 * TERABYTE.value),
 
-    /**
-     * An exabyte, traditionally considered as 1024 petabytes.
-     */
+    /** An exabyte, traditionally considered as 1024 petabytes. */
     EXABYTE(1024 * PETABYTE.value);
 
     private final long value;

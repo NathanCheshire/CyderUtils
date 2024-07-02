@@ -2,13 +2,9 @@ package com.github.natche.cyderutils.ui.frame.enumerations;
 
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 
-/**
- * The possible positions for a {@link CyderFrame}'s title label.
- */
+/** The possible positions for a {@link CyderFrame}'s title label. */
 public enum TitlePosition {
-    /**
-     * Left; if any buttons are on the left, the title position will be forced to the center.
-     */
+    /** Left; if any buttons are on the left, the title position will be forced to the center. */
     LEFT,
 
     /**
@@ -17,8 +13,6 @@ public enum TitlePosition {
      */
     CENTER,
 
-    /**
-     * Right; if any buttons are on the right, the title position will be forced to the center.
-     */
+    /** Right; if any buttons are on the right, the title position will be forced to the center. */
     RIGHT,
 }

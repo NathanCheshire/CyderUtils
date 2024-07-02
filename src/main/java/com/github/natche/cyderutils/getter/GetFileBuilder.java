@@ -12,78 +12,48 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-/**
- * A builder for a get file getter method.
- */
+/** A builder for a get file getter method. */
 public final class GetFileBuilder implements GetBuilder {
-    /**
-     * The frame title.
-     */
+    /** The frame title. */
     private final String frameTitle;
 
-    /**
-     * The initial directory to load files from
-     */
+    /** The initial directory to load files from */
     private final File initialDirectory;
 
-    /**
-     * The initial text of the file field. For if an alternative to the initial directory name is desired.
-     */
+    /** The initial text of the file field. For if an alternative to the initial directory name is desired. */
     private String initialFieldText;
 
-    /**
-     * The directory field foreground.
-     */
+    /** The directory field foreground. */
     private Color fieldForeground = CyderColors.navy;
 
-    /**
-     * The directory field font.
-     */
+    /** The directory field font. */
     private Font fieldFont = CyderFonts.SEGOE_20;
 
-    /**
-     * Whether the getter should allow submissions of files.
-     */
+    /** Whether the getter should allow submissions of files. */
     private boolean allowFileSubmission = true;
 
-    /**
-     * Whether the getter should allow submissions of folders.
-     */
+    /** Whether the getter should allow submissions of folders. */
     private boolean allowFolderSubmission;
 
-    /**
-     * The text of the submit button.
-     */
+    /** The text of the submit button. */
     private String submitButtonText = "Submit";
 
-    /**
-     * The submit button font.
-     */
+    /** The submit button font. */
     private Font submitButtonFont = CyderFonts.SEGOE_20;
 
-    /**
-     * The submit button background color.
-     */
+    /** The submit button background color. */
     private Color submitButtonColor = CyderColors.regularPink;
 
-    /**
-     * The frame to set the getter frame relative to.
-     */
+    /** The frame to set the getter frame relative to. */
     private CyderFrame relativeTo;
 
-    /**
-     * Whether the relative to component should be disabled while the getter frame is active.
-     */
+    /** Whether the relative to component should be disabled while the getter frame is active. */
     private boolean disableRelativeTo;
 
-    /**
-     * The list of runnables to invoke when the getter frame is disposed.
-     */
+    /** The list of runnables to invoke when the getter frame is disposed. */
     private final ArrayList<Runnable> onDialogDisposalRunnables = new ArrayList<>();
 
-    /**
-     * The list of allowable file extensions.
-     */
+    /** The list of allowable file extensions. */
     private ImmutableList<String> allowableFileExtensions = ImmutableList.of();
 
     /**
@@ -375,9 +345,7 @@ public final class GetFileBuilder implements GetBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = frameTitle.hashCode();
@@ -397,9 +365,7 @@ public final class GetFileBuilder implements GetBuilder {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -426,9 +392,7 @@ public final class GetFileBuilder implements GetBuilder {
                 && submitButtonFont == other.getSubmitButtonFont();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GetFileBuilder{"

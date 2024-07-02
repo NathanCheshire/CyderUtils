@@ -1,37 +1,23 @@
 package com.github.natche.cyderutils.youtube;
 
-/**
- * Supported YouTube-DL flags.
- */
+/** Supported YouTube-DL flags. */
 public enum YouTubeDlFlag {
-    /**
-     * The extract audio YouTube-dl flag.
-     */
+    /** The extract audio YouTube-dl flag. */
     EXTRACT_AUDIO("--extract-audio"),
 
-    /**
-     * The audio format YouTube-dl flag.
-     */
+    /** The audio format YouTube-dl flag. */
     AUDIO_FORMAT("--audio-format"),
 
-    /**
-     * The output YouTube-dl flag.
-     */
+    /** The output YouTube-dl flag. */
     OUTPUT("--output"),
 
-    /**
-     * The flag to keep the video file after post-processing.
-     */
+    /** The flag to keep the video file after post-processing. */
     KEEP_VIDEO("--keep-video"),
 
-    /**
-     * The flag to not use .part files and to write directly into output files.
-     */
+    /** The flag to not use .part files and to write directly into output files. */
     NO_PART("--no-part");
 
-    /**
-     * The flag for this YouTube-dl flag
-     */
+    /** The flag for this YouTube-dl flag */
     private final String flag;
 
     YouTubeDlFlag(String flag) {

@@ -5,9 +5,7 @@ import com.github.natche.cyderutils.ui.UiUtil;
 
 import javax.swing.*;
 
-/**
- * A progress bar styled and configured for Cyder.
- */
+/** A progress bar styled and configured for Cyder. */
 public class CyderProgressBar extends JProgressBar {
     /**
      * Constructs a new CyderProgressBar.
@@ -42,9 +40,7 @@ public class CyderProgressBar extends JProgressBar {
         addMouseListener(UiUtil.generateUiActionLoggingMouseAdapter());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return ToStringUtil.commonUiComponentToString(this);

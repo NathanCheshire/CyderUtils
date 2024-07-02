@@ -26,9 +26,7 @@ import java.util.stream.IntStream;
 
 import static com.github.natche.cyderutils.youtube.YouTubeConstants.*;
 
-/**
- * Utility methods related to YouTube videos.
- */
+/** Utility methods related to YouTube videos. */
 public final class YouTubeUtil {
     /**
      * Suppress default constructor.
@@ -127,9 +125,7 @@ public final class YouTubeUtil {
         });
     }
 
-    /**
-     * Outputs instructions to the console due to YouTube-dl or ffmpeg not being installed.
-     */
+    /** Outputs instructions to the console due to YouTube-dl or ffmpeg not being installed. */
     private static void onNoFfmpegOrYoutubeDlInstalled() {
         //        Console.INSTANCE.getInputHandler().println("Sorry, but ffmpeg and/or YouTube-dl "
         //                + "couldn't be located. Please make sure they are both installed and added to your PATH Windows "

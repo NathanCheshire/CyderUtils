@@ -12,29 +12,19 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * An icon button for a drag label.
- */
+/** An icon button for a drag label. */
 public abstract class CyderDragLabelButton extends JLabel implements ICyderDragLabelButton {
-    /**
-     * The default size of a drag label button.
-     */
+    /** The default size of a drag label button. */
     protected static final DragLabelButtonSize DEFAULT_SIZE =
             UiUtil.dragLabelButtonSizeFromString(Props.dragLabelButtonSize.getValue());
 
-    /**
-     * Whether this drag label button is focused.
-     */
+    /** Whether this drag label button is focused. */
     private final AtomicBoolean focused = new AtomicBoolean();
 
-    /**
-     * Whether the mouse is currently inside of this drag label button.
-     */
+    /** Whether the mouse is currently inside of this drag label button. */
     private final AtomicBoolean mouseIn = new AtomicBoolean();
 
-    /**
-     * Constructs a new drag label button.
-     */
+    /** Constructs a new drag label button. */
     public CyderDragLabelButton() {
         this(DEFAULT_SIZE);
     }
@@ -53,9 +43,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         setFocusPaintable(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addDefaultMouseAdapter() {
         addMouseListener(new MouseAdapter() {
@@ -82,9 +70,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         });
     }
 
-    /**
-     * Adds the mouse adapter to lock the click on click actions.
-     */
+    /** Adds the mouse adapter to lock the click on click actions. */
     @ForReadability
     public void addLogOnClickActionMouseAdapter() {
         addMouseListener(new MouseAdapter() {
@@ -95,9 +81,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addDefaultFocusAdapter() {
         addFocusListener(new FocusAdapter() {
@@ -117,65 +101,49 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setFocused(boolean focused) {
         this.focused.set(focused);
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean getFocused() {
         return focused.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setMouseIn(boolean mouseIn) {
         this.mouseIn.set(mouseIn);
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean getMouseIn() {
         return mouseIn.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setFocusPaintable(boolean focusPaintable) {
         if (focusPaintable) addDefaultFocusAdapter();
         setFocusable(focusPaintable);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics g) {
         paintDragLabelButton(g);
     }
 
-    /**
-     * The color to use when painting the default state of this button.
-     */
+    /** The color to use when painting the default state of this button. */
     private Color paintColor = defaultColor;
 
-    /**
-     * The color to use when painting the hover and focus states of this button.
-     */
+    /** The color to use when painting the hover and focus states of this button. */
     private Color hoverAndFocusPaintColor = defaultHoverAndFocusColor;
 
     /**
@@ -200,9 +168,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         this.hoverAndFocusPaintColor = hoverAndFocusPaintColor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Color getPaintColor() {
         if (mouseIn.get() || focused.get()) {
@@ -212,9 +178,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         }
     }
 
-    /**
-     * Adds the default key adapter to invoke all click actions on the enter key press.
-     */
+    /** Adds the default key adapter to invoke all click actions on the enter key press. */
     public void addEnterListenerKeyAdapter() {
         addKeyListener(new KeyAdapter() {
             @Override
@@ -237,34 +201,22 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
     // Hooks logic
     // -----------
 
-    /**
-     * The actions to invoke when this button is pressed.
-     */
+    /** The actions to invoke when this button is pressed. */
     private final ArrayList<Runnable> clickActions = new ArrayList<>();
 
-    /**
-     * The actions to invoke on a mouse over event.
-     */
+    /** The actions to invoke on a mouse over event. */
     private final ArrayList<Runnable> mouseOverActions = new ArrayList<>();
 
-    /**
-     * The actions to invoke on a mouse exit event.
-     */
+    /** The actions to invoke on a mouse exit event. */
     private final ArrayList<Runnable> mouseExitActions = new ArrayList<>();
 
-    /**
-     * The actions to invoke on a focus gained event.
-     */
+    /** The actions to invoke on a focus gained event. */
     private final ArrayList<Runnable> focusGainedActions = new ArrayList<>();
 
-    /**
-     * The actions to invoke on a focus lost event.
-     */
+    /** The actions to invoke on a focus lost event. */
     private final ArrayList<Runnable> focusLostActions = new ArrayList<>();
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setClickAction(Runnable clickAction) {
         Preconditions.checkNotNull(clickAction);
@@ -272,43 +224,33 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         clickActions.add(clickAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addClickAction(Runnable clickAction) {
         Preconditions.checkNotNull(clickAction);
         clickActions.add(clickAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeClickAction(Runnable clickAction) {
         Preconditions.checkNotNull(clickAction);
         clickActions.remove(clickAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void clearClickActions() {
         clickActions.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void invokeClickActions() {
         clickActions.forEach(Runnable::run);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setMouseOverAction(Runnable mouseOverAction) {
         Preconditions.checkNotNull(mouseOverAction);
@@ -316,9 +258,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseOverActions.add(mouseOverAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addMouseOverAction(Runnable mouseOverAction) {
         Preconditions.checkNotNull(mouseOverAction);
@@ -326,9 +266,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseOverActions.add(mouseOverAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeMouseOverAction(Runnable mouseOverAction) {
         Preconditions.checkNotNull(mouseOverAction);
@@ -336,17 +274,13 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseOverActions.remove(mouseOverAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void clearMouseOverActions() {
         mouseOverActions.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void invokeMouseOverActions() {
         for (Runnable mouseOverAction : mouseOverActions) {
@@ -354,9 +288,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setMouseExitAction(Runnable mouseExitAction) {
         Preconditions.checkNotNull(mouseExitAction);
@@ -364,9 +296,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseExitActions.add(mouseExitAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addMouseExitAction(Runnable mouseExitAction) {
         Preconditions.checkNotNull(mouseExitAction);
@@ -374,9 +304,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseExitActions.add(mouseExitAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeMouseExitAction(Runnable mouseExitAction) {
         Preconditions.checkNotNull(mouseExitAction);
@@ -384,25 +312,19 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         mouseExitActions.remove(mouseExitAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void clearMouseExitActions() {
         mouseExitActions.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void invokeMouseExitActions() {
         mouseExitActions.forEach(Runnable::run);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setFocusGainedAction(Runnable focusGainedAction) {
         Preconditions.checkNotNull(focusGainedAction);
@@ -410,9 +332,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusGainedActions.add(focusGainedAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addFocusGainedAction(Runnable focusGainedAction) {
         Preconditions.checkNotNull(focusGainedAction);
@@ -420,9 +340,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusGainedActions.add(focusGainedAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeFocusGainedAction(Runnable focusGainedAction) {
         Preconditions.checkNotNull(focusGainedAction);
@@ -430,25 +348,19 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusGainedActions.remove(focusGainedAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void clearFocusGainedActions() {
         focusGainedActions.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void invokeFocusGainedActions() {
         focusGainedActions.forEach(Runnable::run);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setFocusLostAction(Runnable focusLostAction) {
         Preconditions.checkNotNull(focusLostAction);
@@ -456,9 +368,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusLostActions.add(focusLostAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addFocusLostAction(Runnable focusLostAction) {
         Preconditions.checkNotNull(focusLostAction);
@@ -466,9 +376,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusLostActions.add(focusLostAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void removeFocusLostAction(Runnable focusLostAction) {
         Preconditions.checkNotNull(focusLostAction);
@@ -476,17 +384,13 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
         focusLostActions.remove(focusLostAction);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void clearFocusLostActions() {
         focusLostActions.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void invokeFocusLostActions() {
         focusLostActions.forEach(Runnable::run);
@@ -507,9 +411,7 @@ public abstract class CyderDragLabelButton extends JLabel implements ICyderDragL
      */
     abstract public String getSpecificStringRepresentation();
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderDragLabelButton {"

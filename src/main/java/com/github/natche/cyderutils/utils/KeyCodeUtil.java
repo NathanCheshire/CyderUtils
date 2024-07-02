@@ -10,9 +10,7 @@ import java.awt.event.KeyEvent;
 // todo seems like this could be an object, like CyderKeyEvent, build from code or KeyEvent
 //  and can perform ops on it like the ones here or maybe even invoke via robot manager?
 
-/**
- * Utilities related to key codes/events.
- */
+/** Utilities related to key codes/events. */
 public final class KeyCodeUtil {
     /**
      * Suppress default constructor.

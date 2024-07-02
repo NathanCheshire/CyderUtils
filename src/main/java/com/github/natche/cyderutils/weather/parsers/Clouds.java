@@ -1,17 +1,11 @@
 package com.github.natche.cyderutils.weather.parsers;
 
-/**
- * The clouds object for {@link WeatherData} objects.
- */
+/** The clouds object for {@link WeatherData} objects. */
 public class Clouds {
-    /**
-     * The all attribute of the clouds object.
-     */
+    /** The all attribute of the clouds object. */
     private double all;
 
-    /**
-     * Constructs a new clouds object.
-     */
+    /** Constructs a new clouds object. */
     public Clouds() {}
 
     /**
@@ -32,9 +26,7 @@ public class Clouds {
         this.all = all;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -47,17 +39,13 @@ public class Clouds {
         return other.all == all;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Double.hashCode(all);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Clouds{all=" + all + "}";

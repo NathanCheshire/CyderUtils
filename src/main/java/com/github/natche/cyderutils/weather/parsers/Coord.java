@@ -1,22 +1,14 @@
 package com.github.natche.cyderutils.weather.parsers;
 
-/**
- * The coords object for {@link WeatherData} objects.
- */
+/** The coords object for {@link WeatherData} objects. */
 public class Coord {
-    /**
-     * The longitude of the coord object.
-     */
+    /** The longitude of the coord object. */
     private double lon;
 
-    /**
-     * The latitude of the coord object.
-     */
+    /** The latitude of the coord object. */
     private double lat;
 
-    /**
-     * Constructs a new coord object.
-     */
+    /** Constructs a new coord object. */
     public Coord() {}
 
     /**
@@ -55,9 +47,7 @@ public class Coord {
         this.lat = lat;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,9 +61,7 @@ public class Coord {
                 && other.lon == lon;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Double.hashCode(lat);
@@ -81,9 +69,7 @@ public class Coord {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Coord{lat=" + lat + ", lon=" + lon + "}";

@@ -13,32 +13,20 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.UUID;
 
-/**
- * Static utility class containing methods related to security.
- */
+/** Static utility class containing methods related to security. */
 public final class SecurityUtil {
-    /**
-     * The hashing algorithms supported by {@link SecurityUtil}.
-     */
+    /** The hashing algorithms supported by {@link SecurityUtil}. */
     public enum HashingAlgorithm {
-        /**
-         * The sha256 hashing algorithm.
-         */
+        /** The sha256 hashing algorithm. */
         SHA256("SHA-256"),
 
-        /**
-         * The sha1 hashing algorithm.
-         */
+        /** The sha1 hashing algorithm. */
         SHA1("SHA-1"),
 
-        /**
-         * The md5 hashing algorithm.
-         */
+        /** The md5 hashing algorithm. */
         MD5("MD5");
 
-        /**
-         * The name of this hashing algorithm.
-         */
+        /** The name of this hashing algorithm. */
         private final String name;
 
         HashingAlgorithm(String name) {
@@ -55,9 +43,7 @@ public final class SecurityUtil {
         }
     }
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private SecurityUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

@@ -1,27 +1,17 @@
 package com.github.natche.cyderutils.youtube.parsers;
 
-/**
- * The thumbnail object for a {@link Thumbnails} object.
- */
+/** The thumbnail object for a {@link Thumbnails} object. */
 public class Thumbnail {
-    /**
-     * The url of the image.
-     */
+    /** The url of the image. */
     private String url;
 
-    /**
-     * The width of the image.
-     */
+    /** The width of the image. */
     private int width;
 
-    /**
-     * The height of the image.
-     */
+    /** The height of the image. */
     private int height;
 
-    /**
-     * Constructs a new thumbnail.
-     */
+    /** Constructs a new thumbnail. */
     public Thumbnail() {}
 
     /**
@@ -78,9 +68,7 @@ public class Thumbnail {
         this.height = height;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -95,9 +83,7 @@ public class Thumbnail {
                 && other.height == height;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = url.hashCode();
@@ -106,9 +92,7 @@ public class Thumbnail {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Thumbnail{"

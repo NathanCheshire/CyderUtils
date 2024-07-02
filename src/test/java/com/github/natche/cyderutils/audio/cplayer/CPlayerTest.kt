@@ -15,14 +15,10 @@ import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-/**
- * Test for the [CPlayer].
- */
+/** Test for the [CPlayer]. */
 @ExtendWith(MockitoExtension::class)
 class CPlayerTest
-/**
- * Creates a new instance of this class for testing purposes.
- */
+/** Creates a new instance of this class for testing purposes. */
 {
     /**
      * The audio player factory used for testing purposes since JLayer does not play well
@@ -40,9 +36,7 @@ class CPlayerTest
         }
     }
 
-    /**
-     * A valid audio file.
-     */
+    /** A valid audio file. */
     private val validAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -56,9 +50,7 @@ class CPlayerTest
         "TastyCarrots.mp3"
     )
 
-    /**
-     * Another valid audio file of a different extension.
-     */
+    /** Another valid audio file of a different extension. */
     private val anotherValidAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -72,9 +64,7 @@ class CPlayerTest
         "TastyCarrots.wav"
     )
 
-    /**
-     * An invalid audio file of an unsupported extension.
-     */
+    /** An invalid audio file of an unsupported extension. */
     private val invalidAudioFile = OsUtil.buildFile(
         "src",
         "test",
@@ -88,9 +78,7 @@ class CPlayerTest
         "Nightcore.aac"
     )
 
-    /**
-     * Tests for construction of CPlayers.
-     */
+    /** Tests for construction of CPlayers. */
     @Test
     fun testConstruction() {
         assertThrows(NullPointerException::class.java) { CPlayer(null) }
@@ -101,9 +89,7 @@ class CPlayerTest
         assertDoesNotThrow { CPlayer(validAudioFile) }
     }
 
-    /**
-     * Tests to ensure the suppressed default constructor is not invocable.
-     */
+    /** Tests to ensure the suppressed default constructor is not invocable. */
     @Test
     fun testConstructionUsingSuppressedConstructor() {
         val constructor = CPlayer::class.java.getDeclaredConstructor()
@@ -150,9 +136,7 @@ class CPlayerTest
         assertFalse(player.isPlaying)
     }
 
-    /**
-     * Tests the functionality of stop playing.
-     */
+    /** Tests the functionality of stop playing. */
     @Test
     fun testStopPlaying() {
         val called = AtomicBoolean(false)
@@ -175,9 +159,7 @@ class CPlayerTest
         assertFalse(player.isPlaying)
     }
 
-    /**
-     * Tests for adding on completion callbacks and that they are called.
-     */
+    /** Tests for adding on completion callbacks and that they are called. */
     @Test
     fun testAddOnCompletionCallback() {
         val int = AtomicInteger(0)
@@ -202,9 +184,7 @@ class CPlayerTest
         assertFalse(player.isCanceled)
     }
 
-    /**
-     * Tests for calling play and stop multiple times.
-     */
+    /** Tests for calling play and stop multiple times. */
     @Test
     fun testPlayStopRepeated() {
         val player = CPlayer(anotherValidAudioFile)
@@ -246,9 +226,7 @@ class CPlayerTest
         assertFalse(player.isPlaying)
     }
 
-    /**
-     * Test for the equals method.
-     */
+    /** Test for the equals method. */
     @Test
     fun testEquals() {
         val first = CPlayer(validAudioFile)
@@ -262,9 +240,7 @@ class CPlayerTest
         assertNotEquals(first, Object())
     }
 
-    /**
-     * Tests for the hashCode method.
-     */
+    /** Tests for the hashCode method. */
     @Test
     fun testHashCode() {
         val first = CPlayer(validAudioFile)
@@ -277,9 +253,7 @@ class CPlayerTest
         // no direct tests since not a stable method
     }
 
-    /**
-     * Test for the toString method.
-     */
+    /** Test for the toString method. */
     @Test
     fun testToString() {
         val first = CPlayer(validAudioFile)

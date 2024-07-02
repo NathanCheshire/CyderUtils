@@ -5,9 +5,7 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-/**
- * The supported stream entry values by FFmpeg.
- */
+/** The supported stream entry values by FFmpeg. */
 public enum FfmpegStreamEntry {
     DURATION,
     CODEC_NAME,

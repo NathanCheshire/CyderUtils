@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * An encapsulated JLayer {@link Player} for playing singular audio files.
- */
+/** An encapsulated JLayer {@link Player} for playing singular audio files. */
 public final class CPlayer {
     /**
      * The default audio player object used internally by this class.
@@ -28,9 +26,7 @@ public final class CPlayer {
      * due to the way Java interfaces resolve.
      */
     private static final class DefaultAudioPlayer implements AudioPlayer {
-        /**
-         * The encapsulated player used for audio playback.
-         */
+        /** The encapsulated player used for audio playback. */
         private final Player player;
 
         /**
@@ -43,26 +39,20 @@ public final class CPlayer {
             this.player = new Player(bis);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void play() throws JavaLayerException {
             player.play();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void close() {
             player.close();
         }
     }
 
-    /**
-     * The default factory for generating {@link AudioPlayer}s using {@link Player}s.
-     */
+    /** The default factory for generating {@link AudioPlayer}s using {@link Player}s. */
     private static final class DefaultAudioPlayerFactory implements AudioPlayerFactory {
         @Override
         public AudioPlayer create(BufferedInputStream bis) {
@@ -74,34 +64,22 @@ public final class CPlayer {
         }
     }
 
-    /**
-     * The audio file this player will stream/play.
-     */
+    /** The audio file this player will stream/play. */
     private final File audioFile;
 
-    /**
-     * The factory which generates a new {@link AudioPlayer} when required.
-     */
+    /** The factory which generates a new {@link AudioPlayer} when required. */
     private AudioPlayerFactory playerFactory = new DefaultAudioPlayerFactory();
 
-    /**
-     * The AudioPlayer object usually a {@link Player}.
-     */
+    /** The AudioPlayer object usually a {@link Player}. */
     private AudioPlayer player;
 
-    /**
-     * The runnables to invoke upon a completion event.
-     */
+    /** The runnables to invoke upon a completion event. */
     private final ArrayList<CyderRunnable> onCompletionCallbacks;
 
-    /**
-     * Whether this player has been canceled.
-     */
+    /** Whether this player has been canceled. */
     private final AtomicBoolean canceled = new AtomicBoolean();
 
-    /**
-     * Whether this player is currently playing audio.
-     */
+    /** Whether this player is currently playing audio. */
     private final AtomicBoolean playing = new AtomicBoolean();
 
     /**
@@ -194,9 +172,7 @@ public final class CPlayer {
                 + "}";
     }
 
-    /**
-     * Cancels this player, the on completion callbacks will not be invoked if present.
-     */
+    /** Cancels this player, the on completion callbacks will not be invoked if present. */
     public void cancelPlaying() {
         canceled.set(true);
         requestedToStopPlaying.set(true);
@@ -212,17 +188,13 @@ public final class CPlayer {
         return canceled.get();
     }
 
-    /**
-     * Stops the player, the completion callbacks will be invoked if present.
-     */
+    /** Stops the player, the completion callbacks will be invoked if present. */
     public void stopPlaying() {
         requestedToStopPlaying.set(true);
         closeResources();
     }
 
-    /**
-     * Closes all resources open by this player.
-     */
+    /** Closes all resources open by this player. */
     private void closeResources() {
         if (player != null) player.close();
         player = null;
@@ -284,9 +256,7 @@ public final class CPlayer {
         return this.audioFile.equals(audioFile);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -303,9 +273,7 @@ public final class CPlayer {
                 && canceled.get() == other.canceled.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();
@@ -316,9 +284,7 @@ public final class CPlayer {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AudioPlayer{"

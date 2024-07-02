@@ -12,9 +12,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
 
-/**
- * A utility class for elevation queries.
- */
+/** A utility class for elevation queries. */
 public final class ElevationUtil {
     /**
      * Suppress default constructor.
@@ -25,14 +23,10 @@ public final class ElevationUtil {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    /**
-     * The base string for queries.
-     */
+    /** The base string for queries. */
     private static final String BASE = "https://nationalmap.gov/epqs/pqs.php?";
 
-    /**
-     * The units tag for a url.
-     */
+    /** The units tag for a url. */
     private static final String UNITS_TAG = "&units=";
 
     /**

@@ -15,19 +15,13 @@ import java.util.List;
  * system audios can be playing at any time.
  */
 public final class AudioPlayerManager {
-    /**
-     * Constructs a new AudioPlayerManager.
-     */
+    /** Constructs a new AudioPlayerManager. */
     public AudioPlayerManager() {}
 
-    /**
-     * The player used to play general audio that may be user terminated.
-     */
+    /** The player used to play general audio that may be user terminated. */
     private CPlayer generalPlayer;
 
-    /**
-     * The list of system players which are currently playing audio.
-     */
+    /** The list of system players which are currently playing audio. */
     private final List<CPlayer> systemPlayers = new ArrayList<>();
 
     /**
@@ -142,9 +136,7 @@ public final class AudioPlayerManager {
         return isSystemAudioPlaying() || isGeneralAudioPlaying();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = generalPlayer.hashCode();
@@ -152,9 +144,7 @@ public final class AudioPlayerManager {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "AudioPlayerManager{"
@@ -163,9 +153,7 @@ public final class AudioPlayerManager {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

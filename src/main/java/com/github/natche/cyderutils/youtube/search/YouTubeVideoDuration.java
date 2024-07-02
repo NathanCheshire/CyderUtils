@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * The video duration for a {@link YouTubeSearchQuery}.
- */
+/** The video duration for a {@link YouTubeSearchQuery}. */
 public enum YouTubeVideoDuration {
     //any,long,medium,short
     ANY("any"),
@@ -10,9 +8,7 @@ public enum YouTubeVideoDuration {
     MEDIUM("medium"),
     SHORT("short");
 
-    /**
-     * The url parameter for this video duration.
-     */
+    /** The url parameter for this video duration. */
     private final String urlParameter;
 
     YouTubeVideoDuration(String urlParameter) {

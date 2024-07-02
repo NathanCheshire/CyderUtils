@@ -25,34 +25,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Utility methods revolving around networking, urls, servers, etc.
- */
+/** Utility methods revolving around networking, urls, servers, etc. */
 @SuppressWarnings("unused") /* Response codes */
 public final class NetworkUtil {
-    /**
-     * The local host string.
-     */
+    /** The local host string. */
     public static final String LOCALHOST = "localhost";
 
-    /**
-     * The range a general computer port must fall into.
-     */
+    /** The range a general computer port must fall into. */
     public static final Range<Integer> portRange = Range.closed(1024, 65535);
 
-    /**
-     * The string used to represent a space in a URL.
-     */
+    /** The string used to represent a space in a URL. */
     public static final String URL_SPACE = "%20";
 
-    /**
-     * The time in ms to wait for a local port to bind to determine whether it is available.
-     */
+    /** The time in ms to wait for a local port to bind to determine whether it is available. */
     private static final Duration LOCAL_PORT_AVAILABLE_TIMEOUT = Duration.ofMillis(400);
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private NetworkUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -78,55 +66,35 @@ public final class NetworkUtil {
         return Optional.of(process);
     }
 
-    /**
-     * The timeout value when determining if a site is reachable.
-     */
+    /** The timeout value when determining if a site is reachable. */
     public static final int SITE_PING_TIMEOUT = (int) (TimeUtil.millisInSecond * 5);
 
-    /**
-     * The slash-slash for urls.
-     */
+    /** The slash-slash for urls. */
     private static final String slashSlash = "//";
 
-    /**
-     * So no head?
-     */
+    /** So no head? */
     private static final String HEAD = "HEAD";
 
-    /**
-     * The minimum HTTP response code indicating a successful response.
-     */
+    /** The minimum HTTP response code indicating a successful response. */
     public static final int MIN_SUCCESSFUL_RESPONSE_CODE = 200;
 
-    /**
-     * The maximum HTTP response code indicating a successful response.
-     */
+    /** The maximum HTTP response code indicating a successful response. */
     public static final int MAX_SUCCESSFUL_RESPONSE_CODE = 299;
 
-    /**
-     * The minimum HTTP response code indicating a successful redirection.
-     */
+    /** The minimum HTTP response code indicating a successful redirection. */
     public static final int MIN_REDIRECTED_RESPONSE_CODE = 300;
 
-    /**
-     * The maximum HTTP response code indicating a successful redirection.
-     */
+    /** The maximum HTTP response code indicating a successful redirection. */
     public static final int MAX_REDIRECTED_RESPONSE_CODE = 399;
 
-    /**
-     * The range of response codes that indicate a website as reachable/readable.
-     */
+    /** The range of response codes that indicate a website as reachable/readable. */
     public static final Range<Integer> SITE_REACHABLE_RESPONSE_CODE_RANGE
             = Range.closed(MIN_SUCCESSFUL_RESPONSE_CODE, MAX_REDIRECTED_RESPONSE_CODE);
 
-    /**
-     * The prefix for https urls.
-     */
+    /** The prefix for https urls. */
     private static final String HTTPS = "https";
 
-    /**
-     * The prefix for http urls.
-     */
+    /** The prefix for http urls. */
     private static final String HTTP = "http";
 
     /**
@@ -227,9 +195,7 @@ public final class NetworkUtil {
     // todo allow accepting of this, maybe this should be an abstracted class too, ResourceDownloader
     // even with unzipping capabilities?
 
-    /**
-     * The size of the buffer when downloading resources from a URL or reading a URL.
-     */
+    /** The size of the buffer when downloading resources from a URL or reading a URL. */
     public static final int DOWNLOAD_RESOURCE_BUFFER_SIZE = 1024;
 
     /**

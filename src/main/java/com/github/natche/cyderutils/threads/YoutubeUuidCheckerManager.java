@@ -11,48 +11,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
-/**
- * A manager for {@link YoutubeUuidChecker}s.
- */
+/** A manager for {@link YoutubeUuidChecker}s. */
 public enum YoutubeUuidCheckerManager {
-    /**
-     * The YouTube UUID checker manager instance.
-     */
+    /** The YouTube UUID checker manager instance. */
     INSTANCE;
 
-    /**
-     * The linked {@link CyderOutputPane}.
-     */
+    /** The linked {@link CyderOutputPane}. */
     private CyderOutputPane outputPane;
 
-    /**
-     * Whether any instances of helper YouTube threads are running.
-     */
+    /** Whether any instances of helper YouTube threads are running. */
     private boolean isActive;
 
-    /**
-     * The number of urls checked during the current instance of the YouTube thread(s).
-     */
+    /** The number of urls checked during the current instance of the YouTube thread(s). */
     private final AtomicInteger urlsChecked = new AtomicInteger();
 
-    /**
-     * The last time the user was notified of the current rate.
-     */
+    /** The last time the user was notified of the current rate. */
     private long lastNotifyTime;
 
-    /**
-     * The frequency in seconds to notify the user of the time remaining until all YouTube uuids have been checked.
-     */
+    /** The frequency in seconds to notify the user of the time remaining until all YouTube uuids have been checked. */
     private static final Duration notifyUserOfRateFrequency = Duration.ofSeconds(1);
 
-    /**
-     * The list of active YouTube uuid checkers.
-     */
+    /** The list of active YouTube uuid checkers. */
     private final ArrayList<YoutubeUuidChecker> youTubeUuidCheckers = new ArrayList<>();
 
-    /**
-     * The time this YouTube thread session started.
-     */
+    /** The time this YouTube thread session started. */
     private final AtomicLong startTime = new AtomicLong();
 
     /**
@@ -65,9 +47,7 @@ public enum YoutubeUuidCheckerManager {
         return outputPane.acquireLock();
     }
 
-    /**
-     * Releases the output pane's lock.
-     */
+    /** Releases the output pane's lock. */
     public void releaseLock() {
         outputPane.releaseLock();
     }
@@ -81,9 +61,7 @@ public enum YoutubeUuidCheckerManager {
         return youTubeUuidCheckers.size();
     }
 
-    /**
-     * Whether the Youtube UUID checker manager has been initialized.
-     */
+    /** Whether the Youtube UUID checker manager has been initialized. */
     private final AtomicBoolean initialized = new AtomicBoolean();
 
     /**
@@ -100,9 +78,7 @@ public enum YoutubeUuidCheckerManager {
         this.outputPane = outputPane;
     }
 
-    /**
-     * Reverts this manager to the non-initialized state.
-     */
+    /** Reverts this manager to the non-initialized state. */
     public void deactivate() {
         Preconditions.checkArgument(initialized.get());
 
@@ -113,9 +89,7 @@ public enum YoutubeUuidCheckerManager {
         this.outputPane = null;
     }
 
-    /**
-     * Kills any instances of helper YouTube threads that are currently running.
-     */
+    /** Kills any instances of helper YouTube threads that are currently running. */
     public void killAll() {
         youTubeUuidCheckers.forEach(youtubeUuidChecker -> {
             String lastCheckedUuid = youtubeUuidChecker.kill();
@@ -158,9 +132,7 @@ public enum YoutubeUuidCheckerManager {
         }
     }
 
-    /**
-     * Increments the urls checked counter.
-     */
+    /** Increments the urls checked counter. */
     public void incrementUrlsChecked() {
         Preconditions.checkState(initialized.get());
 
@@ -177,9 +149,7 @@ public enum YoutubeUuidCheckerManager {
         return isActive;
     }
 
-    /**
-     * Checks for whether the user should be notified of the current uuid check rate.
-     */
+    /** Checks for whether the user should be notified of the current uuid check rate. */
     private void checkIfShouldNotifyOfRate() {
         if (System.currentTimeMillis() - lastNotifyTime > notifyUserOfRateFrequency.toMillis()) {
             notifyOfRate();
@@ -187,9 +157,7 @@ public enum YoutubeUuidCheckerManager {
         }
     }
 
-    /**
-     * Notifies the user of the current calculated rate of urls checked each minute.
-     */
+    /** Notifies the user of the current calculated rate of urls checked each minute. */
     private void notifyOfRate() {
         long timeTaken = System.currentTimeMillis() - startTime.get();
         float urlsPerMs = urlsChecked.get() / (float) timeTaken;

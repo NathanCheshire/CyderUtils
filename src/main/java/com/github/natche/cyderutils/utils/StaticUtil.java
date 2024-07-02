@@ -11,35 +11,23 @@ import javax.swing.*;
 import java.io.File;
 import java.util.LinkedHashMap;
 
-/**
- * Utilities for getting static resources.
- */
+/** Utilities for getting static resources. */
 public final class StaticUtil {
-    /**
-     * The name of the static directory which holds all the static files and resources needed by Cyder.
-     */
+    /** The name of the static directory which holds all the static files and resources needed by Cyder. */
     private static final String STATIC = "static";
 
-    /**
-     * The map of static files located.
-     */
+    /** The map of static files located. */
     private static ImmutableMap<String, File> staticFiles = ImmutableMap.of();
 
-    /**
-     * The map of static folders located.
-     */
+    /** The map of static folders located. */
     private static ImmutableMap<String, File> staticFolders = ImmutableMap.of();
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private StaticUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    /**
-     * Loads/reloads all the static resources found within the static directory.
-     */
+    /** Loads/reloads all the static resources found within the static directory. */
     public static void loadStaticResources() {
         staticFiles = getStaticFiles();
         // Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFiles.size() + " static files");

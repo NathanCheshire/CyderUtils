@@ -5,23 +5,15 @@ import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * A notification for a {@link CyderFrame}.
- */
+/** A notification for a {@link CyderFrame}. */
 public abstract class CyderNotification extends JLabel implements ICyderNotification {
-    /**
-     * The background used for notifications.
-     */
+    /** The background used for notifications. */
     static final Color notificationBackgroundColor = new Color(0, 0, 0);
 
-    /**
-     * The color used for notification borders.
-     */
+    /** The color used for notification borders. */
     static final Color notificationBorderColor = new Color(26, 32, 51);
 
-    /**
-     * The magic number used to denote a notification should be shown until dismissed.
-     */
+    /** The magic number used to denote a notification should be shown until dismissed. */
     private static final int showUntilDismissed = -1;
 
     /**

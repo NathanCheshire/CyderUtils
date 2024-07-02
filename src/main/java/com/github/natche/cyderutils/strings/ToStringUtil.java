@@ -10,9 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 
-/**
- * Utilities for casting things to strings.
- */
+/** Utilities for casting things to strings. */
 public final class ToStringUtil {
     /**
      * Special methods which should be attempted to be found
@@ -24,25 +22,17 @@ public final class ToStringUtil {
             new GetterMethodResult("getTitle")
     );
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private ToStringUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
 
-    /**
-     * A class used for reflection to find special methods within an object.
-     */
+    /** A class used for reflection to find special methods within an object. */
     private static class GetterMethodResult {
-        /**
-         * The prefix for the method name to start with.
-         */
+        /** The prefix for the method name to start with. */
         private final String startsWith;
 
-        /**
-         * The result of invoking the getter method.
-         */
+        /** The result of invoking the getter method. */
         private String methodResult;
 
         /**

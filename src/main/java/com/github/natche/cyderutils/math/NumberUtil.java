@@ -14,13 +14,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * A util for working with numbers and not necessarily math.
- */
+/** A util for working with numbers and not necessarily math. */
 public final class NumberUtil {
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private NumberUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

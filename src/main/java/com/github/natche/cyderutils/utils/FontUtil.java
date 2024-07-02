@@ -7,9 +7,7 @@ import com.github.natche.cyderutils.strings.CyderStrings;
 
 import java.awt.*;
 
-/**
- * Utilities related to {@link java.awt.Font}s.
- */
+/** Utilities related to {@link java.awt.Font}s. */
 public final class FontUtil {
     /**
      * The allowable range for font metrics.
@@ -22,9 +20,7 @@ public final class FontUtil {
      */
     public static final Range<Integer> fontMetricRange = Range.closed(0, 3);
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private FontUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

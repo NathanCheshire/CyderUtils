@@ -7,18 +7,12 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A builder for FFmpeg commands.
- */
+/** A builder for FFmpeg commands. */
 public final class FfmpegCommandBuilder {
-    /**
-     * The command parts for this command.
-     */
+    /** The command parts for this command. */
     private final ArrayList<String> commandParts = new ArrayList<>();
 
-    /**
-     * Constructs a new FfmpegCommandBuilder with {@link FfmpegArgument#FFMPEG} as the initial argument.
-     */
+    /** Constructs a new FfmpegCommandBuilder with {@link FfmpegArgument#FFMPEG} as the initial argument. */
     public FfmpegCommandBuilder() {
         this(FfmpegArgument.FFMPEG);
     }
@@ -121,17 +115,13 @@ public final class FfmpegCommandBuilder {
         return ImmutableList.copyOf(commandParts);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return commandParts.hashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "FfmpegCommandBuilder{"
@@ -139,9 +129,7 @@ public final class FfmpegCommandBuilder {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

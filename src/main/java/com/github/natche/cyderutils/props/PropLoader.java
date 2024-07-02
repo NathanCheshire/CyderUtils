@@ -22,28 +22,18 @@ import java.util.Optional;
 
 import static com.github.natche.cyderutils.props.PropConstants.*;
 
-/**
- * A class for loading props from prop files from the props directory for usage throughout Cyder.
- */
+/** A class for loading props from prop files from the props directory for usage throughout Cyder. */
 public final class PropLoader {
-    /**
-     * The props map of keys to the string values which require casting.
-     */
+    /** The props map of keys to the string values which require casting. */
     private static ImmutableMap<String, String> props = ImmutableMap.of();
 
-    /**
-     * The instant at which the props were last loaded/reloaded.
-     */
+    /** The instant at which the props were last loaded/reloaded. */
     private static Instant loadedInstant = Instant.now();
 
-    /**
-     * Whether the props have been loaded.
-     */
+    /** Whether the props have been loaded. */
     private static boolean propsLoaded;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private PropLoader() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

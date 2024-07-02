@@ -6,13 +6,9 @@ import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.strings.CyderStrings;
 import com.github.natche.cyderutils.strings.StringUtil;
 
-/**
- * Utilities related to booleans.
- */
+/** Utilities related to booleans. */
 public final class BooleanUtils {
-    /**
-     * The list of strings indicating a negative intent.
-     */
+    /** The list of strings indicating a negative intent. */
     private static final ImmutableList<String> falseStrings = ImmutableList.of(
             "false",
             "no",
@@ -26,9 +22,7 @@ public final class BooleanUtils {
             "nill"
     );
 
-    /**
-     * The list of strings indicating a positive intent.
-     */
+    /** The list of strings indicating a positive intent. */
     private static final ImmutableList<String> trueStrings = ImmutableList.of(
             "true",
             "yes",
@@ -41,9 +35,7 @@ public final class BooleanUtils {
             "1"
     );
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private BooleanUtils() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

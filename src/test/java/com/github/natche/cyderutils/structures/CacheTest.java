@@ -5,13 +5,9 @@ import com.github.natche.cyderutils.network.Port;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Test for the {@link Cache} structure.
- */
+/** Test for the {@link Cache} structure. */
 class CacheTest {
-    /**
-     * An implementation of a possible cache refresh supplier.
-     */
+    /** An implementation of a possible cache refresh supplier. */
     private final CacheRefreshSupplier<Port> cacheRefreshSupplier = new CacheRefreshSupplier<>() {
         @Override
         public Port get() {
@@ -25,14 +21,10 @@ class CacheTest {
         }
     };
 
-    /**
-     * Constructs a new instance of this class for testing purposes.
-     */
+    /** Constructs a new instance of this class for testing purposes. */
     CacheTest() {}
 
-    /**
-     * Tests for construction of Caches.
-     */
+    /** Tests for construction of Caches. */
     @Test
     void testConstruction() {
         assertThrows(NullPointerException.class, () -> new Cache<>(null, false));
@@ -43,9 +35,7 @@ class CacheTest {
         assertDoesNotThrow(() -> new Cache<>());
     }
 
-    /**
-     * Test for the setCache method.
-     */
+    /** Test for the setCache method. */
     @Test
     void testSetCache() {
         Cache<Object> allowsNull = new Cache<>(null, true);
@@ -55,9 +45,7 @@ class CacheTest {
         assertThrows(NullPointerException.class, () -> disallowsNull.setCache(null));
     }
 
-    /**
-     * Tests for the getCache method.
-     */
+    /** Tests for the getCache method. */
     @Test
     void testGetCache() {
         Port port = Port.from(CommonServicePort.DNS);
@@ -65,9 +53,7 @@ class CacheTest {
         assertEquals(port, portCache.getCache());
     }
 
-    /**
-     * Tests for the clear method.
-     */
+    /** Tests for the clear method. */
     @Test
     void testClear() {
         Port port = Port.from(CommonServicePort.DNS);
@@ -77,9 +63,7 @@ class CacheTest {
         assertNull(portCache.getCache());
     }
 
-    /**
-     * Tests for the isCachePresent method.
-     */
+    /** Tests for the isCachePresent method. */
     @Test
     void testIsCachePresent() {
         Port port = Port.from(CommonServicePort.DNS);
@@ -90,9 +74,7 @@ class CacheTest {
         assertFalse(portCache.isCachePresent());
     }
 
-    /**
-     * Tests for the cacheIfNotPresent method.
-     */
+    /** Tests for the cacheIfNotPresent method. */
     @Test
     void testCacheIfNotPresent() {
         Port port = Port.from(CommonServicePort.DNS);
@@ -107,9 +89,7 @@ class CacheTest {
         assertThrows(NullPointerException.class, () -> notNull.cacheIfNotPresent(null));
     }
 
-    /**
-     * Tests for the set cached value updater.
-     */
+    /** Tests for the set cached value updater. */
     @Test
     void testSetCachedValueUpdater() {
         Cache<Port> portCache = new Cache<>(null, true);
@@ -117,9 +97,7 @@ class CacheTest {
         assertDoesNotThrow(() -> portCache.setCachedValueUpdater(cacheRefreshSupplier));
     }
 
-    /**
-     * Tests for the refreshCachedValue method.
-     */
+    /** Tests for the refreshCachedValue method. */
     @Test
     void testRefreshCachedValue() {
         Port port = Port.from(CommonServicePort.DNS);
@@ -133,9 +111,7 @@ class CacheTest {
         assertEquals(new Port(1738), portCache.getCache());
     }
 
-    /**
-     * Tests for the isNullAllowed method.
-     */
+    /** Tests for the isNullAllowed method. */
     @Test
     void testIsNullAllowed() {
         Cache<?> nullAllowed = new Cache<>(null, true);
@@ -145,9 +121,7 @@ class CacheTest {
         assertFalse(nullDisallowed.isNullAllowed());
     }
 
-    /**
-     * Tests for the equals method.
-     */
+    /** Tests for the equals method. */
     @Test
     void testEquals() {
         Port port = Port.from(CommonServicePort.HTTPS);
@@ -161,9 +135,7 @@ class CacheTest {
         assertNotEquals(first, new Object());
     }
 
-    /**
-     * Tests for the hashcode method.
-     */
+    /** Tests for the hashcode method. */
     @Test
     void testHashCode() {
         Port port = Port.from(CommonServicePort.HTTPS);
@@ -178,9 +150,7 @@ class CacheTest {
         assertEquals(-2112506635, notEqual.hashCode());
     }
 
-    /**
-     * Tests for the toString method.
-     */
+    /** Tests for the toString method. */
     @Test
     void testToString() {
         Port port = Port.from(CommonServicePort.HTTPS);

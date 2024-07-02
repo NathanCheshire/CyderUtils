@@ -2,48 +2,30 @@ package com.github.natche.cyderutils.ui.frame.notification;
 
 import com.github.natche.cyderutils.enumerations.Direction;
 
-/**
- * The supported locations for {@link CyderNotification}s.
- */
+/** The supported locations for {@link CyderNotification}s. */
 public enum NotificationDirection {
-    /**
-     * The notification will appear at the top left of the frame.
-     */
+    /** The notification will appear at the top left of the frame. */
     TOP_LEFT,
 
-    /**
-     * The notification will appear at the top center of the frame.
-     */
+    /** The notification will appear at the top center of the frame. */
     TOP,
 
-    /**
-     * The notification will appear at the top right of the frame.
-     */
+    /** The notification will appear at the top right of the frame. */
     TOP_RIGHT,
 
-    /**
-     * The notification will appear on the left of the frame.
-     */
+    /** The notification will appear on the left of the frame. */
     LEFT,
 
-    /**
-     * The notification will appear on the right of the frame.
-     */
+    /** The notification will appear on the right of the frame. */
     RIGHT,
 
-    /**
-     * The notification will appear at the bottom left of the frame.
-     */
+    /** The notification will appear at the bottom left of the frame. */
     BOTTOM_LEFT,
 
-    /**
-     * The notification will appear at the bottom of the frame.
-     */
+    /** The notification will appear at the bottom of the frame. */
     BOTTOM,
 
-    /**
-     * The notification will appear at the bottom right of the frame.
-     */
+    /** The notification will appear at the bottom right of the frame. */
     BOTTOM_RIGHT;
 
     /**

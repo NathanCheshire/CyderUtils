@@ -13,23 +13,15 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.Optional;
 
-/**
- * Utilities related to the JVM.
- */
+/** Utilities related to the JVM. */
 public final class JvmUtil {
-    /**
-     * The expected main method which Cyder should be launched from.
-     */
+    /** The expected main method which Cyder should be launched from. */
     public static final String EXPECTED_MAIN_METHOD = "cyder.meta.Cyder";
 
-    /**
-     * The bin string.
-     */
+    /** The bin string. */
     private static final String BIN = "bin";
 
-    /**
-     * The thread name for the jvm args logger.
-     */
+    /** The thread name for the jvm args logger. */
     private static final String JVM_ARGS_LOGGER_THREAD_NAME = "JVM Args Logger";
 
     /**
@@ -38,9 +30,7 @@ public final class JvmUtil {
      */
     private static final String JAVAW = "javaw.exe";
 
-    /**
-     * The name of the java.exe executable.
-     */
+    /** The name of the java.exe executable. */
     private static final String JAVA = "java.exe";
 
     /**
@@ -56,20 +46,14 @@ public final class JvmUtil {
      */
     private static final String CLASSPATH_ARGUMENT = "-classpath";
 
-    /**
-     * Whether the current jvm session is in debug mode meaning threads could be externally suspended.
-     */
+    /** Whether the current jvm session is in debug mode meaning threads could be externally suspended. */
     private static final boolean JVM_LAUNCHED_IN_DEBUG_MODE = ManagementFactory.getRuntimeMXBean()
             .getInputArguments().toString().contains(IN_DEBUG_MODE_KEY_PHRASE);
 
-    /**
-     * The name to use for the temporary directory cleaning exit hook.
-     */
+    /** The name to use for the temporary directory cleaning exit hook. */
     private static final String REMOVE_TEMP_DIRECTORY_HOOK_NAME = "cyder-temporary-directory-cleaner-exit-hook";
 
-    /**
-     * The list of shutdown hooks to be added to this instance of Cyder.
-     */
+    /** The list of shutdown hooks to be added to this instance of Cyder. */
     private static final ImmutableList<Thread> shutdownHooks = ImmutableList.of(
             // todo
 //            CyderThreadRunner.createThread(() ->
@@ -77,19 +61,13 @@ public final class JvmUtil {
 //                    REMOVE_TEMP_DIRECTORY_HOOK_NAME)
     );
 
-    /**
-     * The JVM args passed to the main method.
-     */
+    /** The JVM args passed to the main method. */
     private static ImmutableList<String> jvmMainMethodArgs;
 
-    /**
-     * The arguments parsed from {@link #jvmMainMethodArgs}.
-     */
+    /** The arguments parsed from {@link #jvmMainMethodArgs}. */
     private static ImmutableMap<String, String> parsedArgs = ImmutableMap.of();
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private JvmUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -108,9 +86,7 @@ public final class JvmUtil {
         parseArgsMapFromArgs();
     }
 
-    /**
-     * Parses the {@link #parsedArgs} from the {@link #jvmMainMethodArgs}.
-     */
+    /** Parses the {@link #parsedArgs} from the {@link #jvmMainMethodArgs}. */
     private static void parseArgsMapFromArgs() {
         ImmutableMap.Builder<String, String> args = new ImmutableMap.Builder<>();
 
@@ -392,9 +368,7 @@ public final class JvmUtil {
         return ManagementFactory.getRuntimeMXBean().getUptime();
     }
 
-    /**
-     * Adds the exit hooks to this JVM.
-     */
+    /** Adds the exit hooks to this JVM. */
     public static void addExitHooks() {
         shutdownHooks.forEach(hook -> Runtime.getRuntime().addShutdownHook(hook));
     }

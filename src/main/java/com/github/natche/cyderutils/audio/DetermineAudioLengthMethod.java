@@ -26,18 +26,12 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * The methods Cyder supports for extracting the audio length from a {@link SupportedAudioFileType}.
- */
+/** The methods Cyder supports for extracting the audio length from a {@link SupportedAudioFileType}. */
 public enum DetermineAudioLengthMethod {
-    /**
-     * Determine an audio file's length using ffmpeg.
-     */
+    /** Determine an audio file's length using ffmpeg. */
     FFMPEG(DetermineAudioLengthMethod::getLengthViaFfmpeg),
 
-    /**
-     * Determine an audio file's length using the Python package Mutagen.
-     */
+    /** Determine an audio file's length using the Python package Mutagen. */
     PYTHON_MUTAGEN(DetermineAudioLengthMethod::getLengthViaMutagen);
 
     // todo add wave file duration clip? Maybe just clip if it'll work for other audio file types

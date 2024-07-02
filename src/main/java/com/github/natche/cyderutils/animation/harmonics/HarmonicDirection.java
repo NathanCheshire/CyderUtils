@@ -1,16 +1,10 @@
 package com.github.natche.cyderutils.animation.harmonics;
 
-/**
- * The cardinal direction of harmonic oscillation.
- */
+/** The cardinal direction of harmonic oscillation. */
 public enum HarmonicDirection {
-    /**
-     * Vertical oscillation across the y-axis.
-     */
+    /** Vertical oscillation across the y-axis. */
     VERTICAL,
 
-    /**
-     * Horizontal oscillation across the x-axis.
-     */
+    /** Horizontal oscillation across the x-axis. */
     HORIZONTAL
 }

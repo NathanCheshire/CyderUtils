@@ -28,9 +28,7 @@ import java.util.Optional;
  * </ul>
  */
 public final class YouTubeSearchQuery {
-    /**
-     * The search base for YouTube api v3.
-     */
+    /** The search base for YouTube api v3. */
     private static final String searchHeader = "https://www.googleapis.com/youtube/v3/search";
 
     /**
@@ -39,14 +37,10 @@ public final class YouTubeSearchQuery {
      */
     private static final String SNIPPET = "snippet";
 
-    /**
-     * The default query string.
-     */
+    /** The default query string. */
     private static final String DEFAULT_QUERY = "Solitaires by Future";
 
-    /**
-     * The url constructed from the provided builder's parameters.
-     */
+    /** The url constructed from the provided builder's parameters. */
     private final String url;
 
     /**
@@ -115,58 +109,36 @@ public final class YouTubeSearchQuery {
         return new Builder(DEFAULT_QUERY);
     }
 
-    /**
-     * A builder for a {@link YouTubeSearchQuery}.
-     */
+    /** A builder for a {@link YouTubeSearchQuery}. */
     public static final class Builder {
-        /**
-         * The range a max results value must fall within.
-         */
+        /** The range a max results value must fall within. */
         private static final Range<Integer> maxResultsRange = Range.closed(0, 50);
 
-        /**
-         * The default maximum results returned by a YouTube list search query.
-         */
+        /** The default maximum results returned by a YouTube list search query. */
         private static final int DEFAULT_MAX_RESULTS = 5;
 
-        /**
-         * The query string.
-         */
+        /** The query string. */
         private final String query;
 
-        /**
-         * The API key.
-         */
+        /** The API key. */
         private String key;
 
-        /**
-         * The search type.
-         */
+        /** The search type. */
         private YouTubeSearchType type = YouTubeSearchType.VIDEO;
 
-        /**
-         * The safe search type.
-         */
+        /** The safe search type. */
         private YouTubeSafeSearch safeSearch = YouTubeSafeSearch.NONE;
 
-        /**
-         * The search order.
-         */
+        /** The search order. */
         private YouTubeSearchOrder searchOrder = YouTubeSearchOrder.TITLE;
 
-        /**
-         * The video definition.
-         */
+        /** The video definition. */
         private YouTubeVideoDefinition videoDefinition = YouTubeVideoDefinition.ANY;
 
-        /**
-         * The video duration.
-         */
+        /** The video duration. */
         private YouTubeVideoDuration videoDuration = YouTubeVideoDuration.ANY;
 
-        /**
-         * The maximum results that may be returned by this query.
-         */
+        /** The maximum results that may be returned by this query. */
         private int maxResults = DEFAULT_MAX_RESULTS;
 
         /**

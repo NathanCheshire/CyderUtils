@@ -4,18 +4,12 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 
-/**
- * A manager for active and past YouTube downloads.
- */
+/** A manager for active and past YouTube downloads. */
 public enum YouTubeDownloadManager {
-    /**
-     * The YoutubeDownloadManager instance.
-     */
+    /** The YoutubeDownloadManager instance. */
     INSTANCE;
 
-    /**
-     * A list of YouTube videos currently being downloaded.
-     */
+    /** A list of YouTube videos currently being downloaded. */
     private final ArrayList<YouTubeAudioDownload> activeDownloads = new ArrayList<>();
 
     /**
@@ -40,9 +34,7 @@ public enum YouTubeDownloadManager {
         activeDownloads.add(youTubeDownload);
     }
 
-    /**
-     * Cancels all active YouTube downloads.
-     */
+    /** Cancels all active YouTube downloads. */
     public void cancelAllActiveDownloads() {
         activeDownloads.forEach(YouTubeAudioDownload::cancel);
     }

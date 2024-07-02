@@ -1,17 +1,13 @@
 package com.github.natche.cyderutils.ui.frame.tooltip;
 
-/**
- * The supported menu item choices for any tooltip menu.
- */
+/** The supported menu item choices for any tooltip menu. */
 enum TooltipMenuItemType {
     TO_BACK("To back"),
     FRAME_LOCATION("Frame location"),
     FRAME_SIZE("Frame size"),
     SCREENSHOT("Screenshot");
 
-    /**
-     * The label text for this menu item.
-     */
+    /** The label text for this menu item. */
     private final String labelText;
 
     TooltipMenuItemType(String labelText) {
@@ -27,9 +23,7 @@ enum TooltipMenuItemType {
         return labelText;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return labelText;

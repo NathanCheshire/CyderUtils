@@ -1,52 +1,32 @@
 package com.github.natche.cyderutils.youtube.parsers;
 
-/**
- * A snippet for a {@link YouTubeVideo} object.
- */
+/** A snippet for a {@link YouTubeVideo} object. */
 public class Snippet {
-    /**
-     * The formatted time string the YouTube video was published at.
-     */
+    /** The formatted time string the YouTube video was published at. */
     private String publishedAt;
 
-    /**
-     * The channel ID of the owner of the video.
-     */
+    /** The channel ID of the owner of the video. */
     private String channelId;
 
-    /**
-     * The title of the video.
-     */
+    /** The title of the video. */
     private String title;
 
-    /**
-     * The video description.
-     */
+    /** The video description. */
     private String description;
 
-    /**
-     * The thumbnails object.
-     */
+    /** The thumbnails object. */
     private Thumbnails thumbnails;
 
-    /**
-     * The title of the video's publishing channel.
-     */
+    /** The title of the video's publishing channel. */
     private String channelTitle;
 
-    /**
-     * The live broadcast content.
-     */
+    /** The live broadcast content. */
     private String liveBroadcastContent;
 
-    /**
-     * The time at which the video was published.
-     */
+    /** The time at which the video was published. */
     private String publishTime;
 
-    /**
-     * Constructs a new Snippet.
-     */
+    /** Constructs a new Snippet. */
     public Snippet() {}
 
     /**
@@ -193,9 +173,7 @@ public class Snippet {
         this.thumbnails = thumbnails;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -215,9 +193,7 @@ public class Snippet {
                 && other.publishTime.equals(publishTime);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = publishedAt.hashCode();
@@ -231,9 +207,7 @@ public class Snippet {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Snippet{"

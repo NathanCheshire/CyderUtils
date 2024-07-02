@@ -16,54 +16,34 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * return {@code this} instance instead of {@link Void}.
  */
 public final class ComponentAnimator {
-    /**
-     * The default animation delay.
-     */
+    /** The default animation delay. */
     private static final Duration DEFAULT_DELAY = Duration.ofMillis(8);
 
-    /**
-     * The default animation increment.
-     */
+    /** The default animation increment. */
     private static final int DEFAULT_INCREMENT = 4;
 
-    /**
-     * Whether this component is currently animating.
-     */
+    /** Whether this component is currently animating. */
     private final AtomicBoolean isAnimating = new AtomicBoolean(false);
 
-    /**
-     * Whether {@link #stopAnimation()} has been invoked and the animation is being stopped.
-     */
+    /** Whether {@link #stopAnimation()} has been invoked and the animation is being stopped. */
     private final AtomicBoolean stoppingAnimation = new AtomicBoolean(false);
 
-    /**
-     * The direction of animation.
-     */
+    /** The direction of animation. */
     private final Direction animationDirection;
 
-    /**
-     * The component to animate.
-     */
+    /** The component to animate. */
     private final Component animationComponent;
 
-    /**
-     * The animation starting position.
-     */
+    /** The animation starting position. */
     private final int animationStart;
 
-    /**
-     * The animation ending position.
-     */
+    /** The animation ending position. */
     private final int animationEnd;
 
-    /**
-     * The delay between animation frames.
-     */
+    /** The delay between animation frames. */
     private Duration animationDelay = DEFAULT_DELAY;
 
-    /**
-     * The animation increment amount.
-     */
+    /** The animation increment amount. */
     private int animationIncrement = DEFAULT_INCREMENT;
 
     /**
@@ -262,9 +242,7 @@ public final class ComponentAnimator {
         return isAnimating;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ComponentAnimator{"
@@ -278,9 +256,7 @@ public final class ComponentAnimator {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Boolean.hashCode(isAnimating.get());
@@ -293,9 +269,7 @@ public final class ComponentAnimator {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

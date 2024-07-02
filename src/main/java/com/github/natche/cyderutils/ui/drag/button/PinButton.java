@@ -10,33 +10,21 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * A pin button for CyderFrame drag labels.
- */
+/** A pin button for CyderFrame drag labels. */
 public class PinButton extends CyderDragLabelButton {
-    /**
-     * The default width/height given to this pin button.
-     */
+    /** The default width/height given to this pin button. */
     public static final DragLabelButtonSize DEFAULT_SIZE = DragLabelButtonSize.SMALL;
 
-    /**
-     * The padding between the edges of the painted pin button.
-     */
+    /** The padding between the edges of the painted pin button. */
     private static final int PAINT_PADDING = 4;
 
-    /**
-     * The current state of this pin button.
-     */
+    /** The current state of this pin button. */
     private PinState currentState;
 
-    /**
-     * The frame this pin button will be placed on.
-     */
+    /** The frame this pin button will be placed on. */
     private final CyderFrame effectFrame;
 
-    /**
-     * The size this pin button will be painted with.
-     */
+    /** The size this pin button will be painted with. */
     private DragLabelButtonSize size;
 
     /**
@@ -76,9 +64,7 @@ public class PinButton extends CyderDragLabelButton {
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void addDefaultMouseAdapter() {
         addMouseListener(new MouseAdapter() {
@@ -103,16 +89,12 @@ public class PinButton extends CyderDragLabelButton {
         });
     }
 
-    /**
-     * Refreshes the tooltip of this pin button based on the current state.
-     */
+    /** Refreshes the tooltip of this pin button based on the current state. */
     private void refreshTooltip() {
         setToolTipText(currentState.getTooltip());
     }
 
-    /**
-     * The immutable map of pin button states to their successor states.
-     */
+    /** The immutable map of pin button states to their successor states. */
     private static final ImmutableMap<PinState, PinState> pinButtonStates = ImmutableMap.of(
             PinState.DEFAULT, PinState.FRAME_PINNED,
             PinState.FRAME_PINNED, PinState.DEFAULT
@@ -136,9 +118,7 @@ public class PinButton extends CyderDragLabelButton {
         return currentState;
     }
 
-    /**
-     * Sets the state of this pin to the next state.
-     */
+    /** Sets the state of this pin to the next state. */
     private void incrementState() {
         currentState = getNextState();
         refreshTooltip();
@@ -160,9 +140,7 @@ public class PinButton extends CyderDragLabelButton {
         refreshStateBasedOnState();
     }
 
-    /**
-     * Refreshes based on the currently set state.
-     */
+    /** Refreshes based on the currently set state. */
     private void refreshStateBasedOnState() {
         effectFrame.refreshAlwaysOnTop();
     }
@@ -178,9 +156,7 @@ public class PinButton extends CyderDragLabelButton {
         return size.getSize() - 2 * PAINT_PADDING;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void paintDragLabelButton(Graphics g) {
         Preconditions.checkNotNull(g);
@@ -195,9 +171,7 @@ public class PinButton extends CyderDragLabelButton {
         g2d.fillPolygon(pinButtonPolygonXPoints, pinButtonPolygonYPoints, pinButtonPolygonYPoints.length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Color getPaintColor() {
         if (getFocused()) {
@@ -211,60 +185,40 @@ public class PinButton extends CyderDragLabelButton {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setSize(DragLabelButtonSize size) {
         this.size = Preconditions.checkNotNull(size);
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getSpecificStringRepresentation() {
         return PinState.DEFAULT.getTooltip();
     }
 
-    /**
-     * The possible states of pin buttons.
-     */
+    /** The possible states of pin buttons. */
     public enum PinState {
-        /**
-         * The default state of frames.
-         */
+        /** The default state of frames. */
         DEFAULT("Pin", CyderColors.vanilla, CyderColors.regularRed),
 
-        /**
-         * A regular frame is pinned on top.
-         */
+        /** A regular frame is pinned on top. */
         FRAME_PINNED("Pin to console", CyderColors.regularRed, CyderColors.regularPink),
 
-        /**
-         * The console frame is pinned on top.
-         */
+        /** The console frame is pinned on top. */
         CONSOLE_PINNED("Unpin", CyderColors.regularRed, CyderColors.vanilla),
 
-        /**
-         * A regular frame is console pinned.
-         */
+        /** A regular frame is console pinned. */
         PINNED_TO_CONSOLE("Unpin", CyderColors.regularPink, CyderColors.vanilla);
 
-        /**
-         * The hover tooltip text.
-         */
+        /** The hover tooltip text. */
         private final String tooltip;
 
-        /**
-         * The current color.
-         */
+        /** The current color. */
         private final Color currentColor;
 
-        /**
-         * The next state color and thus the current hover color.
-         */
+        /** The next state color and thus the current hover color. */
         private final Color nextColor;
 
         PinState(String tooltip, Color currentColor, Color nextColor) {

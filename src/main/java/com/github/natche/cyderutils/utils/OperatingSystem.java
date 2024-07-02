@@ -2,28 +2,18 @@ package com.github.natche.cyderutils.utils;
 
 import com.google.common.collect.ImmutableList;
 
-/**
- * The primary operating systems utilized in our modern-day world.
- */
+/** The primary operating systems utilized in our modern-day world. */
 public enum OperatingSystem {
-    /**
-     * Macintosh OS.
-     */
+    /** Macintosh OS. */
     MAC("Mac", ImmutableList.of("mac")),
 
-    /**
-     * The Windows operating system.
-     */
+    /** The Windows operating system. */
     WINDOWS("Windows", ImmutableList.of("win")),
 
-    /**
-     * Any GNU/Linux based operating system.
-     */
+    /** Any GNU/Linux based operating system. */
     GNU_LINUX("GNU/Linux", ImmutableList.of("nix", "nux", "aix", "linux")),
 
-    /**
-     * An indeterminable operating system.
-     */
+    /** An indeterminable operating system. */
     UNKNOWN("Unknown", ImmutableList.of());
 
     private final String osName;

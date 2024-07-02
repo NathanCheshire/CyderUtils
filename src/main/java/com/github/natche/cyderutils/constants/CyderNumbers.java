@@ -3,13 +3,9 @@ package com.github.natche.cyderutils.constants;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.strings.CyderStrings;
 
-/**
- * A class of commonly used integers throughout Cyder
- */
+/** A class of commonly used integers throughout Cyder */
 public final class CyderNumbers {
-    /**
-     * Don't change your number.
-     */
+    /** Don't change your number. */
     public static final int JENNY = 8675309;
 
     /**

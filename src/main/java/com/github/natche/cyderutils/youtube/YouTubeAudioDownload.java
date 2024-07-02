@@ -46,39 +46,25 @@ public class YouTubeAudioDownload {
      */
     private static final int DIMENSION_TO_BE_DETERMINED = Integer.MAX_VALUE;
 
-    /**
-     * The string which could be a link, id, or query.
-     */
+    /** The string which could be a link, id, or query. */
     private String providedDownloadString;
 
-    /**
-     * The name to save the audio download as.
-     */
+    /** The name to save the audio download as. */
     private String audioDownloadName;
 
-    /**
-     * The name to save the thumbnail download as.
-     */
+    /** The name to save the thumbnail download as. */
     private String thumbnailDownloadName;
 
-    /**
-     * The width to crop the thumbnail to.
-     */
+    /** The width to crop the thumbnail to. */
     private int requestedThumbnailWidth = DIMENSION_TO_BE_DETERMINED;
 
-    /**
-     * The height to crop the thumbnail to.
-     */
+    /** The height to crop the thumbnail to. */
     private int requestedThumbnailHeight = DIMENSION_TO_BE_DETERMINED;
 
-    /**
-     * The runnable to invoke when the download is canceled.
-     */
+    /** The runnable to invoke when the download is canceled. */
     private Runnable onCanceledCallback;
 
-    /**
-     * The runnable to invoke when the download completes successfully.
-     */
+    /** The runnable to invoke when the download completes successfully. */
     private Runnable onDownloadedCallback;
 
     /**
@@ -87,84 +73,52 @@ public class YouTubeAudioDownload {
      */
     private static final int progressBarWidth = 400;
 
-    /**
-     * The name of this download object.
-     */
+    /** The name of this download object. */
     private String downloadableName;
 
-    /**
-     * The download file size of this download object.
-     */
+    /** The download file size of this download object. */
     private String downloadableFileSize;
 
-    /**
-     * The download progress of this download object.
-     */
+    /** The download progress of this download object. */
     private float downloadableProgress;
 
-    /**
-     * The download rate of this download object.
-     */
+    /** The download rate of this download object. */
     private String downloadableRate;
 
-    /**
-     * The download eta of this download object.
-     */
+    /** The download eta of this download object. */
     private String downloadableEta;
 
-    /**
-     * Whether this download has completed downloading.
-     */
+    /** Whether this download has completed downloading. */
     private boolean isDownloaded;
 
-    /**
-     * Whether this download has completed, not necessarily downloaded.
-     */
+    /** Whether this download has completed, not necessarily downloaded. */
     private boolean isDone;
 
-    /**
-     * Whether this download is currently underway.
-     */
+    /** Whether this download is currently underway. */
     private boolean isDownloading;
 
-    /**
-     * Whether this download was canceled externally.
-     */
+    /** Whether this download was canceled externally. */
     private boolean isCanceled;
 
-    /**
-     * The label this class will print and update with statistics about the download.
-     */
+    /** The label this class will print and update with statistics about the download. */
     private JLabel downloadProgressLabel;
 
-    /**
-     * The button used to cancel the download.
-     */
+    /** The button used to cancel the download. */
     private CyderButton cancelButton;
 
-    /**
-     * The audio file this object downloaded from YouTube.
-     */
+    /** The audio file this object downloaded from YouTube. */
     private File audioDownloadFile;
 
-    /**
-     * The exit code for the internal download process.
-     */
+    /** The exit code for the internal download process. */
     private int processExitCode = DOWNLOAD_NOT_FINISHED;
 
-    /**
-     * The download progress bar to print and update if a valid input handler is provided.
-     */
+    /** The download progress bar to print and update if a valid input handler is provided. */
     private CyderProgressBar downloadProgressBar;
 
-    /**
-     * The progress bar ui to use for the download progress bar.
-     */
+    /** The progress bar ui to use for the download progress bar. */
     private CyderProgressUI downloadProgressBarUi;
 
-    /**
-     * Constructs a new YoutubeDownload object.
-     */
+    /** Constructs a new YoutubeDownload object. */
     public YouTubeAudioDownload() {}
 
     /**
@@ -322,9 +276,7 @@ public class YouTubeAudioDownload {
         this.onDownloadedCallback = onDownloadedCallback;
     }
 
-    /**
-     * Starts the download of the audio and thumbnail file(s).
-     */
+    /** Starts the download of the audio and thumbnail file(s). */
     public void downloadAudioAndThumbnail() {
         if (audioDownloadName == null && thumbnailDownloadName == null) {
             initializeAudioAndThumbnailDownloadNames();
@@ -337,9 +289,7 @@ public class YouTubeAudioDownload {
         downloadAudio();
     }
 
-    /**
-     * Starts the download of the audio file(s).
-     */
+    /** Starts the download of the audio file(s). */
     public void downloadAudio() {
         if (audioDownloadName == null) {
             initializeAudioDownloadNames();
@@ -492,9 +442,7 @@ public class YouTubeAudioDownload {
         return isCanceled;
     }
 
-    /**
-     * Cancels this download if downloading.
-     */
+    /** Cancels this download if downloading. */
     public void cancel() {
         if (isDownloading()) {
             isCanceled = true;
@@ -515,9 +463,7 @@ public class YouTubeAudioDownload {
         return audioDownloadFile;
     }
 
-    /**
-     * Updates the download progress label text.
-     */
+    /** Updates the download progress label text. */
     public void updateProgressLabelText() {
         downloadProgressLabel.setText(HtmlTags.openingHtml + downloadableName
                 + HtmlTags.breakTag + "File size: " + downloadableFileSize
@@ -530,9 +476,7 @@ public class YouTubeAudioDownload {
         downloadProgressLabel.setHorizontalAlignment(JLabel.LEFT);
     }
 
-    /**
-     * The downloaded thumbnail image if present, null otherwise.
-     */
+    /** The downloaded thumbnail image if present, null otherwise. */
     private static BufferedImage downloadedThumbnailImage;
 
     /**
@@ -591,9 +535,7 @@ public class YouTubeAudioDownload {
         }
     }
 
-    /**
-     * Initializes the name(s) of the audio and thumbnail download(s).
-     */
+    /** Initializes the name(s) of the audio and thumbnail download(s). */
     private void initializeAudioAndThumbnailDownloadNames() {
         String safeDownloadName = YouTubeUtil.getDownloadSaveName(providedDownloadString);
 
@@ -601,16 +543,12 @@ public class YouTubeAudioDownload {
         thumbnailDownloadName = safeDownloadName;
     }
 
-    /**
-     * Initializes the name(s) of the audio download(s).
-     */
+    /** Initializes the name(s) of the audio download(s). */
     private void initializeAudioDownloadNames() {
         audioDownloadName = YouTubeUtil.getDownloadSaveName(providedDownloadString);
     }
 
-    /**
-     * Initializes the name(s) of the thumbnail download(s).
-     */
+    /** Initializes the name(s) of the thumbnail download(s). */
     private void initializeThumbnailDownloadName() {
         thumbnailDownloadName = YouTubeUtil.getDownloadSaveName(providedDownloadString);
     }
@@ -680,9 +618,7 @@ public class YouTubeAudioDownload {
         }
     }
 
-    /**
-     * The actions to invoke when the download process ends without a successful exit code.
-     */
+    /** The actions to invoke when the download process ends without a successful exit code. */
     private void onDownloadFailed() {
         // todo hooks, maybe event based system for youtube download is the way to go
         //        if (shouldPrintUiElements()) {
@@ -694,9 +630,7 @@ public class YouTubeAudioDownload {
         //        }
     }
 
-    /**
-     * Creates and prints the progress bar, label, and cancel button to the linked input handler.
-     */
+    /** Creates and prints the progress bar, label, and cancel button to the linked input handler. */
     private void createAndPrintUiElements() {
         downloadProgressBar = new CyderProgressBar(
                 CyderProgressBar.HORIZONTAL,
@@ -782,9 +716,7 @@ public class YouTubeAudioDownload {
         return cancelButton;
     }
 
-    /**
-     * The actions to invoke when the cancel button is pressed.
-     */
+    /** The actions to invoke when the cancel button is pressed. */
     private void onCancelButtonPressed() {
         if (!isCanceled() && isDownloading()) {
             cancel();
@@ -792,9 +724,7 @@ public class YouTubeAudioDownload {
         }
     }
 
-    /**
-     * Cleans up the printed ui elements.
-     */
+    /** Cleans up the printed ui elements. */
     private void cleanUpPrintedUiElements() {
         Color resultColor = isDownloaded
                 ? CyderColors.regularBlue
@@ -808,9 +738,7 @@ public class YouTubeAudioDownload {
         refreshCancelButtonText();
     }
 
-    /**
-     * Refreshes the cancel button text.
-     */
+    /** Refreshes the cancel button text. */
     private void refreshCancelButtonText() {
         String buttonText;
         if (isDownloaded) {

@@ -40,15 +40,11 @@ public class YoutubeUuidChecker {
      */
     private static final int startingIndexForAttemptingIncrements = YouTubeConstants.UUID_LENGTH - 1;
 
-    /**
-     * The chances of success for a singular thread running.
-     */
+    /** The chances of success for a singular thread running. */
     @SuppressWarnings("unused") // Nice to have
     public static final BigInteger CHANCE_OF_SUCCESS = new BigInteger("73786976294838206464");
 
-    /**
-     * YouTube's base 64 system used for UUID construction.
-     */
+    /** YouTube's base 64 system used for UUID construction. */
     private static final ImmutableList<Character> uuidChars = ImmutableList.of(
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
             'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -60,39 +56,25 @@ public class YoutubeUuidChecker {
             '4', '5', '6', '7', '8', '9', '-', '_'
     );
 
-    /**
-     * Whether this uuid checker instance has been killed.
-     */
+    /** Whether this uuid checker instance has been killed. */
     private final AtomicBoolean killed = new AtomicBoolean();
 
-    /**
-     * The list of uuids this checker has checked.
-     */
+    /** The list of uuids this checker has checked. */
     private final ArrayList<String> checkedUuids = new ArrayList<>();
 
-    /**
-     * The uuid this checker is currently on.
-     */
+    /** The uuid this checker is currently on. */
     private String currentUuid;
 
-    /**
-     * The output pane used for printing.
-     */
+    /** The output pane used for printing. */
     private final CyderOutputPane outputPane;
 
-    /**
-     * The instant this checker was started at.
-     */
+    /** The instant this checker was started at. */
     private Instant startingInstant;
 
-    /**
-     * The instant this checker was killed at.
-     */
+    /** The instant this checker was killed at. */
     private Instant endingInstant;
 
-    /**
-     * Suppress default constructor. Requires two parameters for instantiation.
-     */
+    /** Suppress default constructor. Requires two parameters for instantiation. */
     private YoutubeUuidChecker() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
@@ -169,9 +151,7 @@ public class YoutubeUuidChecker {
         return "https://img.youtube.com/vi/" + uuid + "/hqdefault.jpg";
     }
 
-    /**
-     * Starts this instance checking for a valid UUID.
-     */
+    /** Starts this instance checking for a valid UUID. */
     public void startChecking() {
         Preconditions.checkState(!killed.get());
 
@@ -211,9 +191,7 @@ public class YoutubeUuidChecker {
         }, threadName);
     }
 
-    /**
-     * Attempts to acquire the {@link YoutubeUuidCheckerManager}'s lock.
-     */
+    /** Attempts to acquire the {@link YoutubeUuidCheckerManager}'s lock. */
     private void attemptToAcquireLock() {
         if (!YoutubeUuidCheckerManager.INSTANCE.acquireLock()) {
             throw new FatalException("Failed to acquire lock");
@@ -255,9 +233,7 @@ public class YoutubeUuidChecker {
         thumbnailFrame.finalizeAndShow();
     }
 
-    /**
-     * Increments the current UUID by one ordinal.
-     */
+    /** Increments the current UUID by one ordinal. */
     private void incrementUuid() {
         currentUuid = String.valueOf(incrementUuid(currentUuid.toCharArray()));
     }

@@ -31,96 +31,60 @@ public class CyderToastNotification extends CyderNotification {
      */
     private static final float hideContainerOnOpacityFallsBelowRatio = 0.75f;
 
-    /**
-     * The offset from the bottom of the frame toast notifications are placed.
-     */
+    /** The offset from the bottom of the frame toast notifications are placed. */
     private static final int toastBottomOffset = 10;
 
-    /**
-     * The delay between animation steps.
-     */
+    /** The delay between animation steps. */
     private static final int animationDelay = 2;
 
-    /**
-     * The opacity step every {@link #animationDelay}.
-     */
+    /** The opacity step every {@link #animationDelay}. */
     private static final int opacityStep = 2;
 
-    /**
-     * The length for curves when painting the notification fill and outline.
-     */
+    /** The length for curves when painting the notification fill and outline. */
     private static final int curveLength = 2;
 
-    /**
-     * The length of the arrow.
-     */
+    /** The length of the arrow. */
     protected static final int arrowLength = 8;
 
-    /**
-     * The length of the border
-     */
+    /** The length of the border */
     protected static final int borderLength = 5;
 
-    /**
-     * Whether {@link #appear()} has been invoked on this.
-     */
+    /** Whether {@link #appear()} has been invoked on this. */
     protected final AtomicBoolean appearInvoked = new AtomicBoolean();
 
-    /**
-     * Whether {@link #disappear()} has been invoked on this.
-     */
+    /** Whether {@link #disappear()} has been invoked on this. */
     protected final AtomicBoolean disappearInvoked = new AtomicBoolean();
 
-    /**
-     * Whether this is currently performing an animation.
-     */
+    /** Whether this is currently performing an animation. */
     protected final AtomicBoolean animating = new AtomicBoolean();
 
-    /**
-     * Whether this notification has been killed.
-     */
+    /** Whether this notification has been killed. */
     protected final AtomicBoolean killed = new AtomicBoolean();
 
-    /**
-     * The opacity this notification should be painted as.
-     */
+    /** The opacity this notification should be painted as. */
     protected final AtomicInteger opacity = new AtomicInteger(255);
 
-    /**
-     * Whether the mouse is currently hovered over this notification.
-     */
+    /** Whether the mouse is currently hovered over this notification. */
     private final AtomicBoolean isHovered = new AtomicBoolean();
 
-    /**
-     * The executor service for performing the disappear animation.
-     */
+    /** The executor service for performing the disappear animation. */
     protected final ExecutorService appearAnimationService =
             Executors.newSingleThreadExecutor(new CyderThreadFactory("Notification Appear Animation"));
 
-    /**
-     * The executor service for performing the disappear animation.
-     */
+    /** The executor service for performing the disappear animation. */
     protected final ExecutorService disappearAnimationService =
             Executors.newSingleThreadExecutor(new CyderThreadFactory("Notification Disappear Animation"));
 
-    /**
-     * The duration this notification should be visible for.
-     */
+    /** The duration this notification should be visible for. */
     protected final Duration visibleDuration;
 
-    /**
-     * The direction the arrow should be painted on.
-     */
+    /** The direction the arrow should be painted on. */
     protected final Direction arrowDirection;
 
-    /**
-     * The container for this notification.
-     */
+    /** The container for this notification. */
     protected final JLabel container;
 
-    /**
-     * The html-styled text this notification holds if not using a custom container from the builder.
-     */
+    /** The html-styled text this notification holds if not using a custom container from the builder. */
     private final String htmlText;
 
     /**
@@ -140,9 +104,7 @@ public class CyderToastNotification extends CyderNotification {
         setVisible(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getWidth() {
         int ret = 2 * borderLength + container.getWidth() + 2 * 2 * curveLength;
@@ -150,9 +112,7 @@ public class CyderToastNotification extends CyderNotification {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getHeight() {
         int ret = 2 * borderLength + container.getHeight() + 2 * 2 * curveLength;
@@ -160,9 +120,7 @@ public class CyderToastNotification extends CyderNotification {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics g) {
         Preconditions.checkNotNull(g);
@@ -334,9 +292,7 @@ public class CyderToastNotification extends CyderNotification {
         g2d.fill(fillPath);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void appear() {
         if (appearInvoked.get()) return;
@@ -378,9 +334,7 @@ public class CyderToastNotification extends CyderNotification {
         }, appearAnimationService);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void disappear() {
         Preconditions.checkState(appearInvoked.get());
@@ -419,35 +373,27 @@ public class CyderToastNotification extends CyderNotification {
         }, disappearAnimationService);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void kill() {
         killed.set(true);
         animating.set(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isKilled() {
         return killed.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setHovered(boolean hovered) {
         isHovered.set(hovered);
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Optional<String> getLabelText() {
         if (StringUtil.isNullOrEmpty(htmlText)) return Optional.empty();
@@ -464,9 +410,7 @@ public class CyderToastNotification extends CyderNotification {
         return isKilled(); // todo or more hooks here
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setToStartAndEndingPosition() {
         int parentWidth = getParent().getWidth();
@@ -478,25 +422,19 @@ public class CyderToastNotification extends CyderNotification {
                 parentHeight - ourHeight - toastBottomOffset, ourWidth, ourHeight);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setToMidAnimationPosition() {
         setToStartAndEndingPosition();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isAnimating() {
         return animating.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getContainerToString() {
         return container.toString();

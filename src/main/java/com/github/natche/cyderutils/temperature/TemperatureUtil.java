@@ -3,18 +3,12 @@ package com.github.natche.cyderutils.temperature;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.strings.CyderStrings;
 
-/**
- * Utility methods related to temperature conversions.
- */
+/** Utility methods related to temperature conversions. */
 public final class TemperatureUtil {
-    /**
-     * The value to add to Celsius measurements to convert them to Kelvin measurements.
-     */
+    /** The value to add to Celsius measurements to convert them to Kelvin measurements. */
     private static final double kelvinAdditive = 273.15;
 
-    /**
-     * The freezing point of water on a Fahrenheit scale.
-     */
+    /** The freezing point of water on a Fahrenheit scale. */
     private static final double fahrenheitFreezingPoint = 32.0;
 
     /**

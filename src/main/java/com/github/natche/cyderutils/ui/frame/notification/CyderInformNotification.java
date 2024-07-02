@@ -22,59 +22,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * a different notification exceeded the allowable size.
  */
 public final class CyderInformNotification extends CyderNotification {
-    /**
-     * The notification string used for frame titles.
-     */
+    /** The notification string used for frame titles. */
     private static final String NOTIFICATION = "Notification";
 
-    /**
-     * The top, bottom, left, and right padding between the frame and container.
-     */
+    /** The top, bottom, left, and right padding between the frame and container. */
     private static final int notifyPadding = 20;
 
-    /**
-     * The font to use for the text of the notify label.
-     */
+    /** The font to use for the text of the notify label. */
     private static final Font notifyFont = CyderFonts.DEFAULT_FONT_SMALL;
 
-    /**
-     * Whether this notification has been killed.
-     */
+    /** Whether this notification has been killed. */
     private final AtomicBoolean killed = new AtomicBoolean();
 
-    /**
-     * Whether the appear method has been invoked.
-     */
+    /** Whether the appear method has been invoked. */
     private final AtomicBoolean appearInvoked = new AtomicBoolean();
 
-    /**
-     * Whether the disappear method has been invoked.
-     */
+    /** Whether the disappear method has been invoked. */
     private final AtomicBoolean disappearInvoked = new AtomicBoolean();
 
-    /**
-     * The frame used to show the container of this notification.
-     */
+    /** The frame used to show the container of this notification. */
     private CyderFrame notificationFrame;
 
-    /**
-     * The container this notification will display.
-     */
+    /** The container this notification will display. */
     private final Container container;
 
-    /**
-     * The frame to position the notification frame relative to.
-     */
+    /** The frame to position the notification frame relative to. */
     private final CyderFrame relativeFrame;
 
-    /**
-     * The html text for this notification if a custom container is not specified.
-     */
+    /** The html text for this notification if a custom container is not specified. */
     private final String htmlText;
 
-    /**
-     * The listener used to reposition the notification frame relative to the relative frame.
-     */
+    /** The listener used to reposition the notification frame relative to the relative frame. */
     private ComponentListener repositionNotificationFrameListener;
 
     /**
@@ -92,9 +70,7 @@ public final class CyderInformNotification extends CyderNotification {
         this.htmlText = builder.getHtmlText();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void appear() {
         Preconditions.checkState(!appearInvoked.get());
@@ -147,9 +123,7 @@ public final class CyderInformNotification extends CyderNotification {
         notificationFrame.finalizeAndShow(relativeFrame);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public synchronized void disappear() {
         Preconditions.checkState(appearInvoked.get());
@@ -163,18 +137,14 @@ public final class CyderInformNotification extends CyderNotification {
         kill();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void kill() {
         relativeFrame.removeComponentListener(repositionNotificationFrameListener);
         killed.set(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isKilled() {
         return killed.get();
@@ -189,9 +159,7 @@ public final class CyderInformNotification extends CyderNotification {
     @DoNotCall
     public void setHovered(boolean ignored) {}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Optional<String> getLabelText() {
         if (container instanceof JLabel label && !StringUtil.isNullOrEmpty(label.getText())) {
@@ -201,33 +169,25 @@ public final class CyderInformNotification extends CyderNotification {
         return Optional.empty();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setToStartAndEndingPosition() {
         if (notificationFrame != null) notificationFrame.setLocationRelativeTo(relativeFrame);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setToMidAnimationPosition() {
         if (notificationFrame != null) notificationFrame.setLocationRelativeTo(relativeFrame);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isAnimating() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getContainerToString() {
         return container.toString();

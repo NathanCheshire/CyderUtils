@@ -9,69 +9,43 @@ import com.github.natche.cyderutils.strings.CyderStrings;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * A wrapper for a GitHub link to clone a repository.
- */
+/** A wrapper for a GitHub link to clone a repository. */
 @Immutable
 public class GithubCloneRepoLink {
-    /**
-     * The regex to extract the user and repo name from a valid GitHub ".git" repo clone link.
-     */
+    /** The regex to extract the user and repo name from a valid GitHub ".git" repo clone link. */
     private static final String githubRepoCloneRegex = "^((http|https)://)?(www\\.)?github\\.com/(.*)/(.*)\\.git";
 
-    /**
-     * The compiled pattern matcher for {@link #githubRepoCloneRegex}.
-     */
+    /** The compiled pattern matcher for {@link #githubRepoCloneRegex}. */
     private static final Pattern githubRepoClonePattern = Pattern.compile(githubRepoCloneRegex);
 
-    /**
-     * The world wide web subdomain.
-     */
+    /** The world wide web subdomain. */
     private static final String www = "www";
 
-    /**
-     * The colon slash-slash protocol suffix.
-     */
+    /** The colon slash-slash protocol suffix. */
     private static final String colonSlashSlash = "://";
 
-    /**
-     * The safe hyper text transfer protocol.
-     */
+    /** The safe hyper text transfer protocol. */
     private static final String https = "https";
 
-    /**
-     * The hyper text transfer protocol.
-     */
+    /** The hyper text transfer protocol. */
     private static final String http = "http";
 
-    /**
-     * The safe hyper text transfer protocol with colon slash-slash suffix.
-     */
+    /** The safe hyper text transfer protocol with colon slash-slash suffix. */
     private static final String httpsColonSlashSlash = https + colonSlashSlash;
 
-    /**
-     * The hyper text transfer protocol with colon slash-slash suffix.
-     */
+    /** The hyper text transfer protocol with colon slash-slash suffix. */
     private static final String httpColonSlashSlash = http + colonSlashSlash;
 
-    /**
-     * The .git link for the GitHub repository.
-     */
+    /** The .git link for the GitHub repository. */
     private final String link;
 
-    /**
-     * The user/organization the repository belongs to.
-     */
+    /** The user/organization the repository belongs to. */
     private final String user;
 
-    /**
-     * The repository name.
-     */
+    /** The repository name. */
     private final String repository;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private GithubCloneRepoLink() {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
@@ -133,9 +107,7 @@ public class GithubCloneRepoLink {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "GithubCloneRepoLink{"
@@ -154,9 +126,7 @@ public class GithubCloneRepoLink {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -169,9 +139,7 @@ public class GithubCloneRepoLink {
         return link.equals(other.getLink());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return link.hashCode();

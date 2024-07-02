@@ -5,33 +5,21 @@ import com.github.natche.cyderutils.ui.drag.DragLabelButtonSize;
 
 import java.awt.*;
 
-/**
- * An arrow button pointing left.
- */
+/** An arrow button pointing left. */
 public class LeftButton extends CyderDragLabelButton {
-    /**
-     * The text for the left button.
-     */
+    /** The text for the left button. */
     private static final String LEFT = "Left";
 
-    /**
-     * The padding between the edges of the painted left button.
-     */
+    /** The padding between the edges of the painted left button. */
     private static final int PAINT_PADDING = 4;
 
-    /**
-     * The size of the rectangles to draw in the paint method.
-     */
+    /** The size of the rectangles to draw in the paint method. */
     private static final int drawnRectangleLength = 2;
 
-    /**
-     * The size this left button will be painted with.
-     */
+    /** The size this left button will be painted with. */
     private DragLabelButtonSize size;
 
-    /**
-     * Constructs a new left button.
-     */
+    /** Constructs a new left button. */
     public LeftButton() {
         this(DEFAULT_SIZE);
     }
@@ -60,9 +48,7 @@ public class LeftButton extends CyderDragLabelButton {
         return size.getSize() - 2 * PAINT_PADDING;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void paintDragLabelButton(Graphics g) {
         Preconditions.checkNotNull(g);
@@ -80,18 +66,14 @@ public class LeftButton extends CyderDragLabelButton {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setSize(DragLabelButtonSize size) {
         this.size = Preconditions.checkNotNull(size);
         repaint();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getSpecificStringRepresentation() {
         return LEFT;

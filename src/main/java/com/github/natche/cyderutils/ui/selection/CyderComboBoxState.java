@@ -3,19 +3,13 @@ package com.github.natche.cyderutils.ui.selection;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 
-/**
- * A combo box state with the option to show a value different than the one set to when toggled.
- */
+/** A combo box state with the option to show a value different than the one set to when toggled. */
 @Immutable
 public final class CyderComboBoxState {
-    /**
-     * The value to display for this state.
-     */
+    /** The value to display for this state. */
     private final String displayValue;
 
-    /**
-     * The underlying value for this state.
-     */
+    /** The underlying value for this state. */
     private final String mappedValue;
 
     /**
@@ -56,9 +50,7 @@ public final class CyderComboBoxState {
         return mappedValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -72,9 +64,7 @@ public final class CyderComboBoxState {
                 && other.mappedValue.equals(mappedValue);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = displayValue.hashCode();
@@ -82,9 +72,7 @@ public final class CyderComboBoxState {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderComboBoxState{"

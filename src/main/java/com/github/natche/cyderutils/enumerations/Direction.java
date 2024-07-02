@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.enumerations;
 
 import com.google.common.base.Preconditions;
 
-/**
- * A cardinal direction.
- */
+/** A cardinal direction. */
 public enum Direction {
     LEFT("left"),
     RIGHT("right"),

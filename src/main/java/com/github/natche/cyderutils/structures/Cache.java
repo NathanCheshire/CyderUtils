@@ -11,24 +11,16 @@ import java.util.Objects;
  * @param <T> the type of cache.
  */
 public final class Cache<T> {
-    /**
-     * The current cache value.
-     */
+    /** The current cache value. */
     private T cachedValue;
 
-    /**
-     * Whether this cache allows null values.
-     */
+    /** Whether this cache allows null values. */
     private final boolean allowNull;
 
-    /**
-     * The function to invoke to update the currently cached value if requested.
-     */
+    /** The function to invoke to update the currently cached value if requested. */
     private CacheRefreshSupplier<T> cachedValueUpdater;
 
-    /**
-     * Constructs a new cache with an initial value of null.
-     */
+    /** Constructs a new cache with an initial value of null. */
     public Cache() {
         this(null, true);
     }
@@ -66,9 +58,7 @@ public final class Cache<T> {
         return cachedValue;
     }
 
-    /**
-     * Clears the current cache value.
-     */
+    /** Clears the current cache value. */
     public void clear() {
         cachedValue = null;
     }
@@ -125,9 +115,7 @@ public final class Cache<T> {
         return allowNull;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -142,9 +130,7 @@ public final class Cache<T> {
                 && Objects.equals(other.cachedValueUpdater, cachedValueUpdater);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Cache{"
@@ -154,9 +140,7 @@ public final class Cache<T> {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = cachedValue.hashCode();

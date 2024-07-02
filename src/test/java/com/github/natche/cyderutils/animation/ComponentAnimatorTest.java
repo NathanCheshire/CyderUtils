@@ -10,13 +10,9 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for the {@link ComponentAnimator}.
- */
+/** Tests for the {@link ComponentAnimator}. */
 class ComponentAnimatorTest {
-    /**
-     * Creates a new instance of this class for testing purposes.
-     */
+    /** Creates a new instance of this class for testing purposes. */
     ComponentAnimatorTest() {}
 
     @Test

@@ -5,13 +5,9 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 
-/**
- * Tests for the [FfmpegCommandBuilder].
- */
+/** Tests for the [FfmpegCommandBuilder]. */
 class FfmpegCommandBuilderTest {
-    /**
-     * Tests the default constructor.
-     */
+    /** Tests the default constructor. */
     @Test
     fun testConstruction() {
         assertDoesNotThrow { FfmpegCommandBuilder() }
@@ -19,9 +15,7 @@ class FfmpegCommandBuilderTest {
         assertEquals("ffmpeg", builder.build())
     }
 
-    /**
-     * Tests the construction from an initial part.
-     */
+    /** Tests the construction from an initial part. */
     @Test
     fun testConstructionFromInitialPart() {
         assertEquals("ffmpeg", FfmpegCommandBuilder().build())
@@ -29,18 +23,14 @@ class FfmpegCommandBuilderTest {
         assertEquals("map", FfmpegCommandBuilder(FfmpegArgument.MAP).build())
     }
 
-    /**
-     * Tests the construction from a list.
-     */
+    /** Tests the construction from a list. */
     @Test
     fun testConstructionFromList() {
         val list = ImmutableList.of("one", "two", "three")
         assertEquals("ffmpeg one two three", FfmpegCommandBuilder(list).build())
     }
 
-    /**
-     * Tests adding an argument.
-     */
+    /** Tests adding an argument. */
     @Test
     fun testAddArgument() {
         val builder = FfmpegCommandBuilder()
@@ -51,9 +41,7 @@ class FfmpegCommandBuilderTest {
         assertEquals("ffmpeg arg another", builder.build())
     }
 
-    /**
-     * Tests adding arguments.
-     */
+    /** Tests adding arguments. */
     @Test
     fun testAddArguments() {
         val builder = FfmpegCommandBuilder()
@@ -62,9 +50,7 @@ class FfmpegCommandBuilderTest {
         assertEquals("ffmpeg map value", builder.build())
     }
 
-    /**
-     * Tests for the addAllArguments method.
-     */
+    /** Tests for the addAllArguments method. */
     @Test
     fun testAddAllArguments() {
         val builder = FfmpegCommandBuilder()
@@ -74,9 +60,7 @@ class FfmpegCommandBuilderTest {
         assertEquals("ffmpeg one two three", builder.build())
     }
 
-    /**
-     * Tests for the list method.
-     */
+    /** Tests for the list method. */
     @Test
     fun testList() {
         val builder = FfmpegCommandBuilder()
@@ -86,9 +70,7 @@ class FfmpegCommandBuilderTest {
         assertEquals(ImmutableList.of("ffmpeg", "one", "two", "three"), builder.list())
     }
 
-    /**
-     * Test for the toString method.
-     */
+    /** Test for the toString method. */
     @Test
     fun testToString() {
         val firstBuilder = FfmpegCommandBuilder(FfmpegArgument.FFMPEG)
@@ -103,9 +85,7 @@ class FfmpegCommandBuilderTest {
         assertEquals("FfmpegCommandBuilder{commandParts=[ffprobe, -map, -c:a, -i]}", secondBuilder.toString())
     }
 
-    /**
-     * Tests for the hashcode method.
-     */
+    /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
         val first = FfmpegCommandBuilder(FfmpegArgument.FFPROBE)
@@ -127,9 +107,7 @@ class FfmpegCommandBuilderTest {
         assertEquals(350673534, second.hashCode())
     }
 
-    /**
-     * Tests for the equals method.
-     */
+    /** Tests for the equals method. */
     @Test
     fun testEquals() {
         val first = FfmpegCommandBuilder(FfmpegArgument.FFPROBE)

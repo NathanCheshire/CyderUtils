@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.network.scrapers;
 
-/**
- * An interface all results returned by {@link Scraper}s must implement.
- */
+/** An interface all results returned by {@link Scraper}s must implement. */
 public interface ScraperResult {
     /**
      * Returns the URL these results were scraped from.

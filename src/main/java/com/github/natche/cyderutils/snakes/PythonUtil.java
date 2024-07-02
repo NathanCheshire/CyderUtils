@@ -18,43 +18,27 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * Utility functions for Python.
- */
+/** Utility functions for Python. */
 public final class PythonUtil {
-    /**
-     * The show keyword for getting a pip package version.
-     */
+    /** The show keyword for getting a pip package version. */
     private static final String SHOW = "show";
 
-    /**
-     * The prefix of the pip show output for the package name.
-     */
+    /** The prefix of the pip show output for the package name. */
     private static final String namePrefix = "Name: " ;
 
-    /**
-     * The prefix of the pip show output for the version.
-     */
+    /** The prefix of the pip show output for the version. */
     private static final String versionPrefix = "Version: " ;
 
-    /**
-     * The "install" keyword for pip installations.
-     */
+    /** The "install" keyword for pip installations. */
     private static final String INSTALL = "install";
 
-    /**
-     * The version command line argument.
-     */
+    /** The version command line argument. */
     private static final String VERSION_ARGUMENT = "--version";
 
-    /**
-     * The Python version command result prefix.
-     */
+    /** The Python version command result prefix. */
     private static final String pythonVersionResultPrefix = "Python " ;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private PythonUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

@@ -2,78 +2,48 @@ package com.github.natche.cyderutils.weather.parsers;
 
 import java.util.ArrayList;
 
-/**
- * The master object for parsing OpenWeatherMap API weather data.
- */
+/** The master object for parsing OpenWeatherMap API weather data. */
 public class WeatherData {
-    /**
-     * The coord object.
-     */
+    /** The coord object. */
     private Coord coord;
 
-    /**
-     * The list of weather objects.
-     */
+    /** The list of weather objects. */
     private ArrayList<WeatherListObject> weather;
 
-    /**
-     * The origin of the weather data.
-     */
+    /** The origin of the weather data. */
     private String base;
 
-    /**
-     * The main object.
-     */
+    /** The main object. */
     private Main main;
 
-    /**
-     * The visibility.
-     */
+    /** The visibility. */
     private int visibility;
 
-    /**
-     * The wind object.
-     */
+    /** The wind object. */
     private Wind wind;
 
-    /**
-     * The clouds object.
-     */
+    /** The clouds object. */
     private Clouds clouds;
 
-    /**
-     * The time of calculation.
-     */
+    /** The time of calculation. */
     private int dt;
 
-    /**
-     * The sys object.
-     */
+    /** The sys object. */
     private Sys sys;
 
-    /**
-     * The UTC shift for this timezone.
-     */
+    /** The UTC shift for this timezone. */
     private int timezone;
 
-    /**
-     * The city id.
-     */
+    /** The city id. */
     private int id;
 
-    /**
-     * The city name.
-     */
+    /** The city name. */
     private String name;
 
-    /**
-     * An internal parameter.
-     */
+    /** An internal parameter. */
     private double cod;
 
-    /**
-     * Constructs a new weather data object.
-     */
+    /** Constructs a new weather data object. */
     public WeatherData() {}
 
     /**
@@ -310,9 +280,7 @@ public class WeatherData {
         this.cod = cod;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -337,9 +305,7 @@ public class WeatherData {
                 && cod == other.cod;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = coord.hashCode();
@@ -358,9 +324,7 @@ public class WeatherData {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WeatherData{"

@@ -6,37 +6,25 @@ import com.google.errorprone.annotations.Immutable;
 import java.time.LocalDate;
 import java.util.Calendar;
 
-/**
- * A class used to represent a month and date such as July 4th.
- */
+/** A class used to represent a month and date such as July 4th. */
 @Immutable
 @SuppressWarnings("ClassCanBeRecord")
 public final class MonthDay {
-    /**
-     * The calendar instance for querying today's month and date.
-     */
+    /** The calendar instance for querying today's month and date. */
     private static final Calendar calendarInstance = Calendar.getInstance();
 
-    /**
-     * The today month day object.
-     */
+    /** The today month day object. */
     public static final MonthDay TODAY = new MonthDay(
             calendarInstance.get(Calendar.MONTH) + 1,
             calendarInstance.get(Calendar.DATE));
 
-    /**
-     * The "the" string used by the {@link #getMonthDateString()} method.
-     */
+    /** The "the" string used by the {@link #getMonthDateString()} method. */
     private static final String THE = "the";
 
-    /**
-     * The month number.
-     */
+    /** The month number. */
     private final int month;
 
-    /**
-     * The date number.
-     */
+    /** The date number. */
     private final int date;
 
     /**
@@ -124,9 +112,7 @@ public final class MonthDay {
         return TimeUtil.isSpecialDay(this, specialDay);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "MonthDay{"
@@ -135,9 +121,7 @@ public final class MonthDay {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(month);
@@ -145,9 +129,7 @@ public final class MonthDay {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (o == this) {

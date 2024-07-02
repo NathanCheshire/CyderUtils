@@ -14,19 +14,13 @@ import com.google.errorprone.annotations.Immutable;
  */
 @Immutable
 public final class BlockListEntry {
-    /**
-     * The name of the blocked entry.
-     */
+    /** The name of the blocked entry. */
     private final String name;
 
-    /**
-     * The site of the blocked entry.
-     */
+    /** The site of the blocked entry. */
     private final String site;
 
-    /**
-     * The type of the blocked entry.
-     */
+    /** The type of the blocked entry. */
     private final String type;
 
     /**
@@ -78,9 +72,7 @@ public final class BlockListEntry {
         return type;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = name.hashCode();
@@ -89,9 +81,7 @@ public final class BlockListEntry {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -106,9 +96,7 @@ public final class BlockListEntry {
                 && type.equals(other.type);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "BlockListEntry{"

@@ -11,13 +11,9 @@ import org.jsoup.safety.Safelist;
 import java.awt.*;
 import java.util.regex.Pattern;
 
-/**
- * Utilities related to HTML formatting.
- */
+/** Utilities related to HTML formatting. */
 public final class HtmlUtil {
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private HtmlUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

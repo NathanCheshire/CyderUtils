@@ -6,135 +6,87 @@ import com.google.errorprone.annotations.Immutable;
 import com.google.gson.annotations.SerializedName;
 import com.github.natche.cyderutils.network.ipdataco.IpDataManager;
 
-/**
- * A model class for the data returned from querying ipdataco using a {@link IpDataManager}.
- */
+/** A model class for the data returned from querying ipdataco using a {@link IpDataManager}. */
 @Immutable
 public final class IpData {
-    /**
-     * The IP address that was looked up.
-     */
+    /** The IP address that was looked up. */
     private final String ip;
 
-    /**
-     * Whether the country is a recognized member of the European Union.
-     */
+    /** Whether the country is a recognized member of the European Union. */
     @SerializedName("is_eu")
     private final boolean isEu;
 
-    /**
-     * The name of the city from where the IP Address is located.
-     */
+    /** The name of the city from where the IP Address is located. */
     private final String city;
 
-    /**
-     * The name of the region where the IP Address is located.
-     */
+    /** The name of the region where the IP Address is located. */
     private final String region;
 
-    /**
-     * ISO 3166-2 code for the region.
-     */
+    /** ISO 3166-2 code for the region. */
     @SerializedName("region_code")
     private final String regionCode;
 
-    /**
-     * The region type, such as state for the USA or province for Canada.
-     */
+    /** The region type, such as state for the USA or province for Canada. */
     @SerializedName("region_type")
     private final String regionType;
 
-    /**
-     * The name of the country where the IP Address is located.
-     */
+    /** The name of the country where the IP Address is located. */
     @SerializedName("country_name")
     private final String countryName;
 
-    /**
-     * The two-letter ISO 3166-1 alpha-2 code for the country.
-     */
+    /** The two-letter ISO 3166-1 alpha-2 code for the country. */
     @SerializedName("country_code")
     private final String countryCode;
 
-    /**
-     * The name of the continent where the IP Address is located.
-     */
+    /** The name of the continent where the IP Address is located. */
     @SerializedName("continent_name")
     private final String continentName;
 
-    /**
-     * The two-letter ISO 3166-1 alpha-2 code for the continent.
-     */
+    /** The two-letter ISO 3166-1 alpha-2 code for the continent. */
     @SerializedName("continent_code")
     private final String continentCode;
 
-    /**
-     * An approximate latitudinal location for the IP Address.
-     */
+    /** An approximate latitudinal location for the IP Address. */
     private final double latitude;
 
-    /**
-     * An approximate longitudinal location for the IP Address.
-     */
+    /** An approximate longitudinal location for the IP Address. */
     private final double longitude;
 
-    /**
-     * The Postal code for where the IP Address is located.
-     */
+    /** The Postal code for where the IP Address is located. */
     private final String postal;
 
-    /**
-     * The International Calling Code for the country where the IP Address is located.
-     */
+    /** The International Calling Code for the country where the IP Address is located. */
     @SerializedName("calling_code")
     private final String callingCode;
 
-    /**
-     * A link to a PNG/SVG file with the flag of the country where the IP Address is located.
-     */
+    /** A link to a PNG/SVG file with the flag of the country where the IP Address is located. */
     private final String flag;
 
-    /**
-     * An emoji version of the flag of the country where the IP Address is located.
-     */
+    /** An emoji version of the flag of the country where the IP Address is located. */
     @SerializedName("emoji_flag")
     private final String emojiFlag;
 
-    /**
-     * The Unicode for the emoji flag.
-     */
+    /** The Unicode for the emoji flag. */
     @SerializedName("emoji_unicode")
     private final String emojiUnicode;
 
-    /**
-     * The ASN object for this request.
-     */
+    /** The ASN object for this request. */
     private final Asn asn;
 
-    /**
-     * The languages for this IP.
-     */
+    /** The languages for this IP. */
     private final ImmutableList<Language> languages;
 
-    /**
-     * The currency for this IP.
-     */
+    /** The currency for this IP. */
     private final Currency currency;
 
-    /**
-     * The timezone for this IP.
-     */
+    /** The timezone for this IP. */
     @SerializedName("time_zone")
     private final TimeZone timeZone;
 
-    /**
-     * The threat data for this IP.
-     */
+    /** The threat data for this IP. */
     private final Threat threat;
 
-    /**
-     * The total number of requests made by your API key in the last 24 hrs, updated once a minute.
-     */
+    /** The total number of requests made by your API key in the last 24 hrs, updated once a minute. */
     private final int count;
 
     /**
@@ -419,9 +371,7 @@ public final class IpData {
         return languages;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "IpData{"
@@ -451,9 +401,7 @@ public final class IpData {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int result = ip.hashCode();
@@ -482,9 +430,7 @@ public final class IpData {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

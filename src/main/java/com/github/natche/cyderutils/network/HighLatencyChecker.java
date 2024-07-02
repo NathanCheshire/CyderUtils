@@ -17,64 +17,40 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * a status based on a provided map of latency values to categories.
  */
 public final class HighLatencyChecker {
-    /**
-     * The IP address this checker will ping.
-     */
+    /** The IP address this checker will ping. */
     private final String ipAddress;
 
-    /**
-     * The port this checker will ping.
-     */
+    /** The port this checker will ping. */
     private final Port port;
 
-    /**
-     * The name of the ipAddress:port combo this latency checker pings.
-     */
+    /** The name of the ipAddress:port combo this latency checker pings. */
     private final String remoteName;
 
-    /**
-     * The categorizer to categorize the determined latency of this checker.
-     */
+    /** The categorizer to categorize the determined latency of this checker. */
     private final LatencyCategorizer latencyCategorizer;
 
-    /**
-     * The delay between latency refreshes.
-     */
+    /** The delay between latency refreshes. */
     private final Duration pingDelay;
 
-    /**
-     * The frequency at which to check to exit the wait between latency refreshes should occur at.
-     */
+    /** The frequency at which to check to exit the wait between latency refreshes should occur at. */
     private final Duration exitRefreshLatencySleepCheckFrequency;
 
-    /**
-     * The frequency at which to check to exit the spin wait thread when refreshing the latency.
-     */
+    /** The frequency at which to check to exit the spin wait thread when refreshing the latency. */
     private final Duration exitGetLatencySpinWaitCheckFrequency;
 
-    /**
-     * The name of the thread which refreshes the latency.
-     */
+    /** The name of the thread which refreshes the latency. */
     private final String checkerThreadName;
 
-    /**
-     * Whether this high latency checker is currently running.
-     */
+    /** Whether this high latency checker is currently running. */
     private final AtomicBoolean refreshLatencyThreadRunning = new AtomicBoolean(false);
 
-    /**
-     * Whether this high latency checker's {@link #stop()} method has been invoked but the thread has not yet exited.
-     */
+    /** Whether this high latency checker's {@link #stop()} method has been invoked but the thread has not yet exited. */
     private final AtomicBoolean refreshLatencyThreadStopping = new AtomicBoolean(false);
 
-    /**
-     * The current status of this latency checker.
-     */
+    /** The current status of this latency checker. */
     private String currentStatus;
 
-    /**
-     * The current latency of this latency checker.
-     */
+    /** The current latency of this latency checker. */
     private long currentLatency;
 
     /**
@@ -134,9 +110,7 @@ public final class HighLatencyChecker {
         }, checkerThreadName);
     }
 
-    /**
-     * Stops this latency checker if running.
-     */
+    /** Stops this latency checker if running. */
     public void stop() {
         refreshLatencyThreadStopping.get();
     }
@@ -179,9 +153,7 @@ public final class HighLatencyChecker {
         return remoteName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -204,9 +176,7 @@ public final class HighLatencyChecker {
                 && other.currentStatus.equals(currentStatus);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = ipAddress.hashCode();
@@ -223,9 +193,7 @@ public final class HighLatencyChecker {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String toString() {
         return "LatencyChecker{"
                 + "ipAddress=\"" + ipAddress + "\""
@@ -242,9 +210,7 @@ public final class HighLatencyChecker {
                 + "}";
     }
 
-    /**
-     * A builder for constructing instances of {@link HighLatencyChecker}.
-     */
+    /** A builder for constructing instances of {@link HighLatencyChecker}. */
     public static final class Builder {
         private static final String DEFAULT_IP_ADDRESS = "172.217.4.78";
         private static final String DEFAULT_REMOTE_NAME = "Google";

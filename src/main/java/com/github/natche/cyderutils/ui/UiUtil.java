@@ -35,13 +35,9 @@ import java.util.stream.IntStream;
 
 import static com.github.natche.cyderutils.ui.UiConstants.*;
 
-/**
- * Utilities to control, update, modify, and create CyderFrames and ui components.
- */
+/** Utilities to control, update, modify, and create CyderFrames and ui components. */
 public final class UiUtil {
-    /**
-     * The map of supported prop configurable drag label button sizes to button size objects.
-     */
+    /** The map of supported prop configurable drag label button sizes to button size objects. */
     private static final ImmutableMap<String, DragLabelButtonSize> dragLabelButtonRepresentations =
             new ImmutableMap.Builder<String, DragLabelButtonSize>()
                     .put("small", DragLabelButtonSize.SMALL)
@@ -50,9 +46,7 @@ public final class UiUtil {
                     .put("full_drag_label", DragLabelButtonSize.FULL_DRAG_LABEL)
                     .build();
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private UiUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -88,9 +82,7 @@ public final class UiUtil {
                 .filter(f -> !(f instanceof CyderFrame)).collect(Collectors.toList()));
     }
 
-    /**
-     * Saves a screenshot of all CyderFrames to the user's Files/ directory.
-     */
+    /** Saves a screenshot of all CyderFrames to the user's Files/ directory. */
     public static void screenshotCyderFrames() {
         getCyderFrames().stream().filter(Component::isVisible).forEach(UiUtil::screenshotCyderFrame);
     }
@@ -111,9 +103,7 @@ public final class UiUtil {
         return false;
     }
 
-    /**
-     * The max allowable length when including a frame's title in a filename.
-     */
+    /** The max allowable length when including a frame's title in a filename. */
     public static final int MAX_FRAME_TITLE_FILE_LENGTH = 15;
 
     /**
@@ -276,9 +266,7 @@ public final class UiUtil {
                 .findFirst().orElseThrow(() -> new DeviceNotFoundException("Could not find device with id: " + id));
     }
 
-    /**
-     * Closes all instances of {@link Frame} by invoking {@link Frame#dispose()} on all instances.
-     */
+    /** Closes all instances of {@link Frame} by invoking {@link Frame#dispose()} on all instances. */
     public static void disposeAllFrames() {
         Arrays.stream(Frame.getFrames()).forEach(Frame::dispose);
     }
@@ -312,9 +300,7 @@ public final class UiUtil {
         getCyderFrames().forEach(frame -> frame.dispose(fastClose));
     }
 
-    /**
-     * Repaints all valid instances of CyderFrame.
-     */
+    /** Repaints all valid instances of CyderFrame. */
     public static void repaintCyderFrames() {
         getCyderFrames().forEach(CyderFrame::repaint);
     }
@@ -351,9 +337,7 @@ public final class UiUtil {
         };
     }
 
-    /**
-     * The index which determines which color to choose for the border color.
-     */
+    /** The index which determines which color to choose for the border color. */
     private static final AtomicInteger colorIndex = new AtomicInteger();
 
     /**
@@ -670,9 +654,7 @@ public final class UiUtil {
         };
     }
 
-    /**
-     * The alignment for a {@link JTextPane}s {@link javax.swing.text.StyledDocument}.
-     */
+    /** The alignment for a {@link JTextPane}s {@link javax.swing.text.StyledDocument}. */
     public enum JTextPaneAlignment {
         LEFT, CENTER, RIGHT
     }
@@ -699,17 +681,13 @@ public final class UiUtil {
         document.setParagraphAttributes(0, document.getLength(), attributeSet, false);
     }
 
-    /**
-     * Initializes all ui-manager look and feel key-value props.
-     */
+    /** Initializes all ui-manager look and feel key-value props. */
     public static void initializeUiAndSystemProps() {
         initializeUiManagerTooltipProps();
         UIManager.put(SLIDER_ONLY_LEFT_MOUSE_DRAG, Boolean.TRUE);
     }
 
-    /**
-     * Initializes UIManager tooltip key-value props.
-     */
+    /** Initializes UIManager tooltip key-value props. */
     private static void initializeUiManagerTooltipProps() {
         UIManager.put(TOOLTIP_BACKGROUND, TOOLTIP_BACKGROUND_COLOR);
         UIManager.put(TOOLTIP_BORDER, TOOLTIP_BORDER_RESOURCE);

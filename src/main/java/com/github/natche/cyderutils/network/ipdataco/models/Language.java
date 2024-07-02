@@ -4,25 +4,17 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A language entry for the list of languages a user might be native to.
- */
+/** A language entry for the list of languages a user might be native to. */
 @Immutable
 public final class Language {
-    /**
-     * The name of the language.
-     */
+    /** The name of the language. */
     private final String name;
 
-    /**
-     * The native name of the language.
-     */
+    /** The native name of the language. */
     @SerializedName("native")
     private final String nativeName;
 
-    /**
-     * The ISO639-1 language code.
-     */
+    /** The ISO639-1 language code. */
     private final String code;
 
     /**
@@ -74,9 +66,7 @@ public final class Language {
         return code;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Language{"
@@ -86,9 +76,7 @@ public final class Language {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = name.hashCode();
@@ -97,9 +85,7 @@ public final class Language {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

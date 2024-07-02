@@ -11,9 +11,7 @@ import java.io.File;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-/**
- * A Cyder handler for a specific file type.
- */
+/** A Cyder handler for a specific file type. */
 public enum CyderFileHandler {
     TEXT(file -> FileUtil.getExtension(file).equals(Extension.TXT.getExtension()),
             file -> TextViewer.getInstance(file).showGui()),
@@ -28,9 +26,7 @@ public enum CyderFileHandler {
     }),
     DIRECTORY(File::isDirectory, DirectoryViewer::showGui);
 
-    /**
-     * The function to determine whether a Cyder file handler exists for the provided file type.
-     */
+    /** The function to determine whether a Cyder file handler exists for the provided file type. */
     private final Function<File, Boolean> cyderHandlerExists;
 
     /**

@@ -14,28 +14,18 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
-/**
- * Utility methods to calculate the needed space for a String of text.
- */
+/** Utility methods to calculate the needed space for a String of text. */
 public final class BoundsUtil {
-    /**
-     * The default maximum width for returned bounds strings.
-     */
+    /** The default maximum width for returned bounds strings. */
     private static final int DEFAULT_MAX_WIDTH = 1200;
 
-    /**
-     * The opening HTML tag char.
-     */
+    /** The opening HTML tag char. */
     public static final char openingHtmlTagChar = '<';
 
-    /**
-     * The closing HTML tag char.
-     */
+    /** The closing HTML tag char. */
     public static final char closingHtmlTagChar = '>';
 
-    /**
-     * The number of chars to look back or forward in a string to attempt to find a space to replace with a break tag.
-     */
+    /** The number of chars to look back or forward in a string to attempt to find a space to replace with a break tag. */
     private static final int numLookAroundForSpaceChars = 7;
 
     /**

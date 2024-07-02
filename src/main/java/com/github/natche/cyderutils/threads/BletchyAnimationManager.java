@@ -11,56 +11,38 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
-/**
- * A class used to perform Bletchy animations on a specific JTextPane.
- */
+/** A class used to perform Bletchy animations on a specific JTextPane. */
 public enum BletchyAnimationManager {
-    /**
-     * The Bletchy animation manager instance.
-     */
+    /** The Bletchy animation manager instance. */
     INSTANCE;
 
-    /**
-     * The number of iterations per char of the Bletchy animation.
-     */
+    /** The number of iterations per char of the Bletchy animation. */
     @SuppressWarnings("FieldCanBeLocal")
     private final int iterationsPerChar = 5;
 
-    /**
-     * Whether the Bletchy animation animator has been initialized.
-     */
+    /** Whether the Bletchy animation animator has been initialized. */
     private final AtomicBoolean initialized = new AtomicBoolean();
 
-    /**
-     * Character list of all lowercase latin characters.
-     */
+    /** Character list of all lowercase latin characters. */
     private final ImmutableList<Character> lowercaseAlphabetChars = ImmutableList.of(
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     );
 
-    /**
-     * Character list of all arabic digits.
-     */
+    /** Character list of all arabic digits. */
     private final ImmutableList<Character> digitChars = ImmutableList.of(
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     );
 
-    /**
-     * The Unicode index of the starting card suite character.
-     */
+    /** The Unicode index of the starting card suite character. */
     @SuppressWarnings("FieldCanBeLocal")
     private final int minCardSuiteIndex = 9824;
 
-    /**
-     * The Unicode index of the ending card suite character.
-     */
+    /** The Unicode index of the ending card suite character. */
     @SuppressWarnings("FieldCanBeLocal")
     private final int maxCardSuiteIndex = 9835;
 
-    /**
-     * Character list of all unicode card suit characters.
-     */
+    /** Character list of all unicode card suit characters. */
     private final ImmutableList<Character> CARD_SUITS;
 
     {
@@ -73,20 +55,14 @@ public enum BletchyAnimationManager {
         CARD_SUITS = ImmutableList.copyOf(ret);
     }
 
-    /**
-     * Character list of unicode chars used for bletchy animations.
-     */
+    /** Character list of unicode chars used for bletchy animations. */
     private final ImmutableList<Character> UNICODE_CHARS;
 
-    /**
-     * The starting index of the unicode chars to use for bletchy animations.
-     */
+    /** The starting index of the unicode chars to use for bletchy animations. */
     @SuppressWarnings("FieldCanBeLocal")
     private final int usableUnicodeCharsStartIndex = 880;
 
-    /**
-     * The ending index of the unicode chars to use for bletchy animations.
-     */
+    /** The ending index of the unicode chars to use for bletchy animations. */
     @SuppressWarnings("FieldCanBeLocal")
     private final int usableUnicodeEndIndex = 1023;
 
@@ -100,19 +76,13 @@ public enum BletchyAnimationManager {
         UNICODE_CHARS = ImmutableList.copyOf(ret);
     }
 
-    /**
-     * The inner animator class.
-     */
+    /** The inner animator class. */
     private Animator animator;
 
-    /**
-     * The output pane the bletchy animations will be printed to.
-     */
+    /** The output pane the bletchy animations will be printed to. */
     private CyderOutputPane outputPane;
 
-    /**
-     * Common printing methods Cyder uses for JTextPane access.
-     */
+    /** Common printing methods Cyder uses for JTextPane access. */
     private StringUtil printer;
 
     /**
@@ -183,38 +153,24 @@ public enum BletchyAnimationManager {
         }
     }
 
-    /**
-     * Inner class used to invoke the bletchy animation.
-     */
+    /** Inner class used to invoke the bletchy animation. */
     private class Animator {
-        /**
-         * Whether the animation is active.
-         */
+        /** Whether the animation is active. */
         private final AtomicBoolean animationActive = new AtomicBoolean();
 
-        /**
-         * The string to decode.
-         */
+        /** The string to decode. */
         private final String decodeString;
 
-        /**
-         * Whether to use numbers during the Bletchy animation.
-         */
+        /** Whether to use numbers during the Bletchy animation. */
         private final boolean useNumbers;
 
-        /**
-         * Whether to use unicode during the Bletchy animation.
-         */
+        /** Whether to use unicode during the Bletchy animation. */
         private final boolean useUnicode;
 
-        /**
-         * The delay in ms between prints.
-         */
+        /** The delay in ms between prints. */
         private final int millisDelay;
 
-        /**
-         * The Bletchy animation steps.
-         */
+        /** The Bletchy animation steps. */
         private final ArrayList<String> animationSteps;
 
         /**
@@ -238,9 +194,7 @@ public enum BletchyAnimationManager {
             this.animationSteps = getBletchyArray(decodeString, useNumbers, useUnicode);
         }
 
-        /**
-         * Starts the bletchy animation this animator is setup to perform.
-         */
+        /** Starts the bletchy animation this animator is setup to perform. */
         private void start() {
             Preconditions.checkArgument(!animationActive.get());
             animationActive.set(true);
@@ -282,9 +236,7 @@ public enum BletchyAnimationManager {
             }, threadName);
         }
 
-        /**
-         * Kills this bletchy thread.
-         */
+        /** Kills this bletchy thread. */
         public void kill() {
             animationActive.set(true);
         }
@@ -344,9 +296,7 @@ public enum BletchyAnimationManager {
         return animator != null && animator.isActive();
     }
 
-    /**
-     * Kills any and all bletchy printing threads
-     */
+    /** Kills any and all bletchy printing threads */
     public void kill() {
         if (animator != null) {
             animator.kill();

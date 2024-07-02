@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
 
-/**
- * Tests for supported audio file types
- */
+/** Tests for supported audio file types */
 class SupportedAudioFileTypeTest {
     private val aac = OsUtil.buildFile(
         "src",
@@ -75,9 +73,7 @@ class SupportedAudioFileTypeTest {
         "TastyCarrots.wav"
     )
 
-    /**
-     * Tests for the get extension method.
-     */
+    /** Tests for the get extension method. */
     @Test
     fun testGetExtension() {
         assertEquals(".mp3", SupportedAudioFileType.MP3.extension)
@@ -86,9 +82,7 @@ class SupportedAudioFileTypeTest {
         assertEquals(".ogg", SupportedAudioFileType.OGG.extension)
     }
 
-    /**
-     * Tests for the get signature method.
-     */
+    /** Tests for the get signature method. */
     @Test
     fun testGetSignature() {
         assertEquals(ImmutableList.of(0x49, 0x44, 0x33), SupportedAudioFileType.MP3.signature)
@@ -97,9 +91,7 @@ class SupportedAudioFileTypeTest {
         assertEquals(ImmutableList.of(0x4F, 0x67, 0x67, 0x53), SupportedAudioFileType.OGG.signature)
     }
 
-    /**
-     * Tests for the get conversion arguments method.
-     */
+    /** Tests for the get conversion arguments method. */
     @Test
     fun testGetConversionArguments() {
         assertEquals(ImmutableList.of("-q:a", "0", "-map", "a"), SupportedAudioFileType.MP3.conversionArguments)
@@ -114,9 +106,7 @@ class SupportedAudioFileTypeTest {
         )
     }
 
-    /**
-     * Tests for the is supported method.
-     */
+    /** Tests for the is supported method. */
     @Test
     fun testIsSupported() {
         assertThrows(NullPointerException::class.java) {
@@ -136,9 +126,7 @@ class SupportedAudioFileTypeTest {
         assertTrue(SupportedAudioFileType.isSupported(wav))
     }
 
-    /**
-     * Tests for the is of type method.
-     */
+    /** Tests for the is of type method. */
     @Test
     fun testIsOfType() {
         assertThrows(NullPointerException::class.java) {

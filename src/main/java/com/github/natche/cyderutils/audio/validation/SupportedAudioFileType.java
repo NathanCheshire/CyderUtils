@@ -9,13 +9,9 @@ import com.github.natche.cyderutils.files.FileUtil;
 import java.io.File;
 import java.util.Arrays;
 
-/**
- * Audio file formats supported by Cyder.
- */
+/** Audio file formats supported by Cyder. */
 public enum SupportedAudioFileType {
-    /**
-     * The MP3 audio file type.
-     */
+    /** The MP3 audio file type. */
     MP3(".mp3",
             ImmutableList.of(0x49, 0x44, 0x33),
             ImmutableList.of(
@@ -26,9 +22,7 @@ public enum SupportedAudioFileType {
             )
     ),
 
-    /**
-     * The wave audio file type.
-     */
+    /** The wave audio file type. */
     WAVE(".wav",
             ImmutableList.of(0x52, 0x49, 0x46, 0x46),
             ImmutableList.of(
@@ -37,9 +31,7 @@ public enum SupportedAudioFileType {
             )
     ),
 
-    /**
-     * The OGG audio file type.
-     */
+    /** The OGG audio file type. */
     OGG(".ogg",
             ImmutableList.of(0x4F, 0x67, 0x67, 0x53),
             ImmutableList.of(FfmpegArgument.AUDIO_CODE_C.getArgument(),

@@ -19,28 +19,18 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-/**
- * Information frames throughout Cyder.
- */
+/** Information frames throughout Cyder. */
 public final class InformHandler {
-    /**
-     * The width padding on each side of the information pane.
-     */
+    /** The width padding on each side of the information pane. */
     private static final int frameXPadding = 10;
 
-    /**
-     * The offset to translate the text label on the information pane down by.
-     */
+    /** The offset to translate the text label on the information pane down by. */
     private static final int frameYOffset = CyderDragLabel.DEFAULT_HEIGHT;
 
-    /**
-     * THe height padding on each side of the information pane.
-     */
+    /** THe height padding on each side of the information pane. */
     private static final int frameYPadding = 10;
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private InformHandler() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }
@@ -148,53 +138,33 @@ public final class InformHandler {
         return informFrame;
     }
 
-    /**
-     * A builder for an information pane.
-     */
+    /** A builder for an information pane. */
     public static class Builder {
-        /**
-         * The minimum allowable text length for an information pane.
-         */
+        /** The minimum allowable text length for an information pane. */
         public static final int MINIMUM_TEXT_LENGTH = 4;
 
-        /**
-         * The default title for an information pane which are provided no title.
-         */
+        /** The default title for an information pane which are provided no title. */
         public static final String DEFAULT_TITLE = "Information";
 
-        /**
-         * The text, possibly styled with html elements, to display on the information pane.
-         */
+        /** The text, possibly styled with html elements, to display on the information pane. */
         private final String htmlText;
 
-        /**
-         * The title of this information pane.
-         */
+        /** The title of this information pane. */
         private String title = DEFAULT_TITLE;
 
-        /**
-         * The component to set this inform frame relative to before the call to setVisible().
-         */
+        /** The component to set this inform frame relative to before the call to setVisible(). */
         private Component relativeTo;
 
-        /**
-         * The action to invoke before the frame is closed.
-         */
+        /** The action to invoke before the frame is closed. */
         private Runnable preCloseAction;
 
-        /**
-         * The action to invoke after the frame is closed.
-         */
+        /** The action to invoke after the frame is closed. */
         private Runnable postCloseAction;
 
-        /**
-         * The custom container component to layer on the CyderFrame content pane.
-         */
+        /** The custom container component to layer on the CyderFrame content pane. */
         private JLabel container;
 
-        /**
-         * Whether to disable the relative to component.
-         */
+        /** Whether to disable the relative to component. */
         private boolean disableRelativeTo;
 
         /**
@@ -344,9 +314,7 @@ public final class InformHandler {
             return this;
         }
 
-        /**
-         * Creates an information pane using the parameters set by this builder
-         */
+        /** Creates an information pane using the parameters set by this builder */
         public void inform() {
             InformHandler.inform(this);
         }

@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.youtube.search;
 
-/**
- * The order for the result of a {@link YouTubeSearchQuery}.
- */
+/** The order for the result of a {@link YouTubeSearchQuery}. */
 public enum YouTubeSearchOrder {
     DATE("date"),
     RATING("rating"),
@@ -11,9 +9,7 @@ public enum YouTubeSearchOrder {
     VIDEO_COUNT("videoCount"),
     VIEW_COUNT("viewCount");
 
-    /**
-     * The url parameter for this search order.
-     */
+    /** The url parameter for this search order. */
     private final String urlParameter;
 
     YouTubeSearchOrder(String urlParameter) {

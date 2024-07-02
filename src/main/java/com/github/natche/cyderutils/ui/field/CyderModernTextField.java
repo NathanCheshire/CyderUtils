@@ -22,165 +22,101 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-/**
- * A modern looking text field.
- */
+/** A modern looking text field. */
 public class CyderModernTextField extends JTextField {
-    /**
-     * The range percents must fall into.
-     */
+    /** The range percents must fall into. */
     private static final Range<Float> percentageRange = Range.closed(0.0f, 100.0f);
 
-    /**
-     * The name of the ripple animation incrementer thread.
-     */
+    /** The name of the ripple animation incrementer thread. */
     private static final String rippleAnimationIncrementerThreadName =
             "CyderModernTextField Ripple Animation Incrementer";
 
-    /**
-     * The name of the ripple animation decrementer thread.
-     */
+    /** The name of the ripple animation decrementer thread. */
     private static final String rippleAnimationDecrementerThreadName =
             "CyderModernTextField Ripple Animation Decrementer";
 
-    /**
-     * The range of valid timeouts for the ripple animation.
-     */
+    /** The range of valid timeouts for the ripple animation. */
     private static final Range<Integer> rippleAnimationTimeoutRange = Range.closed(1, 1000);
 
-    /**
-     * The inset values for the top, left, and right default border.
-     */
+    /** The inset values for the top, left, and right default border. */
     private static final int topLeftRightBorderInsets = 0;
 
-    /**
-     * The default ripple label thickness.
-     */
+    /** The default ripple label thickness. */
     private static final int defaultRippleLabelThickness = 4;
 
-    /**
-     * The default thickness of the underline label.
-     */
+    /** The default thickness of the underline label. */
     private static final int defaultUnderlineLabelThickness = 4;
 
-    /**
-     * The default number of iterations to flash for.
-     */
+    /** The default number of iterations to flash for. */
     private static final int DEFAULT_FLASH_ITERATIONS = 5;
 
-    /**
-     * The default delay in ms between flash iterations.
-     */
+    /** The default delay in ms between flash iterations. */
     private static final int DEFAULT_FLASH_DELAY = 600;
 
-    /**
-     * The name of the thread to flash the field.
-     */
+    /** The name of the thread to flash the field. */
     private static final String FLASH_FIELD_THREAD_NAME = "CyderModernTextField Field Flasher";
 
-    /**
-     * The current ripple label thickness.
-     */
+    /** The current ripple label thickness. */
     private int rippleLabelThickness = defaultRippleLabelThickness;
 
-    /**
-     * The thickness of the underline label.
-     */
+    /** The thickness of the underline label. */
     private int underlineLabelThickness = defaultUnderlineLabelThickness;
 
-    /**
-     * Whether the ripple animation should be performed
-     */
+    /** Whether the ripple animation should be performed */
     private final AtomicBoolean shouldPerformFocusRipple = new AtomicBoolean(true);
 
-    /**
-     * Whether this component has focus.
-     */
+    /** Whether this component has focus. */
     private final AtomicBoolean focused = new AtomicBoolean(false);
 
-    /**
-     * The current width of the ripple label.
-     */
+    /** The current width of the ripple label. */
     private final AtomicInteger rippleLabelWidth = new AtomicInteger(0);
 
-    /**
-     * The ripple animation color.
-     */
+    /** The ripple animation color. */
     private Color rippleColor = CyderColors.regularRed;
 
-    /**
-     * The amount to increment or decrement the ripple animation by each frame.
-     */
+    /** The amount to increment or decrement the ripple animation by each frame. */
     private int rippleAnimationDelta = 5;
 
-    /**
-     * The delay between ripple animation frames in ms.
-     */
+    /** The delay between ripple animation frames in ms. */
     private int rippleAnimationTimeout = 2;
 
-    /**
-     * The minimum percentage of the width the ripple label can be.
-     */
+    /** The minimum percentage of the width the ripple label can be. */
     private float minRippleLabelWidthPercentage = percentageRange.lowerEndpoint();
 
-    /**
-     * The maximum percentage of the width the ripple label can be.
-     */
+    /** The maximum percentage of the width the ripple label can be. */
     private float maxRippleLabelWidthPercentage = percentageRange.upperEndpoint();
 
-    /**
-     * Whether the ripple decrement animation is currently underway.
-     */
+    /** Whether the ripple decrement animation is currently underway. */
     private final AtomicBoolean inRippleDecrementAnimation = new AtomicBoolean(false);
 
-    /**
-     * Whether the ripple increment animation is currently underway.
-     */
+    /** Whether the ripple increment animation is currently underway. */
     private final AtomicBoolean inRippleIncrementAnimation = new AtomicBoolean(false);
 
-    /**
-     * The background color of this text field.
-     */
+    /** The background color of this text field. */
     private Color backgroundColor = CyderColors.vanilla;
 
-    /**
-     * Whether auto-capitalization should be performed.
-     */
+    /** Whether auto-capitalization should be performed. */
     private final AtomicBoolean shouldPerformAutoCapitalization = new AtomicBoolean(true);
 
-    /**
-     * Whether the character limit should be enforced on key events.
-     */
+    /** Whether the character limit should be enforced on key events. */
     private final AtomicBoolean shouldEnforceCharacterLimit = new AtomicBoolean(false);
 
-    /**
-     * The field regex to enforce entered characters to adhere to if enforcement is enabled.
-     */
+    /** The field regex to enforce entered characters to adhere to if enforcement is enabled. */
     private String fieldRegex = "";
 
-    /**
-     * Whether the flash animation is currently underway.
-     */
+    /** Whether the flash animation is currently underway. */
     private final AtomicBoolean inFlashAnimation = new AtomicBoolean(false);
 
-    /**
-     * The underline color of the text field.
-     */
+    /** The underline color of the text field. */
     private Color underlineColor = CyderColors.navy;
 
-    /**
-     * The label for hint text.
-     */
+    /** The label for hint text. */
     private final JLabel hintTextLabel = new JLabel();
 
-    /**
-     * The hint text for this field.
-     */
+    /** The hint text for this field. */
     private String hintText = "";
 
-    /**
-     * The label for the underline.
-     */
+    /** The label for the underline. */
     private final JLabel underLineLabel = new JLabel() {
         @Override
         public void paint(Graphics g) {
@@ -190,9 +126,7 @@ public class CyderModernTextField extends JTextField {
         }
     };
 
-    /**
-     * The label for the ripple animation.
-     */
+    /** The label for the ripple animation. */
     private final JLabel rippleLabel = new JLabel() {
         @Override
         public void paint(Graphics g) {
@@ -201,9 +135,7 @@ public class CyderModernTextField extends JTextField {
         }
     };
 
-    /**
-     * Constructs a new modern text field.
-     */
+    /** Constructs a new modern text field. */
     public CyderModernTextField() {
         this("");
     }
@@ -242,25 +174,19 @@ public class CyderModernTextField extends JTextField {
         refreshHintLabel();
     }
 
-    /**
-     * Suppress a constructor.
-     */
+    /** Suppress a constructor. */
     @SuppressWarnings("unused")
     public CyderModernTextField(int columns) {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
 
-    /**
-     * Suppress a constructor.
-     */
+    /** Suppress a constructor. */
     @SuppressWarnings("unused")
     public CyderModernTextField(String text, int columns) {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
     }
 
-    /**
-     * Suppress a constructor.
-     */
+    /** Suppress a constructor. */
     @SuppressWarnings("unused")
     public CyderModernTextField(Document doc, String text, int columns) {
         throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
@@ -327,9 +253,7 @@ public class CyderModernTextField extends JTextField {
         this.rippleColor = rippleColor;
     }
 
-    /**
-     * Adds the ripple focus listener to this text field.
-     */
+    /** Adds the ripple focus listener to this text field. */
     @ForReadability
     private void addRippleFocusListener() {
         addFocusListener(new FocusListener() {
@@ -416,9 +340,7 @@ public class CyderModernTextField extends JTextField {
         return inRippleIncrementAnimation.get();
     }
 
-    /**
-     * Starts the increment ripple animation.
-     */
+    /** Starts the increment ripple animation. */
     @ForReadability
     private void startRippleIncrementAnimation() {
         Preconditions.checkState(focused.get());
@@ -493,9 +415,7 @@ public class CyderModernTextField extends JTextField {
         return inRippleDecrementAnimation.get();
     }
 
-    /**
-     * Starts the ripple decrement animation.
-     */
+    /** Starts the ripple decrement animation. */
     @ForReadability
     private void startRippleDecrementAnimation() {
         Preconditions.checkState(!focused.get());
@@ -517,9 +437,7 @@ public class CyderModernTextField extends JTextField {
         }, rippleAnimationDecrementerThreadName);
     }
 
-    /**
-     * Refreshes the underline label bounds.
-     */
+    /** Refreshes the underline label bounds. */
     private void refreshUnderlineLabelBounds() {
         // Three because top and bottom of empty border and the bottom line border (this)
         underLineLabel.setBounds(0, getHeight() - 3 * underlineLabelThickness,
@@ -527,9 +445,7 @@ public class CyderModernTextField extends JTextField {
         underLineLabel.repaint();
     }
 
-    /**
-     * Refreshes the ripple label bounds.
-     */
+    /** Refreshes the ripple label bounds. */
     private void refreshRippleLabelBounds() {
         switch (getHorizontalAlignment()) {
             case JTextField.CENTER -> rippleLabel.setBounds((getWidth() - rippleLabelWidth.get()) / 2,
@@ -542,9 +458,7 @@ public class CyderModernTextField extends JTextField {
         rippleLabel.repaint();
     }
 
-    /**
-     * Refreshes the border meaning the border thickness will also be refreshed.
-     */
+    /** Refreshes the border meaning the border thickness will also be refreshed. */
     public void refreshBorder() {
         setBorder(null);
     }
@@ -560,9 +474,7 @@ public class CyderModernTextField extends JTextField {
                 underlineLabelThickness, topLeftRightBorderInsets));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setBackground(Color newBackgroundColor) {
         Preconditions.checkNotNull(newBackgroundColor);
@@ -572,9 +484,7 @@ public class CyderModernTextField extends JTextField {
         setOpaque(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Color getBackground() {
         return backgroundColor;
@@ -599,9 +509,7 @@ public class CyderModernTextField extends JTextField {
         autoCapitalizationLogic();
     }
 
-    /**
-     * Adds the auto-capitalization key listener to this text field.
-     */
+    /** Adds the auto-capitalization key listener to this text field. */
     private void addAutoCapitalizationKeyListener() {
         addKeyListener(new KeyListener() {
             @Override
@@ -621,9 +529,7 @@ public class CyderModernTextField extends JTextField {
         });
     }
 
-    /**
-     * The logic to perform on key events from the auto capitalization listener.
-     */
+    /** The logic to perform on key events from the auto capitalization listener. */
     @ForReadability
     private void autoCapitalizationLogic() {
         if (shouldPerformAutoCapitalization.get()) {
@@ -653,9 +559,7 @@ public class CyderModernTextField extends JTextField {
         characterLimitLogic();
     }
 
-    /**
-     * The character limit for this field.
-     */
+    /** The character limit for this field. */
     private int characterLimit = Integer.MAX_VALUE;
 
     /**
@@ -679,9 +583,7 @@ public class CyderModernTextField extends JTextField {
         characterLimitLogic();
     }
 
-    /**
-     * Adds the character limit key listener to this text field.
-     */
+    /** Adds the character limit key listener to this text field. */
     private void addCharacterLimitKeyListener() {
         addKeyListener(new KeyListener() {
             @Override
@@ -701,9 +603,7 @@ public class CyderModernTextField extends JTextField {
         });
     }
 
-    /**
-     * The logic to perform one key events of the character limit listener.
-     */
+    /** The logic to perform one key events of the character limit listener. */
     @ForReadability
     private void characterLimitLogic() {
         if (shouldEnforceCharacterLimit.get()) {
@@ -715,9 +615,7 @@ public class CyderModernTextField extends JTextField {
         }
     }
 
-    /**
-     * Whether the field regex should be enforced.
-     */
+    /** Whether the field regex should be enforced. */
     private final AtomicBoolean shouldEnforceFieldRegex = new AtomicBoolean(false);
 
     /**
@@ -758,9 +656,7 @@ public class CyderModernTextField extends JTextField {
         this.fieldRegex = fieldRegex;
     }
 
-    /**
-     * Adds the regex key listener to this field.
-     */
+    /** Adds the regex key listener to this field. */
     private void addFieldRegexKeyListener() {
         addKeyListener(new KeyListener() {
             @Override
@@ -780,9 +676,7 @@ public class CyderModernTextField extends JTextField {
         });
     }
 
-    /**
-     * The logic to invoke on key events from the regex key listener.
-     */
+    /** The logic to invoke on key events from the regex key listener. */
     @ForReadability
     private void fieldRegexKeyListenerLogic() {
         if (shouldEnforceFieldRegex.get() && !fieldRegex.isEmpty()) {
@@ -794,9 +688,7 @@ public class CyderModernTextField extends JTextField {
         }
     }
 
-    /**
-     * Flashes the field for the default number of iterations.
-     */
+    /** Flashes the field for the default number of iterations. */
     public void flash() {
         flash(DEFAULT_FLASH_ITERATIONS, DEFAULT_FLASH_DELAY);
     }
@@ -903,9 +795,7 @@ public class CyderModernTextField extends JTextField {
         return hintText;
     }
 
-    /**
-     * Refreshes the hint text label position, alignment, location, and color
-     */
+    /** Refreshes the hint text label position, alignment, location, and color */
     private void refreshHintLabel() {
         String text = getText();
         hintTextLabel.setVisible(text.isEmpty());
@@ -919,9 +809,7 @@ public class CyderModernTextField extends JTextField {
         hintTextLabel.setText(hintText);
     }
 
-    /**
-     * Adds the hint text key listener to this text field.
-     */
+    /** Adds the hint text key listener to this text field. */
     private void addHintTextKeyListener() {
         addKeyListener(new KeyListener() {
             @Override
@@ -941,9 +829,7 @@ public class CyderModernTextField extends JTextField {
         });
     }
 
-    /**
-     * Adds the hint text focus listener to this text field.
-     */
+    /** Adds the hint text focus listener to this text field. */
     private void addHintTextFocusListener() {
         addFocusListener(new FocusListener() {
             @Override
@@ -958,9 +844,7 @@ public class CyderModernTextField extends JTextField {
         });
     }
 
-    /**
-     * The logic to perform on hint text focus listener events.
-     */
+    /** The logic to perform on hint text focus listener events. */
     @ForReadability
     private void hintTextFocusListenerLogic() {
         if (!hasFocus()) {
@@ -971,9 +855,7 @@ public class CyderModernTextField extends JTextField {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
@@ -983,9 +865,7 @@ public class CyderModernTextField extends JTextField {
         refreshHintLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);

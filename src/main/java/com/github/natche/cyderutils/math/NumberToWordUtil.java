@@ -13,23 +13,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * Utilities for converting a number to it's word form.
- */
+/** Utilities for converting a number to it's word form. */
 public final class NumberToWordUtil {
-    /**
-     * The character to denote a negative number.
-     */
+    /** The character to denote a negative number. */
     private static final String negativeChar = "-";
 
-    /**
-     * The regex for determining if an input is equal to zero
-     */
+    /** The regex for determining if an input is equal to zero */
     private static final String zeroRegex = "\\s*-?\\s*[0]+\\s*";
 
-    /**
-     * The regex for splitting a string into groups of three.
-     */
+    /** The regex for splitting a string into groups of three. */
     private static final String groupsOfThreeDigitsRegex = "(?<=\\G...)";
 
     /**
@@ -38,9 +30,7 @@ public final class NumberToWordUtil {
      */
     private static final Range<Integer> tenToTwentyRange = Range.closedOpen(10, 20);
 
-    /**
-     * String representations for all digits in the one's place.
-     */
+    /** String representations for all digits in the one's place. */
     private static final ImmutableList<String> onesPlaceStrings = ImmutableList.of(
             "",
             "one",
@@ -54,9 +44,7 @@ public final class NumberToWordUtil {
             "nine"
     );
 
-    /**
-     * String representations for all digits in the ten's place in base 10.
-     */
+    /** String representations for all digits in the ten's place in base 10. */
     private static final ImmutableList<String> tensPlaceStrings = ImmutableList.of(
             "",
             "",
@@ -70,9 +58,7 @@ public final class NumberToWordUtil {
             "ninety"
     );
 
-    /**
-     * String representations for numbers in {@link #tenToTwentyRange}.
-     */
+    /** String representations for numbers in {@link #tenToTwentyRange}. */
     private static final ImmutableList<String> tenToTwentyStrings = ImmutableList.of(
             "ten",
             "eleven",
@@ -86,9 +72,7 @@ public final class NumberToWordUtil {
             "nineteen"
     );
 
-    /**
-     * String prefixes for digit trios in base 10.
-     */
+    /** String prefixes for digit trios in base 10. */
     private static final ImmutableList<String> thousandPrefixes = ImmutableList.of(
             "",
             "-thousand",
@@ -115,14 +99,10 @@ public final class NumberToWordUtil {
             "-centillion"
     );
 
-    /**
-     * The pattern used to determine if user input is valid for the to words method.
-     */
+    /** The pattern used to determine if user input is valid for the to words method. */
     private static final Pattern validUserInputPattern = Pattern.compile("\\s*-?" + CyderRegexPatterns.numberPattern);
 
-    /**
-     * The range a trio must be in.
-     */
+    /** The range a trio must be in. */
     private static final Range<Integer> THOUSAND_RANGE = Range.closedOpen(0, 1000);
 
     /**

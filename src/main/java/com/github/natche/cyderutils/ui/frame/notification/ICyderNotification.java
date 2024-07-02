@@ -2,23 +2,15 @@ package com.github.natche.cyderutils.ui.frame.notification;
 
 import java.util.Optional;
 
-/**
- * An interface for the necessary methods a {@link CyderNotification} must implement.
- */
+/** An interface for the necessary methods a {@link CyderNotification} must implement. */
 public interface ICyderNotification {
-    /**
-     * Causes the notification to appear on the frame.
-     */
+    /** Causes the notification to appear on the frame. */
     void appear();
 
-    /**
-     * Causes the notification to disappear from the frame.
-     */
+    /** Causes the notification to disappear from the frame. */
     void disappear();
 
-    /**
-     * Kills the animation and removes this from the parent frame.
-     */
+    /** Kills the animation and removes this from the parent frame. */
     void kill();
 
     /**
@@ -44,9 +36,7 @@ public interface ICyderNotification {
      */
     Optional<String> getLabelText();
 
-    /**
-     * Sets the position of this notification to the start/end of the animation.
-     */
+    /** Sets the position of this notification to the start/end of the animation. */
     void setToStartAndEndingPosition();
 
     /**

@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.getter;
 
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 
-/**
- * A base getter util builder for all specific get method builders to extend.
- */
+/** A base getter util builder for all specific get method builders to extend. */
 public interface GetBuilder {
     /**
      * Returns the title of the get frame.

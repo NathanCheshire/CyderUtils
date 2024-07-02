@@ -1,17 +1,11 @@
 package com.github.natche.cyderutils.audio.ffmpeg;
 
-/**
- * The supported verbosity levels (log levels) for FFmpeg.
- */
+/** The supported verbosity levels (log levels) for FFmpeg. */
 public enum FfmpegLogLevel {
-    /**
-     * No output.
-     */
+    /** No output. */
     QUIET,
 
-    /**
-     * Only show fatal errors which could lead the process to crash.
-     */
+    /** Only show fatal errors which could lead the process to crash. */
     PANIC,
 
     /**
@@ -20,9 +14,7 @@ public enum FfmpegLogLevel {
      */
     FATAL,
 
-    /**
-     * Show all errors, including ones that can be recovered from.
-     */
+    /** Show all errors, including ones that can be recovered from. */
     ERROR,
 
     /**
@@ -31,24 +23,16 @@ public enum FfmpegLogLevel {
      */
     WARNING,
 
-    /**
-     * Standard informational messages will be shown.
-     */
+    /** Standard informational messages will be shown. */
     INFO,
 
-    /**
-     * Show verbose output, including informational messages.
-     */
+    /** Show verbose output, including informational messages. */
     VERBOSE,
 
-    /**
-     * Show all informational messages, including debug information.
-     */
+    /** Show all informational messages, including debug information. */
     DEBUG,
 
-    /**
-     * Show everything, including debugging information.
-     */
+    /** Show everything, including debugging information. */
     TRACE;
 
     /**

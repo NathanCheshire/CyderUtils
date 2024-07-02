@@ -10,43 +10,27 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * A combo box which cycles through the possible values.
- */
+/** A combo box which cycles through the possible values. */
 public class CyderComboBox extends JLabel {
-    /**
-     * The border offset for constructing the field toggle button.
-     */
+    /** The border offset for constructing the field toggle button. */
     private static final int borderOffset = 5;
 
-    /**
-     * The field in which the current value is displayed in.
-     */
+    /** The field in which the current value is displayed in. */
     private final CyderTextField valueDisplayField;
 
-    /**
-     * The switch button which iterates over the switch states.
-     */
+    /** The switch button which iterates over the switch states. */
     private final CyderButton iterationButton;
 
-    /**
-     * The current switch state.
-     */
+    /** The current switch state. */
     private CyderComboBoxState currentState;
 
-    /**
-     * The list of valid states for this switcher.
-     */
+    /** The list of valid states for this switcher. */
     private final Collection<CyderComboBoxState> states;
 
-    /**
-     * The width of the whole switcher.
-     */
+    /** The width of the whole switcher. */
     private final int width;
 
-    /**
-     * The height of the whole switcher.
-     */
+    /** The height of the whole switcher. */
     private final int height;
 
     /**
@@ -196,9 +180,7 @@ public class CyderComboBox extends JLabel {
         iterationButton.addActionListener(e -> runnable.run());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setEnabled(boolean enabled) {
         valueDisplayField.setEnabled(enabled);
         iterationButton.setEnabled(enabled);

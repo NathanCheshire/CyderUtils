@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.bounds;
 
-/**
- * A container for some {@link String} content.
- */
+/** A container for some {@link String} content. */
 public abstract class StringContainer {
     /**
      * Returns the String contained by this container.

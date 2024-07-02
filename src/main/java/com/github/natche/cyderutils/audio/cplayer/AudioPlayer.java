@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.audio.cplayer;
 
 import javazoom.jl.decoder.JavaLayerException;
 
-/**
- * An interface used by {@link CPlayer} to accept classes which have some stop/play audio functionality.
- */
+/** An interface used by {@link CPlayer} to accept classes which have some stop/play audio functionality. */
 public interface AudioPlayer {
     /**
      * Starts this player.
@@ -13,8 +11,6 @@ public interface AudioPlayer {
      */
     void play() throws JavaLayerException;
 
-    /**
-     * Closes the resources this player is using, stopping the playback.
-     */
+    /** Closes the resources this player is using, stopping the playback. */
     void close();
 }

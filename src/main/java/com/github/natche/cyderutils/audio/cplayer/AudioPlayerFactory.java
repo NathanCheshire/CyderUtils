@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.audio.cplayer;
 
 import java.io.BufferedInputStream;
 
-/**
- * A factory for generating {@link AudioPlayer}s from a provided {@link BufferedInputStream}.
- */
+/** A factory for generating {@link AudioPlayer}s from a provided {@link BufferedInputStream}. */
 public interface AudioPlayerFactory {
     /**
      * Creates a new {@link AudioPlayer} using the provided {@link BufferedInputStream}.

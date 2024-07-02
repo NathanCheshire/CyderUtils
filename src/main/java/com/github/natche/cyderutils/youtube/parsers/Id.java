@@ -1,22 +1,14 @@
 package com.github.natche.cyderutils.youtube.parsers;
 
-/**
- * An ID object of a {@link YouTubeVideo}.
- */
+/** An ID object of a {@link YouTubeVideo}. */
 public class Id {
-    /**
-     * The kind, typically "youtube#video".
-     */
+    /** The kind, typically "youtube#video". */
     private String kind;
 
-    /**
-     * The eleven digit YouTube video ID.
-     */
+    /** The eleven digit YouTube video ID. */
     private String videoId;
 
-    /**
-     * Constructs a new YouTube ID.
-     */
+    /** Constructs a new YouTube ID. */
     public Id() {}
 
     /**
@@ -55,9 +47,7 @@ public class Id {
         this.videoId = videoId;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,9 +61,7 @@ public class Id {
                 && other.kind.equals(kind);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = kind.hashCode();
@@ -81,9 +69,7 @@ public class Id {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Id{"

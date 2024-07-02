@@ -3,67 +3,43 @@ package com.github.natche.cyderutils.github.parsers;
 import com.google.common.base.Preconditions;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A json serialization class for a GitHub issue reaction.
- */
+/** A json serialization class for a GitHub issue reaction. */
 @SuppressWarnings("unused")
 public class Reaction {
-    /**
-     * The url to get the list of reactions for the issue referenced by this reaction.
-     */
+    /** The url to get the list of reactions for the issue referenced by this reaction. */
     public String url;
 
-    /**
-     * The total count of reactions for the issue referenced by this reaction.
-     */
+    /** The total count of reactions for the issue referenced by this reaction. */
     @SerializedName("total_count")
     public int totalCount;
 
-    /**
-     * The number of plus one reactions.
-     */
+    /** The number of plus one reactions. */
     @SerializedName("+1")
     public int plusOne;
 
-    /**
-     * The number of minus one reactions.
-     */
+    /** The number of minus one reactions. */
     @SerializedName("-1")
     public int minusOne;
 
-    /**
-     * The number of laugh reactions.
-     */
+    /** The number of laugh reactions. */
     public int laugh;
 
-    /**
-     * The number of hooray reactions.
-     */
+    /** The number of hooray reactions. */
     public int hooray;
 
-    /**
-     * The number of confused reactions.
-     */
+    /** The number of confused reactions. */
     public int confused;
 
-    /**
-     * The number of heart reactions.
-     */
+    /** The number of heart reactions. */
     public int heart;
 
-    /**
-     * The number of rocket reactions.
-     */
+    /** The number of rocket reactions. */
     public int rocket;
 
-    /**
-     * The number of eyes reactions.
-     */
+    /** The number of eyes reactions. */
     public int eyes;
 
-    /**
-     * Creates a new Reaction for a GitHub issue.
-     */
+    /** Creates a new Reaction for a GitHub issue. */
     public Reaction() {}
 
     /**
@@ -248,9 +224,7 @@ public class Reaction {
         this.eyes = eyes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -272,9 +246,7 @@ public class Reaction {
                 && other.eyes == eyes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = url.hashCode();
@@ -291,9 +263,7 @@ public class Reaction {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Reaction{"

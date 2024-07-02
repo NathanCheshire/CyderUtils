@@ -10,18 +10,12 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for a {@link HarmonicRectangle}.
- */
+/** Tests for a {@link HarmonicRectangle}. */
 public class HarmonicRectangleTest {
-    /**
-     * Constructs a new instance of this class for testing purposes.
-     */
+    /** Constructs a new instance of this class for testing purposes. */
     HarmonicRectangleTest() {}
 
-    /**
-     * Tests for construction of harmonic rectangles.
-     */
+    /** Tests for construction of harmonic rectangles. */
     @Test
     void testConstruction() {
         assertThrows(IllegalArgumentException.class,
@@ -49,9 +43,7 @@ public class HarmonicRectangleTest {
         assertThrows(NullPointerException.class, () -> new HarmonicRectangle(new Dimension(1, 1), null));
     }
 
-    /**
-     * Tests for the get and set animation delay method.
-     */
+    /** Tests for the get and set animation delay method. */
     @Test
     void testGetAndSetAnimationDelay() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -60,9 +52,7 @@ public class HarmonicRectangleTest {
         assertEquals(Duration.ofMillis(500), rect.getAnimationDelay());
     }
 
-    /**
-     * Tests for the get and set background color method.
-     */
+    /** Tests for the get and set background color method. */
     @Test
     void testGetAndSetBackgroundColor() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -72,9 +62,7 @@ public class HarmonicRectangleTest {
         assertEquals(color, rect.getBackgroundColor());
     }
 
-    /**
-     * Tests for the get and set harmonic direction method.
-     */
+    /** Tests for the get and set harmonic direction method. */
     @Test
     void testGetAndSetHarmonicDirection() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -83,9 +71,7 @@ public class HarmonicRectangleTest {
         assertEquals(HarmonicDirection.HORIZONTAL, rect.getHarmonicDirection());
     }
 
-    /**
-     * Tests for the get and set animation increment method.
-     */
+    /** Tests for the get and set animation increment method. */
     @Test
     void testGetAndSetAnimationIncrement() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -94,9 +80,7 @@ public class HarmonicRectangleTest {
         assertEquals(22, rect.getAnimationIncrement());
     }
 
-    /**
-     * Tests for the animation cycle such as starting, running, and stopping.
-     */
+    /** Tests for the animation cycle such as starting, running, and stopping. */
     @Test
     void testAnimationCycle() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 20, 100, 20);
@@ -120,9 +104,7 @@ public class HarmonicRectangleTest {
         assertTrue(possibleWidthValues.contains(rect.getWidth()));
     }
 
-    /**
-     * Tests for the manu animation step method.
-     */
+    /** Tests for the manu animation step method. */
     @Test
     void testManualAnimationStep() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 1);
@@ -138,9 +120,7 @@ public class HarmonicRectangleTest {
         assertEquals(5, rect.getWidth());
     }
 
-    /**
-     * Tests for the to string method.
-     */
+    /** Tests for the to string method. */
     @Test
     void testToString() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -159,9 +139,7 @@ public class HarmonicRectangleTest {
                 + " currentHeight=5, maximumWidth=15, maximumHeight=15, isAnimating=false}", maxedOutRect.toString());
     }
 
-    /**
-     * Tests for the hash code method.
-     */
+    /** Tests for the hash code method. */
     @Test
     void testHashCode() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);
@@ -174,9 +152,7 @@ public class HarmonicRectangleTest {
         assertNotEquals(rect, new Object());
     }
 
-    /**
-     * Tests for the equals method.
-     */
+    /** Tests for the equals method. */
     @Test
     void testEquals() {
         HarmonicRectangle rect = new HarmonicRectangle(0, 0, 10, 10);

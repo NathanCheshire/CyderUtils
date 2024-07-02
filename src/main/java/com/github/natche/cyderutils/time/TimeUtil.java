@@ -15,126 +15,78 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Static utility class for things related to time/date queries and conversions.
- */
+/** Static utility class for things related to time/date queries and conversions. */
 @SuppressWarnings("SpellCheckingInspection") /* Date time patterns */
 public final class TimeUtil {
-    /**
-     * The number of milliseconds in a single second.
-     */
+    /** The number of milliseconds in a single second. */
     public static final double millisInSecond = 1000.0;
 
-    /**
-     * The number of seconds in a single minute.
-     */
+    /** The number of seconds in a single minute. */
     public static final double secondsInMinute = 60.0;
 
-    /**
-     * The number of minutes in a single hour.
-     */
+    /** The number of minutes in a single hour. */
     public static final double minutesInHour = 60.0;
 
-    /**
-     * The number of hours in a single day.
-     */
+    /** The number of hours in a single day. */
     public static final double hoursInDay = 24.0;
 
-    /**
-     * The number of days in a single month.
-     */
+    /** The number of days in a single month. */
     public static final double daysInMonth = 30.0;
 
-    /**
-     * The number of days in a single week.
-     */
+    /** The number of days in a single week. */
     public static final double daysInWeek = 7.0;
 
-    /**
-     * The number of days in a single year.
-     */
+    /** The number of days in a single year. */
     public static final double daysInYear = 365.0;
 
-    /**
-     * The number of months in a single year.
-     */
+    /** The number of months in a single year. */
     public static final double monthsInyear = 12.0;
 
-    /**
-     * The number of seconds in a single hour.
-     */
+    /** The number of seconds in a single hour. */
     public static final int secondsInHour = 3600;
 
-    /**
-     * The abbreviation for a year.
-     */
+    /** The abbreviation for a year. */
     public static final String YEAR_ABBREVIATION = "y";
 
-    /**
-     * The abbreviation for a month.
-     */
+    /** The abbreviation for a month. */
     public static final String MONTH_ABBREVIATION = "mo";
 
-    /**
-     * The abbreviation for a day.
-     */
+    /** The abbreviation for a day. */
     public static final String DAY_ABBREVIATION = "d";
 
-    /**
-     * The abbreviation for an hour.
-     */
+    /** The abbreviation for an hour. */
     public static final String HOUR_ABBREVIATION = "h";
 
-    /**
-     * The abbreviation for a minute.
-     */
+    /** The abbreviation for a minute. */
     public static final String MINUTE_ABBREVIATION = "m";
 
-    /**
-     * The abbreviation for a second.
-     */
+    /** The abbreviation for a second. */
     public static final String SECOND_ABBREVIATION = "s";
 
-    /**
-     * The abbreviation for a millisecond.
-     */
+    /** The abbreviation for a millisecond. */
     public static final String MILLISECOND_ABBREVIATION = "ms";
 
-    /**
-     * The calendar instance to use for calculations within this class.
-     */
+    /** The calendar instance to use for calculations within this class. */
     private static final Calendar calendarInstance = Calendar.getInstance();
 
-    /**
-     * The date formatter to use when the weather time is requested.
-     */
+    /** The date formatter to use when the weather time is requested. */
     @SuppressWarnings("SpellCheckingInspection")
     public static final SimpleDateFormat weatherFormat =
             new SimpleDateFormat("h:mm:ss aa EEEEEEEEEEEEE MMMMMMMMMMMMMMMMMM dd, yyyy");
 
-    /**
-     * The date formatter to use when a screenshot is taken for the timestamp suffix.
-     */
+    /** The date formatter to use when a screenshot is taken for the timestamp suffix. */
     public static final SimpleDateFormat SCREENSHOT_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-    /**
-     * The date formatter used for when a log line is being written to the log file.
-     */
+    /** The date formatter used for when a log line is being written to the log file. */
     public static final SimpleDateFormat LOG_LINE_TIME_FORMAT = new SimpleDateFormat("HH-mm-ss.SSS");
 
-    /**
-     * The date formatter to use when formatting a date object to the notified at time.
-     */
+    /** The date formatter to use when formatting a date object to the notified at time. */
     public static final SimpleDateFormat notificationFormat = new SimpleDateFormat("HH:mm:ss");
     
-    /**
-     * The date formatter to use when formatting a date object to the console clock time format without seconds.
-     */
+    /** The date formatter to use when formatting a date object to the console clock time format without seconds. */
     public static final SimpleDateFormat consoleNoSecondFormat = new SimpleDateFormat("EEEEEEEEE h:mmaa");
 
-    /**
-     * An immutable map of month ordinals to their names.
-     */
+    /** An immutable map of month ordinals to their names. */
     public static final ImmutableMap<Integer, String> months = new ImmutableMap.Builder<Integer, String>()
             .put(1, "January")
             .put(2, "February")
@@ -150,104 +102,64 @@ public final class TimeUtil {
             .put(12, "December")
             .build();
 
-    /**
-     * The range an hour must fall within to be counted as in the morning.
-     */
+    /** The range an hour must fall within to be counted as in the morning. */
     private static final Range<Integer> MORNING_RANGE = Range.closedOpen(0, 12);
 
-    /**
-     * The range an hour must fall within to be counted as in the after-noon.
-     */
+    /** The range an hour must fall within to be counted as in the after-noon. */
     private static final Range<Integer> AFTERNOON_RANGE = Range.closedOpen(12, 18);
 
-    /**
-     * The range an hour must fall within to be counted as in the evening.
-     */
+    /** The range an hour must fall within to be counted as in the evening. */
     private static final Range<Integer> EVENING_RANGE = Range.closedOpen(18, 24);
 
-    /**
-     * The decimal formatter for the {@link #formatMillis(long)} method.
-     */
+    /** The decimal formatter for the {@link #formatMillis(long)} method. */
     private static final DecimalFormat milliFormatter = new DecimalFormat("#.##");
 
-    /**
-     * The Christmas month day object.
-     */
+    /** The Christmas month day object. */
     private static final MonthDay christmas = new MonthDay(Calendar.DECEMBER + 1, 25);
 
-    /**
-     * The Halloween month day object.
-     */
+    /** The Halloween month day object. */
     private static final MonthDay halloween = new MonthDay(Calendar.OCTOBER + 1, 31);
 
-    /**
-     * The independence day month day object.
-     */
+    /** The independence day month day object. */
     private static final MonthDay independenceDay = new MonthDay(Calendar.JULY + 1, 4);
 
-    /**
-     * The Valentines day month day object.
-     */
+    /** The Valentines day month day object. */
     private static final MonthDay valentinesDay = new MonthDay(Calendar.FEBRUARY + 1, 14);
 
-    /**
-     * The month Thanksgiving falls in.
-     */
+    /** The month Thanksgiving falls in. */
     private static final int thanksgivingMonth = Calendar.NOVEMBER + 1;
 
-    /**
-     * The nth Thursday Thanksgiving falls on.
-     */
+    /** The nth Thursday Thanksgiving falls on. */
     private static final int thanksgivingNthThursday = 4;
 
-    /**
-     * The April fools month day object.
-     */
+    /** The April fools month day object. */
     private static final MonthDay aprilFoolsDay = new MonthDay(Calendar.APRIL + 1, 1);
 
-    /**
-     * The pi day month day object.
-     */
+    /** The pi day month day object. */
     private static final MonthDay piDay = new MonthDay(Calendar.MARCH + 1, 14);
 
-    /**
-     * The new years day month day object.
-     */
+    /** The new years day month day object. */
     private static final MonthDay newYearsDay = new MonthDay(Calendar.JANUARY + 1, 1);
 
-    /**
-     * The ground hog day month day object.
-     */
+    /** The ground hog day month day object. */
     private static final MonthDay groundHogDay = new MonthDay(Calendar.FEBRUARY + 1, 2);
 
-    /**
-     * The month labor day falls in.
-     */
+    /** The month labor day falls in. */
     private static final int laborDayMonth = Calendar.SEPTEMBER + 1;
 
-    /**
-     * The nth Monday labor day falls on
-     */
+    /** The nth Monday labor day falls on */
     private static final int nthMondayLaborDay = 1;
 
-    /**
-     * The number for the month of may
-     */
+    /** The number for the month of may */
     private static final int mayMonth = Calendar.MAY + 1;
 
-    /**
-     * The number of days which separate Mardi Grass from Easter Sunday.
-     */
+    /** The number of days which separate Mardi Grass from Easter Sunday. */
     private static final int MARDI_GRASS_EASTER_SEPARATION_DAYS = 47;
 
-    /**
-     * The range a minute value must fall within.
-     */
+    /** The range a minute value must fall within. */
     public static final Range<Integer> minuteRange = Range.closed(0, (int) TimeUtil.secondsInMinute);
 
-    /**
-     * Suppress default constructor.
-     */
+    /** Suppress default constructor. */
     private TimeUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
     }

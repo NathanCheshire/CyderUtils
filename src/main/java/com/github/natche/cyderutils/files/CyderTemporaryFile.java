@@ -11,24 +11,16 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * A builder for constructing a temporary file, it's parent directory, and it's name and extension.
- */
+/** A builder for constructing a temporary file, it's parent directory, and it's name and extension. */
 @Immutable
 public final class CyderTemporaryFile {
-    /**
-     * The directory to place this temporary file in.
-     */
+    /** The directory to place this temporary file in. */
     private final File outputDirectory;
 
-    /**
-     * The name of the output file.
-     */
+    /** The name of the output file. */
     private final String outputName;
 
-    /**
-     * The extension of the output file.
-     */
+    /** The extension of the output file. */
     private final String outputExtension;
 
     /**
@@ -187,9 +179,7 @@ public final class CyderTemporaryFile {
         throw new IllegalArgumentException("Unsupported file mode: " + mode);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -205,9 +195,7 @@ public final class CyderTemporaryFile {
                 && other.outputDirectory.getAbsolutePath().equals(outputDirectory.getAbsolutePath());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = outputDirectory.hashCode();
@@ -216,9 +204,7 @@ public final class CyderTemporaryFile {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "CyderTemporaryFile{"
@@ -228,9 +214,7 @@ public final class CyderTemporaryFile {
                 + "}";
     }
 
-    /**
-     * A builder for constructing instances of {@link CyderTemporaryFile}.
-     */
+    /** A builder for constructing instances of {@link CyderTemporaryFile}. */
     public static final class Builder {
         @SuppressWarnings("SpellCheckingInspection")
         private static final SimpleDateFormat deafultFilenameDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");

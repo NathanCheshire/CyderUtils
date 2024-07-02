@@ -8,9 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-/**
- * An abstraction class on top of {@link Color} to add utility and mutation methods.
- */
+/** An abstraction class on top of {@link Color} to add utility and mutation methods. */
 public final class CyderColor extends Color {
     private static final int shorthandHexLength = 3;
     private static final int hexLength = 6;

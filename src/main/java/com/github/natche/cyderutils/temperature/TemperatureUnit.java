@@ -2,9 +2,7 @@ package com.github.natche.cyderutils.temperature;
 
 import com.google.common.base.Preconditions;
 
-/**
- * A common unit of temperature.
- */
+/** A common unit of temperature. */
 public enum TemperatureUnit {
     /**
      * The Celsius unit of temperature, used by metric system countries.

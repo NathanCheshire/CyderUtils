@@ -3,9 +3,7 @@ package com.github.natche.cyderutils.ui.resizing;
 import java.awt.*;
 import java.util.Arrays;
 
-/**
- * Possibles directions of drag for resize events.
- */
+/** Possibles directions of drag for resize events. */
 enum DragDirection {
     NO_DRAG(0, Cursor.DEFAULT_CURSOR),
     NORTH(1, Cursor.N_RESIZE_CURSOR),
@@ -17,14 +15,10 @@ enum DragDirection {
     NORTH_EAST(9, Cursor.NE_RESIZE_CURSOR),
     SOUTH_EAST(12, Cursor.SE_RESIZE_CURSOR);
 
-    /**
-     * The drag ordinal for this drag direction.
-     */
+    /** The drag ordinal for this drag direction. */
     private final int dragOrdinal;
 
-    /**
-     * The cursor ordinal for this drag direction.
-     */
+    /** The cursor ordinal for this drag direction. */
     private final int cursorOrdinal;
 
     DragDirection(int dragOrdinal, int cursorOrdinal) {

@@ -5,29 +5,19 @@ package com.github.natche.cyderutils.youtube.parsers;
  * This is contained in the {@link YouTubeSearchResultPage} list.
  */
 public class YouTubeVideo {
-    /**
-     * The kind. Typically "kind": "youtube#searchResult".
-     */
+    /** The kind. Typically "kind": "youtube#searchResult". */
     private String kind;
 
-    /**
-     * The etag.
-     */
+    /** The etag. */
     private String etag;
 
-    /**
-     * The ID object which contains the YouTube video ID.
-     */
+    /** The ID object which contains the YouTube video ID. */
     private Id id;
 
-    /**
-     * The snippet object containing most of the relevant data.
-     */
+    /** The snippet object containing most of the relevant data. */
     private Snippet snippet;
 
-    /**
-     * Constructs a new YouTubeVideo.
-     */
+    /** Constructs a new YouTubeVideo. */
     public YouTubeVideo() {}
 
     /**
@@ -102,9 +92,7 @@ public class YouTubeVideo {
         this.snippet = snippet;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -120,9 +108,7 @@ public class YouTubeVideo {
                 && other.snippet.equals(snippet);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = kind.hashCode();
@@ -132,9 +118,7 @@ public class YouTubeVideo {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "YouTubeVideo{"

@@ -5,14 +5,10 @@ import com.google.errorprone.annotations.Immutable;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.strings.CyderStrings;
 
-/**
- * An HTML formatted string.
- */
+/** An HTML formatted string. */
 @Immutable
 public final class HtmlString extends StringContainer {
-    /**
-     * The string contained by this html string.
-     */
+    /** The string contained by this html string. */
     private final String containedString;
 
     /**
@@ -36,25 +32,19 @@ public final class HtmlString extends StringContainer {
         this.containedString = containedString;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getString() {
         return containedString;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return containedString.hashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -67,9 +57,7 @@ public final class HtmlString extends StringContainer {
         return containedString.equals(other.getString());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "HtmlString{" + containedString + "}";

@@ -4,36 +4,24 @@ import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A TimeZone object containing timezone data adjusted for DST where applicable.
- */
+/** A TimeZone object containing timezone data adjusted for DST where applicable. */
 @Immutable
 public final class TimeZone {
-    /**
-     * The name of the TimeZone.
-     */
+    /** The name of the TimeZone. */
     private final String name;
 
-    /**
-     * The abbreviation of the timezone.
-     */
+    /** The abbreviation of the timezone. */
     @SerializedName("abbr")
     private final String abbreviation;
 
-    /**
-     * The UTC offset of the timezone.
-     */
+    /** The UTC offset of the timezone. */
     private final String offset;
 
-    /**
-     * Whether DST has been accounted for.
-     */
+    /** Whether DST has been accounted for. */
     @SerializedName("is_dst")
     private final boolean isDst;
 
-    /**
-     * The current time in the timezone accounting for DST.
-     */
+    /** The current time in the timezone accounting for DST. */
     @SerializedName("current_time")
     private final String currentTime;
 
@@ -110,9 +98,7 @@ public final class TimeZone {
         return currentTime;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "TimeZone{"
@@ -124,9 +110,7 @@ public final class TimeZone {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = name.hashCode();
@@ -137,9 +121,7 @@ public final class TimeZone {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -1,27 +1,17 @@
 package com.github.natche.cyderutils.weather.parsers;
 
-/**
- * An object contained in the weather list.
- */
+/** An object contained in the weather list. */
 public class WeatherListObject {
-    /**
-     * The weather condition id.
-     */
+    /** The weather condition id. */
     private int id;
 
-    /**
-     * The group of weather parameter. E.g. rain, snow, extreme.
-     */
+    /** The group of weather parameter. E.g. rain, snow, extreme. */
     private String main;
 
-    /**
-     * The weather condition within the group.
-     */
+    /** The weather condition within the group. */
     private String description;
 
-    /**
-     * The weather icon id.
-     */
+    /** The weather icon id. */
     private String icon;
 
     /**
@@ -96,9 +86,7 @@ public class WeatherListObject {
         this.icon = icon;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -114,9 +102,7 @@ public class WeatherListObject {
                 && other.icon.equals(icon);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(id);
@@ -126,9 +112,7 @@ public class WeatherListObject {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "WeatherListObject{"

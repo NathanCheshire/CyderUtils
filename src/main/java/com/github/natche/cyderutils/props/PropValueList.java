@@ -6,14 +6,10 @@ import com.google.errorprone.annotations.Immutable;
 
 import java.util.List;
 
-/**
- * A list type for the value of a prop.
- */
+/** A list type for the value of a prop. */
 @Immutable
 public final class PropValueList {
-    /**
-     * The list containing the values for a prop.
-     */
+    /** The list containing the values for a prop. */
     public final ImmutableList<String> propValues;
 
     /**
@@ -36,9 +32,7 @@ public final class PropValueList {
         return propValues;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -51,17 +45,13 @@ public final class PropValueList {
         return other.propValues.equals(propValues);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return propValues.hashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "PropValueList{propValues=" + propValues + "}";

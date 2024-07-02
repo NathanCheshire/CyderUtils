@@ -1,22 +1,14 @@
 package com.github.natche.cyderutils.youtube.parsers;
 
-/**
- * The page information object of a {@link YouTubeSearchResultPage}.
- */
+/** The page information object of a {@link YouTubeSearchResultPage}. */
 public class PageInfo {
-    /**
-     * The total results returned via this query. Note this many be into the thousands.
-     */
+    /** The total results returned via this query. Note this many be into the thousands. */
     private long totalResults;
 
-    /**
-     * The results displayed per page of this query.
-     */
+    /** The results displayed per page of this query. */
     private int resultsPerPage;
 
-    /**
-     * Constructs a new PageInfo object.
-     */
+    /** Constructs a new PageInfo object. */
     public PageInfo() {}
 
     /**
@@ -55,9 +47,7 @@ public class PageInfo {
         this.resultsPerPage = resultsPerPage;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,9 +61,7 @@ public class PageInfo {
                 && other.resultsPerPage == resultsPerPage;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Long.hashCode(totalResults);
@@ -81,9 +69,7 @@ public class PageInfo {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "PageInfo{"

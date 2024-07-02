@@ -5,18 +5,12 @@ import com.google.common.collect.Range;
 
 import java.awt.*;
 
-/**
- * A builder for a font.
- */
+/** A builder for a font. */
 public class FontBuilder {
-    /**
-     * The default font metric for built fonts.
-     */
+    /** The default font metric for built fonts. */
     public static final int DEFAULT_METRIC = Font.BOLD;
 
-    /**
-     * The name of the font.
-     */
+    /** The name of the font. */
     private final String name;
 
     /**
@@ -25,9 +19,7 @@ public class FontBuilder {
      */
     private int metric = DEFAULT_METRIC;
 
-    /**
-     * The size of the font.
-     */
+    /** The size of the font. */
     private int size;
 
     /**

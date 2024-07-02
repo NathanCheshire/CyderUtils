@@ -18,29 +18,19 @@ import java.util.concurrent.Future;
  * supported by Cyder, that of {@link #portRange}.
  */
 public final class Port {
-    /**
-     * The range a general computer port must fall into.
-     */
+    /** The range a general computer port must fall into. */
     public static final Range<Integer> portRange = Range.closed(0, 65535);
 
-    /**
-     * The default port available timeout.
-     */
+    /** The default port available timeout. */
     private static final Duration DEFAULT_PORT_AVAILABLE_TIMEOUT = Duration.ofMillis(400);
 
-    /**
-     * The encapsulated port.
-     */
+    /** The encapsulated port. */
     private final int port;
 
-    /**
-     * The executor service used by {@link #isAvailable()}.
-     */
+    /** The executor service used by {@link #isAvailable()}. */
     private final ExecutorService portAvailableFinderService;
 
-    /**
-     * The time to wait for this local port to bind to determine whether it is available.
-     */
+    /** The time to wait for this local port to bind to determine whether it is available. */
     private Duration portAvailableTimeout = DEFAULT_PORT_AVAILABLE_TIMEOUT;
 
     /**
@@ -131,9 +121,7 @@ public final class Port {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Port{"
@@ -142,9 +130,7 @@ public final class Port {
                 + "}";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int ret = Integer.hashCode(port);
@@ -152,9 +138,7 @@ public final class Port {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
