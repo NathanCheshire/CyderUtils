@@ -44,7 +44,7 @@ def read_lines(file_path: str) -> list[str]:
     Reads the lines from the provided file path and returns
       them after stripping leading and trailing whitespace.
     """
-    return strip_lines(open(file_path, 'r').readlines())
+    return open(file_path, 'r').readlines()
 
 
 def write_lines(file_path: str, lines: list[str]) -> None:

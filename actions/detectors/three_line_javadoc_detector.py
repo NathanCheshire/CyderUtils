@@ -37,10 +37,10 @@ class ThreeLineJavadocDetector(Detector):
 
             lines = file.get_lines()
             for line_index, line in enumerate(lines):
-                if line == self.DOC_COMMENT_START and not in_comment:
+                if line.lstrip().startswith(self.DOC_COMMENT_START) and not in_comment:
                     in_comment = True
                     num_comment_lines += 1
-                elif line == self.DOC_COMMENT_END and in_comment:
+                elif line.lstrip().startswith(self.DOC_COMMENT_END) and in_comment:
                     in_comment = False
                     num_comment_lines += 1
 
