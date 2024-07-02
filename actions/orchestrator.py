@@ -22,5 +22,6 @@ if __name__ == '__main__':
     most_files = most_files_scanner.scan()
     WordFilterDetector(most_files).detect_and_print_violations()
 
+    # This should be last since it potentially modifies the files
     ThreeLineJavadocDetector(
         java_and_kotlin_files).set_should_fix_javadoc(args.fix_javadoc).detect_and_print_violations()

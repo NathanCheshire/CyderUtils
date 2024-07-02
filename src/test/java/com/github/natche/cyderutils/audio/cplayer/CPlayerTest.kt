@@ -119,7 +119,6 @@ class CPlayerTest
         assertEquals("Invalid constructor; required audio file", cause?.message)
     }
 
-
     /**
      * Tests for the functionality of cancel playing; transitively tests the following methods:
      *
@@ -246,7 +245,6 @@ class CPlayerTest
         Thread.sleep(50)
         assertFalse(player.isPlaying)
     }
-
 
     /**
      * Test for the equals method.

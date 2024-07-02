@@ -1,10 +1,12 @@
 from detectors.detector import Detector
 from color.colors import *
 from util.file_and_location import FileAndLocation
-from util.utils import read_lines
 
 
 class ThreeLineJavadocDetector(Detector):
+    DOC_COMMENT_START = "/**"
+    DOC_COMMENT_END = "*/"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._fix_javadoc = False
@@ -30,28 +32,31 @@ class ThreeLineJavadocDetector(Detector):
         for file in self._files:
             in_comment = False
             num_comment_lines = 0
-            last_line = ""
 
             lines = file.get_lines()
             for line_index, line in enumerate(lines):
-                if line == "/**" and not in_comment:
+                if line == self.DOC_COMMENT_START and not in_comment:
                     in_comment = True
                     num_comment_lines += 1
-                elif line == "*/" and in_comment:
+                elif line == self.DOC_COMMENT_END and in_comment:
                     in_comment = False
                     num_comment_lines += 1
 
                     if num_comment_lines == 3:
-                        ret.append(FileAndLocation(
-                            file.get_path(), file.get_path(), line_index, line_index, lines))
-                        new_line = last_line[1:].strip()
-                        # TODO: write new line in place of the old three
+                        if not self._fix_javadoc:
+                            ret.append(FileAndLocation(
+                                file.get_path(), file.get_path(), line_index, line_index, lines))
+                        else:
+                            ret.append(line_index)
 
                     num_comment_lines = 0
                 elif in_comment:
                     num_comment_lines += 1
 
-                last_line = line
-
-        self._num_failures = len(ret)
-        return ret
+        # fixing Java docs should result in no failures
+        if self._fix_javadoc:
+            print("Need to correct javadoc for", len(ret), 'lines')
+            return []
+        else:
+            self._num_failures = len(ret)
+            return ret

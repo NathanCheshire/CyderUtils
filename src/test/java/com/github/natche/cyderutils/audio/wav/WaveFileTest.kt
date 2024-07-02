@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 
-
 /**
  * Tests for [WaveFile]s.
  */
