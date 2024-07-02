@@ -71,8 +71,10 @@ class ThreeLineJavadocDetector(Detector):
                     end_line = line_index
 
                     content = lines[start_line + 1].strip().strip('*').strip()
+                    leading_spaces = lines[start_line][:len(
+                        lines[start_line]) - len(lines[start_line].lstrip())]
 
-                    lines[start_line] = f"{self.DOC_COMMENT_START} {content} {self.DOC_COMMENT_END}\n"
+                    lines[start_line] = f"{leading_spaces}{self.DOC_COMMENT_START} {content} {self.DOC_COMMENT_END}\n"
                     del lines[start_line + 1:end_line + 1]
 
                 write_lines(file.get_path(), lines)
