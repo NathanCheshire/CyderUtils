@@ -1,6 +1,8 @@
+from collections import defaultdict
 from detectors.detector import Detector
 from color.colors import *
 from util.file_and_location import FileAndLocation
+from util.utils import write_lines
 
 
 class ThreeLineJavadocDetector(Detector):
@@ -47,7 +49,7 @@ class ThreeLineJavadocDetector(Detector):
                             ret.append(FileAndLocation(
                                 file.get_path(), file.get_path(), line_index, line_index, lines))
                         else:
-                            ret.append(line_index)
+                            ret.append((file, line_index))
 
                     num_comment_lines = 0
                 elif in_comment:
@@ -55,7 +57,26 @@ class ThreeLineJavadocDetector(Detector):
 
         # fixing Java docs should result in no failures
         if self._fix_javadoc:
-            print("Need to correct javadoc for", len(ret), 'lines')
+            file_lines_map = defaultdict(list)
+            for file, line_index in ret:
+                file_lines_map[file].append(line_index)
+
+            for file, line_indices in file_lines_map.items():
+                lines = file.get_lines()
+
+                line_indices.sort(reverse=True)
+
+                for line_index in line_indices:
+                    start_line = line_index - 2
+                    end_line = line_index
+
+                    content = lines[start_line + 1].strip().strip('*').strip()
+
+                    lines[start_line] = f"{self.DOC_COMMENT_START} {content} {self.DOC_COMMENT_END}\n"
+                    del lines[start_line + 1:end_line + 1]
+
+                write_lines(file.get_path(), lines)
+
             return []
         else:
             self._num_failures = len(ret)

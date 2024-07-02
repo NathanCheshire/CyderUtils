@@ -45,3 +45,11 @@ def read_lines(file_path: str) -> list[str]:
       them after stripping leading and trailing whitespace.
     """
     return strip_lines(open(file_path, 'r').readlines())
+
+
+def write_lines(file_path: str, lines: list[str]) -> None:
+    """
+    Writes the provided lines to the provided file.
+    """
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.writelines(lines)
