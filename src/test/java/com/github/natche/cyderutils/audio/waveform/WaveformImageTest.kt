@@ -10,6 +10,9 @@ import java.io.File
 
 /** Tests for waveform image generation. */
 class WaveformImageTest {
+    /**
+     * Saves the provided image to the build/test-results/images directory.
+     */
     private fun saveGeneratedImage(image: CyderImage, filename: String) {
         val outputFile: File = OsUtil.buildFile("build", "test-results", "images", filename)
         image.saveTo(outputFile);
