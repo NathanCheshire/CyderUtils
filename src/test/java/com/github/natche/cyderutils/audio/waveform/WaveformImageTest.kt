@@ -15,6 +15,7 @@ class WaveformImageTest {
      */
     private fun saveGeneratedImage(image: CyderImage, filename: String) {
         val outputFile: File = OsUtil.buildFile("build", "test-results", "images", filename)
+        if (outputFile.exists()) outputFile.delete()
         image.saveTo(outputFile)
     }
 

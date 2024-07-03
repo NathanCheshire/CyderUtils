@@ -1,10 +1,28 @@
 package com.github.natche.cyderutils.audio
 
+import com.github.natche.cyderutils.audio.cplayer.AudioPlayer
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.io.BufferedInputStream
 
 /** Tests for instances of the AudioPlayerManager. */
 class AudioPlayerManagerTest {
+    /**
+     * The audio player factory used by tests within this file.
+     * // todo use me
+     */
+    private val testAudioPlayerFactory: (BufferedInputStream) -> AudioPlayer = {
+        object : AudioPlayer {
+            override fun play() {
+                Thread.sleep(5000)
+            }
+
+            override fun close() {
+                Thread.sleep(500)
+            }
+        }
+    }
+
     /** Tests for construction. */
     @Test
     fun testConstruction() {
@@ -56,6 +74,11 @@ class AudioPlayerManagerTest {
     /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
+    }
+
+    /** Tests for the equals method. */
+    @Test
+    fun testEquals() {
         val first = AudioPlayerManager("first")
         val equalToFirst = AudioPlayerManager("first")
         val notEqual = AudioPlayerManager("third")
@@ -66,11 +89,6 @@ class AudioPlayerManagerTest {
         assertNotEquals(first, Object())
 
         // todo more stuff with players
-    }
-
-    /** Tests for the equals method. */
-    @Test
-    fun testEquals() {
     }
 
     /** Tests for the toString method. */

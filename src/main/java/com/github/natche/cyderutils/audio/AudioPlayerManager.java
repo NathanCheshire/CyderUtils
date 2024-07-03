@@ -12,6 +12,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A manager class for playing "general" audio as well as "system" audio.
@@ -215,7 +216,7 @@ public final class AudioPlayerManager {
         }
 
         AudioPlayerManager other = (AudioPlayerManager) o;
-        return generalPlayer.equals(other.generalPlayer)
+        return Objects.equals(generalPlayer, other.generalPlayer)
                 && systemPlayers.equals(other.systemPlayers)
                 && id.equals(other.id);
     }
