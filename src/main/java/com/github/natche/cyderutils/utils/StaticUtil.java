@@ -13,6 +13,9 @@ import java.util.LinkedHashMap;
 
 /** Utilities for getting static resources. */
 public final class StaticUtil {
+    // todo this should be a static resource manager where you point it to a base dir
+    //  and it does the stuff you'd expect
+
     /** The name of the static directory which holds all the static files and resources needed by Cyder. */
     private static final String STATIC = "static";
 
@@ -31,7 +34,7 @@ public final class StaticUtil {
     public static void loadStaticResources() {
         staticFiles = getStaticFiles();
         // Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFiles.size() + " static files");
-        // todo hooks and this whole system needs to be rethinked from an API POV
+        // todo hooks and this whole system needs to be re-thinked from an API POV
         staticFolders = getStaticFolders();
         // Logger.log(LogTag.SYSTEM_IO, "Loaded " + staticFolders.size() + " static folders");
     }

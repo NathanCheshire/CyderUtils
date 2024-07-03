@@ -166,7 +166,6 @@ public final class CyderAudioFile {
         CyderTemporaryFile temporaryConversionFile = new CyderTemporaryFile.Builder()
                 .setOutputFilename(FileUtil.getFilename(audioFile))
                 .setOutputExtension(audioFileType.getExtension())
-                .setOutputDirectory(outputDirectory)
                 .build();
 
         List<String> process = ImmutableList.of(

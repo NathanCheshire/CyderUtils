@@ -1,11 +1,10 @@
 package com.github.natche.cyderutils.files;
 
+import com.github.natche.cyderutils.enumerations.SystemPropertyKey;
+import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
-import com.github.natche.cyderutils.enumerations.SystemPropertyKey;
-import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.strings.CyderStrings;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -29,7 +28,7 @@ public final class CyderTemporaryFile {
      * @throws IllegalMethodException if invoked
      */
     private CyderTemporaryFile() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Invalid constructor; builder required");
     }
 
     /**

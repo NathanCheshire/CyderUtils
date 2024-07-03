@@ -12,6 +12,7 @@ public final class CyderStrings {
     public static final String QUICK_BROWN_FOX = "The quick brown fox jumps over the lazy dog";
 
     /** Error message for static classes upon attempted instantiation. */
+    @Deprecated
     public static final String ATTEMPTED_INSTANTIATION = "Instances are not permitted for this class";
 
     /** A bullet point character used for numerous purposes. */
@@ -57,7 +58,7 @@ public final class CyderStrings {
     /**
      * Suppress default constructor.
      *
-     * @throws cyderutils.exceptions.IllegalMethodException if invoked.
+     * @throws IllegalMethodException if invoked
      */
     private CyderStrings() {
         throw new IllegalMethodException(ATTEMPTED_INSTANTIATION);

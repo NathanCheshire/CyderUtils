@@ -1,11 +1,12 @@
 package com.github.natche.cyderutils.image;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.color.CyderColor;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
 import com.github.natche.cyderutils.enumerations.Direction;
+import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.math.Angle;
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,27 +24,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** An image abstraction for usage throughout Cyder. */
+/**
+ * An image abstraction for usage throughout Cyder.
+ */
 public final class CyderImage {
-    /** A bitmask for a bit. */
+    /**
+     * A bitmask for a bit.
+     */
     private static final int EIGHT_BIT_MASK = 0xff;
 
-    /** The amount to shift a number by to obtain the alpha. */
+    /**
+     * The amount to shift a number by to obtain the alpha.
+     */
     private static final int ALPHA_SHIFT = 24;
 
-    /** The amount to shift a number by to obtain the red. */
+    /**
+     * The amount to shift a number by to obtain the red.
+     */
     private static final int RED_SHIFT = 16;
 
-    /** The amount to shift a number by to obtain the green. */
+    /**
+     * The amount to shift a number by to obtain the green.
+     */
     private static final int GREEN_SHIFT = 8;
 
-    /** The default color counter the dominant color contained in this image hashmap max length. */
+    /**
+     * The default color counter the dominant color contained in this image hashmap max length.
+     */
     private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
 
-    /** The encapsulated image. */
+    /**
+     * The encapsulated image.
+     */
     private BufferedImage image;
 
-    /** The color counter hashmap's max length. */
+    /**
+     * The color counter hashmap's max length.
+     */
     private int colorCounterMaxLength = DEFAULT_COLOR_COUNTER_MAX_LENGTH;
 
     /**
@@ -141,6 +158,7 @@ public final class CyderImage {
         BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = ret.createGraphics();
 
+        @SuppressWarnings("SuspiciousNameCombination") // Understood
         GradientPaint primary = new GradientPaint(0f, 0f, primaryLeft, height, 0f, primaryRight);
         GradientPaint shade = new GradientPaint(0f, 0f, new Color(shadeColor.getRed(),
                 shadeColor.getGreen(), shadeColor.getBlue(), 0), 0f, 600, shadeColor);
@@ -337,7 +355,9 @@ public final class CyderImage {
         image = rotated;
     }
 
-    /** Crops this image to the maximum square size. */
+    /**
+     * Crops this image to the maximum square size.
+     */
     @SuppressWarnings("SuspiciousNameCombination") /* Cropping logic */
     public void cropToMaximumSquare() {
         int width = image.getWidth();
@@ -417,7 +437,7 @@ public final class CyderImage {
      *
      * @return the dominant color contained in this image
      */
-    public CyderColor getDominantColor() { // todo return CyderColor
+    public CyderColor getDominantColor() {
         Map<Integer, Integer> colorCounter = new HashMap<>(colorCounterMaxLength);
 
         for (int x = 0 ; x < image.getWidth() ; x++) {
@@ -551,7 +571,9 @@ public final class CyderImage {
         return resized;
     }
 
-    /** Converts this image converted to grayscale. */
+    /**
+     * Converts this image converted to grayscale.
+     */
     public void grayscaleImage() {
         BufferedImage bi = getBufferedImage();
         int width = bi.getWidth();
@@ -744,9 +766,10 @@ public final class CyderImage {
     }
 
     /**
-     * Blurs the internal image.
+     * Blurs the internal image using Gaussian blur as the algorithm.
      *
-     * @param radius the radius of the Gaussian blur to perform, this must be an odd number greater than 1
+     * @param radius the radius of the Gaussian blur, must be an odd number greater than 1
+     * @throws IllegalArgumentException if the provided radius 1 or less or if the radius is not an odd number
      */
     public void blur(int radius) {
         Preconditions.checkArgument(radius > 2);
@@ -798,6 +821,45 @@ public final class CyderImage {
         return other.image.equals(image)
                 && pixelsEqual(other)
                 && other.colorCounterMaxLength == colorCounterMaxLength;
+    }
+
+    /**
+     * Saves this image to the provided path.
+     *
+     * @param path the path to save the image to
+     * @return whether the file was saved
+     * @throws NullPointerException     if the provided path is null
+     * @throws IllegalArgumentException if the provided path is empty or only whitespace
+     */
+    @CanIgnoreReturnValue
+    public boolean saveTo(String path) {
+        Preconditions.checkNotNull(path);
+        Preconditions.checkArgument(!path.trim().isEmpty());
+
+        return saveTo(new File(path));
+    }
+
+    /**
+     * Saves this image to the provided file.
+     *
+     * @param file the file to save the image to
+     * @return whether the file was saved
+     * @throws NullPointerException     if the provided file is null
+     * @throws IllegalArgumentException if the provided file does not exist or is not a file
+     */
+    @CanIgnoreReturnValue
+    public boolean saveTo(File file) {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkArgument(!file.exists());
+        Preconditions.checkArgument(file.isFile());
+
+        try {
+            String extension = FileUtil.getExtensionWithoutPeriod(file);
+            ImageIO.write(getBufferedImage(), extension, file);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**
