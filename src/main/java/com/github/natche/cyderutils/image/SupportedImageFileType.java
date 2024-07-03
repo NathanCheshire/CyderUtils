@@ -7,23 +7,15 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Arrays;
 
-/**
- * The image file types supported by Cyder.
- */
+/** The image file types supported by Cyder. */
 public enum SupportedImageFileType {
-    /**
-     * The PNG image extension.
-     */
+    /** The PNG image extension. */
     PNG(".png", ImmutableList.of(0x89, 0x50, 0x4E, 0x47)),
 
-    /**
-     * The JPG image extension.
-     */
+    /** The JPG image extension. */
     JPG(".jpg", ImmutableList.of(0xFF, 0xD8, 0xFF)),
 
-    /**
-     * The JPEG image extension. {@link #JPG} is equivalent and should be preferred over this.
-     */
+    /** The JPEG image extension. {@link #JPG} is equivalent and should be preferred over this. */
     JPEG(".jpeg", ImmutableList.of(0xFF, 0xD8, 0xFF));
 
     private final String extension;

@@ -7,13 +7,9 @@ import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/**
- * Tests for waveform image generation.
- */
+/** Tests for waveform image generation. */
 class WaveformImageTest {
-    /**
-     * Tests the default waveform generation properties.
-     */
+    /** Tests the default waveform generation properties. */
     @Test
     fun testWaveformGenerationDefault() {
         val audioFile = CyderAudioFile.from(
@@ -55,9 +51,7 @@ class WaveformImageTest {
         assertTrue(image.equals(builder.generate()))
     }
 
-    /**
-     * Test for generating an image using gray colors, white background and a resolution of 200x50
-     */
+    /** Test for generating an image using gray colors, white background and a resolution of 200x50 */
     @Test
     fun testWaveformGenerationGray() {
         val audioFile = CyderAudioFile.from(
@@ -104,9 +98,7 @@ class WaveformImageTest {
         assertTrue(image.equals(builder.generate()))
     }
 
-    /**
-     * Tests for generating an image with pink top and bottom, a navy center line, with a resolution of 6000x800.
-     */
+    /** Tests for generating an image with pink top and bottom, a navy center line, with a resolution of 6000x800. */
     @Test
     fun testWaveformGenerationPinkNavyLine() {
         val audioFile = CyderAudioFile.from(

@@ -24,43 +24,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * An image abstraction for usage throughout Cyder.
- */
+/** An image abstraction for usage throughout Cyder. */
 public final class CyderImage {
-    /**
-     * A bitmask for a bit.
-     */
+    /** A bitmask for a bit. */
     private static final int EIGHT_BIT_MASK = 0xff;
 
-    /**
-     * The amount to shift a number by to obtain the alpha.
-     */
+    /** The amount to shift a number by to obtain the alpha. */
     private static final int ALPHA_SHIFT = 24;
 
-    /**
-     * The amount to shift a number by to obtain the red.
-     */
+    /** The amount to shift a number by to obtain the red. */
     private static final int RED_SHIFT = 16;
 
-    /**
-     * The amount to shift a number by to obtain the green.
-     */
+    /** The amount to shift a number by to obtain the green. */
     private static final int GREEN_SHIFT = 8;
 
-    /**
-     * The default color counter the dominant color contained in this image hashmap max length.
-     */
+    /** The default color counter the dominant color contained in this image hashmap max length. */
     private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
 
-    /**
-     * The encapsulated image.
-     */
+    /** The encapsulated image. */
     private BufferedImage image;
 
-    /**
-     * The color counter hashmap's max length.
-     */
+    /** The color counter hashmap's max length. */
     private int colorCounterMaxLength = DEFAULT_COLOR_COUNTER_MAX_LENGTH;
 
     /**
@@ -355,9 +339,7 @@ public final class CyderImage {
         image = rotated;
     }
 
-    /**
-     * Crops this image to the maximum square size.
-     */
+    /** Crops this image to the maximum square size. */
     @SuppressWarnings("SuspiciousNameCombination") /* Cropping logic */
     public void cropToMaximumSquare() {
         int width = image.getWidth();
@@ -571,9 +553,7 @@ public final class CyderImage {
         return resized;
     }
 
-    /**
-     * Converts this image converted to grayscale.
-     */
+    /** Converts this image converted to grayscale. */
     public void grayscaleImage() {
         BufferedImage bi = getBufferedImage();
         int width = bi.getWidth();

@@ -14,9 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Future;
 
-/**
- * A class for generating audio waveforms PNGs from audio files.
- */
+/** A class for generating audio waveforms PNGs from audio files. */
 public final class WaveformImage {
     /**
      * The number denoting a value should be interpolated.
@@ -138,9 +136,7 @@ public final class WaveformImage {
         return waveformImage;
     }
 
-    /**
-     * A builder for constructing the parameters of waveform png generation from a {@link CyderAudioFile}.
-     */
+    /** A builder for constructing the parameters of waveform png generation from a {@link CyderAudioFile}. */
     public static final class WaveformImageBuilder {
         private static final int DEFAULT_WIDTH = 800;
         private static final int DEFAULT_HEIGHT = 100;
@@ -149,39 +145,25 @@ public final class WaveformImage {
         private static final Color DEFAULT_TOP_WAVEFORM_COLOR = CyderColors.navy;
         private static final Color DEFAULT_CENTER_LINE_COLOR = CyderColors.navy;
 
-        /**
-         * The audio file this builder is returning a representation of.
-         */
+        /** The audio file this builder is returning a representation of. */
         private final CyderAudioFile audioFile;
 
-        /**
-         * the width of this waveform builder.
-         */
+        /** the width of this waveform builder. */
         private int width = DEFAULT_WIDTH;
 
-        /**
-         * the height of this waveform builder.
-         */
+        /** the height of this waveform builder. */
         private int height = DEFAULT_HEIGHT;
 
-        /**
-         * The background color of the waveform png.
-         */
+        /** The background color of the waveform png. */
         private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-        /**
-         * The color of the bottom of the waveform png.
-         */
+        /** The color of the bottom of the waveform png. */
         private Color bottomWaveformColor = DEFAULT_BOTTOM_WAVEFORM_COLOR;
 
-        /**
-         * The color of the top of the waveform png.
-         */
+        /** The color of the top of the waveform png. */
         private Color topWaveformColor = DEFAULT_TOP_WAVEFORM_COLOR;
 
-        /**
-         * The center line color for the waveform png.
-         */
+        /** The center line color for the waveform png. */
         private Color centerLineColor = DEFAULT_CENTER_LINE_COLOR;
 
         /**
@@ -347,9 +329,7 @@ public final class WaveformImage {
             return CyderImage.fromBufferedImage(image);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -368,9 +348,7 @@ public final class WaveformImage {
                     && centerLineColor.equals(other.centerLineColor);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             int ret = audioFile.hashCode();
@@ -383,9 +361,7 @@ public final class WaveformImage {
             return ret;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "WaveformGenerationBuilder{"
