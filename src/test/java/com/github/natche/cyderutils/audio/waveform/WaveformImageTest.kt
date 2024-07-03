@@ -6,9 +6,15 @@ import com.github.natche.cyderutils.image.CyderImage
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.io.File
 
 /** Tests for waveform image generation. */
 class WaveformImageTest {
+    private fun saveGeneratedImage(image: CyderImage, filename: String) {
+        val outputFile: File = OsUtil.buildFile("build", "test-results", "images", filename)
+        image.saveTo(outputFile);
+    }
+
     /** Tests the default waveform generation properties. */
     @Test
     fun testWaveformGenerationDefault() {
@@ -32,6 +38,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "Default"
+        val filename =  "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -44,10 +51,11 @@ class WaveformImageTest {
             "audio",
             "waveform",
             "resources",
-            "${name}${descriptor}.png"
+            filename
         )
 
         val image = CyderImage.fromFile(truthFile)
+        saveGeneratedImage(image, filename)
         assertTrue(image.equals(builder.generate()))
     }
 
@@ -79,6 +87,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "GrayGray"
+        val filename =  "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -91,10 +100,11 @@ class WaveformImageTest {
             "audio",
             "waveform",
             "resources",
-            "${name}${descriptor}.png"
+            filename
         )
 
         val image = CyderImage.fromFile(truthFile)
+        saveGeneratedImage(image, filename)
         assertTrue(image.equals(builder.generate()))
     }
 
@@ -126,6 +136,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "PinkNavyLine"
+        val filename = "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -138,9 +149,10 @@ class WaveformImageTest {
             "audio",
             "waveform",
             "resources",
-            "${name}${descriptor}.png"
+            filename
         )
         val image = CyderImage.fromFile(truthFile)
+        saveGeneratedImage(image, filename)
         assertTrue(image.equals(builder.generate()))
     }
 
@@ -169,6 +181,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "Small"
+        val filename = "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -181,9 +194,10 @@ class WaveformImageTest {
             "audio",
             "waveform",
             "resources",
-            "${name}${descriptor}.png"
+            filename
         )
         val image = CyderImage.fromFile(truthFile)
+        saveGeneratedImage(image, filename)
         assertTrue(image.equals(builder.generate()))
     }
 }
