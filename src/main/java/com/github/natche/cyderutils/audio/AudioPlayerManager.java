@@ -2,6 +2,7 @@ package com.github.natche.cyderutils.audio;
 
 import com.github.natche.cyderutils.audio.cplayer.CPlayer;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
+import com.github.natche.cyderutils.utils.SecurityUtil;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
@@ -21,8 +22,36 @@ public final class AudioPlayerManager {
     /** The list of system players which are currently playing audio. */
     private final List<CPlayer> systemPlayers = new ArrayList<>();
 
+    /**
+     * The id of this manager.
+     */
+    private final String id;
+
     /** Constructs a new AudioPlayerManager. */
-    public AudioPlayerManager() {}
+    public AudioPlayerManager() {
+        this(SecurityUtil.generateUuid());
+    }
+
+    /**
+     * Constructs a new AudioPlayerManager using the provided ID.
+     *
+     * @param id the ID to use for this manager
+     */
+    public AudioPlayerManager(String id) {
+        Preconditions.checkNotNull(id);
+        Preconditions.checkArgument(!id.trim().isEmpty());
+
+        this.id = id;
+    }
+
+    /**
+     * Returns the ID of this AudioPlayerManager.
+     *
+     * @return the ID of this AudioPlayerManager
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * Plays the provided audio file as a general audio file.

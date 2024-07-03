@@ -8,8 +8,6 @@ import com.github.natche.cyderutils.math.Angle;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -29,8 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** An image abstraction for usage throughout Cyder. */
 public final class CyderImage {
-    private static final Logger logger = LoggerFactory.getLogger(CyderImage.class);
-
     /** The range that a percentage must fall into. */
     private static final Range<Float> percentageRange = Range.closed(0.0f, 100.0f);
 
@@ -667,7 +663,6 @@ public final class CyderImage {
 
         int totalPixels = getWidth() * getHeight();
         float differencePercent = numDifferences / (float) totalPixels;
-        logger.debug(() -> "Different percentage: " + differencePercent + "%");
         return differencePercent <= maxTolerance;
     }
 
