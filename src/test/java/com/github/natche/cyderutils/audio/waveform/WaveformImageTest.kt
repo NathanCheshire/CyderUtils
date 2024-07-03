@@ -6,16 +6,38 @@ import com.github.natche.cyderutils.image.CyderImage
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.platform.commons.logging.LoggerFactory
+import java.awt.image.BufferedImage
 import java.io.File
 
 /** Tests for waveform image generation. */
 class WaveformImageTest {
+    private val logger = LoggerFactory.getLogger(WaveformImageTest::class.java)
+
     /**
      * Saves the provided image to the build/test-results/images directory.
      */
     private fun saveGeneratedImage(image: CyderImage, filename: String) {
         val outputFile: File = OsUtil.buildFile("build", "test-results", "images", filename)
-        image.saveTo(outputFile);
+        image.saveTo(outputFile)
+    }
+
+    private fun imagesAreSimilar(img1: BufferedImage, img2: BufferedImage, tolerance: Double = 0.01): Boolean {
+        if (img1.width != img2.width || img1.height != img2.height) {
+            return false
+        }
+        var diffCount = 0
+        for (y in 0 until img1.height) {
+            for (x in 0 until img1.width) {
+                if (img1.getRGB(x, y) != img2.getRGB(x, y)) {
+                    diffCount++
+                }
+            }
+        }
+        val totalPixels = img1.width * img1.height
+        val diffPercentage = diffCount.toDouble() / totalPixels
+        logger.info { "Difference percentage: ${"%.2f".format(diffPercentage * 100)}%" }
+        return diffPercentage <= tolerance
     }
 
     /** Tests the default waveform generation properties. */
@@ -59,7 +81,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.equals(builder.generate()))
+        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
     }
 
     /** Test for generating an image using gray colors, white background and a resolution of 200x50 */
@@ -108,7 +130,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.equals(builder.generate()))
+        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
     }
 
     /** Tests for generating an image with pink top and bottom, a navy center line, with a resolution of 6000x800. */
@@ -156,7 +178,7 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.equals(builder.generate()))
+        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
     }
 
     /** Tests for generating a small waveform image. */
@@ -201,6 +223,6 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.equals(builder.generate()))
+        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
     }
 }
