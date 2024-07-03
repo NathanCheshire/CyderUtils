@@ -12,6 +12,11 @@ public final class CyderColors {
     /** A common color used for selected text such as in CyderFields. */
     public static final Color selectionColor = new Color(204, 153, 0);
 
+    /**
+     * A common gray, stolen or rather borrowed from YouTube.
+     */
+    public static final Color gray = new Color(46, 46, 46);
+
     /** A default green color, never to be changed. */
     public static final Color regularGreen = new Color(60, 167, 92);
 

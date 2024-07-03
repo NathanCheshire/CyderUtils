@@ -824,13 +824,13 @@ public final class CyderImage {
      * @param file the file to save the image to
      * @return whether the file was saved
      * @throws NullPointerException     if the provided file is null
-     * @throws IllegalArgumentException if the provided file does not exist or is not a file
+     * @throws IllegalArgumentException if the provided file does not exist or is a directory
      */
     @CanIgnoreReturnValue
     public boolean saveTo(File file) {
         Preconditions.checkNotNull(file);
         Preconditions.checkArgument(!file.exists());
-        Preconditions.checkArgument(file.isFile());
+        Preconditions.checkArgument(!file.isDirectory());
 
         try {
             String extension = FileUtil.getExtensionWithoutPeriod(file);

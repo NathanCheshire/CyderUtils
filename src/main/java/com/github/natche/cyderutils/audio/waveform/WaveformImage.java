@@ -53,7 +53,6 @@ public final class WaveformImage {
         BufferedImage waveformImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = waveformImage.createGraphics();
 
-        // todo needs to be a temp file for this conversion
         CyderAudioFile audioFile = builder.getAudioFile();
         Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE);
 
@@ -143,8 +142,8 @@ public final class WaveformImage {
      * A builder for constructing the parameters of waveform png generation from a {@link CyderAudioFile}.
      */
     public static final class WaveformImageBuilder {
-        private static final int DEFAULT_WIDTH = 300;
-        private static final int DEFAULT_HEIGHT = 80;
+        private static final int DEFAULT_WIDTH = 800;
+        private static final int DEFAULT_HEIGHT = 100;
         private static final Color DEFAULT_BACKGROUND_COLOR = CyderColors.vanilla;
         private static final Color DEFAULT_BOTTOM_WAVEFORM_COLOR = CyderColors.navy;
         private static final Color DEFAULT_TOP_WAVEFORM_COLOR = CyderColors.navy;
