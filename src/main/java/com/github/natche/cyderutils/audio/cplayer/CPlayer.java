@@ -20,50 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** An encapsulated JLayer {@link Player} for playing singular audio files. */
 public final class CPlayer {
-    /**
-     * The default audio player object used internally by this class.
-     * This is required since {@link Player} does not directly implement {@link AudioPlayer}
-     * due to the way Java interfaces resolve.
-     */
-    private static final class DefaultAudioPlayer implements AudioPlayer {
-        /** The encapsulated player used for audio playback. */
-        private final Player player;
-
-        /**
-         * Constructs a new DefaultAudioPlayer.
-         *
-         * @param bis the buffered input stream to read from
-         * @throws JavaLayerException if an exception occurs.
-         */
-        public DefaultAudioPlayer(BufferedInputStream bis) throws JavaLayerException {
-            this.player = new Player(bis);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void play() throws JavaLayerException {
-            player.play();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void close() {
-            player.close();
-        }
-    }
-
-    /** The default factory for generating {@link AudioPlayer}s using {@link Player}s. */
-    private static final class DefaultAudioPlayerFactory implements AudioPlayerFactory {
-        @Override
-        public AudioPlayer create(BufferedInputStream bis) {
-            try {
-                return new DefaultAudioPlayer(bis);
-            } catch (JavaLayerException e) {
-                throw new CPlayerException(e);
-            }
-        }
-    }
-
     /** The audio file this player will stream/play. */
     private final File audioFile;
 

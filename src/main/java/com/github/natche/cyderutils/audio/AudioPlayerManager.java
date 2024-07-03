@@ -1,6 +1,9 @@
 package com.github.natche.cyderutils.audio;
 
+import com.github.natche.cyderutils.audio.cplayer.AudioPlayer;
+import com.github.natche.cyderutils.audio.cplayer.AudioPlayerFactory;
 import com.github.natche.cyderutils.audio.cplayer.CPlayer;
+import com.github.natche.cyderutils.audio.cplayer.DefaultAudioPlayerFactory;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.utils.SecurityUtil;
 import com.google.common.base.Preconditions;
@@ -27,6 +30,9 @@ public final class AudioPlayerManager {
      */
     private final String id;
 
+    /** The factory which generates a new {@link AudioPlayer} when required. */
+    private AudioPlayerFactory playerFactory = new DefaultAudioPlayerFactory();
+
     /** Constructs a new AudioPlayerManager. */
     public AudioPlayerManager() {
         this(SecurityUtil.generateUuid());
@@ -36,12 +42,25 @@ public final class AudioPlayerManager {
      * Constructs a new AudioPlayerManager using the provided ID.
      *
      * @param id the ID to use for this manager
+     * @throws NullPointerException if the provided ID is null
+     * @throws IllegalArgumentException if the provided id is empty
      */
     public AudioPlayerManager(String id) {
         Preconditions.checkNotNull(id);
         Preconditions.checkArgument(!id.trim().isEmpty());
 
         this.id = id;
+    }
+
+    /**
+     * Sets the factory this instance will use to generate a new {@link AudioPlayer}.
+     *
+     * @param factory the factory
+     * @throws NullPointerException if the provided factory is null
+     */
+    public void setAudioPlayerFactory(AudioPlayerFactory factory) {
+        Preconditions.checkNotNull(factory);
+        this.playerFactory = factory;
     }
 
     /**
@@ -70,6 +89,7 @@ public final class AudioPlayerManager {
         Preconditions.checkState(!generalPlayer.isPlaying());
 
         generalPlayer = new CPlayer(audioFile);
+        generalPlayer.setAudioPlayerFactory(playerFactory);
         generalPlayer.play();
     }
 
@@ -90,6 +110,7 @@ public final class AudioPlayerManager {
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
         CPlayer newSystemPlayer = new CPlayer(audioFile);
+        generalPlayer.setAudioPlayerFactory(playerFactory);
         systemPlayers.add(newSystemPlayer);
         newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
         newSystemPlayer.play();
@@ -170,6 +191,7 @@ public final class AudioPlayerManager {
     public int hashCode() {
         int ret = generalPlayer.hashCode();
         ret = 31 * ret + systemPlayers.hashCode();
+        ret = 31 * ret + id.hashCode();
         return ret;
     }
 
@@ -178,7 +200,8 @@ public final class AudioPlayerManager {
     public String toString() {
         return "AudioPlayerManager{"
                 + "generalPlayer=" + generalPlayer + ", "
-                + "systemPlayers=" + systemPlayers
+                + "systemPlayers=" + systemPlayers + ", "
+                + "id=" + id
                 + "}";
     }
 
@@ -193,6 +216,7 @@ public final class AudioPlayerManager {
 
         AudioPlayerManager other = (AudioPlayerManager) o;
         return generalPlayer.equals(other.generalPlayer)
-                && systemPlayers.equals(other.systemPlayers);
+                && systemPlayers.equals(other.systemPlayers)
+                && id.equals(other.id);
     }
 }

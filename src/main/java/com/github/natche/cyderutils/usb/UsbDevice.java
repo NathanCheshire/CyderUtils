@@ -124,9 +124,9 @@ public class UsbDevice {
     @Override
     public int hashCode() {
         int ret = status.hashCode();
-        ret += 31 * ret + type.hashCode();
-        ret += 31 * ret + friendlyName.hashCode();
-        ret += 31 * ret + instanceId.hashCode();
+        ret = 31 * ret + type.hashCode();
+        ret = 31 * ret + friendlyName.hashCode();
+        ret = 31 * ret + instanceId.hashCode();
         return ret;
     }
 }

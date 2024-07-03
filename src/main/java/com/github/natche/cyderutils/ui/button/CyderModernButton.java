@@ -867,13 +867,13 @@ public class CyderModernButton extends JLabel {
     @Override
     public int hashCode() {
         int ret = text.hashCode();
-        ret += 31 * foregroundColor.hashCode();
-        ret += 31 * backgroundColor.hashCode();
-        ret += 31 * hoverColor.hashCode();
-        ret += 31 * pressedColor.hashCode();
-        ret += 31 * borderColor.hashCode();
-        ret += 31 * Integer.hashCode(width);
-        ret += 31 * Integer.hashCode(height);
+        ret = 31 * ret + foregroundColor.hashCode();
+        ret = 31 * ret +backgroundColor.hashCode();
+        ret = 31 * ret +hoverColor.hashCode();
+        ret = 31 * ret +pressedColor.hashCode();
+        ret = 31 * ret +borderColor.hashCode();
+        ret = 31 * ret +Integer.hashCode(width);
+        ret = 31 * ret +Integer.hashCode(height);
         return ret;
     }
 
