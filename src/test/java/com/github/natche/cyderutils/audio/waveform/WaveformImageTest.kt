@@ -143,4 +143,47 @@ class WaveformImageTest {
         val image = CyderImage.fromFile(truthFile)
         assertTrue(image.equals(builder.generate()))
     }
+
+    /** Tests for generating a small waveform image. */
+    @Test
+    fun testWaveformGenerationSmall() {
+        val audioFile = CyderAudioFile.from(
+            OsUtil.buildFile(
+                "src",
+                "test",
+                "java",
+                "com",
+                "github",
+                "natche",
+                "cyderutils",
+                "audio",
+                "waveform",
+                "resources",
+                "RealThings.mp3"
+            )
+        )
+
+        val builder = WaveformImage.WaveformImageBuilder(audioFile)
+        builder.width = 100
+        builder.height = 20
+
+        val name = "RealThings"
+        val descriptor = "Small"
+
+        val truthFile = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "waveform",
+            "resources",
+            "${name}${descriptor}.png"
+        )
+        val image = CyderImage.fromFile(truthFile)
+        assertTrue(image.equals(builder.generate()))
+    }
 }

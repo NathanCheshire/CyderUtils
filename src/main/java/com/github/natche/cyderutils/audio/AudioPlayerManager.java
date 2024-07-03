@@ -1,9 +1,9 @@
 package com.github.natche.cyderutils.audio;
 
+import com.github.natche.cyderutils.audio.cplayer.CPlayer;
+import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.github.natche.cyderutils.audio.cplayer.CPlayer;
-import com.github.natche.cyderutils.files.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,17 +12,17 @@ import java.util.List;
 /**
  * A manager class for playing "general" audio as well as "system" audio.
  * Only one general audio can be playing at a time whilst multiple
- * system audios can be playing at any time.
+ * system audio files can be playing at any time.
  */
 public final class AudioPlayerManager {
-    /** Constructs a new AudioPlayerManager. */
-    public AudioPlayerManager() {}
-
     /** The player used to play general audio that may be user terminated. */
     private CPlayer generalPlayer;
 
     /** The list of system players which are currently playing audio. */
     private final List<CPlayer> systemPlayers = new ArrayList<>();
+
+    /** Constructs a new AudioPlayerManager. */
+    public AudioPlayerManager() {}
 
     /**
      * Plays the provided audio file as a general audio file.
@@ -37,7 +37,7 @@ public final class AudioPlayerManager {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
         Preconditions.checkState(!generalPlayer.isPlaying());
 
         generalPlayer = new CPlayer(audioFile);
@@ -58,7 +58,7 @@ public final class AudioPlayerManager {
         Preconditions.checkNotNull(audioFile);
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
-        Preconditions.checkArgument(FileUtil.isSupportedAudioExtension(audioFile));
+        Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
         CPlayer newSystemPlayer = new CPlayer(audioFile);
         systemPlayers.add(newSystemPlayer);
