@@ -30,6 +30,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class CyderImage {
     /**
+     * The range that a percentage must fall within.
+     */
+    private static final Range<Float> percentageRange = Range.closed(0.0f, 100.0f);
+
+    /**
      * A bitmask for a bit.
      */
     private static final int EIGHT_BIT_MASK = 0xff;
@@ -659,12 +664,12 @@ public final class CyderImage {
      * @param compareImage the image to compare to this image
      * @param maxTolerance the maximum differing tolerance acceptable to return true
      * @return whether the pixels of the provided image and this image are equal
-     * @throws NullPointerException if the provided image is null
+     * @throws NullPointerException     if the provided image is null
      * @throws IllegalArgumentException if the provided maxTolerance is not within the range [0, 100]
      */
     public boolean compareToPixelsIn(CyderImage compareImage, float maxTolerance) {
         Preconditions.checkNotNull(compareImage);
-        Preconditions.checkArgument(Range.closed(0.0f, 100.0f).contains(maxTolerance));
+        Preconditions.checkArgument(percentageRange.contains(maxTolerance));
 
         if (compareImage.getWidth() != getWidth()) return false;
         if (compareImage.getHeight() != getHeight()) return false;

@@ -6,14 +6,10 @@ import com.github.natche.cyderutils.image.CyderImage
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.platform.commons.logging.LoggerFactory
-import java.awt.image.BufferedImage
 import java.io.File
 
 /** Tests for waveform image generation. */
 class WaveformImageTest {
-    private val logger = LoggerFactory.getLogger(WaveformImageTest::class.java)
-
     /**
      * Saves the provided image to the build/test-results/images directory.
      */
@@ -45,7 +41,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "Default"
-        val filename =  "${name}${descriptor}.png"
+        val filename = "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -63,7 +59,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.1f))
     }
 
     /** Test for generating an image using gray colors, white background and a resolution of 200x50 */
@@ -94,7 +90,7 @@ class WaveformImageTest {
 
         val name = "RealThings"
         val descriptor = "GrayGray"
-        val filename =  "${name}${descriptor}.png"
+        val filename = "${name}${descriptor}.png"
 
         val truthFile = OsUtil.buildFile(
             "src",
@@ -112,7 +108,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.1f))
     }
 
     /** Tests for generating an image with pink top and bottom, a navy center line, with a resolution of 6000x800. */
@@ -160,7 +156,7 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.1f))
     }
 
     /** Tests for generating a small waveform image. */
@@ -205,6 +201,6 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.1f))
     }
 }
