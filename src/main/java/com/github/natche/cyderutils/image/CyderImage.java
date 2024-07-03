@@ -803,27 +803,6 @@ public final class CyderImage {
     }
 
     /**
-     * Returns whether the provided object equals this CyderImage instance.
-     * Note this method also compares the direct pixels for an exact match.
-     *
-     * @param o the object to compare against this CyderImage instance
-     * @return whether the provided object equals this CyderImage instance
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (!(o instanceof CyderImage)) {
-            return false;
-        }
-
-        CyderImage other = (CyderImage) o;
-        return other.image.equals(image)
-                && pixelsEqual(other)
-                && other.colorCounterMaxLength == colorCounterMaxLength;
-    }
-
-    /**
      * Saves this image to the provided path.
      *
      * @param path the path to save the image to
@@ -863,13 +842,36 @@ public final class CyderImage {
     }
 
     /**
+     * Returns whether the provided object equals this CyderImage instance.
+     * Note this method also compares the direct pixels for an exact match.
+     *
+     * @param o the object to compare against this CyderImage instance
+     * @return whether the provided object equals this CyderImage instance
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof CyderImage)) {
+            return false;
+        }
+
+        CyderImage other = (CyderImage) o;
+        return pixelsEqual(other)
+                && other.getWidth() == getWidth()
+                && other.getHeight() == getHeight()
+                && other.colorCounterMaxLength == colorCounterMaxLength;
+    }
+
+    /**
      * Returns a hashcode representation of this CyderImage.
      *
      * @return a hashcode representation of this CyderImage
      */
     @Override
     public int hashCode() {
-        int ret = image.hashCode();
+        int ret = Integer.hashCode(image.getWidth());
+        ret = 31 * ret + Integer.hashCode(image.getHeight());
         ret = 31 * ret + Integer.hashCode(colorCounterMaxLength);
         return ret;
     }
@@ -882,8 +884,7 @@ public final class CyderImage {
     @Override
     public String toString() {
         return "CyderImage{"
-                + "image=" + image
-                + ", width=" + image.getWidth()
+                + "width=" + image.getWidth()
                 + ", height=" + image.getHeight()
                 + ", colorCounterMaxLength=" + colorCounterMaxLength
                 + "}";
