@@ -6,6 +6,7 @@ import com.github.natche.cyderutils.enumerations.Direction;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.math.Angle;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Range;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.imageio.ImageIO;
@@ -24,27 +25,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** An image abstraction for usage throughout Cyder. */
+/**
+ * An image abstraction for usage throughout Cyder.
+ */
 public final class CyderImage {
-    /** A bitmask for a bit. */
+    /**
+     * A bitmask for a bit.
+     */
     private static final int EIGHT_BIT_MASK = 0xff;
 
-    /** The amount to shift a number by to obtain the alpha. */
+    /**
+     * The amount to shift a number by to obtain the alpha.
+     */
     private static final int ALPHA_SHIFT = 24;
 
-    /** The amount to shift a number by to obtain the red. */
+    /**
+     * The amount to shift a number by to obtain the red.
+     */
     private static final int RED_SHIFT = 16;
 
-    /** The amount to shift a number by to obtain the green. */
+    /**
+     * The amount to shift a number by to obtain the green.
+     */
     private static final int GREEN_SHIFT = 8;
 
-    /** The default color counter the dominant color contained in this image hashmap max length. */
+    /**
+     * The default color counter the dominant color contained in this image hashmap max length.
+     */
     private static final int DEFAULT_COLOR_COUNTER_MAX_LENGTH = 100;
 
-    /** The encapsulated image. */
+    /**
+     * The encapsulated image.
+     */
     private BufferedImage image;
 
-    /** The color counter hashmap's max length. */
+    /**
+     * The color counter hashmap's max length.
+     */
     private int colorCounterMaxLength = DEFAULT_COLOR_COUNTER_MAX_LENGTH;
 
     /**
@@ -339,7 +356,9 @@ public final class CyderImage {
         image = rotated;
     }
 
-    /** Crops this image to the maximum square size. */
+    /**
+     * Crops this image to the maximum square size.
+     */
     @SuppressWarnings("SuspiciousNameCombination") /* Cropping logic */
     public void cropToMaximumSquare() {
         int width = image.getWidth();
@@ -553,7 +572,9 @@ public final class CyderImage {
         return resized;
     }
 
-    /** Converts this image converted to grayscale. */
+    /**
+     * Converts this image converted to grayscale.
+     */
     public void grayscaleImage() {
         BufferedImage bi = getBufferedImage();
         int width = bi.getWidth();
@@ -636,44 +657,30 @@ public final class CyderImage {
      * Returns whether the pixels of the provided image and this image are equal.
      *
      * @param compareImage the image to compare to this image
+     * @param maxTolerance the maximum differing tolerance acceptable to return true
      * @return whether the pixels of the provided image and this image are equal
      * @throws NullPointerException if the provided image is null
+     * @throws IllegalArgumentException if the provided maxTolerance is not within the range [0, 100]
      */
-    public boolean pixelsEqual(CyderImage compareImage) {
+    public boolean compareToPixelsIn(CyderImage compareImage, float maxTolerance) {
         Preconditions.checkNotNull(compareImage);
+        Preconditions.checkArgument(Range.closed(0.0f, 100.0f).contains(maxTolerance));
 
-        int width = getWidth();
-        int height = getHeight();
-        int otherWidth = compareImage.getWidth();
-        int otherHeight = compareImage.getHeight();
+        if (compareImage.getWidth() != getWidth()) return false;
+        if (compareImage.getHeight() != getHeight()) return false;
 
-        if (otherWidth != width || otherHeight != height) return false;
-
-        int[] pixels = new int[width * height];
-        int[] otherPixels = new int[otherWidth * otherHeight];
-
-        PixelGrabber pixelGrabber = new PixelGrabber(
-                image, 0, 0, width, height, pixels, 0, width);
-
-        try {
-            pixelGrabber.grabPixels();
-        } catch (InterruptedException ignored) {}
-
-        PixelGrabber otherPixelGrabber = new PixelGrabber(
-                compareImage.getBufferedImage(), 0, 0, otherWidth, height, otherPixels, 0, otherWidth);
-        try {
-            otherPixelGrabber.grabPixels();
-        } catch (InterruptedException ignored) {}
-
-        if (otherPixels.length != pixels.length) return false;
-
-        for (int i = 1 ; i < otherPixels.length ; i++) {
-            if (otherPixels[i] != pixels[i]) {
-                return false;
+        int numDifferences = 0;
+        for (int y = 0 ; y < getHeight() ; y++) {
+            for (int x = 0 ; x < getWidth() ; x++) {
+                int ourPixel = image.getRGB(x, y);
+                int theirPixel = compareImage.image.getRGB(x, y);
+                if (ourPixel != theirPixel) numDifferences++;
             }
         }
 
-        return true;
+        int totalPixels = getWidth() * getHeight();
+        float differencePercent = numDifferences / (float) totalPixels;
+        return differencePercent <= maxTolerance;
     }
 
     /**
@@ -845,7 +852,7 @@ public final class CyderImage {
         }
 
         CyderImage other = (CyderImage) o;
-        return pixelsEqual(other)
+        return compareToPixelsIn(other, 0.0f)
                 && other.getWidth() == getWidth()
                 && other.getHeight() == getHeight()
                 && other.colorCounterMaxLength == colorCounterMaxLength;

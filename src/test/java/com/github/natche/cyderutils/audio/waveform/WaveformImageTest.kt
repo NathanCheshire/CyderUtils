@@ -22,24 +22,6 @@ class WaveformImageTest {
         image.saveTo(outputFile)
     }
 
-    private fun imagesAreSimilar(img1: BufferedImage, img2: BufferedImage, tolerance: Double = 0.01): Boolean {
-        if (img1.width != img2.width || img1.height != img2.height) {
-            return false
-        }
-        var diffCount = 0
-        for (y in 0 until img1.height) {
-            for (x in 0 until img1.width) {
-                if (img1.getRGB(x, y) != img2.getRGB(x, y)) {
-                    diffCount++
-                }
-            }
-        }
-        val totalPixels = img1.width * img1.height
-        val diffPercentage = diffCount.toDouble() / totalPixels
-        logger.info { "Difference percentage: ${"%.2f".format(diffPercentage * 100)}%" }
-        return diffPercentage <= tolerance
-    }
-
     /** Tests the default waveform generation properties. */
     @Test
     fun testWaveformGenerationDefault() {
@@ -81,7 +63,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
     }
 
     /** Test for generating an image using gray colors, white background and a resolution of 200x50 */
@@ -130,7 +112,7 @@ class WaveformImageTest {
 
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
     }
 
     /** Tests for generating an image with pink top and bottom, a navy center line, with a resolution of 6000x800. */
@@ -178,7 +160,7 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
     }
 
     /** Tests for generating a small waveform image. */
@@ -223,6 +205,6 @@ class WaveformImageTest {
         )
         val image = CyderImage.fromFile(truthFile)
         saveGeneratedImage(image, filename)
-        assertTrue(imagesAreSimilar(image.bufferedImage, builder.generate().bufferedImage))
+        assertTrue(image.compareToPixelsIn(builder.generate(), 0.0f))
     }
 }
