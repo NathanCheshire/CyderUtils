@@ -805,6 +805,8 @@ public final class CyderImage {
      * @return whether the file was saved
      * @throws NullPointerException     if the provided file is null
      * @throws IllegalArgumentException if the provided file does not exist or is a directory
+     * @throws CyderImageException      if the parent directory of the provided file
+     *                                  does not exist and fails to be created
      */
     @CanIgnoreReturnValue
     public boolean saveTo(File file) {
@@ -815,8 +817,8 @@ public final class CyderImage {
         try {
             File parentDir = file.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                parentDir.mkdirs();
+                if (!parentDir.mkdirs())
+                    throw new CyderImageException("Failed to create parent directory: " + parentDir);
             }
 
             String extension = FileUtil.getExtensionWithoutPeriod(file);
