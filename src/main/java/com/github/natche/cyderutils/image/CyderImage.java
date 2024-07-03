@@ -813,6 +813,12 @@ public final class CyderImage {
         Preconditions.checkArgument(!file.isDirectory());
 
         try {
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                parentDir.mkdirs();
+            }
+
             String extension = FileUtil.getExtensionWithoutPeriod(file);
             ImageIO.write(getBufferedImage(), extension, file);
             return true;
