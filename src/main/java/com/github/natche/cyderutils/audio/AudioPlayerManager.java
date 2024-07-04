@@ -5,6 +5,7 @@ import com.github.natche.cyderutils.audio.cplayer.AudioPlayerFactory;
 import com.github.natche.cyderutils.audio.cplayer.CPlayer;
 import com.github.natche.cyderutils.audio.cplayer.DefaultAudioPlayerFactory;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
+import com.github.natche.cyderutils.structures.CyderRunnable;
 import com.github.natche.cyderutils.utils.SecurityUtil;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -26,9 +27,7 @@ public final class AudioPlayerManager {
     /** The list of system players which are currently playing audio. */
     private final List<CPlayer> systemPlayers = new ArrayList<>();
 
-    /**
-     * The id of this manager.
-     */
+    /** The id of this manager. */
     private final String id;
 
     /** The factory which generates a new {@link AudioPlayer} when required. */
@@ -43,7 +42,7 @@ public final class AudioPlayerManager {
      * Constructs a new AudioPlayerManager using the provided ID.
      *
      * @param id the ID to use for this manager
-     * @throws NullPointerException if the provided ID is null
+     * @throws NullPointerException     if the provided ID is null
      * @throws IllegalArgumentException if the provided id is empty
      */
     public AudioPlayerManager(String id) {
@@ -87,7 +86,7 @@ public final class AudioPlayerManager {
         Preconditions.checkArgument(audioFile.exists());
         Preconditions.checkArgument(audioFile.isFile());
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
-        Preconditions.checkState(!generalPlayer.isPlaying());
+        Preconditions.checkState(!isGeneralAudioPlaying());
 
         generalPlayer = new CPlayer(audioFile);
         generalPlayer.setAudioPlayerFactory(playerFactory);
@@ -111,9 +110,20 @@ public final class AudioPlayerManager {
         Preconditions.checkArgument(SupportedAudioFileType.isSupported(audioFile));
 
         CPlayer newSystemPlayer = new CPlayer(audioFile);
-        generalPlayer.setAudioPlayerFactory(playerFactory);
+        newSystemPlayer.setAudioPlayerFactory(playerFactory);
         systemPlayers.add(newSystemPlayer);
-        newSystemPlayer.addOnCompletionCallback(() -> systemPlayers.remove(newSystemPlayer));
+        newSystemPlayer.addOnCompletionCallback(new CyderRunnable() {
+            @Override
+            public void run() {
+                systemPlayers.remove(newSystemPlayer);
+            }
+
+            @Override
+            public String toString() {
+                return "AudioPlayerManager{id=" + id + "}.systemPlayer{file=" + audioFile.getAbsolutePath()
+                        + "}.removeFromSystemPlayersCompletionCallback";
+            }
+        });
         newSystemPlayer.play();
         return newSystemPlayer;
     }
@@ -124,6 +134,7 @@ public final class AudioPlayerManager {
      * @throws IllegalStateException if the general audio player is not playing.
      */
     public void stopGeneralAudio() {
+        if (generalPlayer == null) return;
         generalPlayer.stopPlaying();
     }
 
@@ -163,6 +174,7 @@ public final class AudioPlayerManager {
      * @return whether the general audio player isp laying
      */
     public boolean isGeneralAudioPlaying() {
+        if (generalPlayer == null) return false;
         return generalPlayer.isPlaying();
     }
 
@@ -175,6 +187,7 @@ public final class AudioPlayerManager {
      */
     public boolean isGeneralAudioPlaying(File audioFile) {
         Preconditions.checkNotNull(audioFile);
+        if (generalPlayer == null) return false;
         return generalPlayer.isUsingAudioFile(audioFile) && isGeneralAudioPlaying();
     }
 
@@ -190,7 +203,7 @@ public final class AudioPlayerManager {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        int ret = generalPlayer.hashCode();
+        int ret = Objects.hashCode(generalPlayer);
         ret = 31 * ret + systemPlayers.hashCode();
         ret = 31 * ret + id.hashCode();
         return ret;

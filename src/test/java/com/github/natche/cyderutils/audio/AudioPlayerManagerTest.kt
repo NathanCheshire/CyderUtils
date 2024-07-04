@@ -1,6 +1,8 @@
 package com.github.natche.cyderutils.audio
 
 import com.github.natche.cyderutils.audio.cplayer.AudioPlayer
+import com.github.natche.cyderutils.threads.ThreadUtil
+import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.BufferedInputStream
@@ -9,7 +11,6 @@ import java.io.BufferedInputStream
 class AudioPlayerManagerTest {
     /**
      * The audio player factory used by tests within this file.
-     * // todo use me
      */
     private val testAudioPlayerFactory: (BufferedInputStream) -> AudioPlayer = {
         object : AudioPlayer {
@@ -19,6 +20,10 @@ class AudioPlayerManagerTest {
 
             override fun close() {
                 Thread.sleep(500)
+            }
+
+            override fun toString(): String {
+                return "AudioPlayerManagerTest.testAudioPlayerFactory"
             }
         }
     }
@@ -41,19 +46,33 @@ class AudioPlayerManagerTest {
         assertEquals("sad-alex", manager.id)
     }
 
-    /** Tests for the play general audio method. */
+    /** Tests for the play general audio, stop general audio, and is general audio playing methods. */
     @Test
     fun testPlayGeneralAudio() {
+        val manager = AudioPlayerManager()
+        manager.setAudioPlayerFactory(testAudioPlayerFactory)
+
+        assertFalse(manager.isAudioPlaying)
+        assertFalse(manager.isGeneralAudioPlaying)
+        assertFalse(manager.isGeneralAudioPlaying(southWav))
+
+        manager.playGeneralAudio(southWav)
+
+        assertTrue(manager.isAudioPlaying)
+        assertTrue(manager.isGeneralAudioPlaying)
+        assertTrue(manager.isGeneralAudioPlaying(southWav))
+
+        manager.stopGeneralAudio()
+        Thread.sleep(5000)
+
+        assertFalse(manager.isAudioPlaying)
+        assertFalse(manager.isGeneralAudioPlaying)
+        assertFalse(manager.isGeneralAudioPlaying(southWav))
     }
 
     /** Tests for the play system audio method. */
     @Test
     fun testPlaySystemAudio() {
-    }
-
-    /** Tests for the stop general audio method. */
-    @Test
-    fun testStopGeneralAudio() {
     }
 
     /** Tests for the stop system audio method. */
@@ -66,14 +85,29 @@ class AudioPlayerManagerTest {
     fun testIsSystemAudioPlaying() {
     }
 
-    /** Tests for the is general audio playing and specific file methods. */
-    @Test
-    fun testIsGeneralAudioPlaying() {
-    }
-
     /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
+        val first = AudioPlayerManager("first")
+        val equalToFirst = AudioPlayerManager("first")
+        val notEqual = AudioPlayerManager("third")
+
+        assertEquals(97440463, first.hashCode())
+        assertEquals(97440463, equalToFirst.hashCode())
+        assertEquals(110331270, notEqual.hashCode())
+
+        assertEquals(first.hashCode(), equalToFirst.hashCode())
+        assertNotEquals(first.hashCode(), notEqual.hashCode())
+        assertNotEquals(first.hashCode(), Object().hashCode())
+
+        first.setAudioPlayerFactory(testAudioPlayerFactory)
+        first.playSystemAudio(southWav)
+
+        assertEquals(-1088113061, first.hashCode())
+
+        assertNotEquals(first.hashCode(), equalToFirst.hashCode())
+        ThreadUtil.sleep(5500)
+        assertEquals(first.hashCode(), equalToFirst.hashCode())
     }
 
     /** Tests for the equals method. */
@@ -88,11 +122,55 @@ class AudioPlayerManagerTest {
         assertNotEquals(first, notEqual)
         assertNotEquals(first, Object())
 
-        // todo more stuff with players
+        first.setAudioPlayerFactory(testAudioPlayerFactory)
+        first.playSystemAudio(southWav)
+
+        assertNotEquals(first, equalToFirst)
+        ThreadUtil.sleep(5500)
+        assertEquals(first, equalToFirst)
     }
 
     /** Tests for the toString method. */
     @Test
     fun testToString() {
+        val first = AudioPlayerManager("first")
+        val second = AudioPlayerManager("second")
+        second.setAudioPlayerFactory(testAudioPlayerFactory)
+        second.playSystemAudio(carrotsMp3)
+
+        assertEquals("AudioPlayerManager{generalPlayer=null, systemPlayers=[], id=first}", first.toString())
+        assertEquals("AudioPlayerManager{generalPlayer=null, systemPlayers=[AudioPlayer{audioFile="
+                + carrotsMp3.absolutePath + ", player=AudioPlayerManagerTest.testAudioPlayerFactory,"
+                + " onCompletionCallbacks=[AudioPlayerManager{id=second}.systemPlayer{file="
+                + carrotsMp3.absolutePath + "}.removeFromSystemPlayersCompletionCallback], canceled=false,"
+                + " playing=true}], id=second}", second.toString())
+    }
+
+    companion object {
+        private val carrotsMp3 = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "TastyCarrots.mp3"
+        )
+
+        private val southWav = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "ManOfTheSouth.wav"
+        )
     }
 }
