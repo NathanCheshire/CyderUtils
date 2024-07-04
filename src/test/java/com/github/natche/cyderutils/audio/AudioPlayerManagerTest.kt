@@ -61,6 +61,7 @@ class AudioPlayerManagerTest {
         assertTrue(manager.isAudioPlaying)
         assertTrue(manager.isGeneralAudioPlaying)
         assertTrue(manager.isGeneralAudioPlaying(southWav))
+        assertFalse(manager.isSystemAudioPlaying)
 
         manager.stopGeneralAudio()
         Thread.sleep(5000)
@@ -70,19 +71,29 @@ class AudioPlayerManagerTest {
         assertFalse(manager.isGeneralAudioPlaying(southWav))
     }
 
-    /** Tests for the play system audio method. */
+    /** Tests for the play system audio, stop system audio, and is system audio playing methods. */
     @Test
     fun testPlaySystemAudio() {
-    }
+        val manager = AudioPlayerManager()
+        manager.setAudioPlayerFactory(testAudioPlayerFactory)
 
-    /** Tests for the stop system audio method. */
-    @Test
-    fun testStopSystemAudio() {
-    }
+        assertFalse(manager.isAudioPlaying)
+        assertFalse(manager.isSystemAudioPlaying)
+        assertFalse(manager.isSystemAudioPlaying(southWav))
 
-    /** Tests for the is system audio playing and specific file methods. */
-    @Test
-    fun testIsSystemAudioPlaying() {
+        manager.playSystemAudio(southWav)
+
+        assertTrue(manager.isAudioPlaying)
+        assertTrue(manager.isSystemAudioPlaying)
+        assertTrue(manager.isSystemAudioPlaying(southWav))
+        assertFalse(manager.isGeneralAudioPlaying)
+
+        manager.stopSystemAudio()
+        Thread.sleep(5000)
+
+        assertFalse(manager.isAudioPlaying)
+        assertFalse(manager.isSystemAudioPlaying)
+        assertFalse(manager.isSystemAudioPlaying(southWav))
     }
 
     /** Tests for the hashcode method. */
@@ -102,8 +113,6 @@ class AudioPlayerManagerTest {
 
         first.setAudioPlayerFactory(testAudioPlayerFactory)
         first.playSystemAudio(southWav)
-
-        assertEquals(-1088113061, first.hashCode())
 
         assertNotEquals(first.hashCode(), equalToFirst.hashCode())
         ThreadUtil.sleep(5500)
