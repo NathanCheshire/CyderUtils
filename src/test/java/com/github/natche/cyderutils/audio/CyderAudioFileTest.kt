@@ -1,0 +1,135 @@
+package com.github.natche.cyderutils.audio
+
+import com.github.natche.cyderutils.utils.OsUtil
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
+import java.io.File
+
+/** Tests for [CyderAudioFile]s. */
+class CyderAudioFileTest {
+    /** Tests for creation from factories. */
+    @Test
+    fun testCreationFactories() {
+        val file: File? = null
+        assertThrows(NullPointerException::class.java) { CyderAudioFile.from(file) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.from("") }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.from("    ") }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.from(File(".")) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.from("something.mp3") }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.from(File("something.mp3")) }
+
+        assertDoesNotThrow { CyderAudioFile.from(southWav) }
+        assertDoesNotThrow { CyderAudioFile.from(carrotsM4a) }
+    }
+
+    /** Tests for creation via the constructors. */
+    @Test
+    fun testCreation() {
+        assertThrows(NullPointerException::class.java) { CyderAudioFile(null) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(File("something.mp3")) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(File(".")) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(nightcoreAac) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(nightcoreAac, 0, 0) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(nightcoreAac, 20, 20) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(nightcoreAac, 19, 20) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile(nightcoreAac, 20, 21) }
+
+        assertDoesNotThrow { CyderAudioFile(southWav) }
+        assertDoesNotThrow { CyderAudioFile(southWav, 20, 0) }
+    }
+
+    @Test
+    fun testConstructionViaBuilder() {
+
+    }
+
+    @Test
+    fun testSetDreamifyHighPass() {
+
+    }
+
+    @Test
+    fun testSetDreamifyLowPass() {
+
+    }
+
+    @Test
+    fun testSetOutputDirectory() {
+
+    }
+
+    @Test
+    fun testConvertTo() {
+
+    }
+
+    @Test
+    fun testGetAudioLength() {
+
+    }
+
+    @Test
+    fun testDreamify() {
+
+    }
+
+    @Test
+    fun testToWaveFile() {
+
+    }
+
+    @Test
+    fun testEquals() {
+
+    }
+
+    @Test
+    fun testToString() {
+
+    }
+
+    @Test
+    fun testHashCode() {
+
+    }
+
+    companion object {
+        val southWav: File = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "ManOfTheSouth.wav"
+        )
+        val carrotsM4a: File = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "TastyCarrots.m4a"
+        )
+        val nightcoreAac: File = OsUtil.buildFile(
+            "src",
+            "test",
+            "java",
+            "com",
+            "github",
+            "natche",
+            "cyderutils",
+            "audio",
+            "resources",
+            "Nightcore.aac"
+        )
+    }
+}

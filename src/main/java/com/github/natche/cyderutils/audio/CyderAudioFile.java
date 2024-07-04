@@ -65,11 +65,11 @@ public final class CyderAudioFile {
      * @param audioFile the audio file to use
      * @return a new instance of a CyderAudioFile from the provided file
      * @throws NullPointerException if the provided file is empty
-     * @throws IllegalArgumentException if the provided file does not exist
+     * @throws IllegalArgumentException if the provided file is a directory
      */
     public static CyderAudioFile from(File audioFile) {
         Preconditions.checkNotNull(audioFile);
-        Preconditions.checkArgument(audioFile.isFile());
+        Preconditions.checkArgument(!audioFile.isDirectory());
 
         return new CyderAudioFile(audioFile);
     }
@@ -166,6 +166,7 @@ public final class CyderAudioFile {
         CyderTemporaryFile temporaryConversionFile = new CyderTemporaryFile.Builder()
                 .setOutputFilename(FileUtil.getFilename(audioFile))
                 .setOutputExtension(audioFileType.getExtension())
+                .setOutputDirectory(outputDirectory)
                 .build();
 
         List<String> process = ImmutableList.of(
@@ -290,7 +291,7 @@ public final class CyderAudioFile {
     }
 
     /** A builder for constructing new instances of a {@link CyderAudioFile}. */
-    public static class Builder {
+    public static final class Builder {
         /** The highpass value for the dreamify ffmpeg filter. */
         private int highpass = DEFAULT_DREAMIFY_HIGH_PASS;
 

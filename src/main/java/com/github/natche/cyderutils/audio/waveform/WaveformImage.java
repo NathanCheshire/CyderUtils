@@ -6,12 +6,14 @@ import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.audio.wav.WaveFile;
 import com.github.natche.cyderutils.audio.wav.WaveFileException;
 import com.github.natche.cyderutils.color.CyderColors;
+import com.github.natche.cyderutils.enumerations.SystemPropertyKey;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
 import com.google.common.base.Preconditions;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.concurrent.Future;
 
 /** A class for generating audio waveforms PNGs from audio files. */
@@ -52,6 +54,7 @@ public final class WaveformImage {
         Graphics2D g2d = waveformImage.createGraphics();
 
         CyderAudioFile audioFile = builder.getAudioFile();
+        audioFile.setOutputDirectory(new File(SystemPropertyKey.JAVA_IO_TMPDIR.getProperty()));
         Future<CyderAudioFile> futureConvertedToWav = audioFile.convertTo(SupportedAudioFileType.WAVE);
 
         while (!futureConvertedToWav.isDone()) Thread.onSpinWait();
