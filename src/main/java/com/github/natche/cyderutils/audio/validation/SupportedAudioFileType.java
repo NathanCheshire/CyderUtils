@@ -1,10 +1,10 @@
 package com.github.natche.cyderutils.audio.validation;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.audio.AudioValidationUtil;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegArgument;
 import com.github.natche.cyderutils.files.FileUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.util.Arrays;

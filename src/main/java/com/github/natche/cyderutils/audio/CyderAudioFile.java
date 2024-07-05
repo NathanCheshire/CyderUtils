@@ -11,7 +11,6 @@ import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.process.CyderProcessException;
 import com.github.natche.cyderutils.process.ProcessResult;
 import com.github.natche.cyderutils.process.ProcessUtil;
-import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
 
 import java.io.File;
@@ -208,7 +207,7 @@ public final class CyderAudioFile {
      * @return the highpass lowpass filter commands string
      */
     private String constructHighpassLowpassFilter() {
-        return "\"" + "highpass=f=" + dreamifyHighPass + ", " + "lowpass=f=" + dreamifyLowPass + "\"";
+        return "highpass=f=" + dreamifyHighPass + "," + "lowpass=f=" + dreamifyLowPass;
     }
 
     /**
@@ -221,20 +220,17 @@ public final class CyderAudioFile {
         return Executors.newSingleThreadExecutor(
                 new CyderThreadFactory(executorThreadName)).submit(() -> {
 
-            String safeFilename = StringUtil.surroundWithQuotes(audioFile.getAbsolutePath());
-
             String filename = FileUtil.getFilename(audioFile)
                     + "_dreamy" + FileUtil.getExtension(audioFile);
             File outputFile = new File(outputDirectory, filename);
-            String safeOutputFilename = StringUtil.surroundWithQuotes(outputFile.getAbsolutePath());
 
             String[] command = {
                     "ffmpeg",
-                    "-i",
-                    safeFilename,
-                    "-filter:a",
-                    constructHighpassLowpassFilter(),
-                    safeOutputFilename
+                    "-y",
+                    "-i", audioFile.getAbsolutePath(),
+                    "-filter:a", constructHighpassLowpassFilter(),
+                    "-f", FileUtil.getExtensionWithoutPeriod(audioFile),
+                    outputFile.getAbsolutePath()
             };
             Future<ProcessResult> result = ProcessUtil.getProcessOutput(command);
             while (!result.isDone()) Thread.onSpinWait();

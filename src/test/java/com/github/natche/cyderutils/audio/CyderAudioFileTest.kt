@@ -6,6 +6,7 @@ import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.lang.IllegalStateException
 import java.time.Duration
 
 /** Tests for [CyderAudioFile]s. */
@@ -106,7 +107,7 @@ class CyderAudioFileTest {
     fun testConvertTo() {
         val file = CyderAudioFile(southWav)
         file.setOutputDirectory(File(SystemPropertyKey.JAVA_IO_TMPDIR.property))
-        assertThrows(NullPointerException::class.java) { file.convertTo(null)  }
+        assertThrows(NullPointerException::class.java) { file.convertTo(null) }
 
         for (audioFormat in SupportedAudioFileType.values()) {
             val futureResult = file.convertTo(audioFormat)
@@ -136,31 +137,74 @@ class CyderAudioFileTest {
     /** Tests for the dreamify method. */
     @Test
     fun testDreamify() {
-
+        val file = CyderAudioFile(southWav)
+        file.setOutputDirectory(File(SystemPropertyKey.JAVA_IO_TMPDIR.property))
+        val futureOptionalResult = file.dreamify()
+        while (!futureOptionalResult.isDone) Thread.onSpinWait()
+        Thread.sleep(5000)
+        val optionalResult = futureOptionalResult.get()
+        assertTrue(optionalResult.isPresent)
+        assertNotNull(optionalResult.get())
     }
 
     /** Tests for the to wave file method. */
     @Test
     fun testToWaveFile() {
-
+        assertDoesNotThrow { CyderAudioFile(southWav).toWaveFile() }
+        assertThrows(IllegalStateException::class.java) { CyderAudioFile(carrotsM4a).toWaveFile() }
     }
 
     /** Tests for the equals method. */
     @Test
     fun testEquals() {
+        val first = CyderAudioFile(southWav)
+        val equal = CyderAudioFile(southWav)
+        val notEqual = CyderAudioFile(carrotsM4a)
 
+        assertEquals(first, first)
+        assertEquals(first, equal)
+        assertNotEquals(first, notEqual)
+        assertNotEquals(first, Object())
+
+        first.setDreamifyHighPass(7000)
+        assertNotEquals(first, equal)
+        equal.setDreamifyHighPass(7000)
+        assertEquals(first, equal)
     }
 
     /** Tests for the to string method. */
     @Test
     fun testToString() {
+        val first = CyderAudioFile(southWav)
+        first.setDreamifyHighPass(5000)
+        first.setDreamifyLowPass(1000)
+        first.setOutputDirectory(File("."))
 
+        val second = CyderAudioFile(carrotsM4a)
+
+        assertEquals(
+            "CyderAudioFile{audioFile=" + southWav.absolutePath
+                    + ", dreamifyLowPass=1000, dreamifyHighPass=5000}", first.toString()
+        )
+        assertEquals(
+            "CyderAudioFile{audioFile=" + carrotsM4a.absolutePath
+                    + ", dreamifyLowPass=200, dreamifyHighPass=1500}", second.toString()
+        )
     }
 
     /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
+        val first = CyderAudioFile(southWav)
+        val equalFirst = CyderAudioFile(southWav)
+        val second = CyderAudioFile(carrotsM4a)
 
+        assertEquals(1870428931, first.hashCode())
+        assertEquals(1870428931, equalFirst.hashCode())
+        assertEquals(-128074749, second.hashCode())
+
+        assertEquals(first.hashCode(), equalFirst.hashCode())
+        assertNotEquals(first.hashCode(), second.hashCode())
     }
 
     companion object {
