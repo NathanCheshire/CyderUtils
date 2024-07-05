@@ -1,10 +1,12 @@
 package com.github.natche.cyderutils.audio
 
+import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType
+import com.github.natche.cyderutils.enumerations.SystemPropertyKey
 import com.github.natche.cyderutils.utils.OsUtil
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.time.Duration
 
 /** Tests for [CyderAudioFile]s. */
 class CyderAudioFileTest {
@@ -39,6 +41,9 @@ class CyderAudioFileTest {
         assertDoesNotThrow { CyderAudioFile(southWav, 20, 0) }
     }
 
+    /**
+     * Tests for construction a CyderAudioFile via a builder.
+     */
     @Test
     fun testConstructionViaBuilder() {
         assertThrows(NullPointerException::class.java) { CyderAudioFile.Builder(null) }
@@ -65,6 +70,7 @@ class CyderAudioFileTest {
         assertDoesNotThrow { builder.setOutputDirectory(File(".")) }
     }
 
+    /** Tests for the set dreamify high pass method. */
     @Test
     fun testSetDreamifyHighPass() {
         val file = CyderAudioFile(southWav)
@@ -74,6 +80,7 @@ class CyderAudioFileTest {
         assertDoesNotThrow { file.setDreamifyHighPass(101) }
     }
 
+    /** Tests for the set dreamify low pass method. */
     @Test
     fun testSetDreamifyLowPass() {
         val file = CyderAudioFile(southWav)
@@ -84,6 +91,7 @@ class CyderAudioFileTest {
         assertDoesNotThrow { file.setDreamifyLowPass(99) }
     }
 
+    /** Tests for the set output directory method. */
     @Test
     fun testSetOutputDirectory() {
         val file = CyderAudioFile(southWav)
@@ -93,36 +101,63 @@ class CyderAudioFileTest {
         assertDoesNotThrow { file.setOutputDirectory(File(".")) }
     }
 
+    /** Tests for the convert to method. */
     @Test
     fun testConvertTo() {
+        val file = CyderAudioFile(southWav)
+        file.setOutputDirectory(File(SystemPropertyKey.JAVA_IO_TMPDIR.property))
+        assertThrows(NullPointerException::class.java) { file.convertTo(null)  }
 
+        for (audioFormat in SupportedAudioFileType.values()) {
+            val futureResult = file.convertTo(audioFormat)
+            while (!futureResult.isDone) Thread.onSpinWait()
+            val result = futureResult.get()
+            assertNotNull(result)
+        }
     }
 
+    /** Tests for the get audio length method. */
     @Test
     fun testGetAudioLength() {
+        val file = CyderAudioFile(southWav)
+        assertThrows(NullPointerException::class.java) { file.getAudioLength(null) }
 
+        var futureResult = file.getAudioLength(DetermineAudioLengthMethod.FFMPEG)
+        while (!futureResult.isDone) Thread.onSpinWait()
+        var result = futureResult.get()
+        assertEquals(Duration.ofSeconds(10, 5000000), result)
+
+        futureResult = file.getAudioLength(DetermineAudioLengthMethod.PYTHON_MUTAGEN)
+        while (!futureResult.isDone) Thread.onSpinWait()
+        result = futureResult.get()
+        assertEquals(Duration.ofSeconds(10, 5000000), result)
     }
 
+    /** Tests for the dreamify method. */
     @Test
     fun testDreamify() {
 
     }
 
+    /** Tests for the to wave file method. */
     @Test
     fun testToWaveFile() {
 
     }
 
+    /** Tests for the equals method. */
     @Test
     fun testEquals() {
 
     }
 
+    /** Tests for the to string method. */
     @Test
     fun testToString() {
 
     }
 
+    /** Tests for the hashcode method. */
     @Test
     fun testHashCode() {
 
