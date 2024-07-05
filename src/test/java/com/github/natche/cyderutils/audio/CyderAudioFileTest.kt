@@ -86,7 +86,11 @@ class CyderAudioFileTest {
 
     @Test
     fun testSetOutputDirectory() {
-
+        val file = CyderAudioFile(southWav)
+        assertThrows(NullPointerException::class.java) { file.setOutputDirectory(null) }
+        assertThrows(IllegalArgumentException::class.java) { file.setOutputDirectory(File("file.txt")) }
+        assertThrows(IllegalArgumentException::class.java) { file.setOutputDirectory(File("directory")) }
+        assertDoesNotThrow { file.setOutputDirectory(File(".")) }
     }
 
     @Test
