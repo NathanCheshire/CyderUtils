@@ -41,12 +41,37 @@ class CyderAudioFileTest {
 
     @Test
     fun testConstructionViaBuilder() {
+        assertThrows(NullPointerException::class.java) { CyderAudioFile.Builder(null) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.Builder(File("file.mp3")) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.Builder(File(".")) }
+        assertThrows(IllegalArgumentException::class.java) { CyderAudioFile.Builder(nightcoreAac) }
 
+        assertDoesNotThrow { CyderAudioFile.Builder(southWav) }
+
+        val builder = CyderAudioFile.Builder(southWav)
+        assertThrows(IllegalArgumentException::class.java) { builder.setHighpass(-20) }
+        assertThrows(IllegalArgumentException::class.java) { builder.setLowpass(40000) }
+
+        assertDoesNotThrow { builder.setLowpass(0) }
+        assertDoesNotThrow { builder.setHighpass(100) }
+        assertThrows(IllegalArgumentException::class.java) { builder.setLowpass(101) }
+        assertThrows(IllegalArgumentException::class.java) { builder.setLowpass(100) }
+        assertDoesNotThrow { builder.setLowpass(99) }
+
+        assertThrows(NullPointerException::class.java) { builder.setOutputDirectory(null) }
+        assertThrows(IllegalArgumentException::class.java) { builder.setOutputDirectory(File("file.mp3")) }
+        assertThrows(IllegalArgumentException::class.java) { builder.setOutputDirectory(File("../directoryThing")) }
+
+        assertDoesNotThrow { builder.setOutputDirectory(File(".")) }
     }
 
     @Test
     fun testSetDreamifyHighPass() {
-
+        val file = CyderAudioFile(southWav)
+        file.setDreamifyLowPass(100)
+        assertThrows(IllegalArgumentException::class.java) { file.setDreamifyHighPass(99) }
+        assertThrows(IllegalArgumentException::class.java) { file.setDreamifyHighPass(100) }
+        assertDoesNotThrow { file.setDreamifyHighPass(101) }
     }
 
     @Test
