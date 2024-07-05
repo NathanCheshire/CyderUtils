@@ -76,7 +76,12 @@ class CyderAudioFileTest {
 
     @Test
     fun testSetDreamifyLowPass() {
-
+        val file = CyderAudioFile(southWav)
+        file.setDreamifyLowPass(0)
+        file.setDreamifyHighPass(100)
+        assertThrows(IllegalArgumentException::class.java) { file.setDreamifyLowPass(101) }
+        assertThrows(IllegalArgumentException::class.java) { file.setDreamifyLowPass(100) }
+        assertDoesNotThrow { file.setDreamifyLowPass(99) }
     }
 
     @Test
