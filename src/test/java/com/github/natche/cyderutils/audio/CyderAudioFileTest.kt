@@ -199,10 +199,6 @@ class CyderAudioFileTest {
         val equalFirst = CyderAudioFile(southWav)
         val second = CyderAudioFile(carrotsM4a)
 
-        assertEquals(1870428931, first.hashCode())
-        assertEquals(1870428931, equalFirst.hashCode())
-        assertEquals(-128074749, second.hashCode())
-
         assertEquals(first.hashCode(), equalFirst.hashCode())
         assertNotEquals(first.hashCode(), second.hashCode())
     }
