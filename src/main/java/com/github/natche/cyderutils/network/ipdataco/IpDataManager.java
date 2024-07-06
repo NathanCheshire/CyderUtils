@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -217,5 +218,45 @@ public final class IpDataManager {
                 ThreadUtil.sleep(REFRESH_FREQUENCY_UPDATED_CHECK_FREQUENCY);
             }
         }, threadName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "IpDataManager{"
+                + "ipDataKey=\"" + ipDataKey + "\", "
+                + "baseUrl=\"" + baseUrl + "\", "
+                + "lastRefreshTime=\"" + lastRefreshTime + "\", "
+                + "refreshFrequency=\"" + refreshFrequency + "\", "
+                + "refresherRunning=\"" + refresherRunning.get() + "\", "
+                + "}";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        int ret = ipDataKey.hashCode();
+        ret = 31 * ret + baseUrl.hashCode();
+        ret = 31 * ret + lastRefreshTime.hashCode();
+        ret = 31 * ret + refreshFrequency.hashCode();
+        ret = 31 * ret + Boolean.hashCode(refresherRunning.get());
+        return ret;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof IpDataManager)) {
+            return false;
+        }
+
+        IpDataManager other = (IpDataManager) o;
+        return other.ipDataKey.equals(ipDataKey)
+                && other.baseUrl.equals(baseUrl)
+                && Objects.equals(other.lastRefreshTime, lastRefreshTime)
+                && Objects.equals(other.refreshFrequency, refreshFrequency)
+                && other.refresherRunning.get() == refresherRunning.get();
     }
 }
