@@ -90,7 +90,7 @@ public final class CyderInformNotification extends CyderNotification {
             container.setLocation(containerX, containerY);
             notificationFrame.getContentPane().add(container);
         } else {
-            BoundsString bs = BoundsUtil.widthHeightCalculation(htmlText, notifyFont);
+            BoundsString bs = BoundsUtil.widthHeightCalculation(htmlText, notifyFont, 1200);
             JLabel label = new JLabel(bs.getText());
             label.setBounds(containerX, containerY, bs.getWidth(), bs.getHeight());
             label.setForeground(CyderColors.navy);

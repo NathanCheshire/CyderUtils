@@ -701,7 +701,7 @@ public final class GetterUtil {
                 textLabel.setFont(getConfirmationBuilder.getLabelFont());
 
                 BoundsString boundsString = BoundsUtil.widthHeightCalculation(
-                        getConfirmationBuilder.getLabelText(), textLabel.getFont());
+                        getConfirmationBuilder.getLabelText(), textLabel.getFont(), 1200);
                 int textWidth = boundsString.getWidth();
                 int textHeight = boundsString.getHeight();
                 textLabel.setText(boundsString.getText());

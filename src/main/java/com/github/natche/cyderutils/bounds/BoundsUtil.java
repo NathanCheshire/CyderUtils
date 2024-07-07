@@ -1,12 +1,9 @@
 package com.github.natche.cyderutils.bounds;
 
-import com.google.common.base.Preconditions;
-import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.constants.HtmlTags;
-import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.strings.CyderStrings;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.utils.HtmlUtil;
+import com.google.common.base.Preconditions;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
@@ -16,9 +13,6 @@ import java.awt.geom.AffineTransform;
 
 /** Utility methods to calculate the needed space for a String of text. */
 public final class BoundsUtil {
-    /** The default maximum width for returned bounds strings. */
-    private static final int DEFAULT_MAX_WIDTH = 1200;
-
     /** The opening HTML tag char. */
     public static final char openingHtmlTagChar = '<';
 
@@ -29,48 +23,6 @@ public final class BoundsUtil {
     private static final int numLookAroundForSpaceChars = 7;
 
     /**
-     * Suppress default constructor.
-     *
-     * @throws IllegalMethodException if invoked
-     */
-    private BoundsUtil() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
-    }
-
-    /**
-     * Calculates the needed width and height necessary to display the provided string using
-     * the {@link CyderFonts#DEFAULT_FONT_SMALL} font. The object returned dictates the html-styled
-     * string to use which is guaranteed to fit within a max width of {@link #DEFAULT_MAX_WIDTH}.
-     * Callers should check to ensure the height is acceptable to their purpose.
-     *
-     * @param text the string to display
-     * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
-     * @throws NullPointerException if the provided text is null
-     */
-    public static BoundsString widthHeightCalculation(String text) {
-        Preconditions.checkNotNull(text);
-
-        return widthHeightCalculation(text, CyderFonts.DEFAULT_FONT_SMALL, DEFAULT_MAX_WIDTH);
-    }
-
-    /**
-     * Calculates the needed width and height necessary to display the provided string. The object returned
-     * dictates the html-styled string to use which is guaranteed to fit within a max width of
-     * {@link #DEFAULT_MAX_WIDTH}. Callers should check to ensure the height is acceptable to their purpose.
-     *
-     * @param text the string to display
-     * @param font the font to be used
-     * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
-     * @throws NullPointerException if the provided text or font is null
-     */
-    public static BoundsString widthHeightCalculation(String text, Font font) {
-        Preconditions.checkNotNull(text);
-        Preconditions.checkNotNull(font);
-
-        return widthHeightCalculation(text, font, DEFAULT_MAX_WIDTH);
-    }
-
-    /**
      * Calculates the needed width and height necessary to display the provided string. The object returned
      * dictates the html-styled string to use which is guaranteed to fit within the provided maximum width.
      * Callers should check to ensure the height is acceptable to their purpose.
@@ -79,7 +31,7 @@ public final class BoundsUtil {
      * @param maxWidth the maximum width allowed
      * @param font     the font to be used
      * @return an object composed of the width, height, and the html-styled text with break tags inserted if needed
-     * @throws NullPointerException if the text or font is null
+     * @throws NullPointerException     if the text or font is null
      * @throws IllegalArgumentException if the provided text is empty or max width is less than or equal to zero
      */
     public static BoundsString widthHeightCalculation(String text, Font font, int maxWidth) {

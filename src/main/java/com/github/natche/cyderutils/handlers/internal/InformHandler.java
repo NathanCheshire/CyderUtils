@@ -1,11 +1,10 @@
 package com.github.natche.cyderutils.handlers.internal;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.bounds.BoundsString;
 import com.github.natche.cyderutils.bounds.BoundsUtil;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
+import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.strings.CyderStrings;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.ui.drag.CyderDragLabel;
@@ -13,6 +12,8 @@ import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.ui.frame.enumerations.FrameType;
 import com.github.natche.cyderutils.ui.label.CyderLabel;
 import com.github.natche.cyderutils.utils.HtmlUtil;
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,7 +89,8 @@ public final class InformHandler {
             textLabel.setOpaque(false);
             textLabel.setForeground(CyderColors.defaultLightModeTextColor);
 
-            BoundsString boundsString = BoundsUtil.widthHeightCalculation(builder.getHtmlText());
+            BoundsString boundsString = BoundsUtil.widthHeightCalculation(builder.getHtmlText(),
+                    CyderFonts.DEFAULT_FONT_SMALL, 1200);
 
             int containerWidth = boundsString.getWidth();
             int containerHeight = boundsString.getHeight();
