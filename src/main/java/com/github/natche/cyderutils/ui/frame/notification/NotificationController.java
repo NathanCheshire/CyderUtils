@@ -186,8 +186,8 @@ public final class NotificationController {
                     .setFont(notificationFont)
                     .setMaxWidth(getMaximumAllowableWidth())
                     .build();
-            int notificationWidth = bounds.getWidth() + notificationPadding;
-            int notificationHeight = bounds.getHeight() + notificationPadding;
+            int notificationWidth = (int) bounds.getWidth() + notificationPadding;
+            int notificationHeight = (int) bounds.getHeight() + notificationPadding;
             String notificationText = bounds.getText();
             if (builder.shouldCalculateViewDuration()) {
                 builder.setViewDuration(msPerWord * HtmlUtil.cleanAndCountWords(notificationText));

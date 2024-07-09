@@ -94,11 +94,11 @@ public final class CyderInformNotification extends CyderNotification {
                     .setMaxWidth(1200)
                     .build();
             JLabel label = new JLabel(bounds.getText());
-            label.setBounds(containerX, containerY, bounds.getWidth(), bounds.getHeight());
+            label.setBounds(containerX, containerY, (int) bounds.getWidth(), (int) bounds.getHeight());
             label.setForeground(CyderColors.navy);
             label.setFont(notifyFont);
-            int width = bounds.getWidth() + 2 * CyderFrame.BORDER_LEN + 2 * notifyPadding;
-            int height = bounds.getHeight() + CyderDragLabel.DEFAULT_HEIGHT
+            int width = (int) bounds.getWidth() + 2 * CyderFrame.BORDER_LEN + 2 * notifyPadding;
+            int height = (int) bounds.getHeight() + CyderDragLabel.DEFAULT_HEIGHT
                     + CyderFrame.BORDER_LEN + 2 * notifyPadding;
             notificationFrame = new CyderFrame.Builder()
                     .setWidth(width)

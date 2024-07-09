@@ -89,8 +89,8 @@ public final class InformHandler {
                     .setMaxWidth(1200)
                     .build();
 
-            int containerWidth = bounds.getWidth();
-            int containerHeight = bounds.getHeight();
+            int containerWidth = (int) bounds.getWidth();
+            int containerHeight = (int) bounds.getHeight();
             String centeredHtml = HtmlUtil.addCenteringToHtml(bounds.getText());
 
             textLabel.setText(centeredHtml);

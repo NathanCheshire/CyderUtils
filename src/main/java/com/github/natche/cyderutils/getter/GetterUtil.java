@@ -136,8 +136,8 @@ public final class GetterUtil {
 
             // todo extract bounds getters here to vars
 
-            int textWidth = bounds.getWidth() + 2 * getInputFieldAndButtonXPadding;
-            int textHeight = bounds.getHeight() + 2 * getInputComponentYPadding;
+            int textWidth = (int) bounds.getWidth() + 2 * getInputFieldAndButtonXPadding;
+            int textHeight = (int) bounds.getHeight() + 2 * getInputComponentYPadding;
             String parsedLabelText = bounds.getText();
 
             int fieldAndButtonWidth = textWidth - 2 * getInputFieldAndButtonXPadding;
@@ -159,7 +159,7 @@ public final class GetterUtil {
             textLabel.setForeground(getInputBuilder.getLabelColor());
             textLabel.setFont(getInputBuilder.getLabelFont());
             textLabel.setBounds(getInputFieldAndButtonXPadding, yOff,
-                    bounds.getWidth(), bounds.getHeight());
+                    (int) bounds.getWidth(), (int) bounds.getHeight());
             inputFrame.getContentPane().add(textLabel);
 
             yOff += getInputComponentYPadding + bounds.getHeight();
@@ -705,8 +705,8 @@ public final class GetterUtil {
                         .setFont(textLabel.getFont())
                         .setMaxWidth(1200)
                         .build();
-                int textWidth = bounds.getWidth();
-                int textHeight = bounds.getHeight();
+                int textWidth = (int) bounds.getWidth();
+                int textHeight = (int) bounds.getHeight();
                 textLabel.setText(bounds.getText());
 
                 int confirmationFrameWidth = 2 * confirmationButtonXPadding + textWidth;
