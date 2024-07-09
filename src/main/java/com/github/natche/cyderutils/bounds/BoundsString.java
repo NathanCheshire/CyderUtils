@@ -1,6 +1,8 @@
 package com.github.natche.cyderutils.bounds;
 
+import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.font.CyderFonts;
+import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.utils.HtmlUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -10,6 +12,7 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +40,9 @@ public final class BoundsString {
 
     /** The text of this bounds string. */
     private final String text;
+
+    /** The HTML styled text after computing the bounds and adjusting the text. */
+    private String styledText;
 
     /** The width of this bounds string. */
     private double width;
@@ -101,7 +107,50 @@ public final class BoundsString {
                 .stream().mapToDouble(Double::doubleValue).max()
                 .orElseThrow(() -> new BoundsComputationException("Could not compute max line height"));
 
-        // todo
+        ArrayList<String> lines = new ArrayList<>();
+        StringBuilder currentLine = new StringBuilder();
+        for (StringContainer part : parts) {
+            String currentLineContent = currentLine.toString();
+            String currentPartContent = part.getString();
+
+            if (part instanceof HtmlString) {
+                if (currentPartContent.equals(HtmlTags.breakTag)) {
+                    lines.add(currentLineContent);
+                    currentLine = new StringBuilder();
+                } else {
+                    currentLine.append(part);
+                }
+
+                continue;
+            }
+
+            for (char c : currentPartContent.toCharArray()) {
+                double currentLineWidth = getLineWidthIgnoringHtmlTags(currentLineContent);
+                double charWidth = getLineWidth(String.valueOf(c));
+                double proposedWidth = currentLineWidth + charWidth;
+
+                // The character will fit on this line
+                if (proposedWidth < maxWidth) {
+                    currentLine.append(c);
+                    continue;
+                }
+
+                // The character will not fit on this line, so we need to find a suitable place to break the string
+                int breakIndex = findBreakInsertionIndexIgnoringHtmlTags(currentLineContent);
+                String fittingLine = currentLine.substring(0, breakIndex).stripTrailing();
+                lines.add(fittingLine);
+
+                String remainder = currentLine.substring(breakIndex, currentLine.length() - 1).stripLeading();
+                currentLine = new StringBuilder(remainder);
+                currentLine.append(c);
+            }
+        }
+
+        double computedWidth = lines.stream()
+                .mapToDouble(this::getLineWidth).max()
+                .orElseThrow(() -> new BoundsComputationException("Could not compute maximum width of lines"));
+        double computedHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
+        checkComputedBounds(computedWidth, computedHeight, lines);
     }
 
     /**
@@ -114,7 +163,8 @@ public final class BoundsString {
 
         StringBuilder currentLine = new StringBuilder();
         for (char c : text.toCharArray()) {
-            double currentLineWidth = getLineWidth(currentLine.toString());
+            String currentLineContent = currentLine.toString();
+            double currentLineWidth = getLineWidth(currentLineContent);
             double charWidth = getLineWidth(String.valueOf(c));
             double proposedWidth = currentLineWidth + charWidth;
 
@@ -125,7 +175,7 @@ public final class BoundsString {
             }
 
             // The character will not fit on this line, so we need to find a suitable place to break the string
-            int breakIndex = findBreakInsertionIndex(currentLine.toString());
+            int breakIndex = findBreakInsertionIndex(currentLineContent);
             String fittingLine = currentLine.substring(0, breakIndex).stripTrailing();
             lines.add(fittingLine);
 
@@ -138,7 +188,7 @@ public final class BoundsString {
                 .mapToDouble(this::getLineWidth).max()
                 .orElseThrow(() -> new BoundsComputationException("Could not compute maximum width of lines"));
         double computedHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
-        checkComputedBounds(computedWidth, computedHeight);
+        checkComputedBounds(computedWidth, computedHeight, lines);
     }
 
     /**
@@ -146,10 +196,11 @@ public final class BoundsString {
      * throws an exception if a dimension exceeds the maximum set value for that dimension
      * or sets the internal state of this instance.
      *
-     * @param computedWidth the computed necessary width
+     * @param computedWidth  the computed necessary width
      * @param computedHeight the computed necessary height
+     * @param lines          the computed lines
      */
-    private void checkComputedBounds(double computedWidth, double computedHeight) {
+    private void checkComputedBounds(double computedWidth, double computedHeight, List<String> lines) {
         if (computedWidth > maxWidth) {
             throw new BoundsComputationException("Computed width exceeds max width, "
                     + computedWidth + " > " + maxWidth);
@@ -161,14 +212,25 @@ public final class BoundsString {
 
         this.width = computedWidth;
         this.height = computedHeight;
+
+        StringBuilder styledTextBuilder = new StringBuilder();
+        if (!lines.get(0).startsWith(HtmlTags.openingHtml)) {
+            styledTextBuilder.append(HtmlTags.openingHtml);
+        }
+        styledTextBuilder.append(StringUtil.joinParts(lines, HtmlTags.breakTag));
+        if (!styledTextBuilder.toString().endsWith(HtmlTags.closingHtml)) {
+            styledTextBuilder.append(HtmlTags.closingHtml);
+        }
+
+        this.styledText = styledTextBuilder.toString();
     }
 
     /**
      * Attempts to find an index to break the provided string into two
      * separate strings at due to it exceeding some specified width.
      *
-     * @param string the string to find a point to break the string at
-     * @return the index to break the string at. If no index could be found, the last valid index is returned.
+     * @param string the string to find a point to split the at
+     * @return the index to split the string at
      */
     private int findBreakInsertionIndex(String string) {
         int length = string.length();
@@ -184,6 +246,38 @@ public final class BoundsString {
     }
 
     /**
+     * Attempts to find an index to break the provided string into two
+     * separate strings at due to it exceeding some specified width.
+     * This method handles inline HTML tags too.
+     *
+     * @param string the string to find a point to split at
+     * @return the index to split the string at
+     */
+    private int findBreakInsertionIndexIgnoringHtmlTags(String string) {
+        int length = string.length();
+
+        int currentIndex = length - 1;
+        boolean inTag = false;
+        int checkedChars = 0;
+        while (checkedChars < CHECK_FOR_SPACE_BACKWARDS_LENGTH || currentIndex == 0) {
+            if (string.charAt(currentIndex) == '>') {
+                inTag = true;
+            } else if (string.charAt(currentIndex) == '<') {
+                inTag = false;
+            } else if (string.charAt(currentIndex) == ' ' && !inTag) {
+                return currentIndex;
+            } else {
+                // A non-html/non-plain text char was checked but was not a space
+                checkedChars++;
+            }
+
+            currentIndex--;
+        }
+
+        return length - 1;
+    }
+
+    /**
      * Returns the needed width for the internal font to render the provided line.
      *
      * @param line the line
@@ -191,6 +285,21 @@ public final class BoundsString {
      */
     private double getLineWidth(String line) {
         return font.getStringBounds(line, context).getWidth();
+    }
+
+    /**
+     * Returns the needed width for the internal font to render the provided line ignoring HTML tags.
+     * Break tags should not be passed to this method for obvious reasons.
+     *
+     * @param line the line possibly with styled HTML tags
+     * @return the necessary width
+     */
+    private double getLineWidthIgnoringHtmlTags(String line) {
+        ImmutableList<String> plainParts = splitHtml(line).stream()
+                .filter((container) -> container instanceof PlainString)
+                .map(StringContainer::getString).collect(ImmutableList.toImmutableList());
+        String joined = StringUtil.joinParts(plainParts, "");
+        return getLineWidth(joined);
     }
 
     private static ImmutableList<StringContainer> splitHtml(String input) {
@@ -215,7 +324,7 @@ public final class BoundsString {
      * @return the text for this bounds string
      */
     public String getText() {
-        return text;
+        return styledText;
     }
 
     /**
