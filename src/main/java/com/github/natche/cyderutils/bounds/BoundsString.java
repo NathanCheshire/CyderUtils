@@ -56,7 +56,8 @@ public final class BoundsString {
      * Constructs a new BoundsString object.
      *
      * @param builder the builder
-     * @throws NullPointerException if the provided builder is null
+     * @throws NullPointerException       if the provided builder is null
+     * @throws BoundsComputationException if the computed width or height exceeds the maximum specifications
      */
     private BoundsString(Builder builder) {
         Preconditions.checkNotNull(builder);
@@ -83,10 +84,24 @@ public final class BoundsString {
         }
     }
 
+    /**
+     * Computes the bounds necessary to hold the text given the maximum specifications while taking into account
+     * HTML styling such as opening and closing tags, break tags, style tags, div tags, etc.
+     *
+     * @param lineHeight the height a single line of text requires
+     */
     private void calculateBoundsWithHtmlStyling(double lineHeight) {
         ImmutableList<StringContainer> parts = splitHtml(text);
+
+        // todo
     }
 
+    /**
+     * Computes the bounds necessary to hold the text given the maximum
+     * specifications and the assumption that there is no HTML styling present.
+     *
+     * @param lineHeight the height a single line of text requires
+     */
     private void calculateBoundsWithoutHtmlStyling(double lineHeight) {
         ArrayList<String> lines = new ArrayList<>();
 
@@ -120,7 +135,8 @@ public final class BoundsString {
                     lines.add(currentLine.toString());
                     currentLine = new StringBuilder();
                 } else {
-                    // Found a space so split and eliminate there
+                    // Found a space so split and eliminate the space
+                    // todo any leading or trailing spaces?
                     String fittingLine = currentLine.substring(0, breakChar);
                     String remainder = currentLine.substring(breakChar + 1, currentLine.length() - 1);
                     lines.add(fittingLine);
@@ -136,7 +152,13 @@ public final class BoundsString {
         }
         double necessaryHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
 
-        // todo throw if this is too big? idk
+        if (necessaryWidth > maxWidth) {
+            throw new BoundsComputationException("Computed width exceeds max width, "
+                    + necessaryWidth + " > " + maxWidth);
+        } else if (necessaryHeight > maxHeight) {
+            throw new BoundsComputationException("Computed height exceeds max height, "
+                    + necessaryHeight + " > " + maxHeight);
+        }
 
         this.width = necessaryWidth;
         this.height = necessaryHeight;
