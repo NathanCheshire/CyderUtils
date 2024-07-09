@@ -111,57 +111,57 @@ public final class BoundsString {
             double charWidth = getLineWidth(String.valueOf(c));
             double proposedWidth = currentLineWidth + charWidth;
 
-            if (proposedWidth == maxWidth) {
+            // The character will fit on this line
+            if (proposedWidth < maxWidth) {
                 currentLine.append(c);
-                lines.add(currentLine.toString());
-                currentLine = new StringBuilder();
-            } else if (proposedWidth < maxWidth) {
-                currentLine.append(c);
-            } else {
-                // check backwards some chars for a space, if we cannot find one,
-                // break here since this char will push us over
-                int breakChar = -1;
-                for (int i = currentLine.length() - 1 ;
-                     i > currentLine.length() - CHECK_FOR_SPACE_BACKWARDS_LENGTH ; i--) {
-                    if (currentLine.charAt(i) == ' ') {
-                        breakChar = i;
-                        break;
-                    }
-                }
-
-                if (breakChar == -1) {
-                    // Could not find a space to break at so here will do
-                    currentLine.append(c);
-                    lines.add(currentLine.toString());
-                    currentLine = new StringBuilder();
-                } else {
-                    // Found a space so split and eliminate the space
-                    // todo any leading or trailing spaces?
-                    String fittingLine = currentLine.substring(0, breakChar);
-                    String remainder = currentLine.substring(breakChar + 1, currentLine.length() - 1);
-                    lines.add(fittingLine);
-                    currentLine = new StringBuilder(remainder);
-                }
+                continue;
             }
+
+            // The character will not fit on this line, so we need to find a suitable place to break the string
+            int breakIndex = findBreakInsertionIndex(currentLine.toString());
+            String fittingLine = currentLine.substring(0, breakIndex).stripTrailing();
+            lines.add(fittingLine);
+
+            String remainder = currentLine.substring(breakIndex, currentLine.length() - 1).stripLeading();
+            currentLine = new StringBuilder(remainder);
+            currentLine.append(c);
         }
 
-        // now find max width and then sum heights plus padding
         double necessaryWidth = maxWidth;
-        for (String line : lines) {
-            necessaryWidth = Math.min(getLineWidth(line), necessaryWidth);
-        }
-        double necessaryHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
-
+        for (String line : lines) necessaryWidth = Math.max(getLineWidth(line), necessaryWidth);
         if (necessaryWidth > maxWidth) {
             throw new BoundsComputationException("Computed width exceeds max width, "
                     + necessaryWidth + " > " + maxWidth);
-        } else if (necessaryHeight > maxHeight) {
+        }
+
+        double necessaryHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
+        if (necessaryHeight > maxHeight) {
             throw new BoundsComputationException("Computed height exceeds max height, "
                     + necessaryHeight + " > " + maxHeight);
         }
 
         this.width = necessaryWidth;
         this.height = necessaryHeight;
+    }
+
+    /**
+     * Attempts to find an index to break the provided string into two
+     * separate strings at due to it exceeding some specified width.
+     *
+     * @param string the string to find a point to break the string at
+     * @return the index to break the string at. If no index could be found, the last valid index is returned.
+     */
+    private int findBreakInsertionIndex(String string) {
+        int length = string.length();
+        int lookBackChars = Math.min(CHECK_FOR_SPACE_BACKWARDS_LENGTH, length);
+        int currentIndex = length - 1;
+
+        while (currentIndex > length - lookBackChars) {
+            if (string.charAt(currentIndex) == ' ') return currentIndex;
+            currentIndex--;
+        }
+
+        return length - 1;
     }
 
     /**
