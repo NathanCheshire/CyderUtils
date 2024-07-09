@@ -235,6 +235,10 @@ public final class BoundsString {
         int ret = text.hashCode();
         ret = 31 * ret + Double.hashCode(width);
         ret = 31 * ret + Double.hashCode(height);
+        ret = 31 * ret + font.hashCode();
+        ret = 31 * ret + Double.hashCode(maxWidth);
+        ret = 31 * ret + Double.hashCode(maxHeight);
+        ret = 31 * ret + Integer.hashCode(linePadding);
         return ret;
     }
 
@@ -244,7 +248,11 @@ public final class BoundsString {
         return "BoundsString{"
                 + "text=\"" + text + "\", "
                 + "width=" + width + ", "
-                + "height=" + height
+                + "height=" + height + ", "
+                + "font=" + font + ", "
+                + "maxWidth=" + maxWidth + ", "
+                + "maxHeight=" + maxHeight + ", "
+                + "linePadding=" + linePadding
                 + "}";
     }
 
@@ -259,7 +267,11 @@ public final class BoundsString {
         BoundsString other = (BoundsString) o;
         return text.equals(other.getText())
                 && width == other.getWidth()
-                && height == other.getHeight();
+                && height == other.getHeight()
+                && font.equals(other.font)
+                && maxWidth == other.maxWidth
+                && maxHeight == other.maxHeight
+                && linePadding == other.linePadding;
     }
 
     /** A builder for constructing a BoundsString object. */
