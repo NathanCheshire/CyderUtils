@@ -185,7 +185,7 @@ class WaveFileTest {
         private val carrotsWav = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -198,7 +198,7 @@ class WaveFileTest {
         private val southWav = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -211,7 +211,7 @@ class WaveFileTest {
         private val mp3 = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",

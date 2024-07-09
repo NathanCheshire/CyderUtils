@@ -3,7 +3,6 @@ package com.github.natche.cyderutils.constants;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
-import com.github.natche.cyderutils.strings.CyderStrings;
 import com.github.natche.cyderutils.utils.StaticUtil;
 
 import javax.swing.*;
@@ -27,7 +26,7 @@ public final class CyderIcons {
      * @throws IllegalMethodException if invoked
      */
     private CyderIcons() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Instances of CyderIcons are not allowed");
     }
 
     /**

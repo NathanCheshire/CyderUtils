@@ -159,7 +159,7 @@ class AudioPlayerManagerTest {
         private val carrotsMp3 = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -172,7 +172,7 @@ class AudioPlayerManagerTest {
         private val southWav = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",

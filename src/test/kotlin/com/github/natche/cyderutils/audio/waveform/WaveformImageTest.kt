@@ -26,7 +26,7 @@ class WaveformImageTest {
             OsUtil.buildFile(
                 "src",
                 "test",
-                "java",
+                "kotlin",
                 "com",
                 "github",
                 "natche",
@@ -47,7 +47,7 @@ class WaveformImageTest {
         val truthFile = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -70,7 +70,7 @@ class WaveformImageTest {
             OsUtil.buildFile(
                 "src",
                 "test",
-                "java",
+                "kotlin",
                 "com",
                 "github",
                 "natche",
@@ -96,7 +96,7 @@ class WaveformImageTest {
         val truthFile = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -119,7 +119,7 @@ class WaveformImageTest {
             OsUtil.buildFile(
                 "src",
                 "test",
-                "java",
+                "kotlin",
                 "com",
                 "github",
                 "natche",
@@ -145,7 +145,7 @@ class WaveformImageTest {
         val truthFile = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -167,7 +167,7 @@ class WaveformImageTest {
             OsUtil.buildFile(
                 "src",
                 "test",
-                "java",
+                "kotlin",
                 "com",
                 "github",
                 "natche",
@@ -190,7 +190,7 @@ class WaveformImageTest {
         val truthFile = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",

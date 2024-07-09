@@ -40,7 +40,7 @@ class CPlayerTest
     private val validAudioFile = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -54,7 +54,7 @@ class CPlayerTest
     private val anotherValidAudioFile = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -68,7 +68,7 @@ class CPlayerTest
     private val invalidAudioFile = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",

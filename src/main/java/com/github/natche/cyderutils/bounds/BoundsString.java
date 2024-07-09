@@ -3,6 +3,7 @@ package com.github.natche.cyderutils.bounds;
 import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.strings.StringUtil;
+import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.utils.HtmlUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -23,6 +24,13 @@ import java.util.regex.Pattern;
  */
 @Immutable
 public final class BoundsString {
+    public static void main(String[] args) {
+        CyderFrame frame = new CyderFrame.Builder()
+                .setSize(new Dimension(500, 500))
+                .build();
+        frame.finalizeAndShow();
+    }
+
     /** The pattern used to extract HTML tags from a String. */
     private static final Pattern tagPattern = Pattern.compile("(<[^>]+>)|([^<]+)");
 

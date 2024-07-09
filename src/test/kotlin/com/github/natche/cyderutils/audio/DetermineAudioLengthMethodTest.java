@@ -55,7 +55,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForMp3UsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.mp3"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -72,7 +72,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForMp3UsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.mp3"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -89,7 +89,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForWavUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.wav"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -106,7 +106,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForWavUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.wav"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -123,7 +123,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForOggUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.ogg"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -140,7 +140,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForOggUsingFfmpeg() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.ogg"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -157,7 +157,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForM4aUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.PYTHON_MUTAGEN.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.m4a"));
         assertDoesNotThrow(() -> futureDuration.get());
 
@@ -174,7 +174,7 @@ class DetermineAudioLengthMethodTest {
     @Test
     void testDetermineAudioLengthWorksForM4aUsingFfmpegUsingMutagen() {
         Future<Duration> futureDuration = DetermineAudioLengthMethod.FFMPEG.determineAudioLength(
-                OsUtil.buildFile("src", "test", "java", "com", "github", "natche", "cyderutils", "audio",
+                OsUtil.buildFile("src", "test", "kotlin", "com", "github", "natche", "cyderutils", "audio",
                         "resources", "TastyCarrots.m4a"));
         assertDoesNotThrow(() -> futureDuration.get());
 

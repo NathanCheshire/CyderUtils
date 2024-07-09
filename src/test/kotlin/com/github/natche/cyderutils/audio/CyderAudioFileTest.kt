@@ -207,7 +207,7 @@ class CyderAudioFileTest {
         val southWav: File = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -219,7 +219,7 @@ class CyderAudioFileTest {
         val carrotsM4a: File = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -231,7 +231,7 @@ class CyderAudioFileTest {
         val nightcoreAac: File = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",

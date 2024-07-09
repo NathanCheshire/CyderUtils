@@ -11,7 +11,7 @@ class SupportedAudioFileTypeTest {
     private val aac = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -24,7 +24,7 @@ class SupportedAudioFileTypeTest {
     private val m4a = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -37,7 +37,7 @@ class SupportedAudioFileTypeTest {
     private val mp3 = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -50,7 +50,7 @@ class SupportedAudioFileTypeTest {
     private val ogg = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",
@@ -63,7 +63,7 @@ class SupportedAudioFileTypeTest {
     private val wav = OsUtil.buildFile(
         "src",
         "test",
-        "java",
+        "kotlin",
         "com",
         "github",
         "natche",

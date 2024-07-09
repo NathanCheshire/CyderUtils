@@ -18,7 +18,7 @@ class AudioValidationUtilTest {
         val southWav = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",
@@ -30,7 +30,7 @@ class AudioValidationUtilTest {
         val carrotsM4a = OsUtil.buildFile(
             "src",
             "test",
-            "java",
+            "kotlin",
             "com",
             "github",
             "natche",

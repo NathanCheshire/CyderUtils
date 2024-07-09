@@ -90,7 +90,7 @@ public final class StaticUtil {
             }
         }
 
-        throw new IllegalArgumentException("Could not find static file: " + filename);
+        throw new IllegalStateException("Could not find static file: " + filename);
     }
 
     /**
