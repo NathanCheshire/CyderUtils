@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.getter;
 
-import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.bounds.BoundsString;
-import com.github.natche.cyderutils.bounds.BoundsUtil;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.strings.StringUtil;
@@ -16,6 +14,7 @@ import com.github.natche.cyderutils.ui.label.CyderLabel;
 import com.github.natche.cyderutils.ui.list.CyderScrollList;
 import com.github.natche.cyderutils.utils.HtmlUtil;
 import com.github.natche.cyderutils.utils.OsUtil;
+import com.google.common.collect.ImmutableList;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -31,14 +30,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.github.natche.cyderutils.strings.CyderStrings.LOADING;
 import static com.github.natche.cyderutils.strings.CyderStrings.NULL;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+// todo rename to manager or something like that
 
 /** A getter utility for getting strings, confirmations, files, etc. from the user. */
 public final class GetterUtil {
     /** To obtain an instance, use {@link GetterUtil#getInstance()}. */
-    private GetterUtil() {}
+    private GetterUtil() {
+        // used internally
+    }
 
     /**
      * Returns a GetterUtil instance.
@@ -88,9 +91,6 @@ public final class GetterUtil {
     // End frame tracking logic
     // ------------------------
 
-    /** The minimum width for a get input frame. */
-    private static final int getInputMinimumFrameWidth = 400;
-
     /** The top and bottom padding for a get input popup. */
     private static final int getInputComponentYPadding = 10;
 
@@ -130,14 +130,15 @@ public final class GetterUtil {
 
         String threadName = "GetInput waiter thread, title: " + "\"" + getInputBuilder.getFrameTitle() + "\"";
         CyderThreadRunner.submit(() -> {
-            BoundsString boundsString = BoundsUtil.widthHeightCalculation(
-                    getInputBuilder.getLabelText(),
-                    getInputBuilder.getLabelFont(),
-                    getInputMinimumFrameWidth);
+            BoundsString bounds = new BoundsString.Builder(getInputBuilder.getLabelText())
+                    .setFont(getInputBuilder.getLabelFont())
+                    .build();
 
-            int textWidth = boundsString.getWidth() + 2 * getInputFieldAndButtonXPadding;
-            int textHeight = boundsString.getHeight() + 2 * getInputComponentYPadding;
-            String parsedLabelText = boundsString.getText();
+            // todo extract bounds getters here to vars
+
+            int textWidth = bounds.getWidth() + 2 * getInputFieldAndButtonXPadding;
+            int textHeight = bounds.getHeight() + 2 * getInputComponentYPadding;
+            String parsedLabelText = bounds.getText();
 
             int fieldAndButtonWidth = textWidth - 2 * getInputFieldAndButtonXPadding;
             int frameHeight = CyderDragLabel.DEFAULT_HEIGHT + textHeight
@@ -158,10 +159,10 @@ public final class GetterUtil {
             textLabel.setForeground(getInputBuilder.getLabelColor());
             textLabel.setFont(getInputBuilder.getLabelFont());
             textLabel.setBounds(getInputFieldAndButtonXPadding, yOff,
-                    boundsString.getWidth(), boundsString.getHeight());
+                    bounds.getWidth(), bounds.getHeight());
             inputFrame.getContentPane().add(textLabel);
 
-            yOff += getInputComponentYPadding + boundsString.getHeight();
+            yOff += getInputComponentYPadding + bounds.getHeight();
 
             CyderTextField inputField = new CyderTextField();
             inputField.setHorizontalAlignment(JTextField.CENTER);
@@ -268,7 +269,7 @@ public final class GetterUtil {
     private static final String LAST_BUTTON_TEXT = " < ";
 
     /** The text for the next button. */
-    private static final String NEXT_BUTTON_TEXT = " >"  ;
+    private static final String NEXT_BUTTON_TEXT = " >";
 
     /** The border for the next and last buttons. */
     private static final LineBorder getFileButtonBorder
@@ -700,11 +701,13 @@ public final class GetterUtil {
                 textLabel.setForeground(getConfirmationBuilder.getLabelColor());
                 textLabel.setFont(getConfirmationBuilder.getLabelFont());
 
-                BoundsString boundsString = BoundsUtil.widthHeightCalculation(
-                        getConfirmationBuilder.getLabelText(), textLabel.getFont(), 1200);
-                int textWidth = boundsString.getWidth();
-                int textHeight = boundsString.getHeight();
-                textLabel.setText(boundsString.getText());
+                BoundsString bounds = new BoundsString.Builder(getConfirmationBuilder.getLabelText())
+                        .setFont(textLabel.getFont())
+                        .setMaxWidth(1200)
+                        .build();
+                int textWidth = bounds.getWidth();
+                int textHeight = bounds.getHeight();
+                textLabel.setText(bounds.getText());
 
                 int confirmationFrameWidth = 2 * confirmationButtonXPadding + textWidth;
                 int confirmationFrameHeight = confirmationFrameTopPadding + textHeight

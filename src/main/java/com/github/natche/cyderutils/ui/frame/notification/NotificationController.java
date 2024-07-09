@@ -1,16 +1,15 @@
 package com.github.natche.cyderutils.ui.frame.notification;
 
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.Futures;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.bounds.BoundsString;
-import com.github.natche.cyderutils.bounds.BoundsUtil;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
 import com.github.natche.cyderutils.threads.ThreadUtil;
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.utils.HtmlUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,9 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** A controller for the notification queue system of a particular {@link CyderFrame}. */
 public final class NotificationController {
-    /** The notification text for log statements. */
-    private static final String NOTIFICATION = "Notification";
-
     /** The foreground color used for notifications. */
     private static final Color notificationForegroundColor = CyderColors.regularPurple;
 
@@ -186,8 +182,10 @@ public final class NotificationController {
 
         JLabel mouseEventLabel;
         if (builder.getContainer() == null) {
-            BoundsString bounds = BoundsUtil.widthHeightCalculation(
-                    builder.getHtmlText(), notificationFont, getMaximumAllowableWidth());
+            BoundsString bounds = new BoundsString.Builder(builder.getHtmlText())
+                    .setFont(notificationFont)
+                    .setMaxWidth(getMaximumAllowableWidth())
+                    .build();
             int notificationWidth = bounds.getWidth() + notificationPadding;
             int notificationHeight = bounds.getHeight() + notificationPadding;
             String notificationText = bounds.getText();

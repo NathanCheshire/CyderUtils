@@ -12,15 +12,6 @@ public final class PlainString extends StringContainer {
     private final String containedString;
 
     /**
-     * Suppress default constructor.
-     *
-     * @throws IllegalMethodException if invoked
-     */
-    private PlainString() {
-        throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
-    }
-
-    /**
      * Constructs a new plain string.
      *
      * @param containedString the contained string

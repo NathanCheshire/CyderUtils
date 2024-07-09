@@ -1,13 +1,7 @@
 package com.github.natche.cyderutils.strings;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.github.natche.cyderutils.bounds.HtmlString;
-import com.github.natche.cyderutils.bounds.PlainString;
-import com.github.natche.cyderutils.bounds.StringContainer;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
 import com.github.natche.cyderutils.constants.CyderUrls;
-import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.exceptions.FatalException;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.network.NetworkUtil;
@@ -15,6 +9,8 @@ import com.github.natche.cyderutils.ui.pane.CyderOutputPane;
 import com.github.natche.cyderutils.utils.ArrayUtil;
 import com.github.natche.cyderutils.utils.SecurityUtil;
 import com.github.natche.cyderutils.utils.StaticUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.atteo.evo.inflector.English;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -77,7 +73,7 @@ public final class StringUtil {
     /**
      * Removes the first object from the linked pane, this could be anything from a Component to a String.
      *
-     * @throws FatalException if the output pane's lock cannot be aquired
+     * @throws FatalException       if the output pane's lock cannot be aquired
      * @throws BadLocationException if some portion of a computed removal range is not a valid part of the document
      */
     public synchronized void removeFirst() throws BadLocationException {
@@ -167,7 +163,6 @@ public final class StringUtil {
      * @param component the component to append to the pane
      * @param name      the name identifier for the style
      * @param stringId  the string identifier for the underlying insert string call
-     *
      * @throws BadLocationException if an exception occurs when attempting to insert the string
      */
     public synchronized void printComponent(Component component, String name, String stringId)
@@ -554,7 +549,7 @@ public final class StringUtil {
                 blockedWords.add(blockedWord);
             }
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         StringUtil.blockedWords = ImmutableList.copyOf(blockedWords);
@@ -724,45 +719,6 @@ public final class StringUtil {
     }
 
     /**
-     * Finds the non-html text and html tags of a string and returns a linked list representing the parts.
-     *
-     * @param htmlText the text containing html tags
-     * @return a linked list where each object represents either a complete tag or raw text
-     */
-    public static ImmutableList<StringContainer> splitToHtmlTagsAndContent(String htmlText) {
-        Preconditions.checkNotNull(htmlText);
-        Preconditions.checkArgument(!htmlText.isEmpty());
-
-        ArrayList<StringContainer> taggedStrings = new ArrayList<>();
-        String textCopy = htmlText;
-
-        while ((textCopy.contains(HtmlTags.opening) && textCopy.contains(HtmlTags.closing))) {
-            int firstOpeningTagIndex = textCopy.indexOf(HtmlTags.opening);
-            int firstClosingTagIndex = textCopy.indexOf(HtmlTags.closing);
-            if (firstClosingTagIndex < firstOpeningTagIndex) break;
-
-            String nextText = textCopy.substring(0, firstOpeningTagIndex);
-            if (!nextText.isEmpty()) {
-                taggedStrings.add(new PlainString(nextText));
-            }
-
-            String nextHtml = textCopy.substring(firstOpeningTagIndex, firstClosingTagIndex + 1);
-            if (!nextHtml.isEmpty()) {
-                taggedStrings.add(new HtmlString(nextHtml));
-            }
-
-            textCopy = textCopy.substring(firstClosingTagIndex + 1);
-        }
-
-        // Remaining text is non-html since the textCopy contain neither opening or closing tags
-        if (!textCopy.isEmpty()) {
-            taggedStrings.add(new PlainString(textCopy));
-        }
-
-        return ImmutableList.copyOf(taggedStrings);
-    }
-
-    /**
      * Determines if the provided String is null meaning literally null,
      * empty (length 0), or contained in {@link CyderStrings#NULL_STRINGS}.
      *
@@ -783,24 +739,7 @@ public final class StringUtil {
      * @return the length of the non-html text
      */
     public static int getTextLengthIgnoringHtmlTags(String htmlText) {
-        Preconditions.checkNotNull(htmlText);
-        Preconditions.checkArgument(!htmlText.isEmpty());
-
-        int length = 0;
-
-        ImmutableList<StringContainer> taggedStrings = splitToHtmlTagsAndContent(htmlText);
-
-        if (taggedStrings.isEmpty()) {
-            length = htmlText.length();
-        } else {
-            for (StringContainer stringContainer : taggedStrings) {
-                if (stringContainer instanceof PlainString plainString) {
-                    length += plainString.getString().length();
-                }
-            }
-        }
-
-        return length;
+        return 0; // todo
     }
 
     /**

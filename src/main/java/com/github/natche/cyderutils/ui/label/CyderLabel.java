@@ -1,20 +1,19 @@
 package com.github.natche.cyderutils.ui.label;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.bounds.HtmlString;
 import com.github.natche.cyderutils.bounds.PlainString;
 import com.github.natche.cyderutils.bounds.StringContainer;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.font.CyderFonts;
-import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.strings.ToStringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.github.natche.cyderutils.threads.ThreadUtil;
 import com.github.natche.cyderutils.ui.UiUtil;
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.utils.HtmlUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
@@ -189,7 +188,8 @@ public class CyderLabel extends JLabel {
                 String parsedChars = Jsoup.clean(getText(), Safelist.none());
 
                 //init list for strings by tag
-                ImmutableList<StringContainer> taggedStrings = StringUtil.splitToHtmlTagsAndContent(originalText);
+                // todo
+                ImmutableList<StringContainer> taggedStrings = ImmutableList.of();
 
                 //init ripple iterations list
                 ArrayList<String> rippleTextIterations = new ArrayList<>();

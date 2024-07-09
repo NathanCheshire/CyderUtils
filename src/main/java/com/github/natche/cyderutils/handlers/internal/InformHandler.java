@@ -1,12 +1,8 @@
 package com.github.natche.cyderutils.handlers.internal;
 
 import com.github.natche.cyderutils.bounds.BoundsString;
-import com.github.natche.cyderutils.bounds.BoundsUtil;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.font.CyderFonts;
-import com.github.natche.cyderutils.strings.CyderStrings;
-import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.ui.drag.CyderDragLabel;
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.ui.frame.enumerations.FrameType;
@@ -33,7 +29,7 @@ public final class InformHandler {
 
     /** Suppress default constructor. */
     private InformHandler() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Instances of InformHandler are not allowed");
     }
 
     /**
@@ -89,13 +85,15 @@ public final class InformHandler {
             textLabel.setOpaque(false);
             textLabel.setForeground(CyderColors.defaultLightModeTextColor);
 
-            BoundsString boundsString = BoundsUtil.widthHeightCalculation(builder.getHtmlText(),
-                    CyderFonts.DEFAULT_FONT_SMALL, 1200);
+            BoundsString bounds = new BoundsString.Builder(builder.getHtmlText())
+                    .setMaxWidth(1200)
+                    .build();
 
-            int containerWidth = boundsString.getWidth();
-            int containerHeight = boundsString.getHeight();
+            int containerWidth = bounds.getWidth();
+            int containerHeight = bounds.getHeight();
+            String centeredHtml = HtmlUtil.addCenteringToHtml(bounds.getText());
 
-            textLabel.setText(HtmlUtil.addCenteringToHtml(boundsString.getText()));
+            textLabel.setText(centeredHtml);
 
             builder.setContainer(textLabel);
 
@@ -142,9 +140,6 @@ public final class InformHandler {
 
     /** A builder for an information pane. */
     public static class Builder {
-        /** The minimum allowable text length for an information pane. */
-        public static final int MINIMUM_TEXT_LENGTH = 4;
-
         /** The default title for an information pane which are provided no title. */
         public static final String DEFAULT_TITLE = "Information";
 
@@ -176,7 +171,7 @@ public final class InformHandler {
          */
         public Builder(String htmlText) {
             Preconditions.checkNotNull(htmlText);
-            Preconditions.checkArgument(StringUtil.getTextLengthIgnoringHtmlTags(htmlText) >= MINIMUM_TEXT_LENGTH);
+            // Preconditions.checkArgument(StringUtil.getTextLengthIgnoringHtmlTags(htmlText) >= MINIMUM_TEXT_LENGTH);
 
             this.htmlText = htmlText;
         }

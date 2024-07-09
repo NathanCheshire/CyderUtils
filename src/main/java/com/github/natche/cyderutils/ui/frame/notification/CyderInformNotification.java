@@ -1,15 +1,14 @@
 package com.github.natche.cyderutils.ui.frame.notification;
 
-import com.google.common.base.Preconditions;
-import com.google.errorprone.annotations.DoNotCall;
 import com.github.natche.cyderutils.bounds.BoundsString;
-import com.github.natche.cyderutils.bounds.BoundsUtil;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.ui.drag.CyderDragLabel;
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.ui.frame.enumerations.FrameType;
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.DoNotCall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,13 +89,17 @@ public final class CyderInformNotification extends CyderNotification {
             container.setLocation(containerX, containerY);
             notificationFrame.getContentPane().add(container);
         } else {
-            BoundsString bs = BoundsUtil.widthHeightCalculation(htmlText, notifyFont, 1200);
-            JLabel label = new JLabel(bs.getText());
-            label.setBounds(containerX, containerY, bs.getWidth(), bs.getHeight());
+            BoundsString bounds = new BoundsString.Builder(htmlText)
+                    .setFont(notifyFont)
+                    .setMaxWidth(1200)
+                    .build();
+            JLabel label = new JLabel(bounds.getText());
+            label.setBounds(containerX, containerY, bounds.getWidth(), bounds.getHeight());
             label.setForeground(CyderColors.navy);
             label.setFont(notifyFont);
-            int width = bs.getWidth() + 2 * CyderFrame.BORDER_LEN + 2 * notifyPadding;
-            int height = bs.getHeight() + CyderDragLabel.DEFAULT_HEIGHT + CyderFrame.BORDER_LEN + 2 * notifyPadding;
+            int width = bounds.getWidth() + 2 * CyderFrame.BORDER_LEN + 2 * notifyPadding;
+            int height = bounds.getHeight() + CyderDragLabel.DEFAULT_HEIGHT
+                    + CyderFrame.BORDER_LEN + 2 * notifyPadding;
             notificationFrame = new CyderFrame.Builder()
                     .setWidth(width)
                     .setHeight(height)

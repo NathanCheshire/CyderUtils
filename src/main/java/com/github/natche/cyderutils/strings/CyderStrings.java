@@ -6,6 +6,7 @@ import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 /** Common strings used throughout Cyder. */
 public final class CyderStrings {
     /** A string to be displayed when an illegal constructor is invoked. */
+    @Deprecated
     public static final String ILLEGAL_CONSTRUCTOR = "Illegal constructor";
 
     /** General renowned sentence in English for using all 26 latin chars. */
