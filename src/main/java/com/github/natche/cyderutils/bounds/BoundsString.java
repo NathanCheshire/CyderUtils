@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A String container for computing the dimensions required for a container to contain the content
+ * A String container for computing the dimensions required for a container to contain the text
  * of a String inside of it with optional properties of Font, maximum width, and maximum height;
  * By default there is no maximum width or height and the default font is {@link CyderFonts#DEFAULT_FONT_SMALL}
  */
@@ -23,9 +23,16 @@ public final class BoundsString {
     /** The pattern used to extract HTML tags from a String. */
     private static final Pattern tagPattern = Pattern.compile("(<[^>]+>)|([^<]+)");
 
+    /** The index of the group for an {@link HtmlString} received by a {@link Matcher} using {@link #tagPattern}. */
     private static final int HTML_STRING_GROUP = 1;
+
+    /** The index of the group for a {@link PlainString} received by a {@link Matcher} using {@link #tagPattern}. */
     private static final int PLAIN_STRING_GROUP = 2;
-    private static final int HEIGHT_CHECK_CHAR_COUNT = 10;
+
+    /**
+     * The maximum number of characters to check backwards in an attempt
+     * to find a space to split a string at when it exceeds the maximum width.
+     */
     private static final int CHECK_FOR_SPACE_BACKWARDS_LENGTH = 10;
 
     /** The text of this bounds string. */
@@ -37,7 +44,7 @@ public final class BoundsString {
     /** The height of this bounds string. */
     private double height;
 
-    /** The font the label showing the content will use. */
+    /** The font the label showing the text will use. */
     private final Font font;
 
     /** The maximum allowable width. */
@@ -62,7 +69,7 @@ public final class BoundsString {
     private BoundsString(Builder builder) {
         Preconditions.checkNotNull(builder);
 
-        this.text = builder.content;
+        this.text = builder.text;
         this.font = builder.font;
         this.maxWidth = builder.maxWidth;
         this.maxHeight = builder.maxHeight;
@@ -74,24 +81,25 @@ public final class BoundsString {
 
     /** Computes the bounds needed for this BoundsString. */
     private void calculateBounds() {
-        String heightCheckChars = text.substring(0, Math.min(text.length(), HEIGHT_CHECK_CHAR_COUNT));
-        double lineHeight = font.getStringBounds(heightCheckChars, context).getHeight();
-
         if (HtmlUtil.containsHtmlStyling(text)) {
-            calculateBoundsWithHtmlStyling(lineHeight);
+            calculateBoundsWithHtmlStyling();
         } else {
-            calculateBoundsWithoutHtmlStyling(lineHeight);
+            calculateBoundsWithoutHtmlStyling();
         }
     }
 
     /**
      * Computes the bounds necessary to hold the text given the maximum specifications while taking into account
      * HTML styling such as opening and closing tags, break tags, style tags, div tags, etc.
-     *
-     * @param lineHeight the height a single line of text requires
      */
-    private void calculateBoundsWithHtmlStyling(double lineHeight) {
+    private void calculateBoundsWithHtmlStyling() {
         ImmutableList<StringContainer> parts = splitHtml(text);
+        double lineHeight = parts.stream()
+                .filter((container) -> container instanceof PlainString)
+                .map((container) -> font.getStringBounds(container.getString(), context).getHeight())
+                .collect(ImmutableList.toImmutableList())
+                .stream().mapToDouble(Double::doubleValue).max()
+                .orElseThrow(() -> new BoundsComputationException("Could not compute max line height"));
 
         // todo
     }
@@ -99,10 +107,9 @@ public final class BoundsString {
     /**
      * Computes the bounds necessary to hold the text given the maximum
      * specifications and the assumption that there is no HTML styling present.
-     *
-     * @param lineHeight the height a single line of text requires
      */
-    private void calculateBoundsWithoutHtmlStyling(double lineHeight) {
+    private void calculateBoundsWithoutHtmlStyling() {
+        double lineHeight = getLineWidth(text);
         ArrayList<String> lines = new ArrayList<>();
 
         StringBuilder currentLine = new StringBuilder();
@@ -127,21 +134,33 @@ public final class BoundsString {
             currentLine.append(c);
         }
 
-        double necessaryWidth = maxWidth;
-        for (String line : lines) necessaryWidth = Math.max(getLineWidth(line), necessaryWidth);
-        if (necessaryWidth > maxWidth) {
+        double computedWidth = lines.stream()
+                .mapToDouble(this::getLineWidth).max()
+                .orElseThrow(() -> new BoundsComputationException("Could not compute maximum width of lines"));
+        double computedHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
+        checkComputedBounds(computedWidth, computedHeight);
+    }
+
+    /**
+     * Checks the computed width and height (bounds) of the internal text and either
+     * throws an exception if a dimension exceeds the maximum set value for that dimension
+     * or sets the internal state of this instance.
+     *
+     * @param computedWidth the computed necessary width
+     * @param computedHeight the computed necessary height
+     */
+    private void checkComputedBounds(double computedWidth, double computedHeight) {
+        if (computedWidth > maxWidth) {
             throw new BoundsComputationException("Computed width exceeds max width, "
-                    + necessaryWidth + " > " + maxWidth);
+                    + computedWidth + " > " + maxWidth);
         }
-
-        double necessaryHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
-        if (necessaryHeight > maxHeight) {
+        if (computedHeight > maxHeight) {
             throw new BoundsComputationException("Computed height exceeds max height, "
-                    + necessaryHeight + " > " + maxHeight);
+                    + computedHeight + " > " + maxHeight);
         }
 
-        this.width = necessaryWidth;
-        this.height = necessaryHeight;
+        this.width = computedWidth;
+        this.height = computedHeight;
     }
 
     /**
@@ -218,12 +237,12 @@ public final class BoundsString {
     }
 
     /**
-     * Returns the necessary width and height for a container to contain the string content.
+     * Returns the necessary width and height for a container to contain the string text.
      * Note that the internal units use floating points, specifically the {@link Double} data type.
      * The ceiling of each is returned when converting to a {@link Dimension} object. For more
      * precise calculations, see {@link #getWidth()} and {@link #getHeight()}.
      *
-     * @return the necessary width and height for a container to contain the string content
+     * @return the necessary width and height for a container to contain the string text
      */
     public Dimension getSize() {
         return new Dimension((int) Math.ceil(width), (int) Math.ceil(height));
@@ -279,7 +298,7 @@ public final class BoundsString {
         /** The default line separation height. */
         public static final int DEFAULT_LINE_PADDING = 5;
 
-        private final String content;
+        private final String text;
         private Font font = CyderFonts.DEFAULT_FONT_SMALL;
         private int maxWidth = Integer.MAX_VALUE;
         private int maxHeight = Integer.MAX_VALUE;
@@ -287,7 +306,7 @@ public final class BoundsString {
 
         /**
          * Constructs a new builder for a BoundsString.
-         * The string content may contain some HTML styling, examples include
+         * The string text may contain some HTML styling, examples include
          * <ul>
          *     <li>HTML opening and closing tags</li>
          *     <li>line breaks</li>
@@ -295,13 +314,13 @@ public final class BoundsString {
          *     <li>JSX will be stripped and will not affect the resulting bounds</li>
          * </ul>
          *
-         * @param content the string content
-         * @throws NullPointerException if the provided content is null
+         * @param text the string text
+         * @throws NullPointerException if the provided text is null
          */
-        public Builder(String content) {
-            Preconditions.checkNotNull(content);
+        public Builder(String text) {
+            Preconditions.checkNotNull(text);
 
-            this.content = content;
+            this.text = text;
         }
 
         /**
