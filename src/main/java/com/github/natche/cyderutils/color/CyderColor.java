@@ -1,29 +1,42 @@
 package com.github.natche.cyderutils.color;
 
+import com.github.natche.cyderutils.range.RangeUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Range;
 
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-/** An abstraction class on top of {@link Color} to add utility and mutation methods. */
+/** An extension class on top of {@link Color} to add utility, mutation, and creation methods. */
 public final class CyderColor extends Color {
+    /** The length of a shorthand hex string without a leading hash. */
     private static final int shorthandHexLength = 3;
+
+    /** The length of a full hex string without a leading hash. */
     private static final int hexLength = 6;
+
+    /** The base for the hexadecimal number system. */
     private static final int hexBase = 16;
+
+    /** The minimum value for a dimension of a rgb color. */
     private static final int minColor = 0;
+
+    /** The maximum value for a dimension of a rgb color. */
     private static final int maxColor = 255;
+
+    /** The range a dimension of a rgb color must fall within. */
+    private static final Range<Integer> colorRange = Range.closed(minColor, maxColor);
 
     /**
      * Constructs a new CyderColor from the provided value for red, green, and blue.
      *
-     * @param redGreenAndBlue the integer value to use for red, green, and blue
+     * @param c the integer value to use for red, green, and blue
      * @throws IllegalArgumentException if the provided value is not in the range [0, 255]
      */
-    public CyderColor(int redGreenAndBlue) {
-        super(checkColorRange(redGreenAndBlue), checkColorRange(redGreenAndBlue), checkColorRange(redGreenAndBlue));
+    public CyderColor(int c) {
+        super(checkColorRange(c), checkColorRange(c), checkColorRange(c));
     }
 
     /**
@@ -40,6 +53,7 @@ public final class CyderColor extends Color {
 
     /**
      * Constructs a new CyderColor from the provided hex string.
+     * The hex string may be in short or long format and with or without a leading hash.
      *
      * @param hex the hex string such as "333", "#333", "6A6A6A", "#6A6A6A"
      * @throws NullPointerException     if the provided string is null
@@ -89,7 +103,7 @@ public final class CyderColor extends Color {
      *
      * @return a new CyderColor object which is the inverse of this color
      */
-    public CyderColor getInverseColor() {
+    public CyderColor getInverse() {
         return new CyderColor(maxColor - getRed(), maxColor - getGreen(), maxColor - getBlue());
     }
 
@@ -102,7 +116,7 @@ public final class CyderColor extends Color {
         int red = getRed();
         int green = getGreen();
         int blue = getBlue();
-        int luminance = (int)(0.2126 * red + 0.7152 * green + 0.0722 * blue);
+        int luminance = (int) (0.2126 * red + 0.7152 * green + 0.0722 * blue);
         return new CyderColor(luminance);
     }
 
@@ -113,7 +127,7 @@ public final class CyderColor extends Color {
      * @return a new instance representing the merged color
      * @throws NullPointerException if the provided color is null
      */
-    public CyderColor getMergedColor(CyderColor color) {
+    public CyderColor merge(CyderColor color) {
         Preconditions.checkNotNull(color);
 
         int r = color.getRed() + getRed();
@@ -147,7 +161,7 @@ public final class CyderColor extends Color {
         maxPossibleDiscreteSteps = Math.min(maxPossibleDiscreteSteps, maxBlueSteps);
         Preconditions.checkArgument(numTransitionColors <= maxPossibleDiscreteSteps);
 
-        ArrayList<CyderColor> ret = new ArrayList<>();
+        ImmutableList.Builder<CyderColor> builder = ImmutableList.builder();
 
         int ourRed = getRed();
         int ourGreen = getGreen();
@@ -164,26 +178,26 @@ public final class CyderColor extends Color {
             int transitionRed = ourRed + (int) (redStep * i);
             int transitionGreen = ourGreen + (int) (greenStep * i);
             int transitionBlue = ourBlue + (int) (blueStep * i);
-            // Cap range, todo method for this maybe?
-            transitionRed = Math.min(Math.max(transitionRed, minColor), maxColor);
-            transitionGreen = Math.min(Math.max(transitionGreen, minColor), maxColor);
-            transitionBlue = Math.min(Math.max(transitionBlue, minColor), maxColor);
 
-            ret.add(new CyderColor(transitionRed, transitionGreen, transitionBlue));
+            transitionRed = RangeUtil.constrainToRange(transitionRed, colorRange);
+            transitionGreen = RangeUtil.constrainToRange(transitionGreen, colorRange);
+            transitionBlue = RangeUtil.constrainToRange(transitionBlue, colorRange);
+
+            builder.add(new CyderColor(transitionRed, transitionGreen, transitionBlue));
         });
 
-        return ImmutableList.copyOf(ret);
+        return builder.build();
     }
 
     /**
-     * Returns whether the provided color value is within the range [0, 255].
+     * Returns whether the provided color value is within the {@link #colorRange}.
      *
      * @param colorValue the color value
-     * @return whether the provided color value is within the range [0, 255]
+     * @return whether the provided color value is within the {@link #colorRange}
      * @throws IllegalArgumentException if the value is outside the valid range
      */
     private static int checkColorRange(int colorValue) {
-        Preconditions.checkArgument(colorValue >= minColor && colorValue <= maxColor);
+        Preconditions.checkArgument(colorRange.contains(colorValue));
         return colorValue;
     }
 
@@ -191,13 +205,15 @@ public final class CyderColor extends Color {
      * Parses a hexadecimal color from the provided hex string.
      * Examples include:
      * <ul>
-     *     <li>#341</li>
+     *     <li>#143</li>
      *     <li>#AFAFAF</li>
      *     <li>000</li>
      * </ul>
      *
      * @param hex the hex string
      * @return a {@link Color} object parsed from the provided hex string
+     * @throws NullPointerException     if the provided string is null
+     * @throws IllegalArgumentException if the provided string is empty or pure whitespace
      */
     private static Color parseColorFromHex(String hex) {
         Preconditions.checkNotNull(hex);

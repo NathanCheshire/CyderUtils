@@ -1,8 +1,6 @@
 package com.github.natche.cyderutils.color;
 
-import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.strings.CyderStrings;
 
 import java.awt.*;
 
@@ -12,9 +10,7 @@ public final class CyderColors {
     /** A common color used for selected text such as in CyderFields. */
     public static final Color selectionColor = new Color(204, 153, 0);
 
-    /**
-     * A common gray, stolen or rather borrowed from YouTube.
-     */
+    /** A common gray, stolen or rather borrowed, from YouTube. */
     public static final Color gray = new Color(46, 46, 46);
 
     /** A default green color, never to be changed. */
@@ -74,34 +70,16 @@ public final class CyderColors {
     /** The brown dirt color used for the perlin widget. */
     public static final Color brownDirt = new Color(131, 101, 57);
 
-    /** The possible border colors to use for the taskbar icon. */
-    public static final ImmutableList<Color> TASKBAR_BORDER_COLORS = ImmutableList.of(
-            new Color(22, 124, 237),
-            new Color(254, 49, 93),
-            new Color(249, 122, 18)
-    );
-
     /**
      * Suppress default constructor.
      *
      * @throws IllegalArgumentException if invoked
      */
     private CyderColors() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Instances of CyderColors is not allowed");
     }
 
-    // todo should have a manager for this
-    /** The color to use for frame borders and other ui components throughout Cyder. */
-    private static Color guiThemeColor = navy;
-
-    /**
-     * Sets the current window border color/UI color.
-     *
-     * @param c the color to use for frame borders and other ui components
-     */
-    public static void setGuiThemeColor(Color c) {
-        guiThemeColor = c;
-    }
+    // todo should have a manager for this for frames to pull a style/config from
 
     /**
      * Returns the current gui theme color.
@@ -109,6 +87,6 @@ public final class CyderColors {
      * @return the current gui theme color
      */
     public static Color getGuiThemeColor() {
-        return guiThemeColor;
+        return navy;
     }
 }

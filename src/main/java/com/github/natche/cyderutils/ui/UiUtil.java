@@ -1,23 +1,20 @@
 package com.github.natche.cyderutils.ui;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.annotations.ForReadability;
-import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
 import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.enumerations.Extension;
-import com.github.natche.cyderutils.exceptions.FatalException;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
-import com.github.natche.cyderutils.strings.CyderStrings;
 import com.github.natche.cyderutils.time.TimeUtil;
 import com.github.natche.cyderutils.ui.drag.DragLabelButtonSize;
 import com.github.natche.cyderutils.ui.exceptions.DeviceNotFoundException;
 import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.utils.OsUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -27,6 +24,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,7 +46,7 @@ public final class UiUtil {
 
     /** Suppress default constructor. */
     private UiUtil() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Instances of UiUtils are not allowed");
     }
 
     /**
@@ -82,9 +80,17 @@ public final class UiUtil {
                 .filter(f -> !(f instanceof CyderFrame)).collect(Collectors.toList()));
     }
 
-    /** Saves a screenshot of all CyderFrames to the user's Files/ directory. */
-    public static void screenshotCyderFrames() {
-        getCyderFrames().stream().filter(Component::isVisible).forEach(UiUtil::screenshotCyderFrame);
+    /**
+     * Saves a screenshot of all CyderFrames to the user's Files/ directory.
+     *
+     * @throws IOException if a screenshot cannot be saved to the system
+     */
+    public static void screenshotCyderFrames() throws IOException {
+        for (CyderFrame cyderFrame : getCyderFrames()) {
+            if (cyderFrame.isVisible()) {
+                screenshotCyderFrame(cyderFrame);
+            }
+        }
     }
 
     /**
@@ -92,8 +98,9 @@ public final class UiUtil {
      *
      * @param cyderFrameName the name of the CyderFrame to screenshot
      * @return whether the screenshot was successfully saved
+     * @throws IOException if the provided CyderFrame cannot save the screenshot
      */
-    public static boolean screenshotCyderFrame(String cyderFrameName) {
+    public static boolean screenshotCyderFrame(String cyderFrameName) throws IOException {
         for (CyderFrame cyderFrame : getCyderFrames()) {
             if (cyderFrame.getTitle().equalsIgnoreCase(cyderFrameName)) {
                 return screenshotCyderFrame(cyderFrame, generateScreenshotSaveFile(cyderFrame));
@@ -111,9 +118,10 @@ public final class UiUtil {
      *
      * @param cyderFrame the CyderFrame to screenshot
      * @return the file reference the screenshot was saved to. Null indicates the save filed
+     * @throws IOException if the screenshot cannot be saved to the system
      */
     @CanIgnoreReturnValue
-    public static File screenshotCyderFrame(CyderFrame cyderFrame) {
+    public static File screenshotCyderFrame(CyderFrame cyderFrame) throws IOException {
         Preconditions.checkNotNull(cyderFrame);
 
         File saveFile = generateScreenshotSaveFile(cyderFrame);
@@ -128,18 +136,19 @@ public final class UiUtil {
      *
      * @param cyderFrame the frame
      * @return the file to save the screenshot of the provided frame to
+     * @throws IOException if the operating system fails to create the file.
      */
     @ForReadability
-    private static File generateScreenshotSaveFile(CyderFrame cyderFrame) {
+    private static File generateScreenshotSaveFile(CyderFrame cyderFrame) throws IOException {
         String saveName = cyderFrame.getTitle()
                 .substring(0, Math.min(MAX_FRAME_TITLE_FILE_LENGTH, cyderFrame.getTitle().length())).trim();
         String timestampSuffix = TimeUtil.screenshotTime();
         String filename = saveName + "_" + timestampSuffix + Extension.PNG.getExtension();
 
-        File saveDir = new File("."); // todo pass in
+        File saveDir = new File("."); // todo pass in? builder lol?
         File createFile = new File(saveDir, filename);
         if (!OsUtil.createFile(createFile, true)) {
-            throw new FatalException("Failed to create file: " + createFile);
+            throw new IOException("Failed to create file: " + createFile);
         }
         return createFile;
     }
@@ -339,24 +348,6 @@ public final class UiUtil {
 
     /** The index which determines which color to choose for the border color. */
     private static final AtomicInteger colorIndex = new AtomicInteger();
-
-    /**
-     * Returns the color to be associated with a CyderFrame's TaskbarIcon border color.
-     *
-     * @return the color to be associated with a CyderFrame's TaskbarIcon border color
-     */
-    public static Color getTaskbarBorderColor() {
-        synchronized (UiUtil.class) {
-            Color ret = CyderColors.TASKBAR_BORDER_COLORS.get(colorIndex.get());
-            colorIndex.getAndIncrement();
-
-            if (colorIndex.get() > CyderColors.TASKBAR_BORDER_COLORS.size() - 1) {
-                colorIndex.set(0);
-            }
-
-            return ret;
-        }
-    }
 
     /**
      * Generates a key adapter to use for a field to invoke the provided runnable.

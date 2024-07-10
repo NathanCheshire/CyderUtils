@@ -1,13 +1,9 @@
 package com.github.natche.cyderutils.ui.frame.tooltip;
 
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.github.natche.cyderutils.color.CyderColor;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.exceptions.FatalException;
-import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.getter.GetInputBuilder;
 import com.github.natche.cyderutils.getter.GetterUtil;
@@ -25,13 +21,15 @@ import com.github.natche.cyderutils.ui.frame.notification.NotificationDirection;
 import com.github.natche.cyderutils.ui.pane.CyderOutputPane;
 import com.github.natche.cyderutils.ui.pane.CyderScrollPane;
 import com.github.natche.cyderutils.utils.SecurityUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -331,18 +329,18 @@ public final class TooltipMenuController {
 
         // todo developer mode previously was here
         if (false) {
-            menuItems.add(new TooltipMenuItem(TooltipMenuItemType.SCREENSHOT.getLabelText())
-                    .addMouseClickAction(() -> tooltipMenuLabel.setVisible(false))
-                    .addMouseClickAction(() -> {
-                        File saveFile = UiUtil.screenshotCyderFrame(controlFrame);
-                        if (saveFile == null) {
-                            controlFrame.notify("Failed to save screenshot");
-                        } else {
-                            controlFrame.notify("Saved screenshot as " + "\""
-                                    + FileUtil.getFilename(saveFile) + "\"");
-                        }
-                    })
-                    .buildMenuItemLabel());
+//            menuItems.add(new TooltipMenuItem(TooltipMenuItemType.SCREENSHOT.getLabelText())
+            //                    .addMouseClickAction(() -> tooltipMenuLabel.setVisible(false))
+            //                    .addMouseClickAction(() -> {
+            //                        File saveFile = UiUtil.screenshotCyderFrame(controlFrame);
+            //                        if (saveFile == null) {
+            //                            controlFrame.notify("Failed to save screenshot");
+            //                        } else {
+            //                            controlFrame.notify("Saved screenshot as " + "\""
+            //                                    + FileUtil.getFilename(saveFile) + "\"");
+            //                        }
+            //                    })
+            //                    .buildMenuItemLabel());
         }
     }
 

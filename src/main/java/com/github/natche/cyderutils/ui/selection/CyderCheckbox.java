@@ -250,7 +250,7 @@ public class CyderCheckbox extends JLabel {
             });
 
             Color originalCheckColor = checkColor;
-            ImmutableList<CyderColor> colors = new CyderColor(background)
+            ImmutableList<? extends Color> colors = new CyderColor(background)
                     .getTransitionColors(originalCheckColor, 15);
             colors.forEach(color -> {
                 setCheckColor(color);

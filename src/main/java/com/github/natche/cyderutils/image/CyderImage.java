@@ -460,7 +460,7 @@ public final class CyderImage {
      * @return the inverse of the dominant color of this image
      */
     public CyderColor getDominantColorInverse() {
-        return getDominantColor().getInverseColor();
+        return getDominantColor().getInverse();
     }
 
     /**

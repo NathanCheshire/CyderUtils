@@ -273,7 +273,6 @@ public class CyderFrame extends JFrame {
         setupDragLabels(builder);
 
         if (!builder.borderless) {
-            taskbarIconBorderColor = UiUtil.getTaskbarBorderColor();
             setupTitleLabel();
             initializeControllers();
         }
@@ -2437,19 +2436,6 @@ public class CyderFrame extends JFrame {
         super.setIconImage(Preconditions.checkNotNull(image));
     }
 
-    /** The taskbar icon border color for this CyderFrame instance. */
-    private Color taskbarIconBorderColor;
-
-    /**
-     * Returns the taskbar border color for this cyder frame.
-     *
-     * @return the taskbar border color for this cyder frame
-     */
-    public synchronized Color getTaskbarIconBorderColor() {
-        if (taskbarIconBorderColor == null) taskbarIconBorderColor = UiUtil.getTaskbarBorderColor();
-        return taskbarIconBorderColor;
-    }
-
     /** The custom ImageIcon to use for the taskbar icon if enabled. */
     private ImageIcon customTaskbarIcon;
 
@@ -2509,7 +2495,7 @@ public class CyderFrame extends JFrame {
 
         if (draw) {
             Color lineColor = background == null
-                    ? new CyderColor(backgroundColor).getInverseColor()
+                    ? new CyderColor(backgroundColor).getInverse()
                     : CyderImage.fromImageIcon(background).getDominantColorInverse();
 
             int centerX = getWidth() / 2 - debugLineLength / 2;
