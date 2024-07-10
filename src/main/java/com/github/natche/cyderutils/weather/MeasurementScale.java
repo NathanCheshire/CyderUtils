@@ -1,6 +1,6 @@
 package com.github.natche.cyderutils.weather;
 
-/** Possible measurement scales, that of imperial or metric. */
+/** Acceptable measurement scales accepted by the OpenWeatherMap API. */
 public enum MeasurementScale {
     /** The imperial measurement scale. */
     IMPERIAL("imperial"),
@@ -8,18 +8,18 @@ public enum MeasurementScale {
     /** The metric measurement scale. */
     METRIC("metric");
 
-    private final String weatherDataRepresentation;
+    private final String unitName;
 
-    MeasurementScale(String weatherDataRepresentation) {
-        this.weatherDataRepresentation = weatherDataRepresentation;
+    MeasurementScale(String unitName) {
+        this.unitName = unitName;
     }
 
     /**
-     * Returns the weather data representation for this measurement scale.
+     * Returns the unit name for this measurement scale.
      *
-     * @return the weather data representation for this measurement scale
+     * @return the unit name for this measurement scale
      */
-    public String getWeatherDataRepresentation() {
-        return weatherDataRepresentation;
+    public String getUnitName() {
+        return unitName;
     }
 }

@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+// todo rename maybe PopupManager?
+
 /** Information frames throughout Cyder. */
 public final class InformHandler {
     /** The width padding on each side of the information pane. */

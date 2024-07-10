@@ -14,6 +14,8 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// todo allow stopping/resuming
+
 /**
  * A manager for storing and refreshing {@link IpData} objects queried from ipdata.co.
  * See <a href="https://dashboard.ipdata.co/sign-up.html">this link</a>

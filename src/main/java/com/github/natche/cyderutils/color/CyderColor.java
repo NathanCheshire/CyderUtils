@@ -119,7 +119,6 @@ public final class CyderColor extends Color {
         int green = getGreen();
         int blue = getBlue();
         int luminance = (int) Math.round(0.2126 * red + 0.7152 * green + 0.0722 * blue);
-        luminance = RangeUtil.constrainToRange(luminance, colorRange);
         return new CyderColor(luminance);
     }
 

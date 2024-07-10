@@ -37,7 +37,7 @@ public final class UiConstants {
     static final String TOOLTIP_FOREGROUND = "ToolTip.foreground";
 
     /** The font used for default Java tooltips. */
-    static final Font TOOLTIP_FONT = new FontBuilder(CyderFonts.TAHOMA).setSize(20).generate();
+    static final Font TOOLTIP_FONT = new FontBuilder(CyderFonts.TAHOMA).setSize(20).build();
 
     /** The default color for the background of tooltips throughout Cyder */
     static final Color TOOLTIP_BORDER_COLOR = new Color(26, 32, 51);

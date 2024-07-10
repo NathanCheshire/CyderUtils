@@ -1,17 +1,11 @@
 package com.github.natche.cyderutils.utils;
 
-import com.google.common.base.Preconditions;
-import com.github.natche.cyderutils.constants.CyderUrls;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.props.Props;
 import com.github.natche.cyderutils.strings.CyderStrings;
-import com.github.natche.cyderutils.weather.MeasurementScale;
 import com.github.natche.cyderutils.youtube.parsers.YouTubeSearchResultPage;
 import com.github.natche.cyderutils.youtube.search.YouTubeSearchQuery;
+import com.google.common.base.Preconditions;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Optional;
 
 /** Utilities related to validation of API keys. */
@@ -25,29 +19,6 @@ public final class ApiKeyUtil {
     /** Suppress default constructor. */
     private ApiKeyUtil() {
         throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
-    }
-
-    /**
-     * Validates the weather key.
-     *
-     * @return whether the provided weather key was valid
-     */
-    public static boolean validateWeatherKey(String weatherDataApiKey) {
-        Preconditions.checkNotNull(weatherDataApiKey);
-        Preconditions.checkArgument(!weatherDataApiKey.isEmpty());
-
-        String openString = CyderUrls.OPEN_WEATHER_BASE
-                + weatherDataApiKey
-                + APP_ID_ARG + Props.weatherKey.getValue()
-                + UNITS_ARG + MeasurementScale.IMPERIAL.getWeatherDataRepresentation();
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new URL(openString).openStream()))) {
-            reader.readLine();
-            return true;
-        } catch (Exception ignored) {
-            return false;
-        }
     }
 
     /**
