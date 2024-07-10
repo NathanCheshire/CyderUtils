@@ -1,4 +1,4 @@
-package com.github.natche.cyderutils.enumerations;
+package com.github.natche.cyderutils.animation;
 
 import com.google.common.base.Preconditions;
 

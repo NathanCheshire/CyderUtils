@@ -2,7 +2,7 @@ package com.github.natche.cyderutils.image;
 
 import com.github.natche.cyderutils.color.CyderColor;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
-import com.github.natche.cyderutils.enumerations.Direction;
+import com.github.natche.cyderutils.animation.Direction;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.math.Angle;
 import com.google.common.base.Preconditions;

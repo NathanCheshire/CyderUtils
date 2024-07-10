@@ -2,7 +2,6 @@ package com.github.natche.cyderutils.animation;
 
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.github.natche.cyderutils.enumerations.Direction;
 import com.github.natche.cyderutils.threads.CyderThreadRunner;
 import com.github.natche.cyderutils.threads.ThreadUtil;
 

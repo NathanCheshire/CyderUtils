@@ -8,7 +8,6 @@ import com.github.natche.cyderutils.annotations.ForReadability;
 import com.github.natche.cyderutils.color.CyderColor;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.constants.CyderIcons;
-import com.github.natche.cyderutils.constants.CyderNumbers;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.getter.GetConfirmationBuilder;
@@ -3055,7 +3054,7 @@ public class CyderFrame extends JFrame {
 
         if (menuType == MenuType.PANEL) {
             int menuHeight = 2 * menuItemHeightPadding + (menuItems.size() * (StringUtil.getAbsoluteMinHeight(
-                    String.valueOf(CyderNumbers.JENNY), CyderFonts.DEFAULT_FONT_SMALL))) + menuYOffset;
+                    "LOX", CyderFonts.DEFAULT_FONT_SMALL))) + menuYOffset;
 
             if (menuHeight > getHeight() - topDrag.getHeight() - menuYOffset) {
                 menuHeight = getHeight() - topDrag.getHeight() - menuYOffset;

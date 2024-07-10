@@ -1,7 +1,6 @@
 package com.github.natche.cyderutils.constants;
 
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.strings.CyderStrings;
 
 /** HTML tags. */
 @SuppressWarnings("unused")
@@ -45,6 +44,6 @@ public final class HtmlTags {
 
     /** Suppress default constructor. */
     private HtmlTags() {
-        throw new IllegalMethodException(CyderStrings.ATTEMPTED_INSTANTIATION);
+        throw new IllegalMethodException("Instances of HtmlTags are not allowed");
     }
 }

@@ -6,7 +6,7 @@ import com.github.natche.cyderutils.animation.ComponentAnimator;
 import com.github.natche.cyderutils.annotations.ForReadability;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.font.CyderFonts;
-import com.github.natche.cyderutils.enumerations.Direction;
+import com.github.natche.cyderutils.animation.Direction;
 import com.github.natche.cyderutils.ui.UiUtil;
 import com.github.natche.cyderutils.ui.button.CyderButton;
 

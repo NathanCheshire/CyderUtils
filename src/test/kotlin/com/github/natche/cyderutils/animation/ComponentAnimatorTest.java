@@ -1,6 +1,5 @@
 package com.github.natche.cyderutils.animation;
 
-import com.github.natche.cyderutils.enumerations.Direction;
 import com.github.natche.cyderutils.threads.ThreadUtil;
 import org.junit.jupiter.api.Test;
 

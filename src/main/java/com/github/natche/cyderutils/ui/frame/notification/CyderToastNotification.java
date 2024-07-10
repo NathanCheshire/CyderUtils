@@ -3,7 +3,7 @@ package com.github.natche.cyderutils.ui.frame.notification;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.github.natche.cyderutils.color.CyderColor;
-import com.github.natche.cyderutils.enumerations.Direction;
+import com.github.natche.cyderutils.animation.Direction;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
 import com.github.natche.cyderutils.threads.ThreadUtil;

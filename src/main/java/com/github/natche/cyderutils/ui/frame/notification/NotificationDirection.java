@@ -1,6 +1,6 @@
 package com.github.natche.cyderutils.ui.frame.notification;
 
-import com.github.natche.cyderutils.enumerations.Direction;
+import com.github.natche.cyderutils.animation.Direction;
 
 /** The supported locations for {@link CyderNotification}s. */
 public enum NotificationDirection {
