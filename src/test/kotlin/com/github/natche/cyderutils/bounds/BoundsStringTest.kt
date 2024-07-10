@@ -1,10 +1,18 @@
 package com.github.natche.cyderutils.bounds
 
+import com.github.natche.cyderutils.files.FileUtil
 import com.github.natche.cyderutils.font.CyderFonts
+import com.github.natche.cyderutils.subroutines.NecessarySubroutines
+import com.github.natche.cyderutils.utils.ArrayUtil
+import com.github.natche.cyderutils.utils.OsUtil
+import com.github.natche.cyderutils.utils.StaticUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.awt.Font
+import java.awt.GraphicsEnvironment
 
 /** Tests for [BoundsString]s. */
 class BoundsStringTest {
@@ -96,5 +104,22 @@ class BoundsStringTest {
         assertEquals(87.73046875, bs.height)
         assertEquals("<html>Some text with HTML<br/> styling"
                 + " and even<br/><div>more</div> text after that</html>", bs.text)
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll(): Unit {
+            val fontFiles = OsUtil.buildFile("static", "fonts").listFiles()
+            val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
+
+            for (fontFile in fontFiles!!) {
+                try {
+                    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 }
