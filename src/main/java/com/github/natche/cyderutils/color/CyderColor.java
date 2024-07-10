@@ -210,12 +210,15 @@ public final class CyderColor extends Color {
      *     <li>000</li>
      * </ul>
      *
+     * Shorthand notation means the first character is the same for the red value,
+     * the second value the same for the green value, and likewise for blue.
+     *
      * @param hex the hex string
      * @return a {@link Color} object parsed from the provided hex string
      * @throws NullPointerException     if the provided string is null
      * @throws IllegalArgumentException if the provided string is empty or pure whitespace
      */
-    private static Color parseColorFromHex(String hex) {
+    public static Color parseColorFromHex(String hex) {
         Preconditions.checkNotNull(hex);
         Preconditions.checkArgument(!hex.trim().isEmpty());
 
