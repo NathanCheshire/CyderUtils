@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 
 import java.awt.*;
-import java.lang.reflect.Field;
 import java.util.stream.IntStream;
 
 /** An extension class on top of {@link Color} to add utility, mutation, and creation methods. */
@@ -52,6 +51,19 @@ public final class CyderColor extends Color {
     }
 
     /**
+     * Constructs a new CyderColor from the provided red, green, blue, and alpha values.
+     *
+     * @param red   the color's red value
+     * @param green the color's green value
+     * @param blue  the color's blue value
+     * @param alpha the color's alpha value
+     * @throws IllegalArgumentException if any color is not in the range [0, 255]
+     */
+    public CyderColor(int red, int green, int blue, int alpha) {
+        super(checkColorRange(red), checkColorRange(green), checkColorRange(blue), checkColorRange(alpha));
+    }
+
+    /**
      * Constructs a new CyderColor from the provided hex string.
      * The hex string may be in short or long format and with or without a leading hash.
      *
@@ -76,26 +88,16 @@ public final class CyderColor extends Color {
     }
 
     /**
-     * Sets the opacity of this color to the provided opacity.
+     * Returns a new CyderColor based on this color but with the provided opacity
      *
      * @param opacity the opacity to set
+     * @return a new CyderColor with the provided opacity
      * @throws IllegalArgumentException if the provided opacity value is out of the range of [0, 255]
      */
-    public void setOpacity(int opacity) {
+    public CyderColor withOpacity(int opacity) {
         checkColorRange(opacity);
 
-        try {
-            Field redField = Color.class.getDeclaredField("value");
-            redField.setAccessible(true);
-            Color newColor = new Color(getRed(), getGreen(), getBlue(), opacity);
-            int newRgb = newColor.getRGB();
-            redField.setInt(this, newRgb);
-        } catch (NoSuchFieldException e) {
-            throw new CyderColorException(
-                    "Failed to find field \"value\" in java.awt.Color class, e=" + e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new CyderColorException("Unable to access field \"value\", e=" + e.getMessage());
-        }
+        return new CyderColor(getRed(), getGreen(), getBlue(), opacity);
     }
 
     /**
@@ -116,7 +118,8 @@ public final class CyderColor extends Color {
         int red = getRed();
         int green = getGreen();
         int blue = getBlue();
-        int luminance = (int) (0.2126 * red + 0.7152 * green + 0.0722 * blue);
+        int luminance = (int) Math.round(0.2126 * red + 0.7152 * green + 0.0722 * blue);
+        luminance = RangeUtil.constrainToRange(luminance, colorRange);
         return new CyderColor(luminance);
     }
 
@@ -127,7 +130,7 @@ public final class CyderColor extends Color {
      * @return a new instance representing the merged color
      * @throws NullPointerException if the provided color is null
      */
-    public CyderColor merge(CyderColor color) {
+    public CyderColor merge(Color color) {
         Preconditions.checkNotNull(color);
 
         int r = color.getRed() + getRed();
@@ -144,14 +147,14 @@ public final class CyderColor extends Color {
      * @param numTransitionColors the number of transition colors to return
      * @return a list representing transition colors for animating a transition from this color to the provided color
      * @throws NullPointerException     if the provided transitionToColor is null
-     * @throws IllegalArgumentException if the provided transition colors number is less than zero
-     *                                  or greater than any color component's distance to the provided
-     *                                  transition color respective color component.
-     *                                  Or if the transitionToColor is equal to this color
+     * @throws IllegalArgumentException if numTransitionColors is less than or equal to zero,
+     *                                  is greater than the color rgb max of 255,
+     *                                  or if the provided transitionToColor is equal to this color
      */
     public ImmutableList<CyderColor> getTransitionColors(Color transitionToColor, int numTransitionColors) {
         Preconditions.checkNotNull(transitionToColor);
         Preconditions.checkArgument(numTransitionColors > 0);
+        Preconditions.checkArgument(numTransitionColors <= 255);
         Preconditions.checkArgument(!equals(transitionToColor));
 
         int maxRedSteps = Math.abs(getRed() - transitionToColor.getRed());
@@ -209,7 +212,7 @@ public final class CyderColor extends Color {
      *     <li>#AFAFAF</li>
      *     <li>000</li>
      * </ul>
-     *
+     * <p>
      * Shorthand notation means the first character is the same for the red value,
      * the second value the same for the green value, and likewise for blue.
      *

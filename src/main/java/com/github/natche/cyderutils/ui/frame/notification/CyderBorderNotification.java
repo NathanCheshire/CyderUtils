@@ -50,7 +50,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
      */
     private void paintArrowBorder(Graphics2D g2d) {
         CyderColor notificationCyderColor = new CyderColor(notificationBorderColor);
-        notificationCyderColor.setOpacity(opacity.get());
+        notificationCyderColor.withOpacity(opacity.get());
         g2d.setColor(notificationCyderColor);
 
         // Artificially inflate length to draw arrow
@@ -100,7 +100,7 @@ public final class CyderBorderNotification extends CyderToastNotification {
      */
     private void paintArrowFill(Graphics2D g2d) {
         CyderColor cyderColorNotificationBackground = new CyderColor(notificationBackgroundColor);
-        cyderColorNotificationBackground.setOpacity(opacity.get());
+        cyderColorNotificationBackground.withOpacity(opacity.get());
         g2d.setColor(cyderColorNotificationBackground);
 
         GeneralPath fillPath = new GeneralPath();

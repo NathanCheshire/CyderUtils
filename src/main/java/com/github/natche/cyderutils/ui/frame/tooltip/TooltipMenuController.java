@@ -354,12 +354,12 @@ public final class TooltipMenuController {
                     int h = calculateHeight();
 
                     CyderColor cyderBorderColor = new CyderColor(borderColor);
-                    cyderBorderColor.setOpacity(opacity.get());
+                    cyderBorderColor.withOpacity(opacity.get());
                     g.setColor(cyderBorderColor);
                     g.fillRect(0, 0, w, h);
 
                     CyderColor innerColor = new CyderColor(CyderColors.getGuiThemeColor());
-                    innerColor.setOpacity(opacity.get());
+                    innerColor.withOpacity(opacity.get());
                     g.setColor(innerColor);
                     g.fillRect(borderLength, borderLength, w - 2 * borderLength, h - 2 * borderLength);
 
