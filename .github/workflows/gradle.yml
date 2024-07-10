@@ -46,6 +46,36 @@ jobs:
         run: net start audiosrv
         shell: powershell
 
+      - name: Download and Install Fonts
+        shell: powershell
+        run: |
+          $fonts = @(
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/segoe-ui-black.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/beyno.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/condiment-regular.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/agency-fb.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/prompt-bold.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/tahoma.ttf",
+            "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/arial-black.ttf"
+          )
+
+          $fontDir = "$env:USERPROFILE\Downloads\fonts"
+          New-Item -ItemType Directory -Force -Path $fontDir
+
+          foreach ($fontUrl in $fonts) {
+            $fontFile = "$fontDir\$(Split-Path -Leaf $fontUrl)"
+            Invoke-WebRequest -Uri $fontUrl -OutFile $fontFile
+          }
+
+          $ttfFiles = Get-ChildItem "$fontDir\*.ttf"
+          foreach ($ttfFile in $ttfFiles) {
+            $destPath = "$env:SystemRoot\Fonts\$($ttfFile.Name)"
+            Copy-Item -Path $ttfFile.FullName -Destination $destPath
+            $fontName = [System.IO.Path]::GetFileNameWithoutExtension($ttfFile.Name)
+            $regPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+            Set-ItemProperty -Path $regPath -Name "$fontName (TrueType)" -Value $ttfFile.Name
+          }
+
       - name: Build with Gradle
         run: ./gradlew clean build --info --stacktrace --no-daemon
 
