@@ -58,10 +58,10 @@ jobs:
             "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/tahoma.ttf",
             "https://raw.githubusercontent.com/nathancheshire/cyderutils/main/static/fonts/arial-black.ttf"
           )
-
+          
           $fontDir = "$env:USERPROFILE\Downloads\fonts"
           New-Item -ItemType Directory -Force -Path $fontDir
-
+          
           foreach ($fontUrl in $fonts) {
             $fontFile = "$fontDir\$(Split-Path -Leaf $fontUrl)"
             Invoke-WebRequest -Uri $fontUrl -OutFile $fontFile
@@ -70,10 +70,10 @@ jobs:
           $ttfFiles = Get-ChildItem "$fontDir\*.ttf"
           foreach ($ttfFile in $ttfFiles) {
             $destPath = "$env:SystemRoot\Fonts\$($ttfFile.Name)"
-            Copy-Item -Path $ttfFile.FullName -Destination $destPath
+            Copy-Item -Path $ttfFile.FullName -Destination $destPath -Force
             $fontName = [System.IO.Path]::GetFileNameWithoutExtension($ttfFile.Name)
             $regPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
-            Set-ItemProperty -Path $regPath -Name "$fontName (TrueType)" -Value $ttfFile.Name
+            Set-ItemProperty -Path $regPath -Name "$fontName (TrueType)" -Value $ttfFile.Name -Force
           }
 
       - name: Build with Gradle
