@@ -3,7 +3,6 @@ package com.github.natche.cyderutils.bounds;
 import com.github.natche.cyderutils.constants.HtmlTags;
 import com.github.natche.cyderutils.font.CyderFonts;
 import com.github.natche.cyderutils.strings.StringUtil;
-import com.github.natche.cyderutils.ui.frame.CyderFrame;
 import com.github.natche.cyderutils.utils.HtmlUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -24,13 +23,6 @@ import java.util.regex.Pattern;
  */
 @Immutable
 public final class BoundsString {
-    public static void main(String[] args) {
-        CyderFrame frame = new CyderFrame.Builder()
-                .setSize(new Dimension(500, 500))
-                .build();
-        frame.finalizeAndShow();
-    }
-
     /** The pattern used to extract HTML tags from a String. */
     private static final Pattern tagPattern = Pattern.compile("(<[^>]+>)|([^<]+)");
 
@@ -126,14 +118,14 @@ public final class BoundsString {
                     lines.add(currentLineContent);
                     currentLine = new StringBuilder();
                 } else {
-                    currentLine.append(part);
+                    currentLine.append(currentPartContent);
                 }
 
                 continue;
             }
 
             for (char c : currentPartContent.toCharArray()) {
-                double currentLineWidth = getLineWidthIgnoringHtmlTags(currentLineContent);
+                double currentLineWidth = getLineWidthIgnoringHtmlTags(currentLine.toString());
                 double charWidth = getLineWidth(String.valueOf(c));
                 double proposedWidth = currentLineWidth + charWidth;
 
@@ -148,14 +140,16 @@ public final class BoundsString {
                 String fittingLine = currentLine.substring(0, breakIndex).stripTrailing();
                 lines.add(fittingLine);
 
-                String remainder = currentLine.substring(breakIndex, currentLine.length() - 1).stripLeading();
+                String remainder = currentLine.substring(breakIndex).stripLeading();
                 currentLine = new StringBuilder(remainder);
                 currentLine.append(c);
             }
         }
 
+        lines.add(currentLine.toString());
+
         double computedWidth = lines.stream()
-                .mapToDouble(this::getLineWidth).max()
+                .mapToDouble(this::getLineWidthIgnoringHtmlTags).max()
                 .orElseThrow(() -> new BoundsComputationException("Could not compute maximum width of lines"));
         double computedHeight = lines.size() * lineHeight + (lines.size() - 1) * linePadding;
         checkComputedBounds(computedWidth, computedHeight, lines);
@@ -166,7 +160,7 @@ public final class BoundsString {
      * specifications and the assumption that there is no HTML styling present.
      */
     private void calculateBoundsWithoutHtmlStyling() {
-        double lineHeight = getLineWidth(text);
+        double lineHeight = font.getStringBounds(text, context).getHeight();
         ArrayList<String> lines = new ArrayList<>();
 
         StringBuilder currentLine = new StringBuilder();
@@ -187,10 +181,12 @@ public final class BoundsString {
             String fittingLine = currentLine.substring(0, breakIndex).stripTrailing();
             lines.add(fittingLine);
 
-            String remainder = currentLine.substring(breakIndex, currentLine.length() - 1).stripLeading();
+            String remainder = currentLine.substring(breakIndex).stripLeading();
             currentLine = new StringBuilder(remainder);
             currentLine.append(c);
         }
+
+        lines.add(currentLine.toString());
 
         double computedWidth = lines.stream()
                 .mapToDouble(this::getLineWidth).max()
@@ -274,7 +270,7 @@ public final class BoundsString {
                 inTag = false;
             } else if (string.charAt(currentIndex) == ' ' && !inTag) {
                 return currentIndex;
-            } else {
+            } else if (!inTag) {
                 // A non-html/non-plain text char was checked but was not a space
                 checkedChars++;
             }
@@ -487,7 +483,7 @@ public final class BoundsString {
          * @throws IllegalArgumentException if the provided height is less than 0
          */
         public Builder setLinePadding(int linePadding) {
-            Preconditions.checkArgument(maxHeight >= 0);
+            Preconditions.checkArgument(linePadding >= 0);
             this.linePadding = linePadding;
             return this;
         }
