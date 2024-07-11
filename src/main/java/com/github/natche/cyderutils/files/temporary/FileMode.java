@@ -1,4 +1,4 @@
-package com.github.natche.cyderutils.files;
+package com.github.natche.cyderutils.files.temporary;
 
 /** The supported modes for reading/writing to/from a {@link CyderTemporaryFile}. */
 public enum FileMode {

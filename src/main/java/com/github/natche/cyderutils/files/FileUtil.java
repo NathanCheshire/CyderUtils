@@ -1,5 +1,6 @@
 package com.github.natche.cyderutils.files;
 
+import com.github.natche.cyderutils.files.exceptions.UnsupportedOsException;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -609,7 +610,7 @@ public final class FileUtil {
         return getFiles(topLevelDirectory, true);
     }
 
-    /*
+    /**
      * Returns an immutable list of files found within the provided directory.
      *
      * @param topLevelDirectory the top level directory to search for files in

@@ -216,7 +216,7 @@ public final class StatUtil {
     }
 
     /**
-     * Returns whether hte provided line is a code line meaning it is not blank or a comment line.
+     * Returns whether the provided line is a code line meaning it is not blank or a comment line.
      *
      * @param line the line
      * @return whether the provided line is a code line

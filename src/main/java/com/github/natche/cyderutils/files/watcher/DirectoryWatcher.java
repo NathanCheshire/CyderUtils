@@ -1,5 +1,6 @@
-package com.github.natche.cyderutils.files;
+package com.github.natche.cyderutils.files.watcher;
 
+import com.github.natche.cyderutils.files.FileUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.github.natche.cyderutils.exceptions.FatalException;

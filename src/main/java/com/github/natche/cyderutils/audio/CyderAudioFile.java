@@ -6,7 +6,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.audio.wav.WaveFile;
 import com.github.natche.cyderutils.enumerations.Extension;
-import com.github.natche.cyderutils.files.CyderTemporaryFile;
+import com.github.natche.cyderutils.files.temporary.CyderTemporaryFile;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.process.CyderProcessException;
 import com.github.natche.cyderutils.process.ProcessResult;

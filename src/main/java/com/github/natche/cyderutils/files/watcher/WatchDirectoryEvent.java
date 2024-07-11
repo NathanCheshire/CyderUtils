@@ -1,4 +1,4 @@
-package com.github.natche.cyderutils.files;
+package com.github.natche.cyderutils.files.watcher;
 
 /** File events that may occur inside of a directory. */
 public enum WatchDirectoryEvent {

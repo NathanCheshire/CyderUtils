@@ -1,4 +1,4 @@
-package com.github.natche.cyderutils.files;
+package com.github.natche.cyderutils.files.exceptions;
 
 /**
  * An exception used to indicate the host's operating system could not be validated

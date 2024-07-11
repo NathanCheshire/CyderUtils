@@ -7,7 +7,7 @@ import com.github.natche.cyderutils.audio.ffmpeg.FfmpegPrintFormat;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegStreamEntry;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
-import com.github.natche.cyderutils.files.CyderTemporaryFile;
+import com.github.natche.cyderutils.files.temporary.CyderTemporaryFile;
 import com.github.natche.cyderutils.files.FileUtil;
 import com.github.natche.cyderutils.process.*;
 import com.github.natche.cyderutils.strings.StringUtil;

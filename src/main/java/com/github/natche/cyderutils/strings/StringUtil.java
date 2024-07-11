@@ -1,7 +1,6 @@
 package com.github.natche.cyderutils.strings;
 
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
-import com.github.natche.cyderutils.constants.CyderUrls;
 import com.github.natche.cyderutils.exceptions.FatalException;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.network.NetworkUtil;
@@ -683,7 +682,7 @@ public final class StringUtil {
         Preconditions.checkArgument(!query.isEmpty());
 
         try {
-            String queryUrl = CyderUrls.WIKIPEDIA_SUMMARY_BASE + WIKI_SUM_URL_SUFFIX
+            String queryUrl = "https://en.wikipedia.org/w/api.php?format=json&action=query" + WIKI_SUM_URL_SUFFIX
                     + query.replace(CyderRegexPatterns.whiteSpaceRegex, NetworkUtil.URL_SPACE);
             String urlContents = NetworkUtil.readUrl(queryUrl);
 

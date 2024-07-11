@@ -3,7 +3,6 @@ package com.github.natche.cyderutils.threads;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.github.natche.cyderutils.constants.CyderUrls;
 import com.github.natche.cyderutils.exceptions.FatalException;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
@@ -212,7 +211,7 @@ public class YoutubeUuidChecker {
         thumbnailFrame.setTitlePosition(TitlePosition.CENTER);
         thumbnailFrame.setTitle(currentUuid);
 
-        String videoUrl = CyderUrls.YOUTUBE_VIDEO_HEADER + currentUuid;
+        String videoUrl = "https://www.youtube.com/watch?v=" + currentUuid;
         String title = videoUrl;
         Optional<String> optionalTitle = NetworkUtil.getUrlTitle(videoUrl);
         if (optionalTitle.isPresent()) title = optionalTitle.get();

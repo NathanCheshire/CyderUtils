@@ -3,7 +3,6 @@ package com.github.natche.cyderutils.youtube;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
-import com.github.natche.cyderutils.constants.CyderUrls;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
 import com.github.natche.cyderutils.network.NetworkUtil;
@@ -190,7 +189,7 @@ public final class YouTubeUtil {
         Preconditions.checkNotNull(uuid);
         Preconditions.checkArgument(YouTubeConstants.UUID_PATTERN.matcher(uuid).matches());
 
-        return CyderUrls.YOUTUBE_VIDEO_HEADER + uuid;
+        return "https://www.youtube.com/watch?v=" + uuid;
     }
 
     /**

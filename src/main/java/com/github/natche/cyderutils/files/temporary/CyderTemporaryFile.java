@@ -1,4 +1,4 @@
-package com.github.natche.cyderutils.files;
+package com.github.natche.cyderutils.files.temporary;
 
 import com.github.natche.cyderutils.enumerations.SystemPropertyKey;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;

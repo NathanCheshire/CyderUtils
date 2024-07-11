@@ -1,10 +1,10 @@
 package com.github.natche.cyderutils.handlers.external;
 
 import com.google.common.base.Preconditions;
-import com.github.natche.cyderutils.files.DirectoryWatcher;
+import com.github.natche.cyderutils.files.watcher.DirectoryWatcher;
 import com.github.natche.cyderutils.files.FileUtil;
-import com.github.natche.cyderutils.files.WatchDirectoryEvent;
-import com.github.natche.cyderutils.files.WatchDirectorySubscriber;
+import com.github.natche.cyderutils.files.watcher.WatchDirectoryEvent;
+import com.github.natche.cyderutils.files.watcher.WatchDirectorySubscriber;
 import com.github.natche.cyderutils.getter.GetInputBuilder;
 import com.github.natche.cyderutils.getter.GetterUtil;
 import com.github.natche.cyderutils.image.CyderImage;
