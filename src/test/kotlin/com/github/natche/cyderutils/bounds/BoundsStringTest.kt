@@ -1,14 +1,13 @@
 package com.github.natche.cyderutils.bounds
 
 import com.github.natche.cyderutils.font.CyderFonts
+import com.github.natche.cyderutils.font.FontUtil
 import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.awt.Font
-import java.awt.GraphicsEnvironment
 
 /** Tests for [BoundsString]s. */
 class BoundsStringTest {
@@ -49,8 +48,10 @@ class BoundsStringTest {
 
         assertEquals(380.8212890625, bs.width)
         assertEquals(57.099609375, bs.height)
-        assertEquals("<html>Some text without HTML styling"
-                + " and even more text<br/>after that</html>", bs.text)
+        assertEquals(
+            "<html>Some text without HTML styling"
+                    + " and even more text<br/>after that</html>", bs.text
+        )
 
         bs = BoundsString.Builder(
             "The quick brown fox jumps over the lazy dogs"
@@ -83,9 +84,11 @@ class BoundsStringTest {
 
         assertEquals(780.40771484375, bs.width)
         assertEquals(134.32861328125, bs.height)
-        assertEquals("<html>The quick brown fox jumps over the lazy dogs The quick brown fox<br/>"
+        assertEquals(
+            "<html>The quick brown fox jumps over the lazy dogs The quick brown fox<br/>"
                     + "jumps over the lazy dogs The quick brown fox jumps over the lazy<br/>"
-                    + "dogs The quick brown fox jumps over the lazy dogs</html>", bs.text)
+                    + "dogs The quick brown fox jumps over the lazy dogs</html>", bs.text
+        )
     }
 
     /**
@@ -103,8 +106,9 @@ class BoundsStringTest {
 
         assertEquals(279.8662109375, bs.width)
         assertEquals(57.099609375, bs.height)
-        assertEquals("<html>Some text with HTML<br/>"
-                + " styling and even <div>more</div> text after that</html>", bs.text
+        assertEquals(
+            "<html>Some text with HTML<br/>"
+                    + " styling and even <div>more</div> text after that</html>", bs.text
         )
     }
 
@@ -112,16 +116,7 @@ class BoundsStringTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
-            val fontFiles = OsUtil.buildFile("static", "fonts").listFiles()
-            val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-
-            for (fontFile in fontFiles!!) {
-                try {
-                    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+            FontUtil.registerTrueTypeFonts(OsUtil.buildFile("static", "fonts"))
         }
     }
 }

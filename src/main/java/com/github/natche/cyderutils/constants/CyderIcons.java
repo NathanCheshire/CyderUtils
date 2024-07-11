@@ -3,14 +3,13 @@ package com.github.natche.cyderutils.constants;
 import com.github.natche.cyderutils.color.CyderColors;
 import com.github.natche.cyderutils.exceptions.IllegalMethodException;
 import com.github.natche.cyderutils.image.CyderImage;
-import com.github.natche.cyderutils.utils.StaticUtil;
 
 import javax.swing.*;
 
 /** Common {@link ImageIcon}s used throughout Cyder. */
 public final class CyderIcons {
     /** The Cyder logo. */
-    public static final ImageIcon CYDER_ICON = new ImageIcon(StaticUtil.getStaticPath("CyderIcon.png"));
+    public static final ImageIcon CYDER_ICON = new ImageIcon("todo");
 
     /** The length of the default background. */
     private static final int DEFAULT_BACKGROUND_LEN = 1000;

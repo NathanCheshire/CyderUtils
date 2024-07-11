@@ -7,7 +7,6 @@ import com.github.natche.cyderutils.network.NetworkUtil;
 import com.github.natche.cyderutils.ui.pane.CyderOutputPane;
 import com.github.natche.cyderutils.utils.ArrayUtil;
 import com.github.natche.cyderutils.utils.SecurityUtil;
-import com.github.natche.cyderutils.utils.StaticUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.atteo.evo.inflector.English;
@@ -20,10 +19,10 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.*;
+import java.util.Optional;
 
 /**
  * String utility methods along with JTextPane utility methods
@@ -532,52 +531,6 @@ public final class StringUtil {
         }
 
         return false;
-    }
-
-    /** The list of blocked words as found from the static file "blocked.txt". */
-    private static ImmutableList<String> blockedWords;
-
-    private static void loadBlockedWords() {
-        ArrayList<String> blockedWords = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(
-                StaticUtil.getStaticResource("blocked.txt")))) {
-            String blockedWord;
-
-            while ((blockedWord = reader.readLine()) != null) {
-                blockedWords.add(blockedWord);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        StringUtil.blockedWords = ImmutableList.copyOf(blockedWords);
-    }
-
-    /** A record for holding information regarding a located bad word. */
-    public record BlockedWordResult(boolean failed, String triggerWord) {}
-
-    /**
-     * Tests a given string to see if it contains any blocked words contained in the blocked.txt system file.
-     *
-     * @param input      the provided string to test against
-     * @param filterLeet whether to filter out possible leet from the string
-     * @return a result object describing whether a bad word was found and if so, which
-     */
-    public static BlockedWordResult containsBlockedWords(String input, boolean filterLeet) {
-        Preconditions.checkNotNull(input);
-        Preconditions.checkArgument(!input.isEmpty());
-
-        if (blockedWords == null) loadBlockedWords();
-        if (filterLeet) input = filterLeet(input.toLowerCase());
-
-        for (String blockedWord : blockedWords) {
-            if (hasWord(input, blockedWord, true)) {
-                return new BlockedWordResult(true, blockedWord);
-            }
-        }
-
-        return new BlockedWordResult(false, "");
     }
 
     /**
