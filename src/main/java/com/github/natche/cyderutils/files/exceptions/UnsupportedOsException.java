@@ -16,8 +16,4 @@ public class UnsupportedOsException extends CyderException {
     public UnsupportedOsException(Exception e) {
         super(e);
     }
-
-    public static void main(String[] args) {
-        UnsupportedOsException.throwFromMessage("adf");
-    }
 }

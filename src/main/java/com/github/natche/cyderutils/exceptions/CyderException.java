@@ -26,33 +26,23 @@ public abstract class CyderException extends RuntimeException {
     }
 
     /**
-     * Factory method to create an instance of the specific CyderException subclass.
-     *
-     * @param errorMessage the error message
-     * @return the specific CyderException instance
-     */
-    private CyderException createException(String errorMessage) {
-
-    }
-
-    /**
      * Static method to throw the specific CyderException with the provided message.
+     * This method is inherited by all subclasses and works correctly for each subclass.
      *
      * @param errorMessage the error message
-     * @throws CyderException the custom exception
-     * @throws NullPointerException if the provided exception or message are null
-     * @throws IllegalArgumentException if the provided message is empty
+     * @throws T the specific CyderException subclass
      */
-    public static void throwFromMessage(Class<? extends CyderException> exceptionClass, String errorMessage) throws CyderException {
-        Preconditions.checkNotNull(exceptionClass);
+    @SuppressWarnings("unchecked")
+    public static <T extends CyderException> void throwFromMessage(String errorMessage) throws T {
         Preconditions.checkNotNull(errorMessage);
         Preconditions.checkArgument(!errorMessage.trim().isEmpty());
 
         try {
-            CyderException exceptionInstance = exceptionClass.getDeclaredConstructor(String.class).newInstance(errorMessage);
-            throw exceptionInstance;
+            Class<T> exceptionClass = (Class<T>)
+                    Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
+            throw exceptionClass.getDeclaredConstructor(String.class).newInstance(errorMessage);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Exception instantiation failed", e);
+            throw new RuntimeException("Failed to instantiate or throw exception", e);
         }
     }
 
@@ -62,7 +52,7 @@ public abstract class CyderException extends RuntimeException {
      * @param message the message
      * @return the message after performing Precondition checks.
      */
-    private static String preconditions(String message) {
+    protected static String preconditions(String message) {
         Preconditions.checkNotNull(message);
         Preconditions.checkArgument(!message.trim().isEmpty());
         return message;
