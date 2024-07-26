@@ -33,7 +33,7 @@ public abstract class CyderException extends RuntimeException {
      * @throws T the specific CyderException subclass
      */
     @SuppressWarnings("unchecked")
-    public static <T extends CyderException> void throwFromMessage(String errorMessage) throws T {
+    public static <T extends CyderException> T throwFromMessage(String errorMessage) throws T {
         Preconditions.checkNotNull(errorMessage);
         Preconditions.checkArgument(!errorMessage.trim().isEmpty());
 

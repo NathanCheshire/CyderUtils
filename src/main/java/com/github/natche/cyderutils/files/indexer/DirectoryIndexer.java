@@ -98,7 +98,8 @@ public final class DirectoryIndexer {
             if (key.contains(filename)) return files.get(filename);
         }
 
-        throw new ResourceNotFoundException("File not found matching or partially matching " + filename);
+        throw ResourceNotFoundException.throwFromMessage(
+                "File not found matching or partially matching " + filename);
     }
 
     /**

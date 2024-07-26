@@ -1,7 +1,9 @@
 package com.github.natche.cyderutils.font;
 
+import com.github.natche.cyderutils.exceptions.CyderException;
+
 /** An exception thrown by {@link FontUtil} */
-public class FontException extends RuntimeException {
+public class FontException extends CyderException {
     /** Constructs a new FontException exception using the provided error message. */
     public FontException(String errorMessage) {
         super(errorMessage);
