@@ -122,15 +122,15 @@ class CyderAudioFileTest {
         val file = CyderAudioFile(southWav)
         assertThrows(NullPointerException::class.java) { file.getAudioLength(null) }
 
-        var futureResult = file.getAudioLength(DetermineAudioLengthMethod.FFMPEG)
+        val futureResult = file.getAudioLength(DetermineAudioLengthMethod.FFMPEG)
         while (!futureResult.isDone) Thread.onSpinWait()
-        var result = futureResult.get()
+        val result = futureResult.get()
         assertEquals(Duration.ofSeconds(10, 5000000), result)
 
-        futureResult = file.getAudioLength(DetermineAudioLengthMethod.PYTHON_MUTAGEN)
-        while (!futureResult.isDone) Thread.onSpinWait()
-        result = futureResult.get()
-        assertEquals(Duration.ofSeconds(10, 5000000), result)
+        val mutagenFutureResult = file.getAudioLength(DetermineAudioLengthMethod.PYTHON_MUTAGEN)
+        while (!mutagenFutureResult.isDone) Thread.onSpinWait()
+        val mutagenResult = mutagenFutureResult.get()
+        assertEquals(Duration.ofSeconds(10, 5000000), mutagenResult)
     }
 
     /** Tests for the dreamify method. */
