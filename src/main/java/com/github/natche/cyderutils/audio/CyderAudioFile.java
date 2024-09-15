@@ -21,8 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * A Cyder wrapper class around a {@link java.io.File} of a supported audio type, as defined by
- * {@link SupportedAudioFileType#isSupported(File)}, for performing certain operations or mutations.
+ * A wrapper class around a {@link java.io.File} of a supported audio type, as defined by
+ * {@link SupportedAudioFileType#isSupported(File)}, for performing operations, conversions, and mutations.
  */
 public final class CyderAudioFile {
     /** The default highpass value for dreamifying an audio file. */
@@ -178,9 +178,12 @@ public final class CyderAudioFile {
             while (!futureResult.isDone()) Thread.onSpinWait();
 
             try {
+                @SuppressWarnings("unused") // Simply ensure get invocation does not throw
                 ProcessResult result = futureResult.get();
-                // FFmpeg uses the error stream for process output,
+
+                // ffmpeg uses the error stream for process output,
                 // so we do not care about it containing errors here
+
                 return new CyderAudioFile(temporaryConversionFile.buildFile());
             } catch (Exception e) {
                 throw new CyderProcessException(e);
@@ -252,7 +255,12 @@ public final class CyderAudioFile {
         return new WaveFile(audioFile);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns whether the provided object is equal to this.
+     *
+     * @param o the other object
+     * @return whether the provided object is equal to this
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -267,7 +275,11 @@ public final class CyderAudioFile {
                 && this.dreamifyHighPass == other.dreamifyHighPass;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a string representation of this object.
+     *
+     * @return a string representation of this object
+     */
     @Override
     public String toString() {
         return "CyderAudioFile{"
@@ -277,7 +289,11 @@ public final class CyderAudioFile {
                 + "}";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a hashcode of this object.
+     *
+     * @return a hashcode of this object
+     */
     @Override
     public int hashCode() {
         int ret = audioFile.hashCode();

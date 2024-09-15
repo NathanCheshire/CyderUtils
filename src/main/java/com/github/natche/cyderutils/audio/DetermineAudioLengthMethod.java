@@ -179,10 +179,10 @@ public enum DetermineAudioLengthMethod {
 
             Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
                     ImmutableList.of(firstCommandOptional.get(), scriptFile.getAbsolutePath()));
-            while (!mutagenInstalled.isDone()) Thread.onSpinWait();
+            while (!mutagenLengthResult.isDone()) Thread.onSpinWait();
             ProcessResult result = mutagenLengthResult.get();
 
-            if (result.hasErrors()) {
+            if (result.containsErrors()) {
                 throw new CyderProcessException(
                         "Mutagen length process result contains errors: " + result.getErrorOutput());
             }

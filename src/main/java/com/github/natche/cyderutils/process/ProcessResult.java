@@ -2,32 +2,59 @@ package com.github.natche.cyderutils.process;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.github.natche.cyderutils.exceptions.IllegalMethodException;
-import com.github.natche.cyderutils.strings.CyderStrings;
 
 import java.util.Collection;
 
-/** The result of a {@link ProcessUtil#getProcessOutput(String) invocation}. */
-public class ProcessResult {
+/**
+ * The result of a {@link Process} run. Commonly used throughout Cyder
+ * and returned by classes such as {@link ProcessUtil}.
+ */
+public final class ProcessResult {
     /** The standard output of the process. */
     private final ImmutableList<String> standardOutput;
 
     /** The error output of the process. */
     private final ImmutableList<String> errorOutput;
 
-    /** Suppress default constructor. */
-    private ProcessResult() {
-        throw new IllegalMethodException(CyderStrings.ILLEGAL_CONSTRUCTOR);
+    /**
+     * Constructs and returns a new process result.
+     *
+     * @param standardOutput the standard output
+     * @throws NullPointerException if the provided collections is null
+     */
+    public static ProcessResult fromStandardOutput(Collection<String> standardOutput) {
+        Preconditions.checkNotNull(standardOutput);
+
+        return new ProcessResult(standardOutput, ImmutableList.of());
     }
 
     /**
-     * Constructs a new process result.
+     * Constructs and returns a new process result.
+     *
+     * @param errorOutput the error output
+     * @throws NullPointerException if the provided collection is null
+     */
+    public static ProcessResult fromErrorOutput(Collection<String> errorOutput) {
+        Preconditions.checkNotNull(errorOutput);
+
+        return new ProcessResult(ImmutableList.of(), errorOutput);
+    }
+
+    /**
+     * Constructs and returns a new process result.
      *
      * @param standardOutput the standard output
      * @param errorOutput    the error output
      * @throws NullPointerException if either of the provided collections is null
      */
-    public ProcessResult(Collection<String> standardOutput, Collection<String> errorOutput) {
+    public static ProcessResult from(Collection<String> standardOutput, Collection<String> errorOutput) {
+        Preconditions.checkNotNull(standardOutput);
+        Preconditions.checkNotNull(errorOutput);
+
+        return new ProcessResult(standardOutput, errorOutput);
+    }
+
+    private ProcessResult(Collection<String> standardOutput, Collection<String> errorOutput) {
         Preconditions.checkNotNull(standardOutput);
         Preconditions.checkNotNull(errorOutput);
 
@@ -58,11 +85,16 @@ public class ProcessResult {
      *
      * @return whether the error output contains strings
      */
-    public boolean hasErrors() {
+    public boolean containsErrors() {
         return !errorOutput.isEmpty();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns whether the provided object is equal to this.
+     *
+     * @param o the other object
+     * @return whether the provided object is equal to this
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -77,7 +109,11 @@ public class ProcessResult {
                 && other.errorOutput.equals(errorOutput);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a hashcode representation of this object.
+     *
+     * @return a hashcode representation of this object
+     */
     @Override
     public int hashCode() {
         int ret = standardOutput.hashCode();
@@ -85,7 +121,11 @@ public class ProcessResult {
         return ret;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a string representation of this object.
+     *
+     * @return a string representation of this object
+     */
     @Override
     public String toString() {
         return "ProcessResult{"

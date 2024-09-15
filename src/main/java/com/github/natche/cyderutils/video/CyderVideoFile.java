@@ -88,7 +88,7 @@ public final class CyderVideoFile {
             while (!futureResult.isDone()) Thread.onSpinWait();
             try {
                 ProcessResult result = futureResult.get();
-                if (result.hasErrors()) {
+                if (result.containsErrors()) {
                     throw new CyderVideoException("CyderVideoFile.extractAudio process contains errors, e:"
                             + result.getErrorOutput());
                 }

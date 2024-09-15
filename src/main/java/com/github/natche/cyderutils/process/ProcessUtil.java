@@ -98,7 +98,7 @@ public final class ProcessUtil {
                 throw new CyderProcessException(e);
             }
 
-            return new ProcessResult(standardOutput, errorOutput);
+            return ProcessResult.from(standardOutput, errorOutput);
         });
     }
 

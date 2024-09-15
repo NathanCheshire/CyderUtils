@@ -55,7 +55,7 @@ public final class UsbUtil {
 
             ProcessResult result = futureResult.get();
 
-            if (result.hasErrors()) {
+            if (result.containsErrors()) {
                 throw new FatalException("Exception whilst trying to query USB devices");
             }
 

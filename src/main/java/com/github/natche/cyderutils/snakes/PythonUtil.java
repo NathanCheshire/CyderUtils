@@ -110,7 +110,7 @@ public final class PythonUtil {
 
                     try {
                         ProcessResult result = futureResult.get();
-                        if (result.hasErrors()) return Optional.empty();
+                        if (result.containsErrors()) return Optional.empty();
 
                         ImmutableList<String> output = result.getStandardOutput();
                         if (output.isEmpty()) return Optional.empty();
