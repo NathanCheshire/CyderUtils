@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -77,29 +79,35 @@ public final class ProcessUtil {
         Preconditions.checkArgument(!command.trim().isEmpty());
 
         String threadName = "getProcessOutput, command: " + StringUtil.surroundWithQuotes(command);
-        return Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName)).submit(() -> {
-            ArrayList<String> standardOutput = new ArrayList<>();
-            ArrayList<String> errorOutput = new ArrayList<>();
+        ExecutorService executorService = Executors.newSingleThreadExecutor(new CyderThreadFactory(threadName));
 
-            try {
-                Process process = Runtime.getRuntime().exec(command);
-                process.getOutputStream().close();
+        try {
+            return executorService.submit(() -> {
+                ArrayList<String> standardOutput = new ArrayList<>();
+                ArrayList<String> errorOutput = new ArrayList<>();
 
-                String outputLine;
-                BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                while ((outputLine = outReader.readLine()) != null) standardOutput.add(outputLine);
-                outReader.close();
+                try {
+                    Process process = Runtime.getRuntime().exec(command);
+                    process.getOutputStream().close();
 
-                String errorLine;
-                BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while ((errorLine = errorReader.readLine()) != null) errorOutput.add(errorLine);
-                errorReader.close();
-            } catch (IOException e) {
-                throw new CyderProcessException(e);
-            }
+                    String outputLine;
+                    BufferedReader outReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    while ((outputLine = outReader.readLine()) != null) standardOutput.add(outputLine);
+                    outReader.close();
 
-            return ProcessResult.from(standardOutput, errorOutput);
-        });
+                    String errorLine;
+                    BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    while ((errorLine = errorReader.readLine()) != null) errorOutput.add(errorLine);
+                    errorReader.close();
+                } catch (IOException e) {
+                    throw new CyderProcessException(e);
+                }
+
+                return ProcessResult.from(standardOutput, errorOutput);
+            });
+        } finally {
+            executorService.shutdown();
+        }
     }
 
     /**

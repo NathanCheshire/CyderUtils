@@ -21,13 +21,15 @@ jobs:
       - name: Install dependencies on Windows
         shell: powershell
         run: |
-          choco install ffmpeg python
-          python -m pip install --upgrade pip
-          pip install mutagen
+          choco install ffmpeg
+          python -m venv cyderenv
+          .\cyderenv\Scripts\pip install --upgrade pip
           Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip -OutFile Scream4.0.zip
           Expand-Archive -Path Scream4.0.zip -DestinationPath Scream
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
+        env:
+          CYDER_PYTHON_EXECUTABLE_PATH: ${{ github.workspace }}\cyderenv\Scripts\python.exe
 
       - name: Setup MSVC Dev Cmd
         uses: ilammy/msvc-dev-cmd@v1
@@ -45,7 +47,7 @@ jobs:
       - name: Start Windows Audio Service
         run: net start audiosrv
         shell: powershell
-      
+
       - name: Build with Gradle
         run: ./gradlew clean build --info --stacktrace --no-daemon
 

@@ -6,7 +6,6 @@ import com.github.natche.cyderutils.utils.OsUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.lang.IllegalStateException
 import java.time.Duration
 
 /** Tests for [CyderAudioFile]s. */
@@ -130,9 +129,8 @@ class CyderAudioFileTest {
 
         futureResult = file.getAudioLength(DetermineAudioLengthMethod.PYTHON_MUTAGEN)
         while (!futureResult.isDone) Thread.onSpinWait()
-        // todo when PythonManager is done fix these
-//        result = futureResult.get()
-//        assertEquals(Duration.ofSeconds(10, 5000000), result)
+        result = futureResult.get()
+        assertEquals(Duration.ofSeconds(10, 5000000), result)
     }
 
     /** Tests for the dreamify method. */

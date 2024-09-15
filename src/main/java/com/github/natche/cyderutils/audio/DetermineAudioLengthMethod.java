@@ -7,19 +7,18 @@ import com.github.natche.cyderutils.audio.ffmpeg.FfmpegPrintFormat;
 import com.github.natche.cyderutils.audio.ffmpeg.FfmpegStreamEntry;
 import com.github.natche.cyderutils.audio.validation.SupportedAudioFileType;
 import com.github.natche.cyderutils.constants.CyderRegexPatterns;
-import com.github.natche.cyderutils.files.temporary.CyderTemporaryFile;
 import com.github.natche.cyderutils.files.FileUtil;
+import com.github.natche.cyderutils.files.temporary.CyderTemporaryFile;
 import com.github.natche.cyderutils.process.*;
 import com.github.natche.cyderutils.strings.StringUtil;
 import com.github.natche.cyderutils.threads.CyderThreadFactory;
 import com.github.natche.cyderutils.time.TimeUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Futures;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -32,10 +31,10 @@ public enum DetermineAudioLengthMethod {
     FFMPEG(DetermineAudioLengthMethod::getLengthViaFfmpeg),
 
     /** Determine an audio file's length using the Python package Mutagen. */
-    PYTHON_MUTAGEN(DetermineAudioLengthMethod::getLengthViaMutagen);
+    PYTHON_MUTAGEN(DetermineAudioLengthMethod::getLengthViaMutagen),
 
-    // todo add wave file duration clip? Maybe just clip if it'll work for other audio file types
-    //  since we can get duration from a wave directly so conv to wave and then get that from the cyder wav file
+    /** Determine an audio file's length using a {@link javax.sound.sampled.Clip}. */
+    AUDIO_CLIP(DetermineAudioLengthMethod::getLengthViaAudioClip);
 
     /**
      * The pattern used to extract the duration seconds floating point number from the
@@ -136,8 +135,7 @@ public enum DetermineAudioLengthMethod {
      * @throws NullPointerException     if the provided audio file is null
      * @throws IllegalArgumentException if the provided audio file is not a file,
      *                                  does not exist, or is not a supported audio type
-     * @throws CyderProcessException    if {@link PythonPackage#MUTAGEN} is not and cannot be
-     *                                  installed or a valid working Python command cannot be found
+     * @throws CyderProcessException    if mutagen is not present and fails to install
      */
     private static Future<Duration> getLengthViaMutagen(File audioFile) {
         Preconditions.checkNotNull(audioFile);
@@ -147,13 +145,15 @@ public enum DetermineAudioLengthMethod {
 
         CyderThreadFactory threadFactory = getThreadFactory(DetermineAudioLengthMethod.PYTHON_MUTAGEN, audioFile);
         return Executors.newSingleThreadExecutor(threadFactory).submit(() -> {
-            Future<Boolean> mutagenInstalled = PythonPackage.MUTAGEN.isInstalled();
-            while (!mutagenInstalled.isDone()) Thread.onSpinWait();
-
-            if (!mutagenInstalled.get()) {
-                Future<Boolean> installationRequest = PythonPackage.MUTAGEN.install();
-                while (!installationRequest.isDone()) Thread.onSpinWait();
-                if (!installationRequest.get()) throw new CyderProcessException("Failed to install Mutagen");
+            PythonVirtualEnvironment pev = PevProvider.INSTANCE.getProvider();
+            Future<Boolean> mutagenPresent = pev.isPipDependencyPresent("mutagen");
+            while (!mutagenPresent.isDone()) Thread.onSpinWait();
+            if (!mutagenPresent.get()) {
+                Future<Boolean> installedMutagen = pev.installRequirement("mutagen");
+                while (!installedMutagen.isDone()) Thread.onSpinWait();
+                if (!installedMutagen.get()) {
+                    throw new CyderProcessException("Failed to install mutagen");
+                }
             }
 
             ImmutableList<String> script = ImmutableList.of(
@@ -170,32 +170,33 @@ public enum DetermineAudioLengthMethod {
             File scriptFile = temporaryPythonScriptFile.buildFile();
             FileUtil.writeLinesToFile(scriptFile, script, false);
 
-            Future<Optional<String>> firstWorkingPythonInvocableCommand
-                    = PythonProgram.PYTHON.getFirstWorkingProgramName();
-            while (!firstWorkingPythonInvocableCommand.isDone()) Thread.onSpinWait();
-            Optional<String> firstCommandOptional = firstWorkingPythonInvocableCommand.get();
-            if (firstCommandOptional.isEmpty())
-                throw new CyderProcessException("Failed to find working Python command");
-
             Future<ProcessResult> mutagenLengthResult = ProcessUtil.getProcessOutput(
-                    ImmutableList.of(firstCommandOptional.get(), scriptFile.getAbsolutePath()));
+                    ImmutableList.of(
+                            pev.getPythonExecutable().getAbsolutePath(),
+                            scriptFile.getAbsolutePath()
+                    )
+            );
             while (!mutagenLengthResult.isDone()) Thread.onSpinWait();
             ProcessResult result = mutagenLengthResult.get();
-
             if (result.containsErrors()) {
-                throw new CyderProcessException(
-                        "Mutagen length process result contains errors: " + result.getErrorOutput());
+                throw new CyderProcessException("Mutagen length process result contains errors");
             }
 
-            List<String> output = result.getStandardOutput();
+            ImmutableList<String> output = result.getStandardOutput();
             if (output.size() > 1) {
-                throw new CyderProcessException("Mutagen length process result contains more than one line: " + output);
+                throw new CyderProcessException("Mutagen length process unexpected output: " + output);
             }
 
             float seconds = Float.parseFloat(output.get(0));
             float millis = seconds * 1000.0f;
             return Duration.ofMillis(Math.round(millis));
         });
+    }
+
+    private static Future<Duration> getLengthViaAudioClip(File audioFile) {
+        // todo add wave file duration clip? Maybe just clip if it'll work for other audio file types
+        //  since we can get duration from a wave directly so conv to wave and then get that from the cyder wav file
+        return Futures.immediateFuture(Duration.ofMillis(0));
     }
 
     /**
