@@ -54,11 +54,14 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build --info --stacktrace --no-daemon
+        env:
+          CYDER_PYTHON_EXECUTABLE_PATH: ${{ env.CYDER_PYTHON_EXECUTABLE_PATH }}
 
       - name: Generate code coverage with JaCoCo
         run: ./gradlew jacocoTestReport
         env:
           IP_KEY: ${{ secrets.IP_KEY }}
+          CYDER_PYTHON_EXECUTABLE_PATH: ${{ env.CYDER_PYTHON_EXECUTABLE_PATH }}
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
