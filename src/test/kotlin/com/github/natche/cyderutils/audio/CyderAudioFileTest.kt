@@ -119,7 +119,7 @@ class CyderAudioFileTest {
     /** Tests for the get audio length method. */
     @Test
     fun testGetAudioLength() {
-        System.getenv().values.stream().forEach(System.out::println)
+        System.getenv().forEach(System.out::println)
 
         val file = CyderAudioFile(southWav)
         assertThrows(NullPointerException::class.java) { file.getAudioLength(null) }
