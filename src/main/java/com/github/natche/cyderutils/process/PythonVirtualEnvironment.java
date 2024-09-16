@@ -109,6 +109,7 @@ public final class PythonVirtualEnvironment {
             while (!futureResult.isDone()) Thread.onSpinWait();
             ProcessResult result = futureResult.get();
             ImmutableList<String> outputLines = result.getStandardOutput();
+            result.getErrorOutput().forEach(System.out::println);
 
             if (outputLines.isEmpty()) return false;
             if (result.containsErrors()) return false;
