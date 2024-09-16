@@ -8,6 +8,9 @@ jobs:
   install-build-and-test:
     runs-on: windows-latest
 
+    env:
+      CYDER_PYTHON_EXECUTABLE_PATH: ${{ github.workspace }}\cyderenv\Scripts\python.exe
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -18,18 +21,19 @@ jobs:
           java-version: '17.0.6'
           distribution: 'temurin'
 
-      - name: Install dependencies on Windows
+      - name: Install dependencies on Windows and set up virtual environment
         shell: powershell
         run: |
           choco install ffmpeg python
+          python -m pip install --upgrade pip
+          pip install mutagen
           python -m venv cyderenv
+          .\cyderenv\Scripts\Activate
           .\cyderenv\Scripts\pip install --upgrade pip
           Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/4.0/Scream4.0.zip -OutFile Scream4.0.zip
           Expand-Archive -Path Scream4.0.zip -DestinationPath Scream
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
-        env:
-          CYDER_PYTHON_EXECUTABLE_PATH: ${{ github.workspace }}\cyderenv\Scripts\python.exe
 
       - name: Setup MSVC Dev Cmd
         uses: ilammy/msvc-dev-cmd@v1
