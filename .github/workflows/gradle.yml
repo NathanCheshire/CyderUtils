@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      CYDER_PYTHON_EXECUTABLE_PATH: ${{ github.workspace }}\cyderenv\Scripts\python.exe
+      CYDER_PYTHON_EXECUTABLE_PATH: ./cyderenv/Scripts/python.exe
 
     steps:
       - name: Check out repository
